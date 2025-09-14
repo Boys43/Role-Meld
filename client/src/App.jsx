@@ -8,42 +8,12 @@ import JobsForm from './pages/JobsForm'
 import EmployeeDashboard from './pages/EmployeeDashboard'
 import ApplicantDashboard from './pages/ApplicantDashboard'
 import { ToastContainer } from 'react-toastify';
-import { useContext } from 'react'
-import { AppContext } from './context/AppContext'
 import Resume from './pages/Resume'
-import FindJobs from './pages/FIndJobs'
-
-// // ----------------//
-// //   Auth Context  //
-// // ----------------//
-// const AuthContext = createContext();
-
-// const AuthProvider = ({ children }) => {
-//   const { isLoggedIn: appIsLoggedIn, userData } = useContext(AppContext);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     // Wait for authentication check to complete
-//     // appIsLoggedIn is null during initial check, false when not logged in, true when logged in
-//     if (appIsLoggedIn !== null) {
-//       if (appIsLoggedIn === false || (appIsLoggedIn === true && userData !== false)) {
-//         setLoading(false);
-//       }
-//     }
-//   }, [appIsLoggedIn, userData]);
-
-//   return (
-//     <AuthContext.Provider
-//       value={{ isLoggedIn: appIsLoggedIn, loading, user: userData }}
-//     >
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
+import FindJobs from './pages/FindJobs'
+import JobDetails from './pages/JobDetails'
+import SavedJobs from './pages/SavedJobs'
 
 const App = () => {
-
-  const { userData } = useContext(AppContext);
 
   return (
     <>
@@ -58,6 +28,8 @@ const App = () => {
         <Route path="/resume" element={<Resume />} />
         <Route path="/recruiterdashboard" element={<EmployeeDashboard />} />
         <Route path="/find-jobs" element={<FindJobs />} />
+        <Route path="/jobdetails/:id" element={<JobDetails />} />
+        <Route path="/savedjobs" element={<SavedJobs />} />
       </Routes>
       {/* <Footer /> */}
     </>

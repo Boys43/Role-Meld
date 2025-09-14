@@ -43,9 +43,6 @@ const Resume = () => {
             }));
         }
     };
-
-    console.log(formData);
-    console.log('userData', userData);
     
     const updateProfile = async (e) => {
         e.preventDefault()
