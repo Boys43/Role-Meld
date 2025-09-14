@@ -30,7 +30,7 @@ export const register = async (req, res) => {
 
         if (role === "user") {
             await userProfileModel.create({ authId: auth._id, role: "user", name: name, email: email });
-        } else if (role === "recruiter") {
+        } else {
             await recruiterProfileModel.create({ authId: auth._id, role: "recruiter", name: name, email: email })
         }
 
