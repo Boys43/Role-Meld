@@ -1,4 +1,6 @@
+import authModel from "../models/authModels.js";
 import userProfileModel from "../models/userProfileModel.js";
+import recruiterProfileModel from "../models/recruiterProfileModel.js"
 import fs from "fs";
 
 // ---------- Utility function ----------
@@ -51,17 +53,29 @@ export const getUserData = async (req, res) => {
     const userId = req.user._id;
 
     try {
-        const user = await userProfileModel.findOne({ authId: userId });
+        const authUser = await authModel.findById(userId);
 
-        if (!user) {
-            return res.json({ success: false, message: "User Not Found!" });
+        let profile;
+
+        if (authUser.role === "user") {
+            profile = await userProfileModel.findOne({ authId: userId });
+        } else {
+            profile = await recruiterProfileModel.findOne({ authId: userId });
         }
 
-        return res.json({ success: true, user });
+        if (!profile) {
+            return res.json({ success: false, message: "Profile not found!" });
+        }
+
+        return res.json({
+            success: true,
+            profile,
+        });
     } catch (error) {
         return res.json({ success: false, message: error.message });
     }
 };
+
 
 export const updateProfile = async (req, res) => {
     try {
@@ -85,25 +99,42 @@ export const updateProfile = async (req, res) => {
             return resObj;
         };
 
+        const authUser = await authModel.findById(userId);
         const updateFields = flattenObject(updateUser);
 
-        let user = await userProfileModel.findOneAndUpdate(
-            { authId: userId },
-            { $set: updateFields },
-            { new: true }
-        );
+        let updatedProfile;
 
-        if (!user) {
-            return res.json({ success: false, message: "User Not Found!" });
+        if (authUser.role === "user") {
+            updatedProfile = await userProfileModel.findOneAndUpdate(
+                { authId: userId },
+                { $set: updateFields },
+                { new: true }
+            );
+
+            if (!updatedProfile) {
+                return res.json({ success: false, message: "User Not Found!" });
+            }
+
+            updatedProfile.profileScore = calculateProfileScore(updatedProfile);
+            await updatedProfile.save();
+        } else {
+            updatedProfile = await recruiterProfileModel.findOneAndUpdate(
+                { authId: userId },
+                { $set: updateFields },
+                { new: true }
+            );
+
+            if (!updatedProfile) {
+                return res.json({ success: false, message: "User Not Found!" });
+            }
+
+            await updatedProfile.save();
         }
 
-        user.profileScore = calculateProfileScore(user);
-        await user.save();
-
-        res.json({
+        return res.json({
             success: true,
             message: "Profile updated successfully",
-            user,
+            profile: updatedProfile,
         });
     } catch (error) {
         console.error(error);
@@ -142,24 +173,31 @@ export const checkProfileScore = async (req, res) => {
 
 export const updateProfilePicture = async (req, res) => {
     const userId = req.user._id;
-        console.log("Incoming file:", req.file);  // 👈 Debug here
+    console.log("Incoming file:", req.file);  // 👈 Debug here
 
     try {
-        const user = await userProfileModel.findOne({ authId: userId });
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User Not Found!" });
-        }
+        const authUser = await authModel.findOne(userId);
 
         if (!req.file) {
             return res.status(400).json({ success: false, message: "No file uploaded" });
         }
-        
 
-        // Save only filename with /uploads/
+        let user;
+
+        if (authUser.role === "user") {
+            user = await userProfileModel.findOne({ authId: userId })
+        } else {
+            user = await recruiterProfileModel.findOne({ authId: userId })
+        }
+        
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User Not Found!" });
+        }
+
+        user.profileScore ? user.profileScore  = calculateProfileScore(user) : ''
+        
         user.profilePicture = req.file.filename;
 
-        user.profileScore = calculateProfileScore(user);
         await user.save();
 
         res.json({

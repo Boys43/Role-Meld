@@ -210,7 +210,6 @@ const ApplicantDashboard = () => {
 
             <h1 className="text-[var(--primary-color)] font-semibold">Update Your Profile</h1>
 
-
             <form onSubmit={updateProfile} className="flex flex-col gap-1 mt-3">
               <label htmlFor="name" className="font-medium">Name</label>
               <input type="text"
