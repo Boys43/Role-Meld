@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { CiBookmark } from "react-icons/ci";
 import { CiPaperplane } from "react-icons/ci";
-import { IoBookmark } from "react-icons/io5"; 
+import { IoBookmark } from "react-icons/io5";
 
 const JobDetails = () => {
     const { backendUrl } = useContext(AppContext);
@@ -61,8 +61,8 @@ const JobDetails = () => {
         }
     }, [jobData]);
 
-      const {savedJobs, toggleSaveJob} = useContext(AppContext);
-    
+    const { savedJobs, toggleSaveJob } = useContext(AppContext);
+
 
     function viewDetails(id) {
         navigate(`/jobdetails/${id}`)

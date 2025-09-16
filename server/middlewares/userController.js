@@ -2,6 +2,8 @@ import authModel from "../models/authModels.js";
 import userProfileModel from "../models/userProfileModel.js";
 import recruiterProfileModel from "../models/recruiterProfileModel.js"
 import fs from "fs";
+import jobsModel from "../models/jobsModel.js";
+import applicationModel from "../models/applicationModel.js";
 
 // ---------- Utility function ----------
 function calculateProfileScore(user) {
@@ -76,7 +78,6 @@ export const getUserData = async (req, res) => {
     }
 };
 
-
 export const updateProfile = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -86,28 +87,14 @@ export const updateProfile = async (req, res) => {
             return res.json({ success: false, message: "Missing or invalid details" });
         }
 
-        // Flatten nested objects into dot notation
-        const flattenObject = (obj, parentKey = "", resObj = {}) => {
-            for (let key in obj) {
-                const newKey = parentKey ? `${parentKey}.${key}` : key;
-                if (typeof obj[key] === "object" && !Array.isArray(obj[key]) && obj[key] !== null) {
-                    flattenObject(obj[key], newKey, resObj);
-                } else {
-                    resObj[newKey] = obj[key];
-                }
-            }
-            return resObj;
-        };
-
         const authUser = await authModel.findById(userId);
-        const updateFields = flattenObject(updateUser);
 
         let updatedProfile;
 
         if (authUser.role === "user") {
             updatedProfile = await userProfileModel.findOneAndUpdate(
                 { authId: userId },
-                { $set: updateFields },
+                { $set: updateUser },   // 👈 directly update
                 { new: true }
             );
 
@@ -120,7 +107,7 @@ export const updateProfile = async (req, res) => {
         } else {
             updatedProfile = await recruiterProfileModel.findOneAndUpdate(
                 { authId: userId },
-                { $set: updateFields },
+                { $set: updateUser },   // 👈 directly update
                 { new: true }
             );
 
@@ -145,7 +132,6 @@ export const updateProfile = async (req, res) => {
         });
     }
 };
-
 
 export const checkProfileScore = async (req, res) => {
     const userId = req.user._id;
@@ -189,13 +175,13 @@ export const updateProfilePicture = async (req, res) => {
         } else {
             user = await recruiterProfileModel.findOne({ authId: userId })
         }
-        
+
         if (!user) {
             return res.status(404).json({ success: false, message: "User Not Found!" });
         }
 
-        user.profileScore ? user.profileScore  = calculateProfileScore(user) : ''
-        
+        user.profileScore ? user.profileScore = calculateProfileScore(user) : ''
+
         user.profilePicture = req.file.filename;
 
         await user.save();
@@ -210,6 +196,102 @@ export const updateProfilePicture = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Server Error",
+            error: error.message,
+        });
+    }
+};
+
+
+export const updateResume = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        if (!req.file) {
+            return res.json({ success: false, message: "No resume uploaded" });
+        }
+
+        const updatedProfile = await userProfileModel.findOneAndUpdate(
+            { authId: userId },
+            { $set: { resume: req.file.filename } }, // only save filename or path
+            { new: true }
+        );
+
+        return res.json({
+            success: true,
+            message: "Resume uploaded successfully",
+            profile: updatedProfile,
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error", error: error.message });
+    }
+};
+
+export const applyJob = async (req, res) => {
+    const userId = req.user._id;
+
+    if (!userId) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    try {
+        const { jobId, applicantDetails } = req.body;
+
+        if (!jobId || !applicantDetails) {
+            return res.status(400).json({ success: false, message: "Missing job ID or applicant details" });
+        }
+
+        const job = await jobsModel.findById(jobId);
+
+        if (!job) return res.status(404).json({ success: false, message: "Job not found" });
+
+        const application = new applicationModel({
+            job: job._id,
+            applicant: req.user._id,
+            recruiter: job.postedBy,
+            resume: applicantDetails.resume,
+            name: applicantDetails.name,
+            email: applicantDetails.email
+        });
+
+        const user = await userProfileModel.findOne({ authId: userId });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User profile not found" });
+        }
+
+        user.appliedJobs.push(job._id);
+        await user.save();
+
+        await application.save();
+
+        res.json({ success: true, message: "Application submitted", application });
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Server error", error: err.message });
+    }
+};
+
+export const fetchApplicants = async (req, res) => {
+    try {
+        const userId = req.user._id; // recruiter id
+
+        if (!userId) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        // Find all applications for jobs posted by this recruiter
+        const applications = await applicationModel.find({ recruiter: userId })
+            .populate("applicant", "name email resume") // show applicant details
+            .populate("job", "title description location"); // show job info
+
+        return res.json({
+            success: true,
+            message: "Applicants fetched successfully",
+            applicants: applications,
+        });
+    } catch (error) {
+        console.error("Error fetching applicants:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error",
             error: error.message,
         });
     }

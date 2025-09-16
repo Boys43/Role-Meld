@@ -15,6 +15,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { FaDollarSign } from "react-icons/fa";
 
 import ReactPaginate from "react-paginate";
+import Sidebar from './Sidebar';
 
 
 const FindJobs = () => {
@@ -35,7 +36,7 @@ const FindJobs = () => {
   const [searchLocation, setSearchLocation] = useState('');
   const [searchJob, setSearchJob] = useState('');
 
-  const { backendUrl, setJobId } = useContext(AppContext);
+  const { backendUrl, userData, setJobId } = useContext(AppContext);
 
   const getJobs = async () => {
     try {
@@ -103,13 +104,30 @@ const FindJobs = () => {
     navigate(`/jobdetails/${id}`)
   }
 
+  const applyJob = async (jobId) => {
+
+    try {
+      const applicantDetails = {
+        resume: userData?.resume,
+        name: userData.name,
+        email: userData.email
+      }
+      const { data } = await axios.post(`${backendUrl}/api/user/applyjob`, { jobId, applicantDetails });
+      if (data.success) {
+        toast.success(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
   return (
     <>
-      <div className='h-screen w-full'>
-        <main className='py-10 h-screen overflow-y-scroll no-scrollbar flex flex-col gap-10'>
+      <div className='h-screen relative w-full flex'>
+        <main className='p-10 h-screen w-full flex flex-col gap-10'>
           <section
             id="search"
-            className="w-[70%] shadow-2xl border-[1px] border-black mx-auto rounded-2xl"
+            className="shadow-2xl border-[1px] border-black mx-auto rounded-2xl"
           >
             <form className="flex items-center">
               <div className="flex relative w-1/2">
@@ -169,17 +187,17 @@ const FindJobs = () => {
               <option value="programmer">Programmer</option>
             </select>
           </section>
-          <div className='flex relative'>
-            <aside className='border w-[20%]'>
+          <div className='flex relative w-full'>
+            <aside className='border w-[15rem]'>
 
             </aside>
-            <section className='px-4 w-[80%] gap-4'>
-              <div className=''>
-                <ul className='grid lg:grid-cols-3 w-full md:grid-cols-2 sm:grid-cols-1 gap-5'>
+            <section className='gap-4 '>
+              <div className='px-4 w-full'>
+                <ul className='grid lg:grid-cols-2 md:grid-cols-1 w-full sm:grid-cols-1 gap-5'>
                   {filteredJobs.length > 0 ? (
                     filteredJobs.map((job) => <div
                       key={job._id}
-                      className='relative flex  flex-col justify-between gap-3 items-start w-full border-[1px] p-5 rounded-2xl shadow-xl mb-5'>
+                      className='relative flex flex-col justify-between w-full gap-3 items-start border-[1px] p-5 rounded-2xl shadow-xl mb-5'>
                       <div className=' top-3 flex gap-2 right-3 text-[0.8rem]'>
                         <span className={`px-2 rounded bg-yellow-200`}>
                           {job.jobType}
@@ -201,7 +219,10 @@ const FindJobs = () => {
                         <button onClick={() => viewDetails(job._id)} className='flex w-1/2 bg-[var(--primary-color)]/50 border-2 border-[var(--primary-color)]  items-center gap-4'>
                           View Details <CiPaperplane />
                         </button>
-                        <button className='flex bg-green-400 w-1/2 border-2 border-green-500  items-center gap-4'>
+                        <button onClick={(e) => {
+                          e.preventDefault();
+                          applyJob(job._id)
+                        }} className='flex bg-green-400 w-1/2 border-2 border-green-500  items-center gap-4'>
                           Apply Now <CiPaperplane />
                         </button>
                       </div>
@@ -232,9 +253,6 @@ const FindJobs = () => {
                   nextClassName="px-3 flex items-center py-1 rounded cursor-pointer"
                 />
               </div>
-              <div>
-              </div>
-
             </section>
           </div>
         </main>

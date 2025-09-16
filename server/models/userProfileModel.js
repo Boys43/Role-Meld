@@ -11,22 +11,16 @@ const userProfileSchema = new mongoose.Schema({
   headline: { type: String, default: "" },
   phone: { type: String, default: "" },
   country: { type: String, default: "" },
-  location: {
-    city: { type: String, default: "" },
-    address: { type: String, default: "" },
-    postal: { type: String, default: "" },
-  },
-  resume: {
-    workExperience: { type: Array, default: [] },
-    education: {
-      college: { type: String, default: "" },
-      qualification: { type: String, default: "" },
-      from: { type: String, default: "" },
-      to: { type: String, default: "" },
-      city: { type: String, default: "" },
-    },
-    skills: { type: Array, default: [] },
-  }
+  city: { type: String, default: "" },
+  address: { type: String, default: "" },
+  postal: { type: String, default: "" },
+  appliedJobs: { type: Array, default: [] },
+
+  // 🆕 Resume & extra fields
+  resume: { type: String, default: "" },   // file URL (PDF/Doc)
+  portfolio: { type: String, default: "" },
+  github: { type: String, default: "" },
 });
+
 
 export default mongoose.model("UserProfile", userProfileSchema);

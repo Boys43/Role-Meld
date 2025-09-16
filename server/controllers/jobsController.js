@@ -1,25 +1,38 @@
 import jobsModel from '../models/jobsModel.js';
+import recruiterProfileModel from '../models/recruiterProfileModel.js';
 // import authModel from '../models/authModels.js';
 
 import userProfileModel from "../models/userProfileModel.js";
 
 export const addJob = async (req, res) => {
     const { jobData } = req.body;
+    const { _id: userId } = req.user
 
     if (!jobData) {
-        return res.json({ success: false, message: "Missing Details" });
+        return res.status(400).json({ success: false, message: "Missing Details" });
     }
 
     try {
-        const jobs = new jobsModel({
+        const job = new jobsModel({
             ...jobData,
             postedBy: req.user._id,
             postedAt: new Date(),
-            applicationDeadline: Date.now() + jobData.applicationDeadline * 24 * 60 * 60 * 1000,
-        })
-        await jobs.save()
+            applicationDeadline: new Date(Date.now() + jobData.applicationDeadline * 24 * 60 * 60 * 1000),
+        });
+        await job.save();
 
-        return res.json({ success: true, message: "Job Listed" });
+        const recruiter = await recruiterProfileModel.findOne({ authId: userId });
+
+        if (!recruiter) {
+            return res.status(404).json({ success: false, message: "User Not Found" });
+        }
+
+        if (!recruiter.sentJobs.includes(job._id)) {
+            recruiter.sentJobs.push(job._id);
+        }
+        await recruiter.save();
+
+        return res.status(201).json({ success: true, message: "Job Listed" });
     } catch (error) {
         if (error.name === "ValidationError") {
             return res.status(400).json({
@@ -31,7 +44,8 @@ export const addJob = async (req, res) => {
 
         return res.status(500).json({ success: false, message: error.message });
     }
-}
+};
+
 
 export const saveJob = async (req, res) => {
     const { savedJobs } = req.body;
@@ -46,7 +60,7 @@ export const saveJob = async (req, res) => {
 
         user.savedJobs = savedJobs;
         await user.save()
-        return res.json({ success: true})
+        return res.json({ success: true })
     } catch (error) {
         return res.json({ success: false, message: error.message });
     }
