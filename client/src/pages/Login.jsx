@@ -25,7 +25,7 @@ const Login = () => {
         // ✅ Fetch full user data before navigating
         await getUserData();
 
-        navigate("/find-jobs");
+        navigate("/dashboard");
       } else {
         toast.error(data.message);
         setIsLoggedIn(false);

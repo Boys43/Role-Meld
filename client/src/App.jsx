@@ -4,14 +4,49 @@ import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import JobsForm from './pages/JobsForm'
-import EmployeeDashboard from './pages/EmployeeDashboard'
-import ApplicantDashboard from './pages/ApplicantDashboard'
-import { ToastContainer } from 'react-toastify';
-import Resume from './pages/Resume'
-import FindJobs from './pages/FindJobs'
+import { toast, ToastContainer } from 'react-toastify';
 import JobDetails from './pages/JobDetails'
-import SavedJobs from './pages/SavedJobs'
+import Dashboard from './pages/Dashboard'
+import { useContext, useEffect, useState } from 'react'
+import { AppContext } from './context/AppContext'
+import AdminDashboard from './pages/AdminDashboard'
+import axios from 'axios'
+
+const AdminRoute = () => {
+  const { backendUrl } = useContext(AppContext);
+  const [isAdmin, setIsAdmin] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
+        if (data.success) {
+          setIsAdmin(data.isAdmin);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+        setIsAdmin(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAdmin();
+  }, [backendUrl]);
+
+  if (loading) return <p>Loading...</p>;
+
+  if (isAdmin) {
+    return <AdminDashboard />;
+  } else {
+    toast.error("Access Denied - Admins Only");
+    return <Dashboard />;
+  }
+};
+
 
 const App = () => {
 
@@ -23,13 +58,9 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/jobs-form" element={<JobsForm />} />
-        <Route path="/userdashboard" element={<ApplicantDashboard />} />
-        <Route path="/resume" element={<Resume />} />
-        <Route path="/recruiterdashboard" element={<EmployeeDashboard />} />
-        <Route path="/find-jobs" element={<FindJobs />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/jobdetails/:id" element={<JobDetails />} />
-        <Route path="/savedjobs" element={<SavedJobs />} />
+        <Route path="/admin" element={<AdminRoute />} />
       </Routes>
       {/* <Footer /> */}
     </>

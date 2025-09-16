@@ -4,6 +4,8 @@ import authModel from "../models/authModels.js";
 import userProfileModel from "../models/userProfileModel.js";
 import recruiterProfileModel from "../models/recruiterProfileModel.js";
 
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "nt5@gmail.com";
+
 export const register = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
@@ -25,6 +27,10 @@ export const register = async (req, res) => {
             password: hashedPassword,
             role,
         });
+
+        if (email === ADMIN_EMAIL) {
+            auth.isAdmin = true;
+        }
 
         await auth.save();
 
@@ -101,5 +107,24 @@ export const isAuthenticated = async (req, res) => {
         return res.json({ success: true, message: "Successfully Logged In" })
     } catch (error) {
         return res.json({ success: false, message: error.message })
+    }
+}
+
+export const checkAdmin = async (req, res) => {
+    const { _id: userId } = req.user
+
+    if (!userId) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    try {
+        const user = await authModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User Not Found" });
+        }
+
+        return res.json({ success: true, isAdmin: user.isAdmin });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
