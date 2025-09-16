@@ -57,25 +57,13 @@ const Navbar = () => {
           >
             Company reviews
           </NavLink>
-          {userData?.role === "user" ? (
-            <NavLink
-              to="/userdashboard"
-              className={`relative text-[0.9rem] after:content-[''] after:block after:w-0 after:h-[2px] 
-      after:bg-[var(--primary-color)] after:absolute after:bottom-[-5%] after:left-0 pb-[0.5rem] 
-      ${location.pathname === "/userdashboard" ? "after:w-full" : ""}`}
-            >
-              Dashboard
-            </NavLink>
-          ) : userData?.role === "recruiter" ? (
-            <NavLink
-              to="/recruiterdashboard"
-              className={`relative text-[0.9rem] after:content-[''] after:block after:w-0 after:h-[2px] 
-      after:bg-[var(--primary-color)] after:absolute after:bottom-[-5%] after:left-0 pb-[0.5rem] 
-      ${location.pathname === "/recruiterdashboard" ? "after:w-full" : ""}`}
-            >
-              Dashboard
-            </NavLink>
-          ) : null}
+          <NavLink
+            to={"/dashboard"}
+            className={`relative text-[0.9rem] after:content-[''] after:block after:w-0 after:h-[2px] after:bg-[var(--primary-color)] after:absolute after:bottom-[-5%] after:left-0 pb-[0.5rem] ${location.pathname === "/company-reviews" ? "after:w-full" : ""
+              }`}
+          >
+            Dashboard
+          </NavLink>
 
         </div>
         <div className="flex items-baseline gap-6">
