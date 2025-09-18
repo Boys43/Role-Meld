@@ -12,8 +12,6 @@ import { startJobsCron } from "./cron/jobsCron.js";
 const app = express();
 app.use(cookieParser())
 app.use(express.json())
-import cors from "cors";
-
 const allowedOrigins = [
     "http://localhost:5173",
     "https://role-meld-1.onrender.com",  // add more origins here
