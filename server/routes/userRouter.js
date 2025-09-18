@@ -5,6 +5,7 @@ import express from 'express'
 import multer from "multer";
 import path from 'path'
 import { checkAdmin } from "../controllers/authController.js";
+import { getAllRecruiters, getAllUsers } from "../controllers/userController.js";
 
 const userRouter = express.Router()
 
@@ -28,6 +29,7 @@ userRouter.get('/checkprofilescore', userAuth, checkProfileScore)
 userRouter.post('/updateprofilepicture', userAuth, upload.single('profilePicture'), updateProfilePicture)
 userRouter.post('/applyjob', userAuth, applyJob);
 userRouter.get('/fetchapplicants', userAuth, fetchApplicants)
-
+userRouter.get('/allusers', userAuth, getAllUsers);
+userRouter.get('/allrecruiters', userAuth, getAllRecruiters);
 
 export default userRouter;

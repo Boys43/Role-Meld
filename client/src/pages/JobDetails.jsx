@@ -46,7 +46,7 @@ const JobDetails = () => {
             } else {
                 setCompanyJobs([]);
             }
-        } catch (error) {
+        } catch (error) {z
             toast.error(error.message);
         }
     }
@@ -126,7 +126,9 @@ const JobDetails = () => {
                     <div className='w-[40%] py-4 sm:py-6 lg:py-8 shadow-xl border rounded-3xl px-8 h-screen'>
                         <h1 className='font-bold'>More Jobs from <span className='italic text-[var(--primary-color)]'>{jobData?.company || "Google"}</span></h1>
                         <div>
-                            {companyJobs <= 0 ? "No Jobs Found" : companyJobs.map((e, i) => (
+                            {companyJobs <= 0 ? "No Jobs Found" : companyJobs.filter((job)=>{
+                                return job.isActive === true && job.approved === 'approved';
+                            }).map((e, i) => (
                                 <div
                                     key={i}
                                     className='relative flex flex-col gap-2 items-start w-full border-[1px] border-black p-5 rounded-2xl h-[37vh] shadow-lg mb-5'>

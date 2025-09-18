@@ -1,36 +1,38 @@
-import { useContext, useEffect } from "react";
+import { useContext, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
-import { useState } from "react";
 import axios from "axios";
 import { IoBookmark } from "react-icons/io5";
 import { toast } from "react-toastify";
+import { FiMenu, FiX } from "react-icons/fi";
 
 const Navbar = () => {
   const location = useLocation();
-  const navigate = useNavigate()
-  const { isLoggedIn, loading, backendUrl, setIsLoggedIn, setUserData, userData } = useContext(AppContext);
+  const navigate = useNavigate();
+  const { isLoggedIn, loading, backendUrl, setIsLoggedIn, setUserData, userData } =
+    useContext(AppContext);
 
   const [showDropdown, setShowDropdown] = useState(false);
+  const [mobileMenu, setMobileMenu] = useState(false);
+
   axios.defaults.withCredentials = true;
 
   const logout = async () => {
     try {
-      const { data } = await axios.post(`${backendUrl}/api/auth/logout`)
+      const { data } = await axios.post(`${backendUrl}/api/auth/logout`);
       if (data.success) {
-        setIsLoggedIn(false)
-        setUserData(false)
-        setShowDropdown(false)
-        navigate('/')
-        toast.success(data.message)
+        setIsLoggedIn(false);
+        setUserData(false);
+        setShowDropdown(false);
+        navigate("/");
+        toast.success(data.message);
       } else {
-        toast.error(data.message)
+        toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message)
-
+      toast.error(error.response?.data?.message || error.message);
     }
-  }
+  };
 
   if (loading) {
     return <nav className="p-4">Loading...</nav>;
@@ -38,40 +40,62 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="flex items-center border-b-gray-200 border-b-[1px] px-4 py-4 justify-between">
+      <nav className="flex items-center border-b-gray-200 border-b px-4 py-4 justify-between">
+        {/* Left Logo */}
         <div className="flex items-center gap-6">
           <NavLink to={"/"}>
-            <img src='/favicon.png' className="w-32" alt="" />
+            <img src="/favicon.png" className="w-32" alt="" />
           </NavLink>
-          <NavLink
-            to={"/find-jobs"}
-            className={`relative text-[0.9rem] after:content-[''] after:block after:w-0 after:h-[2px] after:bg-[var(--primary-color)] after:absolute after:bottom-[-5%] after:left-0 pb-[0.5rem] ${location.pathname === "/" ? "after:w-full" : ""
-              }`}
-          >
-            Find Jobs
-          </NavLink>
-          <NavLink
-            to={"/company-reviews"}
-            className={`relative text-[0.9rem] after:content-[''] after:block after:w-0 after:h-[2px] after:bg-[var(--primary-color)] after:absolute after:bottom-[-5%] after:left-0 pb-[0.5rem] ${location.pathname === "/company-reviews" ? "after:w-full" : ""
-              }`}
-          >
-            Company reviews
-          </NavLink>
+           <div className="hidden md:flex items-baseline gap-6">
+          {userData?.role === "user" && (
+            <>
+              <NavLink
+                to={"/find-jobs"}
+                className={`relative text-[0.9rem] pb-[0.5rem] ${
+                  location.pathname === "/find-jobs" ? "font-bold text-[var(--primary-color)]" : ""
+                }`}
+              >
+                Find Jobs
+              </NavLink>
+              <NavLink
+                to={"/company-reviews"}
+                className={`relative text-[0.9rem] pb-[0.5rem] ${
+                  location.pathname === "/company-reviews"
+                    ? "font-bold text-[var(--primary-color)]"
+                    : ""
+                }`}
+              >
+                Company Reviews
+              </NavLink>
+            </>
+          )}
+
           <NavLink
             to={"/dashboard"}
-            className={`relative text-[0.9rem] after:content-[''] after:block after:w-0 after:h-[2px] after:bg-[var(--primary-color)] after:absolute after:bottom-[-5%] after:left-0 pb-[0.5rem] ${location.pathname === "/company-reviews" ? "after:w-full" : ""
-              }`}
+            className={`relative text-[0.9rem] pb-[0.5rem] ${
+              location.pathname === "/dashboard" ? "font-bold text-[var(--primary-color)]" : ""
+            }`}
           >
             Dashboard
           </NavLink>
-
         </div>
-        <div className="flex items-baseline gap-6">
-          {isLoggedIn ?
-            <div className="relative flex  items-center gap-4">
-              <h4 className="text-[var(--primary-color)]">Hi, {userData?.name || "Buddy"}</h4>
-              <div className="h-10 w-10 flex rounded-full items-center justify-center hover:bg-[var(--primary-color)]/15 transition-all cursor-pointer border" onClick={()=>navigate('/savedjobs')}>
-                <IoBookmark size={25} className="text-[var(--primary-color)]  " />
+        </div>
+
+        {/* Desktop Links */}
+       
+
+        {/* Right Section */}
+        <div className="hidden md:flex items-center gap-6">
+          {isLoggedIn ? (
+            <div className="relative flex items-center gap-4">
+              <h4 className="text-[var(--primary-color)]">
+                Hi, {userData?.name || "Buddy"}
+              </h4>
+              <div
+                className="h-10 w-10 flex rounded-full items-center justify-center hover:bg-[var(--primary-color)]/15 transition-all cursor-pointer border"
+                onClick={() => navigate("/savedjobs")}
+              >
+                <IoBookmark size={25} className="text-[var(--primary-color)]" />
               </div>
               <div
                 onClick={() => setShowDropdown(!showDropdown)}
@@ -84,7 +108,7 @@ const Navbar = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  userData?.name ? userData.name[0].toUpperCase() : "?"
+                  userData?.name?.[0]?.toUpperCase() || "?"
                 )}
               </div>
 
@@ -95,39 +119,85 @@ const Navbar = () => {
                       onClick={logout}
                       className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
                       Logout
                     </li>
                   </ul>
                 </div>
               )}
             </div>
+          ) : (
+            <div className="flex gap-4 items-center">
+              <NavLink
+                to={"/login"}
+                className={`relative text-[0.9rem] pb-[0.5rem] text-[var(--primary-color)] font-bold ${
+                  location.pathname === "/login" ? "underline" : ""
+                }`}
+              >
+                Sign In
+              </NavLink>
+              <NavLink
+                to={"/post-jobs"}
+                className={`relative text-[0.9rem] pb-[0.5rem] ${
+                  location.pathname === "/post-jobs" ? "underline" : ""
+                }`}
+              >
+                Employers / Post Jobs
+              </NavLink>
+            </div>
+          )}
+        </div>
 
-            : (
-              <div className="flex gap-4 items-center ">
-                <NavLink
-                  to={"/login"}
-                  className={`relative text-[0.9rem] after:content-[''] after:block after:w-0 after:h-[2px] after:bg-[var(--primary-color)] after:absolute after:bottom-[-5%] after:left-0 pb-[0.5rem] text-[var(--primary-color)] font-bold ${location.pathname === "/login" ? "after:w-full" : ""
-                    }`}
-                >
-                  Sign In
-                </NavLink>
-                <NavLink
-                  to={"/company-reviews"}
-                  className={`relative text-[0.9rem] after:content-[''] after:block after:w-0 after:h-[2px] after:bg-[var(--primary-color)] after:absolute after:bottom-[-5%] after:left-0 pb-[0.5rem] ${location.pathname === "/post-jobs" ? "after:w-full" : ""
-                    }`}
-                >
-                  Empoyers / Post Jobs
-                </NavLink>
-              </div>)
-          }
+        {/* Mobile Hamburger */}
+        <div className="md:hidden">
+          <button onClick={() => setMobileMenu(!mobileMenu)}>
+            {mobileMenu ? <FiX size={28} /> : <FiMenu size={28} />}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenu && (
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg p-4 space-y-4">
+          {userData?.role === "user" && (
+            <>
+              <NavLink to="/find-jobs" onClick={() => setMobileMenu(false)}>
+                Find Jobs
+              </NavLink>
+              <NavLink to="/company-reviews" onClick={() => setMobileMenu(false)}>
+                Company Reviews
+              </NavLink>
+            </>
+          )}
+          <NavLink to="/dashboard" onClick={() => setMobileMenu(false)}>
+            Dashboard
+          </NavLink>
+
+          {isLoggedIn ? (
+            <>
+              <button
+                onClick={() => {
+                  logout();
+                  setMobileMenu(false);
+                }}
+                className="text-left w-full text-red-600"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" onClick={() => setMobileMenu(false)}>
+                Sign In
+              </NavLink>
+              <NavLink to="/post-jobs" onClick={() => setMobileMenu(false)}>
+                Employers / Post Jobs
+              </NavLink>
+            </>
+          )}
+        </div>
+      )}
     </>
   );
 };
-
 
 export default Navbar;

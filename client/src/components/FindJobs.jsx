@@ -38,9 +38,9 @@ const FindJobs = () => {
 
   const { backendUrl, userData, setJobId } = useContext(AppContext);
 
-  const getJobs = async () => {
+  const getApprovedJobs = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/api/jobs/getalljobs`);
+      const { data } = await axios.get(`${backendUrl}/api/jobs/getapprovedjobs`);
       if (data.success) {
         setJobs(data.jobs)
       } else {
@@ -52,7 +52,7 @@ const FindJobs = () => {
   }
 
   useEffect(() => {
-    getJobs();
+    getApprovedJobs();
   }, [])
 
   const stopWords = [
@@ -123,7 +123,7 @@ const FindJobs = () => {
 
   return (
     <>
-      <div className='h-screen relative w-full flex'>
+      <div className=' relative w-full h-[calc(100vh-4.6rem)] overflow-y-auto flex'>
         <main className='p-10 h-screen w-full flex flex-col gap-10'>
           <section
             id="search"

@@ -15,7 +15,7 @@ export const addJob = async (req, res) => {
     try {
         const job = new jobsModel({
             ...jobData,
-            postedBy: req.user._id,
+            postedBy: userId,
             postedAt: new Date(),
             applicationDeadline: new Date(Date.now() + jobData.applicationDeadline * 24 * 60 * 60 * 1000),
         });
@@ -41,7 +41,6 @@ export const addJob = async (req, res) => {
                 errors: Object.keys(error.errors).map((key) => `${key} is required`),
             });
         }
-
         return res.status(500).json({ success: false, message: error.message });
     }
 };
@@ -88,7 +87,7 @@ export const getJob = async (req, res) => {
 
 export const getAllJobs = async (req, res) => {
     try {
-        const jobs = await jobsModel.find();
+        const jobs = await jobsModel.find().populate('postedBy', 'name email');
 
         if (!jobs || jobs.length < 0) {
             return res.json({ success: false, message: "No Jobs Found" })
@@ -108,7 +107,7 @@ export const getCompanyJobs = async (req, res) => {
     }
 
     try {
-        const companyJobs = await jobsModel.find({ company: company })
+        const companyJobs = await jobsModel.find({ company: company, isActive: true });
 
         if (!companyJobs || companyJobs.length <= 0) {
             return res.json({ success: false, message: "No Jobs Found" });
@@ -128,7 +127,7 @@ export const getSavedJobs = async (req, res) => {
     }
 
     try {
-        const getSavedJobs = await jobsModel.find({ _id: { $in: savedJobsIds } });
+        const getSavedJobs = await jobsModel.find({ _id: { $in: savedJobsIds }, isActive: true });
 
         if (!getSavedJobs || getSavedJobs.length <= 0) {
             return res.json({ success: false, message: "No Saved Jobs" })
@@ -137,5 +136,56 @@ export const getSavedJobs = async (req, res) => {
         return res.json({ success: true, getSavedJobs })
     } catch (error) {
         return res.json({ success: false, message: error.message })
+    }
+}
+
+export const updateJobStatus = async (req, res) => {
+    const { jobId, status } = req.body;
+
+    if (!jobId || !status) {
+        return res.status(400).json({ success: false, message: "Missing Details" });
+    }
+
+    try {
+        const job = await jobsModel.findById(jobId);
+        if (!job) {
+            return res.status(404).json({ success: false, message: "Job Not Found" });
+        }
+
+        job.approved = status;
+        await job.save();
+
+        return res.status(200).json({ success: true, message: "Job Status Updated" });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export const getApprovedJobs = async (req, res) => {
+    try {
+        const jobs = await jobsModel.find({ approved: "approved", isActive: true });
+        return res.json({ success: true, jobs });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export const getPendingJobs = async (req, res) => {
+    try {
+        const jobs = await jobsModel.find({ approved: "pending", isActive: true });
+        return res.json({ success: true, jobs });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export const getActiveJobs = async (req, res) => {
+    try {
+        const result = await jobsModel.updateMany(
+            { applicationDeadline: { $lt: new Date() } },
+            { $set: { isActive: false } }
+        );
+    } catch (error) {
+
     }
 }
