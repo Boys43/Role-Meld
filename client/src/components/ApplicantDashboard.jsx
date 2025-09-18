@@ -180,45 +180,80 @@ const ApplicantDashboard = () => {
 
 
         <hr className="mt-5" />
-        <h2>Resume</h2>
+        <h2 className="text-2xl font-bold mb-4 text-[var(--primary-color)]">📄 Resume</h2>
+
         {userData?.resume ? (
-          <div className="flex items-center  gap-4 ">
-            <p className="flex items-center py-4 px-4 shadow-2xl rounded-xl border-1 ">Uploaded File: <strong>{userData.resume}</strong></p>
+          <div className="space-y-4">
+            {/* Uploaded Resume Display */}
+            <div className="flex items-center justify-between bg-white shadow-md rounded-xl border border-gray-200 p-4">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-600">Uploaded File:</span>
+                <strong className="text-[var(--primary-color)]">{userData.resume}</strong>
+              </div>
+            </div>
+
+            {/* Update Resume Form */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 changeResume();
               }}
-              className="flex items-center p-2 bg-[var(--primary-color)]/50 rounded-2xl border-2 border-[var(--primary-color)]"
+              className="flex items-center gap-3 bg-[var(--primary-color)]/10 p-3 rounded-xl border-2 border-[var(--primary-color)]"
             >
               <input
                 type="file"
                 name="resume"
                 accept=".pdf,.doc,.docx"
+                className="block w-full text-sm text-gray-700 
+                   file:mr-4 file:py-2 file:px-4 
+                   file:rounded-lg file:border-0 
+                   file:text-sm file:font-semibold 
+                   file:bg-[var(--primary-color)]/80 file:text-white 
+                   hover:file:bg-[var(--primary-color)]/100 
+                   cursor-pointer"
                 onChange={(e) => setResume(e.target.files[0])}
               />
-              <button className="bg-[var(--primary-color)]/70 border border-[var(--primary-color)]" type="submit">Submit</button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-lg bg-[var(--primary-color)] text-white font-medium hover:bg-[var(--primary-color)]/90 transition"
+              >
+                Update
+              </button>
             </form>
           </div>
         ) : (
-          <div>
-            <h2>Upload Resume</h2>
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold text-gray-700">Upload Resume</h3>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 changeResume();
               }}
+              className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-300"
             >
               <input
                 type="file"
                 name="resume"
                 accept=".pdf,.doc,.docx"
+                className="block w-full text-sm text-gray-700 
+                   file:mr-4 file:py-2 file:px-4 
+                   file:rounded-lg file:border-0 
+                   file:text-sm file:font-semibold 
+                   file:bg-[var(--primary-color)]/80 file:text-white 
+                   hover:file:bg-[var(--primary-color)]/100 
+                   cursor-pointer"
                 onChange={(e) => setResume(e.target.files[0])}
               />
-              <button type="submit">Submit</button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-lg bg-[var(--primary-color)] text-white font-medium hover:bg-[var(--primary-color)]/90 transition"
+              >
+                Upload
+              </button>
             </form>
           </div>
         )}
+
 
         <hr className="mt-5" />
 
