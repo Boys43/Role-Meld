@@ -7,6 +7,7 @@ import "dotenv/config";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRouter.js";
 import applicationRouter from "./routes/applicationRoutes.js";
+import { startJobsCron } from "./cron/jobsCron.js";
 
 const app = express();
 app.use(cookieParser())
@@ -22,8 +23,10 @@ app.get('/', (req, res) => {
 })
 
 connectDB();
+startJobsCron(); // starts the cron task
 
-app.use("/api/jobs", jobsRouter);
+
+app.use('/api/jobs', jobsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/applications', applicationRouter);

@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import { FaCamera } from 'react-icons/fa';
 import axios from 'axios';
@@ -46,7 +46,6 @@ const EmployeeDashboard = () => {
       toast.error(error.response?.data?.message || error.message);
     }
   };
-  console.log(userData.company);
 
   const updateProfile = async (e) => {
     e.preventDefault();
@@ -65,129 +64,176 @@ const EmployeeDashboard = () => {
     }
   };
 
+  const [Applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(false)
+  const fetchJobs = async () => {
+    setLoading(true)
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/user/fetchapplicants`);
+      if (data.success) {
+        setApplications(data.applicants);
+      } else {
+        setApplications([])
+      }
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const [Jobs, setJobs] = useState([])
+
+  const jobs = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/jobs/getalljobs`)
+      if (data.success) {
+        setJobs(data.jobs)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+  console.log(Applications);
+
+  useEffect(() => {
+    fetchJobs();
+    jobs()
+  }, [])
+
+  console.log(Jobs.filter((job) => {
+    return job.isActive === true && job?.company === userData?.company;
+  }));
+
+
   return (
-    <div className='flex p-10'>
-      <div  className='flex flex-col'>
-        {/* Profile Section */}
-        <div className='flex items-center px-10 gap-4 w-full h-full'>
-          <div className="relative w-20 h-20">
-            {/* Profile Circle */}
-            <div className="w-20 h-20 border-2 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
-              {userData?.profilePicture ? (
-                <img
-                  src={`${backendUrl}/uploads/${userData?.profilePicture}`}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                userData?.name?.[0] || "?"
-              )}
-            </div>
+    <div className='flex flex-col w-full p-6 bg-white rounded-lg h-[calc(100vh-4.6rem)] overflow-y-auto'>
+      {/* Profile Section */}
+      <div className='flex items-center gap-6 pb-4'>
+        <div className="relative w-20 h-20">
+          {/* Profile Circle */}
+          <div className="w-20 h-20 border-2 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
+            {userData?.profilePicture ? (
+              <img
+                src={`${backendUrl}/uploads/${userData?.profilePicture}`}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              userData?.name?.[0] || "?"
+            )}
+          </div>
 
-            {/* Upload Form */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                changePicture();
-                setShowSubmit(false);
+          {/* Upload Form */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              changePicture();
+              setShowSubmit(false);
+            }}
+            className="mt-2"
+          >
+            <input
+              type="file"
+              id="profilePicture"
+              name="profilePicture"
+              className="hidden"
+              accept="image/*"
+              onChange={(e) => {
+                setProfilePicture(e.target.files[0]);
+                setShowSubmit(true);
               }}
-              className="mt-2"
-            >
-              <input
-                type="file"
-                id="profilePicture"
-                name="profilePicture"
-                className="hidden"
-                accept="image/*"
-                onChange={(e) => {
-                  setProfilePicture(e.target.files[0]);
-                  setShowSubmit(true);
-                }}
-              />
-              <label
-                htmlFor="profilePicture"
-                className="absolute bottom-0 right-0 bg-white rounded-full p-1 cursor-pointer shadow"
-              >
-                <FaCamera className="text-gray-600 text-sm" />
-              </label>
-              {showSubmit && (
-                <button type="submit" className="text-sm bg-[var(--primary-color)] text-white rounded px-2 py-1 mt-1">
-                  Upload
-                </button>
-              )}
-            </form>
-          </div>
-
-          {/* User Info */}
-          <div className='w-1/2'>
-            <h1 className='text-2xl font-bold text-[var(--primary-color)]'>
-              {userData?.company === "Individual" ? userData?.name : userData?.company}
-            </h1>
-          </div>
-          <span>
-            <HiOutlinePencilSquare
-              onClick={() => setUpdatePopUpState('block')}
-              className='text-[var(--primary-color)] cursor-pointer'
             />
-          </span>
+            <label
+              htmlFor="profilePicture"
+              className="absolute bottom-0 right-0 bg-white rounded-full p-1 cursor-pointer shadow"
+            >
+              <FaCamera className="text-gray-600 text-sm" />
+            </label>
+            {showSubmit && (
+              <button type="submit" className="text-sm bg-[var(--primary-color)] text-white rounded px-2 py-1 mt-1">
+                Upload
+              </button>
+            )}
+          </form>
         </div>
 
-        {/* Stats */}
-        <div className='grid grid-cols-3 gap-6 mt-5 w-full'>
-          <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-[var(--primary-color)] p-4 cursor-pointer flex flex-col items-center justify-center'>
-            <h3 className='flex items-center gap-4 font-semibold'><LuGitPullRequest />Total Applications</h3>
-            <h1>0</h1>
-          </div>
-          <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-[var(--primary-color)] p-4 cursor-pointer flex flex-col items-center justify-center'>
-            <h3 className='flex items-center gap-4 font-semibold'><IoPersonAddSharp />Total Active Jobs</h3>
-            <h1>0</h1>
-          </div>
+        {/* User Info */}
+        <div className='w-1/2'>
+          <h1 className='text-2xl font-bold text-[var(--primary-color)]'>
+            {userData?.company === "Individual" ? userData?.name : userData?.company}
+          </h1>
         </div>
+        <span>
+          <HiOutlinePencilSquare
+            onClick={() => setUpdatePopUpState('block')}
+            className='text-[var(--primary-color)] cursor-pointer'
+          />
+        </span>
+      </div>
 
-        {/* Update Profile Modal */}
-        <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-screen flex items-center justify-center backdrop-blur-sm ${updatePopUpState}`}>
-          <div className="w-[70%] h-[70%] border relative bg-white shadow-2xl rounded-2xl overflow-y-auto p-4">
-            <MdCancel onClick={() => setUpdatePopUpState('hidden')} size={20} className="absolute right-5 top-5 cursor-pointer" />
-            <h1 className="text-[var(--primary-color)] font-semibold">Update Your Profile</h1>
-
-            <form onSubmit={updateProfile} className="flex flex-col gap-2 mt-3">
-              <label htmlFor="name" className="font-medium">Name</label>
-              <input
-                type="text"
-                name="name"
-                value={userData?.name ?? ""}
-                onChange={handleChange}
-                className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                placeholder="Enter Name"
-              />
-
-              <label htmlFor="company" className="font-medium mt-2">Company Name</label>
-              <input
-                type="text"
-                name="company"
-                value={formData?.company ?? userData?.company ?? ""}
-                onChange={handleChange}
-                className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                placeholder="Enter Company Name"
-              />
-
-              <label htmlFor="members" className="font-medium mt-2">Members</label>
-              <input
-                type="text"
-                name="members"
-                value={formData?.members ?? userData?.members ?? ""}
-                onChange={handleChange}
-                className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                placeholder="Enter Members"
-              />
-
-              <button type="submit" className="bg-[var(--primary-color)] text-white px-4 py-2 rounded mt-2">Save</button>
-            </form>
-          </div>
+      {/* Stats */}
+      <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5 w-full'>
+        <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-[var(--primary-color)] p-4 cursor-pointer flex flex-col items-center justify-center'>
+          <h3 className='flex items-center gap-4 font-semibold'><LuGitPullRequest />Total Applications</h3>
+          <h1>
+            {Applications.length}
+          </h1>
+        </div>
+        <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-[var(--primary-color)] p-4 cursor-pointer flex flex-col items-center justify-center'>
+          <h3 className='flex items-center gap-4 font-semibold'><IoPersonAddSharp />Total Active Jobs</h3>
+          <h1>
+            {Jobs.filter((job) => {
+              return job.isActive === true && job.company === userData.company;
+            }).length}
+          </h1>
         </div>
       </div>
 
+      {/* Update Profile Modal */}
+      <div className={`fixed z-51 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-screen flex items-center justify-center backdrop-blur-sm ${updatePopUpState}`}>
+        <div className="w-[70%] h-[70%] border relative bg-white shadow-2xl rounded-2xl overflow-y-auto p-4">
+          <MdCancel onClick={() => setUpdatePopUpState('hidden')} size={20} className="absolute right-5 top-5 cursor-pointer" />
+          <h1 className="text-[var(--primary-color)] font-semibold">Update Your Profile</h1>
+
+          <form onSubmit={updateProfile} className="flex flex-col gap-2 mt-3">
+            <label htmlFor="name" className="font-medium">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={userData?.name ?? ""}
+              onChange={handleChange}
+              className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+              placeholder="Enter Name"
+            />
+
+            <label htmlFor="company" className="font-medium mt-2">Company Name</label>
+            <input
+              type="text"
+              name="company"
+              value={formData?.company ?? userData?.company ?? ""}
+              onChange={handleChange}
+              className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+              placeholder="Enter Company Name"
+            />
+
+            <label htmlFor="members" className="font-medium mt-2">Members</label>
+            <input
+              type="text"
+              name="members"
+              value={formData?.members ?? userData?.members ?? ""}
+              onChange={handleChange}
+              className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+              placeholder="Enter Members"
+            />
+
+            <button type="submit" className="bg-[var(--primary-color)] text-white px-4 py-2 rounded mt-2">Save</button>
+          </form>
+        </div>
+      </div>
     </div>
+
   )
 }
 

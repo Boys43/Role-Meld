@@ -44,7 +44,7 @@ const SavedJobs = () => {
 
   return (
     <>
-      <div className='flex '>
+      <div className='flex w-full h-[calc(100vh-4.6rem)] overflow-y-auto'>
         <div className='p-4 flex flex-col gap-4 max-w-[1500px] w-full mx-auto'>
           <h1 className='font-bold text-[var(--primary-color)] flex items-center gap-4'><FaBookmark size={30} />Saved Jobs</h1>
           <div className='flex flex-col gap-4'>

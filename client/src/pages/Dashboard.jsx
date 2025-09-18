@@ -8,10 +8,11 @@ import EmployeeDashboard from "../components/EmployeeDashboard";
 import Applications from "../components/Applications";
 import JobForm from "../components/JobsForm";
 import { AppContext } from "../context/AppContext";
+import RecruiterJobs from "../components/RecruiterJobs";
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("userdashboard");
   const { userData } = useContext(AppContext);
+  const [activeTab, setActiveTab] = useState(userData?.role === "user" ? "userdashboard" : "recruiterdashboard");
 
   const renderContent = () => {
     switch (activeTab) {
@@ -29,6 +30,8 @@ const Dashboard = () => {
         return <Applications />;
       case "list-job":
         return <JobForm />
+      case "listed-jobs":
+        return <RecruiterJobs />
       default:
         if (userData?.role === "user") return <ApplicantDashboard />;
         if (userData?.role === "recruiter") return <EmployeeDashboard />;
@@ -38,12 +41,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex w-full h-screen">
-      {/* Sidebar */}
+    <div className="flex">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-
-      {/* Main Content */}
-      <div className="flex-1 p-6 overflow-y-auto">{renderContent()}</div>
+      {renderContent()}
     </div>
   );
 };

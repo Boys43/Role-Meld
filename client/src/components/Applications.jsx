@@ -53,12 +53,46 @@ const Applications = () => {
         })();
     }, [])
 
-    console.log(Applications);
+    const [filter, setFilter] = useState('all')
 
+    const filteredApplications = Applications.filter((application) => {
+        return filter === 'all' ? true : application.status === filter;
+    })
 
     return (
-        <div className='flex flex-col gap-4 p-8'>
+        <div className='flex w-full h-[calc(100vh-4.6rem)] overflow-y-auto flex-col gap-4 p-8'>
             <h2 className='flex items-center gap-4 font-bold'><IoSettings className='text-[var(--text-color)]' />Job Applications</h2>
+
+            <div className='flex gap-6'>
+                <div className='py-2 px-4 rounded-xl font-semibold border bg-white cursor-pointer'
+                    onClick={() => setFilter('all')}
+                >
+                    All <span className='bg-white py-1 px-2.5 border  ml-2 rounded-2xl'>{Applications.length}</span>
+                </div>
+
+                <div className='py-2 px-4 rounded-xl border font-semibold border-yellow-950 bg-yellow-400 cursor-pointer'
+                    onClick={() => setFilter('pending')}
+                >
+                    Pending <span className='bg-white py-1 px-2.5  ml-2 rounded-2xl'>{Applications.filter((job) => {
+                        return job.status === 'pending';
+                    }).length}</span>
+                </div>
+                <div className='py-2 px-4 rounded-xl border font-semibold border-red-950 bg-red-400 cursor-pointer'
+                    onClick={() => setFilter('rejected')}
+                >
+                    Rejected <span className='bg-white py-1 px-2.5  ml-2 rounded-2xl'>{Applications.filter((job) => {
+                        return job.status === 'rejected';
+                    }).length}</span>
+                </div>
+                <div className='py-2 px-4 rounded-xl border font-semibold border-green-950 bg-green-400  cursor-pointer'
+                    onClick={() => setFilter('hired')}
+                >
+                    Approved <span className='bg-white py-1 px-2.5  ml-2 rounded-2xl'>{Applications.filter((job) => {
+                        return job.status === 'hired';
+                    }).length}</span>
+                </div>
+
+            </div>
 
             {loading ? (
                 <p>Loading jobs...</p> // 👈 show this while fetching
@@ -66,13 +100,13 @@ const Applications = () => {
                 <p>No jobs available</p>
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Applications.map((app) => (
+                    {filteredApplications.map((app) => (
                         <li
                             key={app._id}
                             className={`rounded-2xl border shadow-md transition-all duration-300 overflow-hidden
-    ${app.status === "hired" ? "bg-green-100 border-green-400" : ""}
-    ${app.status === "rejected" ? "bg-red-100 border-red-400" : "bg-white"}
-  `}
+                                ${app.status === "hired" ? "bg-green-300 border-green-400" : ""}
+                                ${app.status === "rejected" ? "bg-red-100 border-red-400" : "bg-white"}
+                            `}
                         >
                             <div className="p-5 flex flex-col gap-3">
                                 {/* Job Info */}

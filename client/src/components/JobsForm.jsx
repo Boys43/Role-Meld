@@ -35,7 +35,7 @@ const JobForm = () => {
   };
 
   return (
-    <div className="mt-10 border p-4 rounded-lg flex flex-col justify-center cursor-pointer">
+    <div className="w-full p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto cursor-pointer">
       <h1 className="text-[var(--primary-color)] font-semibold">List New Jobs</h1>
       <form
         onSubmit={(e) => {
