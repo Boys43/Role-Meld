@@ -43,7 +43,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     navLinks = [
       { name: "Dashboard", key: "userdashboard", icon: <MdOutlineDashboard size={30} /> },
       { name: "Saved Jobs", key: "savedjobs", icon: <CiBookmarkCheck size={30} /> },
-      { name: "Find Jobs", key: "find-jobs", icon: <MdFindInPage size={30} /> },
       { name: "Applied Jobs", key: "applied-jobs", icon: <VscGitStashApply size={30} /> },
     ];
   }
