@@ -13,6 +13,7 @@ export const AppContextProvider = (props) => {
   const [profileScore, setProfileScore] = useState(0);
   const [jobId, setJobId] = useState("");
   const [savedJobs, setSavedJobs] = useState(() => new Set());
+  axios.defaults.withCredentials = true;
 
   const toggleSaveJob = async (id) => {
     setSavedJobs((prev) => {
@@ -38,7 +39,6 @@ export const AppContextProvider = (props) => {
 
   };
 
-  axios.defaults.withCredentials = true;
 
   const getUserData = async () => {
     try {

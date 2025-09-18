@@ -46,43 +46,42 @@ const Navbar = () => {
           <NavLink to={"/"}>
             <img src="/favicon.png" className="w-32" alt="" />
           </NavLink>
-           <div className="hidden md:flex items-baseline gap-6">
-          {userData?.role === "user" && (
-            <>
-              <NavLink
-                to={"/find-jobs"}
-                className={`relative text-[0.9rem] pb-[0.5rem] ${
-                  location.pathname === "/find-jobs" ? "font-bold text-[var(--primary-color)]" : ""
-                }`}
-              >
-                Find Jobs
-              </NavLink>
-              <NavLink
-                to={"/company-reviews"}
-                className={`relative text-[0.9rem] pb-[0.5rem] ${
-                  location.pathname === "/company-reviews"
+
+          {isLoggedIn && <div className="hidden md:flex items-baseline gap-6">
+            {userData?.role === "user" && (
+              <>
+                <NavLink
+                  to={"/find-jobs"}
+                  className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/find-jobs" ? "font-bold text-[var(--primary-color)]" : ""
+                    }`}
+                >
+                  Find Jobs
+                </NavLink>
+                <NavLink
+                  to={"/company-reviews"}
+                  className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/company-reviews"
                     ? "font-bold text-[var(--primary-color)]"
                     : ""
-                }`}
-              >
-                Company Reviews
-              </NavLink>
-            </>
-          )}
+                    }`}
+                >
+                  Company Reviews
+                </NavLink>
+              </>
+            )}
 
-          <NavLink
-            to={"/dashboard"}
-            className={`relative text-[0.9rem] pb-[0.5rem] ${
-              location.pathname === "/dashboard" ? "font-bold text-[var(--primary-color)]" : ""
-            }`}
-          >
-            Dashboard
-          </NavLink>
-        </div>
+            <NavLink
+              to={"/dashboard"}
+              className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/dashboard" ? "font-bold text-[var(--primary-color)]" : ""
+                }`}
+            >
+              Dashboard
+            </NavLink>
+          </div>}
+
         </div>
 
         {/* Desktop Links */}
-       
+
 
         {/* Right Section */}
         <div className="hidden md:flex items-center gap-6">
@@ -129,17 +128,15 @@ const Navbar = () => {
             <div className="flex gap-4 items-center">
               <NavLink
                 to={"/login"}
-                className={`relative text-[0.9rem] pb-[0.5rem] text-[var(--primary-color)] font-bold ${
-                  location.pathname === "/login" ? "underline" : ""
-                }`}
+                className={`relative text-[0.9rem] pb-[0.5rem] text-[var(--primary-color)] font-bold ${location.pathname === "/login" ? "underline" : ""
+                  }`}
               >
                 Sign In
               </NavLink>
               <NavLink
                 to={"/post-jobs"}
-                className={`relative text-[0.9rem] pb-[0.5rem] ${
-                  location.pathname === "/post-jobs" ? "underline" : ""
-                }`}
+                className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/post-jobs" ? "underline" : ""
+                  }`}
               >
                 Employers / Post Jobs
               </NavLink>
