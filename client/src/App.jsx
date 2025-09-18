@@ -11,6 +11,7 @@ import { useContext, useEffect, useState } from 'react'
 import { AppContext } from './context/AppContext'
 import AdminDashboard from './pages/AdminDashboard'
 import axios from 'axios'
+import FindJobs from './pages/FindJobs'
 
 const AdminRoute = () => {
   const { backendUrl } = useContext(AppContext);
@@ -61,6 +62,8 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/jobdetails/:id" element={<JobDetails />} />
         <Route path="/admin" element={<AdminRoute />} />
+        <Route path="/find-jobs" element={<FindJobs />} />
+
       </Routes>
       {/* <Footer /> */}
     </>

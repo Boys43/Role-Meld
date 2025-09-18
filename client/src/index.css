@@ -24,7 +24,7 @@ body {
 
 
 button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 0.7rem;
   /* More balanced padding */
   display: inline-flex;
   justify-content: center;
@@ -54,12 +54,10 @@ button:hover {
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   box-shadow: 0 6px 14px rgba(114, 14, 158, 0.35);
   transform: translateY(-2px);
-  /* Floating effect */
 }
 
 button:active {
   transform: translateY(1px) scale(0.98);
-  /* Pressed effect */
   box-shadow: 0 2px 6px rgba(114, 14, 158, 0.25);
 }
 

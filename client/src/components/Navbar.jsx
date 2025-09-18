@@ -126,20 +126,15 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex gap-4 items-center">
-              <NavLink
-                to={"/login"}
-                className={`relative text-[0.9rem] pb-[0.5rem] text-[var(--primary-color)] font-bold ${location.pathname === "/login" ? "underline" : ""
-                  }`}
-              >
-                Sign In
-              </NavLink>
-              <NavLink
-                to={"/post-jobs"}
-                className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/post-jobs" ? "underline" : ""
-                  }`}
-              >
-                Employers / Post Jobs
-              </NavLink>
+              <button>
+                <NavLink
+                  to={"/login"}
+                  className={` ${location.pathname === "/login" ? "underline" : ""
+                    }`}
+                >
+                  Sign In
+                </NavLink>
+              </button>
             </div>
           )}
         </div>
@@ -183,12 +178,11 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <NavLink to="/login" onClick={() => setMobileMenu(false)}>
-                Sign In
-              </NavLink>
-              <NavLink to="/post-jobs" onClick={() => setMobileMenu(false)}>
-                Employers / Post Jobs
-              </NavLink>
+              <button>
+                <NavLink to="/login" onClick={() => setMobileMenu(false)}>
+                  Sign In
+                </NavLink>
+              </button>
             </>
           )}
         </div>
