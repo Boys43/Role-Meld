@@ -223,22 +223,33 @@ const ApplicantDashboard = () => {
         <hr className="mt-5" />
 
         {/* Profile Score */}
-        <div className="p-2">
-          <h2>Your Profile Score</h2>
-          <h3>{profileScore}</h3>
-          <div className="w-full mt-2 border h-4 rounded">
+        <div className="p-4 bg-white rounded-lg shadow-md border">
+          <h2 className="text-lg font-semibold text-gray-800">Your Profile Score</h2>
+          <h3 className="text-2xl font-bold text-[var(--primary-color)] mt-1">{profileScore}%</h3>
+
+          {/* Progress Bar */}
+          <div className="w-full mt-3 bg-gray-200 h-3 rounded-full overflow-hidden">
             <div
-              className="h-full bg-green-500"
+              className={`h-full ${profileScore <= 25
+                ? "bg-red-500"
+                : profileScore <= 50
+                  ? "bg-orange-500"
+                  : profileScore <= 75
+                    ? "bg-yellow-400"
+                    : "bg-green-500"} bg-green-500 transition-all duration-500`}
               style={{ width: `${profileScore}%` }}
             ></div>
-            <div>
-            </div>
-            <div>
-              <h3>Improve Your Profile Score: </h3>
-              <div className="p-4 border"></div>
+          </div>
+
+          {/* Improvement Section */}
+          <div className="mt-4">
+            <h3 className="text-sm font-medium text-gray-700">Improve Your Profile Score</h3>
+            <div className="mt-2 p-3 border rounded-md text-sm text-gray-600">
+              Add missing details like skills, experience, or profile picture to boost your score.
             </div>
           </div>
         </div>
+
 
         {/* Update Profile Pop Up */}
         <div className={`w-full backdrop-blur-sm flex items-center justify-center rounded h-screen border fixed z-51 top-[50%] left-[50%] translate-[-50%] ${updatePopUpState}`}>
