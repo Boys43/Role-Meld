@@ -123,8 +123,8 @@ const FindJobs = () => {
 
   return (
     <>
-      <div className=' relative w-full h-[calc(100vh-4.6rem)] overflow-y-auto flex'>
-        <main className='p-10 h-screen w-full flex flex-col gap-10'>
+      <div className='relative w-full h-[calc(100vh-4.6rem)] overflow-y-auto flex'>
+        <main className='p-10 w-full flex flex-col gap-10'>
           <section
             id="search"
             className="shadow-2xl border-[1px] border-black mx-auto rounded-2xl"
@@ -187,74 +187,69 @@ const FindJobs = () => {
               <option value="programmer">Programmer</option>
             </select>
           </section>
-          <div className='flex relative w-full'>
-            <aside className='border w-[15rem]'>
-
-            </aside>
-            <section className='gap-4 '>
-              <div className='px-4 w-full'>
-                <ul className='grid lg:grid-cols-2 md:grid-cols-1 w-full sm:grid-cols-1 gap-5'>
-                  {filteredJobs.length > 0 ? (
-                    filteredJobs.map((job) => <div
-                      key={job._id}
-                      className='relative flex flex-col justify-between w-full gap-3 items-start border-[1px] p-5 rounded-2xl shadow-xl mb-5'>
-                      <div className=' top-3 flex gap-2 right-3 text-[0.8rem]'>
-                        <span className={`px-2 rounded bg-yellow-200`}>
-                          {job.jobType}
-                        </span>
-                        <span className={`px-2 rounded bg-green-200`}>
-                          {job.locationType}
-                        </span>
-                        <span className={`px-2 rounded bg-red-200`}>
-                          {job.category}
-                        </span>
-                      </div>
-                      <h3 className='font-semibold h-10'>{job.title.split(" ").slice(0, 3).join(" ")}</h3>
-                      <div id='company' className=''>
-                        <h4 className='font-semibold text-gray-500 flex items-center gap-2 '><FaBriefcase size={15} />{job.company}</h4>
-                        <h5 className='text-gray-500 flex items-center gap-2 '><IoLocationOutline />{job.location}</h5>
-                      </div>
-                      <h5 className='bg-gray-100 py-1 px-2 text-[0.8rem] flex items-center gap-2 rounded'><FaDollarSign />{job.salary}</h5>
-                      <div className='flex items-center gap-4 justify-between w-full'>
-                        <button onClick={() => viewDetails(job._id)} className='flex w-1/2 bg-[var(--primary-color)]/50 border-2 border-[var(--primary-color)]  items-center gap-4'>
-                          View Details <CiPaperplane />
-                        </button>
-                        <button onClick={(e) => {
-                          e.preventDefault();
-                          applyJob(job._id)
-                        }} className='flex bg-green-400 w-1/2 border-2 border-green-500  items-center gap-4'>
-                          Apply Now <CiPaperplane />
-                        </button>
-                      </div>
-                      <span
-                        onClick={() => toggleSaveJob(job._id)}
-                        className='absolute top-5 right-5 text-[1.5rem] cursor-pointer'>
-                        {savedJobs.has(job._id) ? <IoBookmark /> : <CiBookmark />}
+          <section className='gap-4'>
+            <div className='px-4 w-full'>
+              <ul className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3  w-full gap-5'>
+                {filteredJobs.length > 0 ? (
+                  filteredJobs.map((job) => <div
+                    key={job._id}
+                    className='relative flex flex-col justify-between w-full gap-3 items-start border-[1px] p-5 rounded-2xl shadow-xl mb-5'>
+                    <div className=' top-3 flex gap-2 right-3 text-[0.8rem]'>
+                      <span className={`px-2 rounded bg-yellow-200`}>
+                        {job.jobType}
                       </span>
-                    </div>)
-                  ) : (
-                    <p>No jobs found.</p>
-                  )}
-                </ul>
+                      <span className={`px-2 rounded bg-green-200`}>
+                        {job.locationType}
+                      </span>
+                      <span className={`px-2 rounded bg-red-200`}>
+                        {job.category}
+                      </span>
+                    </div>
+                    <h3 className='font-semibold h-10'>{job.title.split(" ").slice(0, 3).join(" ")}</h3>
+                    <div id='company' className=''>
+                      <h4 className='font-semibold text-gray-500 flex items-center gap-2 '><FaBriefcase size={15} />{job.company}</h4>
+                      <h5 className='text-gray-500 flex items-center gap-2 '><IoLocationOutline />{job.location}</h5>
+                    </div>
+                    <h5 className='bg-gray-100 py-1 px-2 text-[0.8rem] flex items-center gap-2 rounded'><FaDollarSign />{job.salary}</h5>
+                    <div className='flex items-center gap-4 justify-between w-full'>
+                      <button onClick={() => viewDetails(job._id)} className='flex w-1/2 bg-[var(--primary-color)]/50 border-2 border-[var(--primary-color)]  items-center gap-4'>
+                        View Details <CiPaperplane />
+                      </button>
+                      <button onClick={(e) => {
+                        e.preventDefault();
+                        applyJob(job._id)
+                      }} className='flex bg-green-400 w-1/2 border-2 border-green-500  items-center gap-4'>
+                        Apply Now <CiPaperplane />
+                      </button>
+                    </div>
+                    <span
+                      onClick={() => toggleSaveJob(job._id)}
+                      className='absolute top-5 right-5 text-[1.5rem] cursor-pointer'>
+                      {savedJobs.has(job._id) ? <IoBookmark /> : <CiBookmark />}
+                    </span>
+                  </div>)
+                ) : (
+                  <p>No jobs found.</p>
+                )}
+              </ul>
 
-                {/* Pagination */}
-                <ReactPaginate
-                  breakLabel="..."
-                  nextLabel={<FaChevronRight className='text-[var(--primary-color)]' />}
-                  onPageChange={handlePageClick}
-                  pageRangeDisplayed={3}
-                  pageCount={pageCount}
-                  previousLabel={<FaChevronLeft className='text-[var(--primary-color)]' />}
-                  renderOnZeroPageCount={null}
-                  containerClassName="flex gap-2 mt-4 justify-center"
-                  pageClassName="px-3 py-1 rounded cursor-pointer"
-                  activeClassName="bg-[var(--primary-color)] text-white"
-                  previousClassName="px-2 flex items-center rounded-full py-1 rounded cursor-pointer"
-                  nextClassName="px-3 flex items-center py-1 rounded cursor-pointer"
-                />
-              </div>
-            </section>
-          </div>
+              {/* Pagination */}
+              <ReactPaginate
+                breakLabel="..."
+                nextLabel={<FaChevronRight className='text-[var(--primary-color)]' />}
+                onPageChange={handlePageClick}
+                pageRangeDisplayed={3}
+                pageCount={pageCount}
+                previousLabel={<FaChevronLeft className='text-[var(--primary-color)]' />}
+                renderOnZeroPageCount={null}
+                containerClassName="flex gap-2 mt-4 justify-center"
+                pageClassName="px-3 py-1 rounded cursor-pointer"
+                activeClassName="bg-[var(--primary-color)] text-white"
+                previousClassName="px-2 flex items-center rounded-full py-1 rounded cursor-pointer"
+                nextClassName="px-3 flex items-center py-1 rounded cursor-pointer"
+              />
+            </div>
+          </section>
         </main>
       </div>
 

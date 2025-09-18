@@ -88,8 +88,10 @@ const ApplicantDashboard = () => {
     try {
       const { data } = await axios.post(`${backendUrl}/api/user/updateprofile`, { updateUser: formData })
       if (data.success) {
-        setUserData(data.user)
+        setUserData(data.profile)
         toast.success(data.message)
+        setFormData({})
+        setUpdatePopUpState('hidden')
       } else {
         toast.error(data.message)
       }
@@ -239,7 +241,7 @@ const ApplicantDashboard = () => {
         </div>
 
         {/* Update Profile Pop Up */}
-        <div className={`w-full backdrop-blur-sm flex items-center justify-center rounded h-screen border fixed top-[50%] left-[50%] translate-[-50%] ${updatePopUpState}`}>
+        <div className={`w-full backdrop-blur-sm flex items-center justify-center rounded h-screen border fixed z-51 top-[50%] left-[50%] translate-[-50%] ${updatePopUpState}`}>
           <div className=" w-[70%] h-[70%] border relative bg-white shadow-2xl rounded-2xl overflow-y-auto p-4 ">
 
             <MdCancel onClick={() => setUpdatePopUpState('hidden')} size={20} className="absolute right-5 top-5 cursor-pointer" />
