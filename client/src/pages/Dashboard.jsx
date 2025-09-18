@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import ApplicantDashboard from "../components/ApplicantDashboard";
 import SavedJobs from "../components/SavedJobs";
-import FindJobs from "../components/FindJobs";
 import AppliedJobs from "../components/AppliedJobs";
 import EmployeeDashboard from "../components/EmployeeDashboard";
 import Applications from "../components/Applications";
@@ -20,8 +19,6 @@ const Dashboard = () => {
         return <ApplicantDashboard />;
       case "savedjobs":
         return <SavedJobs />;
-      case "find-jobs":
-        return <FindJobs />;
       case "applied-jobs":
         return <AppliedJobs />
       case "recruiterdashboard":

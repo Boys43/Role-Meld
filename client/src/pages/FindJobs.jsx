@@ -13,9 +13,9 @@ import { toast } from 'react-toastify'
 import { AppContext } from '../context/AppContext';
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { FaDollarSign } from "react-icons/fa";
-
+import { FaSearch } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
 import ReactPaginate from "react-paginate";
-import Sidebar from './Sidebar';
 
 
 const FindJobs = () => {
@@ -24,6 +24,8 @@ const FindJobs = () => {
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
+
+  const [showLogin, setShowLogin] = useState(false);
 
   const [jobs, setJobs] = useState([]);
 
@@ -36,7 +38,7 @@ const FindJobs = () => {
   const [searchLocation, setSearchLocation] = useState('');
   const [searchJob, setSearchJob] = useState('');
 
-  const { backendUrl, userData, setJobId } = useContext(AppContext);
+  const { backendUrl, userData, setJobId, isLoggedIn } = useContext(AppContext);
 
   const getApprovedJobs = async () => {
     try {
@@ -127,9 +129,9 @@ const FindJobs = () => {
         <main className='p-10 w-full flex flex-col gap-10'>
           <section
             id="search"
-            className="shadow-2xl border-[1px] border-black mx-auto rounded-2xl"
+            className="shadow-2xl w-[70vw] mx-auto border-[1px] border-black rounded-2xl"
           >
-            <form className="flex items-center">
+            <form className="flex w-full items-center">
               <div className="flex relative w-1/2">
                 <GrSearch
                   size={15}
@@ -158,9 +160,9 @@ const FindJobs = () => {
                   placeholder="City, state, zip code, or 'remote'"
                 />
               </div>
-              <div className='p-2'>
-                <button className='bg-[var(--primary-color)]'>
-                  Find Jobs
+              <div className='p-1'>
+                <button>
+                  <FaSearch />
                 </button>
               </div>
             </form>
@@ -217,21 +219,64 @@ const FindJobs = () => {
                       </button>
                       <button onClick={(e) => {
                         e.preventDefault();
-                        applyJob(job._id)
+                        isLoggedIn ? applyJob(job._id) : setShowLogin(true)
                       }} className='flex bg-green-400 w-1/2 border-2 border-green-500  items-center gap-4'>
                         Apply Now <CiPaperplane />
                       </button>
                     </div>
                     <span
-                      onClick={() => toggleSaveJob(job._id)}
+                      onClick={() => isLoggedIn ? toggleSaveJob(job._id) : setShowLogin(true)}
                       className='absolute top-5 right-5 text-[1.5rem] cursor-pointer'>
                       {savedJobs.has(job._id) ? <IoBookmark /> : <CiBookmark />}
                     </span>
                   </div>)
                 ) : (
-                  <p>No jobs found.</p>
+                  <div className='w-[50vw] mx-auto '>
+
+                  </div>
                 )}
               </ul>
+
+              {showLogin && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+                  <div className="relative flex flex-col items-center gap-4 p-6 w-80 bg-white rounded-2xl shadow-lg animate-fadeIn">
+                    {/* Close Icon */}
+                    <MdCancel
+                      onClick={() => setShowLogin(false)}
+                      className="absolute top-3 right-3 text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                      size={24}
+                    />
+
+                    {/* Header */}
+                    <h3 className="text-xl font-bold text-gray-800 text-center">
+                      Please Login First
+                    </h3>
+
+                    {/* Login Button */}
+                    <div className='flex gap-2 w-full items-center'>
+                      <button
+                        onClick={() => navigate('/login')}
+                        className='w-full'
+                      >
+                        Login
+                      </button>
+                      <button
+                        className='w-full'
+                        onClick={() => navigate('/register')}
+
+                      >
+                        Sign Up
+                      </button>
+                    </div>
+
+                    {/* Optional: Small text */}
+                    <p className="text-sm text-gray-500 text-center">
+                      You need to login to continue
+                    </p>
+                  </div>
+                </div>
+              )}
+
 
               {/* Pagination */}
               <ReactPaginate

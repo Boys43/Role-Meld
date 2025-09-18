@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios';
 import { FaBriefcase, FaDollarSign, FaArrowRight } from "react-icons/fa";
-import { MdLocationOn } from "react-icons/md";
+import { MdLocationOn, MdCancel } from "react-icons/md";
 import { IoIosWarning } from "react-icons/io";
 import { toast } from 'react-toastify';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { CiPaperplane } from "react-icons/ci";
 import { IoBookmark } from "react-icons/io5";
 
 const JobDetails = () => {
-    const { backendUrl } = useContext(AppContext);
+    const { backendUrl, isLoggedIn, userData } = useContext(AppContext);
     const [jobData, setJobData] = useState(null);
     const navigate = useNavigate();
     const { id } = useParams();
@@ -46,7 +46,8 @@ const JobDetails = () => {
             } else {
                 setCompanyJobs([]);
             }
-        } catch (error) {z
+        } catch (error) {
+            z
             toast.error(error.message);
         }
     }
@@ -63,9 +64,26 @@ const JobDetails = () => {
 
     const { savedJobs, toggleSaveJob } = useContext(AppContext);
 
-
     function viewDetails(id) {
         navigate(`/jobdetails/${id}`)
+    }
+
+    const [showLogin, setShowLogin] = useState(false);
+
+    const applyJob = async (jobId) => {
+        try {
+            const applicantDetails = {
+                resume: userData?.resume,
+                name: userData.name,
+                email: userData.email
+            }
+            const { data } = await axios.post(`${backendUrl}/api/user/applyjob`, { jobId, applicantDetails });
+            if (data.success) {
+                toast.success(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
 
     return (
@@ -92,7 +110,9 @@ const JobDetails = () => {
                         </div>
                     </div>
                     <div className='flex flex-col gap-2 items-center'>
-                        <button className='flex gap-2 items-center'>
+                        <button
+                            onClick={() => isLoggedIn ? applyJob(jobData?._id) : setShowLogin(true)}
+                            className='flex gap-2 items-center'>
                             Apply Now <FaArrowRight size={15} />
                         </button>
                         <h4 className='flex font-semibold italic gap-2 items-center'>
@@ -123,11 +143,53 @@ const JobDetails = () => {
                             </ul>
                         </div>
                     </div>
+
+                    {showLogin && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+                            <div className="relative flex flex-col items-center gap-4 p-6 w-80 bg-white rounded-2xl shadow-lg animate-fadeIn">
+                                {/* Close Icon */}
+                                <MdCancel
+                                    onClick={() => setShowLogin(false)}
+                                    className="absolute top-3 right-3 text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                                    size={24}
+                                />
+
+                                {/* Header */}
+                                <h3 className="text-xl font-bold text-gray-800 text-center">
+                                    Please Login First
+                                </h3>
+
+                                {/* Login Button */}
+                                <div className='flex gap-2 w-full items-center'>
+                                    <button
+                                        onClick={() => navigate('/login')}
+                                        className='w-full'
+                                    >
+                                        Login
+                                    </button>
+                                    <button
+                                        className='w-full'
+                                        onClick={() => navigate('/register')}
+
+                                    >
+                                        Sign Up
+                                    </button>
+                                </div>
+
+                                {/* Optional: Small text */}
+                                <p className="text-sm text-gray-500 text-center">
+                                    You need to login to continue
+                                </p>
+                            </div>
+                        </div>
+                    )}
                     <div className='w-[40%] py-4 sm:py-6 lg:py-8 shadow-xl border rounded-3xl px-8 h-screen'>
                         <h1 className='font-bold'>More Jobs from <span className='italic text-[var(--primary-color)]'>{jobData?.company || "Google"}</span></h1>
                         <div>
-                            {companyJobs <= 0 ? "No Jobs Found" : companyJobs.filter((job)=>{
-                                return job.isActive === true && job.approved === 'approved';
+                            {companyJobs.filter((job) => {
+                                return job.isActive === true && job.approved === 'approved' && job._id !== jobData?._id;
+                            }) <= 0 ? <p className='text-center font-bold mt-10'>No Jobs Found</p> : companyJobs.filter((job) => {
+                                return job.isActive === true && job.approved === 'approved' && job._id !== jobData?._id;
                             }).map((e, i) => (
                                 <div
                                     key={i}
