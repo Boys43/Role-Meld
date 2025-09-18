@@ -32,7 +32,7 @@ const AppliedJobs = () => {
 
 
     return (
-        <div className='p-5'>
+        <div className='p-5 w-full h-[calc(100vh-4.6rem)] overflow-y-auto'>
             {loading ? <div>Loading...</div> : <>
                 <h1 className='font-bold'>Applied Jobs</h1>
                 <ul className='flex flex-col gap-4 mt-4'>
