@@ -10,6 +10,6 @@ const recruiterProfileSchema = new mongoose.Schema({
   role: { type: String, default: "user" }, // applicant, recruiter
   profilePicture: { type: String, default: "" },
   sentJobs: {type: Array, default: []}
-});
+}, { timestamps: true });
 
 export default mongoose.model("RecruiterProfile", recruiterProfileSchema);

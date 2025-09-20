@@ -63,7 +63,6 @@ const App = () => {
         <Route path="/jobdetails/:id" element={<JobDetails />} />
         <Route path="/admin" element={<AdminRoute />} />
         <Route path="/find-jobs" element={<FindJobs />} />
-
       </Routes>
       {/* <Footer /> */}
     </>

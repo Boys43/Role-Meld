@@ -19,7 +19,7 @@ const jobsSchema = new mongoose.Schema({
     category: { type: String },
     approved: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
     isActive: { type: Boolean, default: true },
-})
+}, { timestamps: true });
 
 const jobsModel = mongoose.models.Jobs || mongoose.model("Jobs", jobsSchema);
 export default jobsModel;

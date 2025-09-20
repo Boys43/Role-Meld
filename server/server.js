@@ -8,6 +8,7 @@ import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRouter.js";
 import applicationRouter from "./routes/applicationRoutes.js";
 import { startJobsCron } from "./cron/jobsCron.js";
+import analyticRouter from "./routes/analyticRoutes.js";
 
 const app = express();
 app.use(cookieParser())
@@ -49,6 +50,7 @@ app.use('/api/jobs', jobsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/applications', applicationRouter);
+app.use('/api/analytics', analyticRouter);
 
 app.listen(PORT, () => {
     console.log(`App Listening on http://localhost:${PORT}`);

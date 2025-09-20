@@ -20,7 +20,7 @@ const userProfileSchema = new mongoose.Schema({
   resume: { type: String, default: "" },   // file URL (PDF/Doc)
   portfolio: { type: String, default: "" },
   github: { type: String, default: "" },
-});
+}, { timestamps: true });
 
 
 export default mongoose.model("UserProfile", userProfileSchema);
