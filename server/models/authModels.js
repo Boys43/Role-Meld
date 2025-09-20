@@ -6,7 +6,7 @@ const authSchema = new mongoose.Schema({
     password: {type: String, required: true},
     role: {type: String, enum: ['user', 'recruiter'], default: 'user'},
     isAdmin: {type: Boolean, default: false},
-})
+}, {timestamps: true});
 
 const authModel = mongoose.model("User", authSchema);
 export default authModel;

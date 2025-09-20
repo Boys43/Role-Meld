@@ -80,9 +80,6 @@ const Navbar = () => {
 
         </div>
 
-        {/* Desktop Links */}
-
-
         {/* Right Section */}
         <div className="hidden md:flex items-center gap-6">
           {isLoggedIn ? (
