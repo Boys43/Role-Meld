@@ -17,7 +17,7 @@ export const weeklyAnalytic = async (req, res) => {
             end.setDate(now.getDate() - (i + 1));
 
             const count = await jobsModel.countDocuments({
-                postedAt: { $gte: end, $lt: start }
+                createdAt: { $gte: end, $lt: start }
             });
 
             jobResults.push({
@@ -34,12 +34,12 @@ export const weeklyAnalytic = async (req, res) => {
             end.setDate(now.getDate() - (i + 1));
 
             const count = await userProfileModel.countDocuments({
-                postedAt: { $gte: end, $lt: start }
+                createdAt: { $gte: end, $lt: start }
             });
 
             userResults.push({
                 day: end.toISOString().split("T")[0], // yyyy-mm-dd format
-                jobs: count
+                users: count
             });
         }
 
@@ -51,12 +51,12 @@ export const weeklyAnalytic = async (req, res) => {
             end.setDate(now.getDate() - (i + 1));
 
             const count = await recruiterProfileModel.countDocuments({
-                postedAt: { $gte: end, $lt: start }
+                createdAt: { $gte: end, $lt: start }
             });
 
             recruiterResults.push({
                 day: end.toISOString().split("T")[0], // yyyy-mm-dd format
-                jobs: count
+                recruiters: count
             });
         }
 

@@ -127,46 +127,6 @@ const FindJobs = () => {
     <>
       <div className='relative w-full h-[calc(100vh-4.6rem)] overflow-y-auto flex'>
         <main className='p-10 w-full flex flex-col gap-10'>
-          <section
-            id="search"
-            className="shadow-2xl w-[70vw] mx-auto border-[1px] border-black rounded-2xl"
-          >
-            <form className="flex w-full items-center">
-              <div className="flex relative w-1/2">
-                <GrSearch
-                  size={15}
-                  className="absolute left-6 top-1/2 -translate-y-1/2 "
-                />
-                <input
-                  value={searchJob}
-                  onChange={(e) => setSearchJob(e.target.value)}
-                  className="border-3 border-transparent focus:border-[var(--primary-color)] 
-                  focus:outline-none py-3 pl-14 rounded-2xl w-full transition-all"
-                  type="text"
-                  placeholder="Job title, keywords, or company"
-                />
-              </div>
-              <div className="w-[1px] h-[2rem] bg-gray-300"></div>
-              <div className="flex relative w-1/2">
-                <IoLocationOutline
-                  size={20}
-                  className="absolute left-6 top-1/2 -translate-y-1/2 "
-                />
-                <input
-                  value={searchLocation}
-                  onChange={(e) => setSearchLocation(e.target.value)}
-                  className="border-3 border-transparent focus:border-[var(--primary-color)] focus:outline-none focus:border-3 transition-all p-3 pl-14 rounded-2xl w-full"
-                  type="text"
-                  placeholder="City, state, zip code, or 'remote'"
-                />
-              </div>
-              <div className='p-1'>
-                <button>
-                  <FaSearch />
-                </button>
-              </div>
-            </form>
-          </section>
           {/* Filter Jobs */}
           <section className='w-full flex gap-5 justify-center'>
             <select name="location" id="location" className='py-1 px-4 border-[1px] border-black rounded' onChange={(e) => setFilterLocationType(e.target.value)}>

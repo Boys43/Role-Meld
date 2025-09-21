@@ -68,9 +68,6 @@ button:disabled {
   box-shadow: none;
 }
 
-p {
-  color: var(--text-color);
-}
 
 /* Hide scrollbar but allow scrolling */
 .no-scrollbar::-webkit-scrollbar {
