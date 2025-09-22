@@ -21,7 +21,7 @@ const EmployeeDashboard = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const changePicture = async () => {
+  const changePicture = async (profilePicture) => {
     const formData = new FormData();
     formData.append("profilePicture", profilePicture);
 
@@ -127,11 +127,6 @@ const EmployeeDashboard = () => {
 
           {/* Upload Form */}
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              changePicture();
-              setShowSubmit(false);
-            }}
             className="mt-2"
           >
             <input
@@ -141,8 +136,8 @@ const EmployeeDashboard = () => {
               className="hidden"
               accept="image/*"
               onChange={(e) => {
-                setProfilePicture(e.target.files[0]);
-                setShowSubmit(true);
+                e.preventDefault();
+                changePicture(e.target.files[0]);
               }}
             />
             <label
@@ -151,11 +146,6 @@ const EmployeeDashboard = () => {
             >
               <FaCamera className="text-gray-600 text-sm" />
             </label>
-            {showSubmit && (
-              <button type="submit" className="text-sm bg-[var(--primary-color)] text-white rounded px-2 py-1 mt-1">
-                Upload
-              </button>
-            )}
           </form>
         </div>
 

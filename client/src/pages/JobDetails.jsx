@@ -1,231 +1,200 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios';
-import { FaBriefcase, FaDollarSign, FaArrowRight } from "react-icons/fa";
-import { MdLocationOn, MdCancel } from "react-icons/md";
-import { IoIosWarning } from "react-icons/io";
+import { useNavigate, useParams } from 'react-router-dom';
+// React Icons
+import { IoHomeOutline } from "react-icons/io5";
 import { toast } from 'react-toastify';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { CiBookmark } from "react-icons/ci";
-import { CiPaperplane } from "react-icons/ci";
-import { IoBookmark } from "react-icons/io5";
+import { MdCancel, MdTitle } from "react-icons/md";
+import { IoIosWarning } from "react-icons/io";
+import { FaDollarSign } from "react-icons/fa";
+import { FaAudioDescription } from "react-icons/fa6";
+import { TbListDetails } from "react-icons/tb";
+import { IoIosMail } from "react-icons/io";
+import JobCard from '../components/JobCard';
 
 const JobDetails = () => {
     const { backendUrl, isLoggedIn, userData } = useContext(AppContext);
+    const [loginReminder, setLoginReminder] = useState(false)
     const [jobData, setJobData] = useState(null);
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const [companyJobs, setCompanyJobs] = useState([])
-
     const getJob = async () => {
-        // let jobId = "68c3d4c1e99d7a75af562c95";
+        setLoading(true)
         try {
-            const { data } = await axios.post(backendUrl + '/api/jobs/getJob', { id });
+            const { data } = await axios.post(`${backendUrl}/api/jobs/getJob`, { id });
             if (data.success) {
-                setJobData(data.job)
-            } else {
-                setJobData(null);
+                setJobData(data.job);
             }
         } catch (error) {
-            console.log(error.message);
+            toast.error(error.response.data.message);
+        } finally {
+            setLoading(false)
         }
     }
 
-    const getCompanyJobs = async () => {
-        let company = jobData?.company;
-        console.log(jobData);
-
-        console.log(company);
-
+    const [toggleApplyJob, setToggleApplyJob] = useState(false)
+    const [applJobId, setapplJobId] = useState('')
+    const [coverLetter, setCoverLetter] = useState('')
+    const applyJob = async (id) => {
         try {
-            const { data } = await axios.post(`${backendUrl}/api/jobs/getcompanyjobs`, { company })
+            const { data } = await axios.post(backendUrl + '/api/user/applyjob', { jobId: id, resume: userData?.resume, coverLetter: coverLetter });
+
+            if (data.success) {
+                toast.success(data.message);
+                setToggleApplyJob(false);
+            }
+        } catch (error) {
+            toast.error(error.response.data.message);
+        }
+    }
+
+    const [companyJobs, setCompanyJobs] = useState([])
+    // Get More Related Jobs;
+    const getCompanyJobs = async () => {
+        setLoading(true)
+        try {
+            const { data } = await axios.post(`${backendUrl}/api/jobs/getcompanyjobs`, { company: jobData?.company });
             if (data.success) {
                 setCompanyJobs(data.companyJobs);
-                console.log(companyJobs);
-            } else {
-                setCompanyJobs([]);
             }
         } catch (error) {
-            z
-            toast.error(error.message);
+            toast.error(error.response.data.message);
+        } finally {
+            setLoading(false)
         }
     }
+
 
     useEffect(() => {
         getJob();
-    }, []);
+        getCompanyJobs();
+    }, [])
 
-    useEffect(() => {
-        if (jobData?.company) {
-            getCompanyJobs();
-        }
-    }, [jobData]);
-
-    const { savedJobs, toggleSaveJob } = useContext(AppContext);
-
-    function viewDetails(id) {
-        navigate(`/jobdetails/${id}`)
-    }
-
-    const [showLogin, setShowLogin] = useState(false);
-
-    const applyJob = async (jobId) => {
-        try {
-            const applicantDetails = {
-                resume: userData?.resume,
-                name: userData.name,
-                email: userData.email
-            }
-            const { data } = await axios.post(`${backendUrl}/api/user/applyjob`, { jobId, applicantDetails });
-            if (data.success) {
-                toast.success(data.message)
-            }
-        } catch (error) {
-            toast.error(error.message)
-        }
+    if (loading) {
+        return <div className="flex fixed top-1/2 left-1/2 tanslate-1/2 justify-center items-center py-10">
+            <div className="w-8 h-8 border-4 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>
+        </div>
     }
 
     return (
-        <>
-            <div className='p-4 sm:p-6 md:p-8 lg:p-10 h-screen flex flex-col gap-8'>
-                <div className='w-full flex items-center justify-between p-4 sm:p-6 md:p-8 lg:p-10 border bg-[var(--primary-color)]/20 rounded-2xl shadow-2xl'>
-                    <div className='flex gap-4'>
-                        <div className='w-20 h-20 rounded-full overflow-hidden border-4 border-[var(--primary-color)]'>
-                            <img src={`${backendUrl + '/uploads/' + jobData?.companyProfile}` ?? jobData?.company ?? '?'} alt="" />
-                        </div>
-                        <div className='flex flex-col gap-2'>
-                            <h1 className='font-medium'>{jobData?.title}</h1>
-                            <h4 className='italic flex items-center gap-4'>
-                                <span className='flex items-center gap-2'>
-                                    <FaBriefcase size={17} className='text-[var(--text-color)]' />Google
-                                </span>
-                                <span className='flex items-center gap-2'>
-                                    <FaDollarSign size={19} /> {jobData?.salary} $
-                                </span>
-                                <span className='flex items-center gap-2'>
-                                    <MdLocationOn size={20} /> {jobData?.location}
-                                </span>
-                            </h4>
+        <main className='p-6'>
+            <section className='p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                <div className='col-span-2'>
+                    <h4 className='p-4 flex items-center text-lg gap-4 font-semibold'>
+                        <IoHomeOutline size={25} className='' /> <span className='text-[var(--primary-color)]'>/</span> {jobData?.category} <span className='text-[var(--primary-color)]'>/</span> {jobData?.subCategory}
+                    </h4>
+                    <div className='my-4 border rounded-2xl p-4 shadow-lg bg-[var(--primary-color)]/10 flex items-center justify-between'>
+                        <div>
+                            <div className='flex items-center gap-4'>
+                                <img src={`${backendUrl}/uploads/${jobData?.companyProfile}`} alt={jobData?.companyProfile} className='w-8 object-cover h-8 rounded-full border-2 border-[var(--primary-color)]' />
+                                <h4 className='font-bold'>
+                                    {jobData?.company}
+                                </h4>
+                            </div>
+                            <h3 className='font-bold my-4 flex items-center gap-4'>
+                                <MdTitle size={30} className='text-[var(--primary-color)]' /> {jobData?.title}
+                            </h3>
                         </div>
                     </div>
-                    <div className='flex flex-col gap-2 items-center'>
-                        <button
-                            onClick={() => isLoggedIn ? applyJob(jobData?._id) : setShowLogin(true)}
-                            className='flex gap-2 items-center'>
-                            Apply Now <FaArrowRight size={15} />
-                        </button>
-                        <h4 className='flex font-semibold italic gap-2 items-center'>
-                            Last Date: <div className='text-red-500 flex items-center gap-2 font-medium'> <IoIosWarning size={19} /> {jobData?.applicationDeadline ? new Date(jobData.applicationDeadline).toISOString().split("T")[0] : "No deadline"}</div>
-                        </h4>
+                    <div className='p-4 flex flex-col gap-4'>
+                        <h2 className='font-bold flex items-center gap-4'>
+                            <TbListDetails className='text-[var(--primary-color)]' /> Job Details:
+                        </h2>
+                        <div className='flex items-center gap-4 ml-6'>
+                            <span className='bg-red-300 rounded-lg text-white border border-red-500 px-2 py-1 '>{jobData?.jobType}</span>
+                            <span className='bg-green-300 rounded-lg text-white border border-green-500 px-2 py-1 '>{jobData?.locationType}</span>
+                        </div>
+                    </div>
+                    <div className='p-4 flex flex-col gap-4 h-screen'>
+                        <h2 className='font-bold flex items-center gap-4'>
+                            <FaAudioDescription className='text-[var(--primary-color)]' /> Job Description:
+                        </h2>
+                        <div className='ml-8' dangerouslySetInnerHTML={{ __html: jobData?.description }} />
                     </div>
                 </div>
-                <div className='flex rounded-2xl gap-4'>
-                    <div className='w-[60%] rounded-3xl border py-4 sm:py-6 shadow-xl lg:py-8 px-8 h-screen'>
-                        <div className='flex min-h-[40vh] flex-col gap-2'>
-                            <h1 className='font-bold'>
-                                Job Description
-                            </h1>
-                            <div dangerouslySetInnerHTML={{ __html: jobData?.description }} />
+                <div className=''>
+                    <div className='border p-4 shadow-lg flex flex-col  sticky top-0'>
+                        <h2 className='font-bold flex items-center gap-4 bg-gray-300 border-2 border-[var(--secondary-color)] px-4 py-2 rounded-lg'>
+                            <FaDollarSign />{jobData?.salary}
+                        </h2>
+                        <div className='flex gap-6 w-full py-4'>
+                            <span className='flex items-center gap-2 text-red-500 bgrounded-md'>
+                                <IoIosWarning />
+                                {jobData?.applicationDeadline &&
+                                    new Date(jobData.applicationDeadline).toLocaleDateString("en-US", {
+                                        day: "2-digit",
+                                        month: "long"
+                                    })
+                                }
+                            </span>
+                            <span className='flex items-center gap-2 text-green-500 py-1 rounded-md'>
+                                <IoIosMail /> {jobData?.applicants.length} <span className='font-bold'>Applicants</span>
+                            </span>
                         </div>
-                        <div className='flex flex-col gap-2'>
-                            <h1 className='font-bold'>Key Points</h1>
-                            <ul className='list-disc list-inside'>
-                                <li className='text-xl'>
-                                    The Job is <span className='font-medium text-[var(--primary-color)] italic'>{jobData?.jobType}</span>
-                                </li>
-                                <li className='text-xl'>
-                                    The Job is for <span className='font-medium text-[var(--primary-color)] italic capitalize'>{jobData?.category}</span>
-                                </li>
-                                <li className='text-xl'>
-                                    The Applicant must be <span className='font-medium text-[var(--primary-color)] italic capitalize'>{jobData?.locationType}</span>
-                                </li>
-                            </ul>
+                        <div className='p-2 border-2 border-[var(--primary-color)] bg-[var(--primary-color)]/10 rounded-lg'>
+                            {userData?.resume ? <h4><span className='text-[var(--primary-color)] font-bold'>Resume:</span>{userData?.resume}</h4> : <h4 className='text-red-500 flex gap-4 items-center'>No resume uploaded <span onClick={() => isLoggedIn ? navigate('/dashboard') : setLoginReminder(true)} className='text-sm underline text-black'>Upload</span></h4>}
                         </div>
+                        <button className='mt-4'
+                            onClick={() => isLoggedIn ? setapplJobId(true) : setLoginReminder(true)}
+                        >
+                            Apply Now
+                        </button>
                     </div>
+                </div>
+            </section>
 
-                    {showLogin && (
-                        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
-                            <div className="relative flex flex-col items-center gap-4 p-6 w-80 bg-white rounded-2xl shadow-lg animate-fadeIn">
-                                {/* Close Icon */}
-                                <MdCancel
-                                    onClick={() => setShowLogin(false)}
-                                    className="absolute top-3 right-3 text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
-                                    size={24}
-                                />
+            <section className='my-4 min-h-[40vh] w-full'>
+                <h2 className='font-semibold'>More Jobs from <span className='font-bold'>{jobData?.company}</span></h2>
+                <ul className='grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                    {companyJobs?.filter(job => job._id !== jobData?._id).length > 0 ? companyJobs?.filter(job => job._id !== jobData?._id)?.map((e, i) => (
+                        <JobCard key={i} e={e} />
+                    )) :
+                        <h4 className='font-semibold  mt-8 '>
+                            No Jobs Posted from {jobData?.company}
+                        </h4>
+                    }
+                </ul>
+            </section>
 
-                                {/* Header */}
-                                <h3 className="text-xl font-bold text-gray-800 text-center">
-                                    Please Login First
-                                </h3>
 
-                                {/* Login Button */}
-                                <div className='flex gap-2 w-full items-center'>
-                                    <button
-                                        onClick={() => navigate('/login')}
-                                        className='w-full'
-                                    >
-                                        Login
-                                    </button>
-                                    <button
-                                        className='w-full'
-                                        onClick={() => navigate('/register')}
-
-                                    >
-                                        Sign Up
-                                    </button>
-                                </div>
-
-                                {/* Optional: Small text */}
-                                <p className="text-sm text-gray-500 text-center">
-                                    You need to login to continue
-                                </p>
-                            </div>
-                        </div>
-                    )}
-                    <div className='w-[40%] py-4 sm:py-6 lg:py-8 shadow-xl border rounded-3xl px-8 h-screen'>
-                        <h1 className='font-bold'>More Jobs from <span className='italic text-[var(--primary-color)]'>{jobData?.company || "Google"}</span></h1>
-                        <div>
-                            {companyJobs.filter((job) => {
-                                return job.isActive === true && job.approved === 'approved' && job._id !== jobData?._id;
-                            }) <= 0 ? <p className='text-center font-bold mt-10'>No Jobs Found</p> : companyJobs.filter((job) => {
-                                return job.isActive === true && job.approved === 'approved' && job._id !== jobData?._id;
-                            }).map((e, i) => (
-                                <div
-                                    key={i}
-                                    className='relative flex flex-col gap-2 items-start w-full border-[1px] border-black p-5 rounded-2xl h-[37vh] shadow-lg mb-5'>
-                                    <div className=' top-3 flex gap-2 right-3 text-[0.8rem]'>
-                                        <span className={`px-2 rounded bg-yellow-200`}>
-                                            {e?.jobType}
-                                        </span>
-                                        <span className={`px-2 rounded bg-green-200`}>
-                                            {e?.locationType}
-                                        </span>
-                                        <span className={`px-2 rounded bg-red-200`}>
-                                            {e?.category}
-                                        </span>
-                                    </div>
-                                    <h3 className='font-semibold h-10'>{e?.title.split(" ").slice(0, 3).join(" ")}</h3>
-                                    <div id='company' className=''>
-                                        <h4 className='font-semibold text-gray-500'>{e?.company}</h4>
-                                        <h5 className='text-gray-500 '>{e?.location}</h5>
-                                    </div>
-                                    <h5 className='bg-gray-100 py-1 px-2 text-[0.8rem] rounded'>$ {e?.salary}</h5>
-                                    <button onClick={() => viewDetails(e._id)} className='flex items-center gap-4'>
-                                        View Details <CiPaperplane />
-                                    </button>
-                                    <span
-                                        onClick={() => toggleSaveJob(e._id)}
-                                        className='absolute top-5 right-5 text-[1.5rem] cursor-pointer'>
-                                        {savedJobs.has(e._id) ? <IoBookmark /> : < CiBookmark />}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+            {/* Apply Job Pop Up */}
+            <div className={`fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center justify-center ${toggleApplyJob ? 'flex' : 'hidden'}`}>
+                <div className='w-[500px] relative bg-white shadow-2xl rounded-lg p-8'>
+                    <span className='absolute top-4 right-4 cursor-pointer'>
+                        <MdCancel onClick={() => setToggleApplyJob(false)} />
+                    </span>
+                    <h1>
+                        Briefly Explain Your Self
+                    </h1>
+                    <textarea value={coverLetter} onChange={(e) => setCoverLetter(e.target.value)} name="coverLetter" className='w-full h-[50%] rounded-2xl resize-none p-4 border shadow-lg my-10' placeholder='Enter Your Brief Interest In the Job...' id="coverLetter">
+                    </textarea>
+                    <button onClick={() => applyJob(applJobId)}>
+                        Apply
+                    </button>
                 </div>
             </div>
-        </>
+
+            {/* Login */}
+            <div className={`fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center justify-center ${loginReminder ? 'flex' : 'hidden'}`}>
+                <div className='relative bg-white flex flex-col items-center gap-4 shadow-2xl rounded-lg p-8'>
+                    <span className='absolute top-4 right-4 cursor-pointer'>
+                        <MdCancel onClick={() => setLoginReminder(false)} />
+                    </span>
+                    <h3 className='font-bold'>
+                        Please Login First
+                    </h3>
+                    <button className='w-full' onClick={() => navigate('/login')}>
+                        Login
+                    </button>
+                    <p>
+                        You need to be <span className='font-semibold'>Login</span> to continue
+                    </p>
+                </div>
+            </div>
+        </main>
     )
 }
 

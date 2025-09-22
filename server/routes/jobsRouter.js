@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJob, getAllJobs, getApprovedJobs, getCompanyJobs, getJob, getPendingJobs, getSavedJobs, updateJobStatus } from '../controllers/jobsController.js'
+import { addJob, getAllJobs, getApprovedJobs, getCategoryJobs, getCompanyJobs, getJob, getPendingJobs, getSavedJobs, searchJob, updateJobStatus } from '../controllers/jobsController.js'
 import userAuth from '../middlewares/userAuth.js';
 
 const jobsRouter = express.Router()
@@ -12,5 +12,8 @@ jobsRouter.post('/getsavedjobs', getSavedJobs);
 jobsRouter.post('/updatejobstatus', updateJobStatus);
 jobsRouter.get('/getapprovedjobs', getApprovedJobs);
 jobsRouter.get('/getpendingjobs', getPendingJobs);
+jobsRouter.post('/searchjobs', searchJob);
+jobsRouter.post('/getcategoryjobs', getCategoryJobs);
+
 
 export default jobsRouter;

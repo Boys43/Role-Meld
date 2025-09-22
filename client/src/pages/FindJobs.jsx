@@ -1,265 +1,141 @@
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import Search from '../components/Search'
+import { useLocation, } from 'react-router-dom'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
-// import Search from '../components/Search'
-import { useState } from 'react';
-import { GrSearch } from "react-icons/gr";
-import { IoLocationOutline } from "react-icons/io5";
-import { CiBookmark } from "react-icons/ci";
-import { CiPaperplane } from "react-icons/ci";
-import { IoBookmark } from "react-icons/io5";
-import { FaBriefcase } from "react-icons/fa";
+import { AppContext } from '../context/AppContext'
 import { toast } from 'react-toastify'
-import { AppContext } from '../context/AppContext';
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { FaDollarSign } from "react-icons/fa";
-import { FaSearch } from "react-icons/fa";
-import { MdCancel } from "react-icons/md";
-import ReactPaginate from "react-paginate";
 
+// React Icons
+import { FaFilter } from "react-icons/fa";
+import JobCard from '../components/JobCard'
 
 const FindJobs = () => {
+  const location = useLocation();
+  const { backendUrl, userData } = useContext(AppContext)
 
-  const navigate = useNavigate();
-  const [currentItems, setCurrentItems] = useState([]);
-  const [pageCount, setPageCount] = useState(0);
-  const [itemOffset, setItemOffset] = useState(0);
+  const [loading, setLoading] = useState(false)
 
-  const [showLogin, setShowLogin] = useState(false);
+  // Using Parameters for getting the job 
+  const search = new URLSearchParams(location.search);
+  const Param = search.get('job');
+  const categoryParam = search.get('category');
 
-  const [jobs, setJobs] = useState([]);
-
-  const itemsPerPage = 6; // how many items per page
-
-  // Filter Items
-  const [filterJobType, setFilterJobType] = useState('');
-  const [filterRole, setFilterRole] = useState('');
-  const [filterLocationType, setFilterLocationType] = useState('');
-  const [searchLocation, setSearchLocation] = useState('');
-  const [searchJob, setSearchJob] = useState('');
-
-  const { backendUrl, userData, setJobId, isLoggedIn } = useContext(AppContext);
-
-  const getApprovedJobs = async () => {
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/jobs/getapprovedjobs`);
-      if (data.success) {
-        setJobs(data.jobs)
-      } else {
-        toast.error(data.message)
+  const [searchedCategories, setSearchedCategories] = useState([]);
+  const [approvedCategoryJobs, setApprovedCategoryJobs] = useState([]);
+  if (Param) {
+    const seachedJobs = async () => {
+      try {
+        const { data } = await axios.post(`${backendUrl}/api/jobs/searchjobs`, { search: Param })
+        if (data.success) {
+          setSearchedCategories(data.categorySet);
+          setApprovedCategoryJobs(data.approvedCategoryJobs);
+        }
+      } catch (error) {
+        toast.error(error.response.data.message);
       }
-    } catch (error) {
-      toast.error(error.message)
+    }
+    useEffect(() => {
+      seachedJobs();
+    }, [Param]);
+  } else {
+    const gettAllJobs = async () => {
+      try {
+        const { data } = await axios.get(`${backendUrl}/api/jobs/getalljobs`)
+        if (data.success) {
+          setSearchedCategories(data.categorySet);
+          setApprovedCategoryJobs(data.approvedCategoryJobs);
+        }
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
     }
   }
 
-  useEffect(() => {
-    getApprovedJobs();
-  }, [])
-
-  const stopWords = [
-    'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'any', 'are', 'aren\'t', 'as', 'at',
-    'be', 'because', 'been', 'before', 'being', 'below', 'between', 'both', 'but', 'by',
-    'can', 'cannot', 'could', 'couldn\'t', 'did', 'didn\'t', 'do', 'does', 'doesn\'t', 'doing', 'don\'t', 'down', 'during',
-    'each', 'few', 'from', 'further', 'had', 'hadn\'t', 'has', 'hasn\'t', 'have', 'haven\'t', 'having',
-    'he', 'he\'d', 'he\'ll', 'he\'s', 'her', 'here', 'here\'s', 'hers', 'herself', 'him', 'himself', 'his', 'how', 'how\'s',
-    'i', 'i\'d', 'i\'ll', 'i\'m', 'i\'ve', 'if', 'in', 'into', 'is', 'isn\'t', 'it', 'it\'s', 'its', 'itself',
-    'let\'s', 'me', 'more', 'most', 'mustn\'t', 'my', 'myself', 'no', 'nor', 'not', 'of', 'off', 'on', 'once', 'only', 'or', 'other', 'ought', 'our', 'ours', 'ourselves', 'out', 'over', 'own',
-    'same', 'shan\'t', 'she', 'she\'d', 'she\'ll', 'she\'s', 'should', 'shouldn\'t', 'so', 'some', 'such',
-    'than', 'that', 'that\'s', 'the', 'their', 'theirs', 'them', 'themselves', 'then', 'there', 'there\'s', 'these', 'they', 'they\'d', 'they\'ll', 'they\'re', 'they\'ve', 'this', 'those', 'through', 'to', 'too',
-    'under', 'until', 'up', 'very', 'was', 'wasn\'t', 'we', 'we\'d', 'we\'ll', 'we\'re', 'we\'ve', 'were', 'weren\'t',
-    'what', 'what\'s', 'when', 'when\'s', 'where', 'where\'s', 'which', 'while', 'who', 'who\'s', 'whom', 'why', 'why\'s', 'with', 'won\'t', 'would', 'wouldn\'t',
-    'you', 'you\'d', 'you\'ll', 'you\'re', 'you\'ve', 'your', 'yours', 'yourself', 'yourselves'
-  ];
-
-  const filteredJobs = useMemo(() => {
-    return jobs.filter(job => {
-      const matchesLocation = searchLocation ? job.location.toLowerCase().includes(searchLocation.toLowerCase()) : true;
-      const matchesLocationType = filterLocationType
-        ? job.locationType.toLowerCase() === filterLocationType.toLowerCase()
-        : true;
-
-      const matchesJobType = filterJobType
-        ? job.jobType.toLowerCase() === filterJobType.toLowerCase()
-        : true;
-      const matchesCategory = filterRole ? job.category?.toLowerCase() === filterRole.toLowerCase() : true;
-
-      return matchesLocation && matchesLocationType && matchesJobType && matchesCategory;
-    });
-  }, [jobs, searchJob, searchLocation, filterJobType, filterRole, filterLocationType]);
-
-  useEffect(() => {
-    const endOffset = itemOffset + itemsPerPage;
-    setCurrentItems(filteredJobs.slice(itemOffset, endOffset));
-    setPageCount(Math.ceil(filteredJobs.length / itemsPerPage));
-  }, [itemOffset, itemsPerPage, filteredJobs]);
 
 
-  const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % filteredJobs.length;
-    setItemOffset(newOffset);
-  };
+  const [filterCateogry, setFilterCateogry] = useState(categoryParam || 'category');
+  const [filterLocationType, setFilterLocationType] = useState('locationType');
+  const [filterJobType, setFilterJobType] = useState('jobType');
 
-  const { savedJobs, toggleSaveJob } = useContext(AppContext);
+  const filteredJobs = approvedCategoryJobs?.filter((job) => {
+    return (
+      (filterCateogry === "category" || job.category === filterCateogry) &&
+      (filterLocationType === "locationType" || job.locationType === filterLocationType) &&
+      (filterJobType === "jobType" || job.jobType === filterJobType)
+    );
+  });
 
-  function viewDetails(id) {
-    navigate(`/jobdetails/${id}`)
+  // Loading
+  if (loading) {
+    return <div className="flex fixed top-1/2 left-1/2 tanslate-1/2 justify-center items-center py-10">
+      <div className="w-8 h-8 border-4 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>
+    </div>
   }
 
-  const applyJob = async (jobId) => {
-
-    try {
-      const applicantDetails = {
-        resume: userData?.resume,
-        name: userData.name,
-        email: userData.email
-      }
-      const { data } = await axios.post(`${backendUrl}/api/user/applyjob`, { jobId, applicantDetails });
-      if (data.success) {
-        toast.success(data.message)
-      }
-    } catch (error) {
-      toast.error(error.message)
-    }
-  }
+  // View Details
 
   return (
     <>
-      <div className='relative w-full h-[calc(100vh-4.6rem)] overflow-y-auto flex'>
-        <main className='p-10 w-full flex flex-col gap-10'>
-          {/* Filter Jobs */}
-          <section className='w-full flex gap-5 justify-center'>
-            <select name="location" id="location" className='py-1 px-4 border-[1px] border-black rounded' onChange={(e) => setFilterLocationType(e.target.value)}>
-              <option value="">All Locations</option>
-              <option value="remote">Remote</option>
-              <option value="on-site">Onsite</option>
-            </select>
-            <select name="job-type" id="job-type" className='py-1 px-4 border-[1px] border-black rounded' onChange={(e) => setFilterJobType(e.target.value)}>
-              <option value="">All Job Types</option>
-              <option value="Full Time">Full Time</option>
-              <option value="Part Time">Part Time</option>
-              <option value="contract">Contract</option>
-            </select>
-            <select name="role" id="role" className='py-1 select: px-4 border-[1px] border-black rounded' onChange={(e) => setFilterRole(e.target.value)}>
-              <option value="">All Roles</option>
-              <option value="developer">Developer</option>
-              <option value="designer">Designer</option>
-              <option value="manager">Manager</option>
-              <option value="qa">QA</option>
-              <option value="programmer">Programmer</option>
-            </select>
-          </section>
-          <section className='gap-4'>
-            <div className='px-4 w-full'>
-              <ul className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3  w-full gap-5'>
-                {filteredJobs.length > 0 ? (
-                  filteredJobs.map((job) => <div
-                    key={job._id}
-                    className='relative flex flex-col justify-between w-full gap-3 items-start border-[1px] p-5 rounded-2xl shadow-xl mb-5'>
-                    <div className=' top-3 flex gap-2 right-3 text-[0.8rem]'>
-                      <span className={`px-2 rounded bg-yellow-200`}>
-                        {job.jobType}
-                      </span>
-                      <span className={`px-2 rounded bg-green-200`}>
-                        {job.locationType}
-                      </span>
-                      <span className={`px-2 rounded bg-red-200`}>
-                        {job.category}
-                      </span>
-                    </div>
-                    <h3 className='font-semibold h-10'>{job.title.split(" ").slice(0, 3).join(" ")}</h3>
-                    <div id='company' className=''>
-                      <h4 className='font-semibold text-gray-500 flex items-center gap-2 '><FaBriefcase size={15} />{job.company}</h4>
-                      <h5 className='text-gray-500 flex items-center gap-2 '><IoLocationOutline />{job.location}</h5>
-                    </div>
-                    <h5 className='bg-gray-100 py-1 px-2 text-[0.8rem] flex items-center gap-2 rounded'><FaDollarSign />{job.salary}</h5>
-                    <div className='flex items-center gap-4 justify-between w-full'>
-                      <button onClick={() => viewDetails(job._id)} className='flex w-1/2 bg-[var(--primary-color)]/50 border-2 border-[var(--primary-color)]  items-center gap-4'>
-                        View Details <CiPaperplane />
-                      </button>
-                      <button onClick={(e) => {
-                        e.preventDefault();
-                        isLoggedIn ? applyJob(job._id) : setShowLogin(true)
-                      }} className='flex bg-green-400 w-1/2 border-2 border-green-500  items-center gap-4'>
-                        Apply Now <CiPaperplane />
-                      </button>
-                    </div>
-                    <span
-                      onClick={() => isLoggedIn ? toggleSaveJob(job._id) : setShowLogin(true)}
-                      className='absolute top-5 right-5 text-[1.5rem] cursor-pointer'>
-                      {savedJobs.has(job._id) ? <IoBookmark /> : <CiBookmark />}
-                    </span>
-                  </div>)
-                ) : (
-                  <div className='w-[50vw] mx-auto '>
+      <div className=''>
+        <div className='p-6'>
+          <Search Param={Param} />
+          <div className='my-6 px-10'>
+            {/* Jobs */}
+            <h1>
+              <span className='font-bold'>Results For:</span> {Param}
+            </h1>
+            <section className='flex items-center gap-8 mt-6'>
+              <h3 className='flex items-center gap-2 font-semibold'>
+                <FaFilter size={20} className='text-[var(--primary-color)]' /> Filter:
+              </h3>
+              <select
+                name="category"
+                id="category"
+                onChange={(e) => setFilterCateogry(e.target.value)}
+                className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
+              >
+                <option value="category">Category</option>
+                {searchedCategories.map((category, i) => (
+                  <option
+                    key={i}
+                    value={category || "Empty"}
+                    className="px-4 py-2 bg-white hover:bg-blue-50"
+                  >
+                    {category || "Empty"}
+                  </option>
+                ))}
+              </select>
+              <select name="jobType" id="jobType"
+                className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
+                onChange={(e) => setFilterJobType(e.target.value)}
+              >
+                <option value="jobType">Job Type</option>
+                <option value="Full Time">Full Time</option>
+                <option value="Part Time">Part Time</option>
+                <option value="Contract">Contract</option>
+              </select>
 
-                  </div>
-                )}
+              <select name="LocationType" id="LocationType"
+                className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
+                onChange={(e) => setFilterLocationType(e.target.value)}
+              >
+                <option value="locationType">Location Type</option>
+                <option value="Remote">Remote</option>
+                <option value="On Site">On Site</option>
+                <option value="Hybrid">Hybrid</option>
+              </select>
+            </section>
+            <section className='my-4'>
+              <ul className='grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                {filteredJobs?.map((e, i) => (
+                  <JobCard key={i} e={e} />
+                ))}
               </ul>
-
-              {showLogin && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
-                  <div className="relative flex flex-col items-center gap-4 p-6 w-80 bg-white rounded-2xl shadow-lg animate-fadeIn">
-                    {/* Close Icon */}
-                    <MdCancel
-                      onClick={() => setShowLogin(false)}
-                      className="absolute top-3 right-3 text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
-                      size={24}
-                    />
-
-                    {/* Header */}
-                    <h3 className="text-xl font-bold text-gray-800 text-center">
-                      Please Login First
-                    </h3>
-
-                    {/* Login Button */}
-                    <div className='flex gap-2 w-full items-center'>
-                      <button
-                        onClick={() => navigate('/login')}
-                        className='w-full'
-                      >
-                        Login
-                      </button>
-                      <button
-                        className='w-full'
-                        onClick={() => navigate('/register')}
-
-                      >
-                        Sign Up
-                      </button>
-                    </div>
-
-                    {/* Optional: Small text */}
-                    <p className="text-sm text-gray-500 text-center">
-                      You need to login to continue
-                    </p>
-                  </div>
-                </div>
-              )}
-
-
-              {/* Pagination */}
-              <ReactPaginate
-                breakLabel="..."
-                nextLabel={<FaChevronRight className='text-[var(--primary-color)]' />}
-                onPageChange={handlePageClick}
-                pageRangeDisplayed={3}
-                pageCount={pageCount}
-                previousLabel={<FaChevronLeft className='text-[var(--primary-color)]' />}
-                renderOnZeroPageCount={null}
-                containerClassName="flex gap-2 mt-4 justify-center"
-                pageClassName="px-3 py-1 rounded cursor-pointer"
-                activeClassName="bg-[var(--primary-color)] text-white"
-                previousClassName="px-2 flex items-center rounded-full py-1 rounded cursor-pointer"
-                nextClassName="px-3 flex items-center py-1 rounded cursor-pointer"
-              />
-            </div>
-          </section>
-        </main>
+            </section>
+          </div>
+        </div >
       </div>
-
     </>
   )
 }
-
 export default FindJobs
