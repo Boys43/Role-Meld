@@ -234,9 +234,9 @@ export const applyJob = async (req, res) => {
     }
 
     try {
-        const { jobId, applicantDetails } = req.body;
+        const { jobId, resume, coverLetter } = req.body;
 
-        if (!jobId || !applicantDetails) {
+        if (!jobId || !resume || !coverLetter) {
             return res.status(400).json({ success: false, message: "Missing job ID or applicant details" });
         }
 
@@ -244,14 +244,17 @@ export const applyJob = async (req, res) => {
 
         if (!job) return res.status(404).json({ success: false, message: "Job not found" });
 
+        job.applicants.push(req.user._id);
+        await job.save();
+
         const application = new applicationModel({
             job: job._id,
             applicant: req.user._id,
             recruiter: job.postedBy,
-            resume: applicantDetails.resume,
-            name: applicantDetails.name,
-            email: applicantDetails.email
+            resume: resume,
+            coverLetter: coverLetter,
         });
+        await application.save();
 
         const user = await userProfileModel.findOne({ authId: userId });
         if (!user) {
@@ -260,8 +263,6 @@ export const applyJob = async (req, res) => {
 
         user.appliedJobs.push(job._id);
         await user.save();
-
-        await application.save();
 
         res.json({ success: true, message: "Application submitted", application });
     } catch (err) {

@@ -7,7 +7,6 @@ const applicationSchema = new mongoose.Schema({
     coverLetter: String,
     resume: String, // file URL
     status: { type: String, enum: ["applied", "shortlisted", "rejected", "hired"], default: "applied" },
-    appliedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
 export default mongoose.model("Application", applicationSchema);

@@ -12,6 +12,7 @@ import { AppContext } from './context/AppContext'
 import AdminDashboard from './pages/AdminDashboard'
 import axios from 'axios'
 import FindJobs from './pages/FindJobs'
+import CategoryJobs from './pages/CategoryJobs'
 
 const AdminRoute = () => {
   const { backendUrl } = useContext(AppContext);
@@ -55,15 +56,18 @@ const App = () => {
     <>
       <ToastContainer />
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/jobdetails/:id" element={<JobDetails />} />
-        <Route path="/admin" element={<AdminRoute />} />
-        <Route path="/find-jobs" element={<FindJobs />} />
-      </Routes>
+      <div className='max-w-[76.375] mx-auto ' >
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/jobdetails/:id" element={<JobDetails />} />
+          <Route path="/admin" element={<AdminRoute />} />
+          <Route path="/find-jobs" element={<FindJobs />} />
+          <Route path="/category-jobs" element={<CategoryJobs />} />
+        </Routes>
+      </div>
       {/* <Footer /> */}
     </>
   )

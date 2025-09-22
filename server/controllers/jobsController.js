@@ -1,3 +1,4 @@
+import applicationModel from '../models/applicationModel.js';
 import jobsModel from '../models/jobsModel.js';
 import recruiterProfileModel from '../models/recruiterProfileModel.js';
 // import authModel from '../models/authModels.js';
@@ -107,7 +108,7 @@ export const getCompanyJobs = async (req, res) => {
     }
 
     try {
-        const companyJobs = await jobsModel.find({ company: company, isActive: true });
+        const companyJobs = await jobsModel.find({ company: company, isActive: true, approved:"approved" });
 
         if (!companyJobs || companyJobs.length <= 0) {
             return res.json({ success: false, message: "No Jobs Found" });
@@ -189,3 +190,50 @@ export const getActiveJobs = async (req, res) => {
 
     }
 }
+
+export const searchJob = async (req, res) => {
+    try {
+        const { search } = req.body;
+
+        // Search for approved jobs matching title (case-insensitive)
+        const approvedJobs = await jobsModel.find({
+            title: { $regex: search, $options: "i" },
+            approved: "approved"
+        });
+
+        // Get unique categories of matched jobs
+        const categorySet = new Set(approvedJobs.map(job => job.category));
+
+        const approvedCategoryJobs = await jobsModel.find({
+            category: { $in: [...categorySet] },
+            approved: "approved"
+        })
+
+        return res.json({
+            success: true,
+            categorySet: [...categorySet],
+            approvedCategoryJobs
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const getCategoryJobs = async (req, res) => {
+    try {
+        const { category } = req.body;
+
+        const approvedCategoryJobs = await jobsModel.find({
+            category: category,
+            approved: "approved"
+        });
+
+        return res.json({
+            success: true,
+            approvedCategoryJobs
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+

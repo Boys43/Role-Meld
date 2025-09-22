@@ -4,18 +4,89 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
 
+// Define categories and subcategories
+const categories = {
+  "IT & Software": [
+    "Frontend Developer",
+    "Backend Developer",
+    "Full Stack Developer",
+    "Mobile App Developer",
+    "UI/UX Designer",
+    "Data Scientist",
+    "AI / ML Engineer",
+    "DevOps Engineer",
+    "QA / Tester",
+  ],
+  "Digital Marketing": [
+    "SEO Specialist",
+    "Content Marketing",
+    "Social Media Marketing",
+    "Email Marketing",
+    "PPC / Ads",
+    "Affiliate Marketing",
+  ],
+  "Design & Creative": [
+    "Graphic Designer",
+    "Illustrator",
+    "Animator",
+    "Product Designer",
+    "Presentation Designer",
+  ],
+  "Finance & Accounting": [
+    "Accountant",
+    "Bookkeeper",
+    "Financial Analyst",
+    "Tax Consultant",
+    "Audit & Compliance",
+  ],
+  "Human Resources": [
+    "HR Manager",
+    "Recruiter",
+    "Training & Development",
+    "Virtual Assistant",
+  ],
+  "Sales & Business Development": [
+    "Sales Executive",
+    "Business Development Manager",
+    "Account Manager",
+    "Lead Generation",
+  ],
+  "Engineering & Architecture": [
+    "Civil Engineer",
+    "Mechanical Engineer",
+    "Electrical Engineer",
+    "Architect",
+    "Project Manager",
+  ],
+};
+
 const JobForm = () => {
   const { backendUrl, userData } = useContext(AppContext);
   const [jobData, setJobData] = useState({});
+  const [subCategories, setSubCategories] = useState([]);
   const editor = useRef(null);
 
   const handleJobChange = (e) => {
-    setJobData({
-      ...jobData,
-      [e.target.name]: e.target.value,
-      companyProfile: userData.profilePicture,
-      company: userData.company,
-    });
+    const { name, value } = e.target;
+
+    // If main category changes, update subcategories
+    if (name === "category") {
+      setSubCategories(categories[value] || []);
+      setJobData((prev) => ({
+        ...prev,
+        category: value,
+        subCategory: "", // reset subcategory when category changes
+        companyProfile: userData.profilePicture,
+        company: userData.company,
+      }));
+    } else {
+      setJobData((prev) => ({
+        ...prev,
+        [name]: value,
+        companyProfile: userData.profilePicture,
+        company: userData.company,
+      }));
+    }
   };
 
   const postJob = async () => {
@@ -25,7 +96,8 @@ const JobForm = () => {
       });
       if (data.success) {
         toast.success(data.message);
-        setJobData({}); // clear form
+        setJobData({});
+        setSubCategories([]);
       } else {
         toast.error(data.message);
       }
@@ -69,9 +141,10 @@ const JobForm = () => {
           }
         />
 
-        {/* Location Type */}
+        {/* Details */}
         <h3 className="font-medium">Details</h3>
         <div className="flex flex-wrap gap-4">
+          {/* Location Type */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold mb-1">Location Type</label>
             <select
@@ -81,13 +154,13 @@ const JobForm = () => {
               className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
             >
               <option value="">Select Location Type</option>
-              <option value="remote">Remote</option>
-              <option value="on-site">On-site</option>
-              <option value="hybrid">Hybrid</option>
+              <option value="Remote">Remote</option>
+              <option value="On Site">On-site</option>
+              <option value="Hybrid">Hybrid</option>
             </select>
           </div>
 
-          {/* Job Category */}
+          {/* Main Category */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold mb-1">Job Category</label>
             <select
@@ -97,15 +170,30 @@ const JobForm = () => {
               className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
             >
               <option value="">Select Category</option>
-              <option value="frontend">Frontend Developer</option>
-              <option value="backend">Backend Developer</option>
-              <option value="fullstack">Full Stack Developer</option>
-              <option value="mobile">Mobile App Developer</option>
-              <option value="uiux">UI/UX Designer</option>
-              <option value="datascientist">Data Scientist</option>
-              <option value="mlai">AI / ML Engineer</option>
-              <option value="devops">DevOps Engineer</option>
-              <option value="qa">QA / Tester</option>
+              {Object.keys(categories).map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sub Category */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold mb-1">Sub Category</label>
+            <select
+              name="subCategory"
+              value={jobData.subCategory || ""}
+              onChange={handleJobChange}
+              className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+              disabled={!subCategories.length}
+            >
+              <option value="">Select Sub Category</option>
+              {subCategories.map((sub) => (
+                <option key={sub} value={sub}>
+                  {sub}
+                </option>
+              ))}
             </select>
           </div>
 

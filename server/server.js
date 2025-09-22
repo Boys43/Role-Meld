@@ -9,6 +9,8 @@ import userRouter from "./routes/userRouter.js";
 import applicationRouter from "./routes/applicationRoutes.js";
 import { startJobsCron } from "./cron/jobsCron.js";
 import analyticRouter from "./routes/analyticRoutes.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 app.use(cookieParser())
@@ -18,6 +20,12 @@ const allowedOrigins = [
     "https://role-meld.onrender.com",  // backend (API)
     "https://role-meld-1.onrender.com" // frontend
 ];
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from "uploads" folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 
 app.use(

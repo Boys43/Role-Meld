@@ -10,7 +10,6 @@ const jobsSchema = new mongoose.Schema({
     skills: { type: [String], required: true },
     experience: { type: String, required: true },
     postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "RecruiterProfile", required: true },
-    postedAt: { type: Date, default: Date.now },
     applicationDeadline: { type: Date, required: true },
     applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: "userProfile" }],
     sponsored: { type: Boolean, default: false },
@@ -19,6 +18,7 @@ const jobsSchema = new mongoose.Schema({
     category: { type: String },
     approved: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
     isActive: { type: Boolean, default: true },
+    subCategory: { type: String, default: '' },
 }, { timestamps: true });
 
 const jobsModel = mongoose.models.Jobs || mongoose.model("Jobs", jobsSchema);
