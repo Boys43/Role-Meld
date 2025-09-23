@@ -7,12 +7,18 @@ import { toast } from 'react-toastify';
 import { MdCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
+// React Icons
+import { CiBookmark } from "react-icons/ci";
+import { FaBookmark } from "react-icons/fa";
+
 const JobCard = ({ e }) => {
-    const { backendUrl, isLoggedIn, userData } = useContext(AppContext);
+    const { backendUrl, isLoggedIn, userData, toggleSaveJob, savedJobs } = useContext(AppContext);
+    console.log([...savedJobs]);
+
     const [toggleApplyJob, setToggleApplyJob] = useState(false)
     const [applJobId, setapplJobId] = useState('')
     const navigate = useNavigate();
-    const [coverLetter, setCoverLetter] = useState('')
+    const [coverLetter, setCoverLetter] = useState('');
     const applyJob = async (id) => {
         try {
             const { data } = await axios.post(backendUrl + '/api/user/applyjob', { jobId: id, resume: userData?.resume, coverLetter: coverLetter });
@@ -35,7 +41,7 @@ const JobCard = ({ e }) => {
 
     return (
         <>
-            <li className='p-6 border border-blue-500 rounded-lg shadow hover:shadow-lg transition-shadow flex flex-col gap-4 bg-blue-50'>
+            <li className='p-6 border relative border-blue-500 rounded-lg shadow hover:shadow-lg transition-shadow flex flex-col gap-4 bg-blue-50'>
                 {/* Company Info */}
                 <div className='flex items-center gap-3'>
                     <img
@@ -83,6 +89,11 @@ const JobCard = ({ e }) => {
                         View Details
                     </button>
                 </div>
+                <span
+                    onClick={() => toggleSaveJob(e?._id)}
+                    className='text-[var(--primary-color)] text-sm mt-2 cursor-pointer absolute top-3 right-3'>
+                    {[...savedJobs].includes(e?._id) ? <FaBookmark size={25} /> : <CiBookmark size={30} />}
+                </span>
             </li>
 
             {/* Apply Job Pop Up */}

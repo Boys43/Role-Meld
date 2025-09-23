@@ -38,7 +38,6 @@ const RecruiterJobs = () => {
 
     console.log(filteredJobs);
 
-
     return (
         <div className='w-full p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto '>
             <div className='p-4 bg-white border rounded-lg shadow-lg'>

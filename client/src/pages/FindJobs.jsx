@@ -12,17 +12,19 @@ import JobCard from '../components/JobCard'
 const FindJobs = () => {
   const location = useLocation();
   const { backendUrl, userData } = useContext(AppContext)
-
   const [loading, setLoading] = useState(false)
+
+
 
   // Using Parameters for getting the job 
   const search = new URLSearchParams(location.search);
   const Param = search.get('job');
   const categoryParam = search.get('category');
+  console.log(Param);
 
   const [searchedCategories, setSearchedCategories] = useState([]);
   const [approvedCategoryJobs, setApprovedCategoryJobs] = useState([]);
-  if (Param) {
+  if (Param !== null) {
     const seachedJobs = async () => {
       try {
         const { data } = await axios.post(`${backendUrl}/api/jobs/searchjobs`, { search: Param })
@@ -38,19 +40,23 @@ const FindJobs = () => {
       seachedJobs();
     }, [Param]);
   } else {
-    const gettAllJobs = async () => {
+    const getAllJobs = async () => {
       try {
-        const { data } = await axios.get(`${backendUrl}/api/jobs/getalljobs`)
+        const { data } = await axios.get(`${backendUrl}/api/jobs/getapprovedjobs`)
         if (data.success) {
           setSearchedCategories(data.categorySet);
-          setApprovedCategoryJobs(data.approvedCategoryJobs);
+          setApprovedCategoryJobs(data.jobs);
         }
       } catch (error) {
         toast.error(error.response.data.message);
       }
     }
+    useEffect(() => {
+      getAllJobs();
+    }, []);
   }
 
+  console.log(searchedCategories);
 
 
   const [filterCateogry, setFilterCateogry] = useState(categoryParam || 'category');
@@ -76,65 +82,65 @@ const FindJobs = () => {
 
   return (
     <>
-      <div className=''>
-        <div className='p-6'>
+      <div className='px-6'>
+        <div className='sticky top-0 py-6'>
           <Search Param={Param} />
-          <div className='my-6 px-10'>
-            {/* Jobs */}
-            <h1>
-              <span className='font-bold'>Results For:</span> {Param}
-            </h1>
-            <section className='flex items-center gap-8 mt-6'>
-              <h3 className='flex items-center gap-2 font-semibold'>
-                <FaFilter size={20} className='text-[var(--primary-color)]' /> Filter:
-              </h3>
-              <select
-                name="category"
-                id="category"
-                onChange={(e) => setFilterCateogry(e.target.value)}
-                className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
-              >
-                <option value="category">Category</option>
-                {searchedCategories.map((category, i) => (
-                  <option
-                    key={i}
-                    value={category || "Empty"}
-                    className="px-4 py-2 bg-white hover:bg-blue-50"
-                  >
-                    {category || "Empty"}
-                  </option>
-                ))}
-              </select>
-              <select name="jobType" id="jobType"
-                className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
-                onChange={(e) => setFilterJobType(e.target.value)}
-              >
-                <option value="jobType">Job Type</option>
-                <option value="Full Time">Full Time</option>
-                <option value="Part Time">Part Time</option>
-                <option value="Contract">Contract</option>
-              </select>
+        </div>
+        <div className='my-6 px-2 md:px-5 lg:px-10'>
+          {/* Jobs */}
+          <h1>
+            <span className='font-bold'>Results For:</span> {Param}
+          </h1>
+          <section className='flex flex-wrap items-center gap-8 mt-6'>
+            <h3 className='flex items-center gap-2 font-semibold'>
+              <FaFilter size={20} className='text-[var(--primary-color)]' /> Filter:
+            </h3>
+            <select
+              name="category"
+              id="category"
+              onChange={(e) => setFilterCateogry(e.target.value)}
+              className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
+            >
+              <option value="category">Category</option>
+              {searchedCategories?.map((category, i) => (
+                <option
+                  key={i}
+                  value={category || "Empty"}
+                  className="px-4 py-2 bg-white hover:bg-blue-50"
+                >
+                  {category || "Empty"}
+                </option>
+              ))}
+            </select>
+            <select name="jobType" id="jobType"
+              className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
+              onChange={(e) => setFilterJobType(e.target.value)}
+            >
+              <option value="jobType">Job Type</option>
+              <option value="Full Time">Full Time</option>
+              <option value="Part Time">Part Time</option>
+              <option value="Contract">Contract</option>
+            </select>
 
-              <select name="LocationType" id="LocationType"
-                className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
-                onChange={(e) => setFilterLocationType(e.target.value)}
-              >
-                <option value="locationType">Location Type</option>
-                <option value="Remote">Remote</option>
-                <option value="On Site">On Site</option>
-                <option value="Hybrid">Hybrid</option>
-              </select>
-            </section>
-            <section className='my-4'>
-              <ul className='grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                {filteredJobs?.map((e, i) => (
-                  <JobCard key={i} e={e} />
-                ))}
-              </ul>
-            </section>
-          </div>
-        </div >
-      </div>
+            <select name="LocationType" id="LocationType"
+              className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
+              onChange={(e) => setFilterLocationType(e.target.value)}
+            >
+              <option value="locationType">Location Type</option>
+              <option value="Remote">Remote</option>
+              <option value="On Site">On Site</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+          </section>
+          <section className='my-4'>
+            <ul className='grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+              {filteredJobs?.map((e, i) => (
+                <JobCard key={i} e={e} />
+              ))}
+            </ul>
+          </section>
+        </div>
+      </div >
     </>
   )
 }
