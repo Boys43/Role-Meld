@@ -56,19 +56,17 @@ const App = () => {
     <>
       <ToastContainer />
       <Navbar />
-      <div className='max-w-[76.375] mx-auto ' >
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/jobdetails/:id" element={<JobDetails />} />
-          <Route path="/admin" element={<AdminRoute />} />
-          <Route path="/find-jobs" element={<FindJobs />} />
-          <Route path="/category-jobs" element={<CategoryJobs />} />
-        </Routes>
-      </div>
-      {/* <Footer /> */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/jobdetails/:id" element={<JobDetails />} />
+        <Route path="/admin" element={<AdminRoute />} />
+        <Route path="/find-jobs" element={<FindJobs />} />
+        <Route path="/category-jobs" element={<CategoryJobs />} />
+      </Routes>
+      <Footer />
     </>
   )
 }
