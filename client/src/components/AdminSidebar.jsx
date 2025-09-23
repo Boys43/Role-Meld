@@ -12,6 +12,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
     { name: 'Users', key: "users", icon: <FaCodePullRequest size={25} /> },
     { name: 'Recruiters', key: "recruiters", icon: <RiAdminLine size={25} /> },
     { name: 'Jobs', key: "jobs", icon: <IoPersonSharp size={25} /> },
+    { name: 'Blog', key: "blog", icon: <IoPersonSharp size={25} /> },
   ]
 
   return (

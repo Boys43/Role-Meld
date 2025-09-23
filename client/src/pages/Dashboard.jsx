@@ -8,6 +8,7 @@ import Applications from "../components/Applications";
 import JobForm from "../components/JobsForm";
 import { AppContext } from "../context/AppContext";
 import RecruiterJobs from "../components/RecruiterJobs";
+import AdminBlog from "../components/AdminBlog";
 
 const Dashboard = () => {
   const { userData } = useContext(AppContext);

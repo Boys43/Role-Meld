@@ -11,6 +11,7 @@ import { startJobsCron } from "./cron/jobsCron.js";
 import analyticRouter from "./routes/analyticRoutes.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
+import blogRouter from "./routes/blogRoutes.js";
 
 const app = express();
 app.use(cookieParser())
@@ -26,8 +27,6 @@ const __dirname = path.dirname(__filename);
 // Serve static files from "uploads" folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
-
 app.use(
     cors({
         origin: function (origin, callback) {
@@ -41,24 +40,21 @@ app.use(
     })
 );
 
-app.use('/uploads', express.static('uploads'));
-
 const PORT = 4000;
-
 
 app.get('/', (req, res) => {
     res.send("I am Working Bitch!")
 })
 
 connectDB();
-startJobsCron(); // starts the cron task
-
+startJobsCron();
 
 app.use('/api/jobs', jobsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/applications', applicationRouter);
 app.use('/api/analytics', analyticRouter);
+app.use('/api/blog', blogRouter);
 
 app.listen(PORT, () => {
     console.log(`App Listening on http://localhost:${PORT}`);

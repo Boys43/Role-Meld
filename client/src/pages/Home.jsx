@@ -58,14 +58,25 @@ const Home = () => {
           </p>
           <Search />
         </section>
-        <section className="border gap-4 flex flex-wrap items-center justify-evenly rounded-2xl p-4 mt-4 shadow-xl">
-          <img src={assets.nt} alt="Netflix" className="w-20" />
-          <img src={assets.am} alt="Amazon" className="w-20" />
-          <img src={assets.sm} alt="samsung" className="w-20" />
-          <img src={assets.apple} alt="Apple" className="w-20" />
-          <img src={assets.tcs} alt="Tcs" className="w-15" />
-          <img src={assets.mt} alt="Microsoft" className="w-20" />
-          <img src={assets.fb} alt="Facebook" className="w-20" />
+        <section className="border   rounded-2xl p-4 mt-4 shadow-xl">
+          <Marquee pauseOnHover>
+            <div className="flex flex-wrap items-center justify-evenly gap-10 md:gap-20 lg:gap-30 w-full">
+              <img src={assets.nt} alt="Netflix" className="w-20" />
+              <img src={assets.am} alt="Amazon" className="w-20" />
+              <img src={assets.sm} alt="samsung" className="w-20" />
+              <img src={assets.apple} alt="Apple" className="w-20" />
+              <img src={assets.tcs} alt="Tcs" className="w-15" />
+              <img src={assets.mt} alt="Microsoft" className="w-20" />
+              <img src={assets.fb} alt="Facebook" className="w-20" />
+              <img src={assets.nt} alt="Netflix" className="w-20" />
+              <img src={assets.am} alt="Amazon" className="w-20" />
+              <img src={assets.sm} alt="samsung" className="w-20" />
+              <img src={assets.apple} alt="Apple" className="w-20" />
+              <img src={assets.tcs} alt="Tcs" className="w-15" />
+              <img src={assets.mt} alt="Microsoft" className="w-20" />
+              <img src={assets.fb} alt="Facebook" className="w-20 mr-10 lg:mr-15" />
+            </div>
+          </Marquee>
         </section>
         <section className="mt-20">
           <h1 className="font-bold my-8 flex items-center gap-4">
@@ -146,7 +157,7 @@ const Home = () => {
                   <MdDesignServices size={30} />
                   Design & Creative
                 </h3>
-                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 mr-10"
                   onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Finance & Accounting"))}
                 >
                   <MdAccountBalance size={30} />
@@ -229,7 +240,7 @@ const Home = () => {
                   <MdEngineering size={30} />
                   Engineering
                 </h3>
-                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 mr-10"
                   onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Website Development"))}
                 >
                   <MdWeb size={30} />
@@ -249,9 +260,7 @@ const Home = () => {
           <h1 className="font-bold flex items-center gap-4">
             <MdRateReview className="text-[var(--primary-color)]" /> Testimonials
           </h1>
-          <div className="">
-            <Testimonials />
-          </div>
+          <Testimonials />
         </section>
       </main>
     </>
