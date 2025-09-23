@@ -108,7 +108,7 @@ export const getCompanyJobs = async (req, res) => {
     }
 
     try {
-        const companyJobs = await jobsModel.find({ company: company, isActive: true, approved:"approved" });
+        const companyJobs = await jobsModel.find({ company: company, isActive: true, approved: "approved" });
 
         if (!companyJobs || companyJobs.length <= 0) {
             return res.json({ success: false, message: "No Jobs Found" });
@@ -165,7 +165,13 @@ export const updateJobStatus = async (req, res) => {
 export const getApprovedJobs = async (req, res) => {
     try {
         const jobs = await jobsModel.find({ approved: "approved", isActive: true });
-        return res.json({ success: true, jobs });
+
+        console.log(jobs);
+
+        const categorySet = new Set(jobs.map(job => job.category));
+        console.log(categorySet);
+
+        return res.json({ success: true, jobs, categorySet: [...categorySet] });
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }
@@ -198,15 +204,17 @@ export const searchJob = async (req, res) => {
         // Search for approved jobs matching title (case-insensitive)
         const approvedJobs = await jobsModel.find({
             title: { $regex: search, $options: "i" },
-            approved: "approved"
+            approved: "approved",
+            isActive: true
         });
-
+        
         // Get unique categories of matched jobs
         const categorySet = new Set(approvedJobs.map(job => job.category));
-
+        
         const approvedCategoryJobs = await jobsModel.find({
             category: { $in: [...categorySet] },
-            approved: "approved"
+            approved: "approved",
+            isActive: true
         })
 
         return res.json({
@@ -225,7 +233,8 @@ export const getCategoryJobs = async (req, res) => {
 
         const approvedCategoryJobs = await jobsModel.find({
             category: category,
-            approved: "approved"
+            approved: "approved",
+            isActive: true
         });
 
         return res.json({
@@ -237,3 +246,20 @@ export const getCategoryJobs = async (req, res) => {
     }
 }
 
+// Sponsored Jobs
+export const getSponsoredJobs = async (req, res) => {
+    try {
+        const sponsoredJobs = await jobsModel.find({
+            sponsored: true,
+            approved: "approved",
+            isActive: true
+        });
+
+        return res.status(200).json({
+            success: true,
+            sponsoredJobs
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}

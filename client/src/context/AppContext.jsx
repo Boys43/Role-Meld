@@ -34,9 +34,8 @@ export const AppContextProvider = (props) => {
           toast.error(error.message || "Something went wrong");
         });
 
-      return newSet; // ✅ Correctly updates state
+      return newSet;
     });
-
   };
 
 

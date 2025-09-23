@@ -3,6 +3,8 @@ import JoditEditor from "jodit-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
+import "react-step-progress-bar/styles.css";
+import { ProgressBar } from "react-step-progress-bar";
 
 // Define categories and subcategories
 const categories = {
@@ -106,9 +108,17 @@ const JobForm = () => {
     }
   };
 
+  const [jobSteps, setjobSteps] = useState(0);
+  console.log(jobData.title);
+
+
   return (
-    <div className="w-full p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto cursor-pointer">
-      <h1 className="text-[var(--primary-color)] font-semibold">List New Jobs</h1>
+    <div className="w-full p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto">
+      <h1 className="text-[var(--primary-color)] mb-8 font-semibold">List New Jobs</h1>
+      <ProgressBar
+        percent={jobSteps * 14.285714285714286}
+        filledBackground="linear-gradient(to right, var(--primary-color), var(--secondary-color)"
+      />
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -116,49 +126,19 @@ const JobForm = () => {
         }}
         className="flex flex-col gap-2 mt-4"
       >
-        {/* Title */}
-        <label htmlFor="title" className="font-medium">
-          Title
-        </label>
-        <input
-          type="text"
-          name="title"
-          value={jobData.title || ""}
-          onChange={handleJobChange}
-          className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-          placeholder="Title"
-        />
-
-        {/* Description */}
-        <label htmlFor="description" className="font-medium">
-          Description
-        </label>
-        <JoditEditor
-          ref={editor}
-          value={jobData.description || ""}
-          onChange={(content) =>
-            setJobData((prev) => ({ ...prev, description: content }))
-          }
-        />
-
-        {/* Details */}
-        <h3 className="font-medium">Details</h3>
-        <div className="flex flex-wrap gap-4">
-          {/* Location Type */}
-          <div className="flex flex-col">
-            <label className="text-sm font-semibold mb-1">Location Type</label>
-            <select
-              name="locationType"
-              value={jobData.locationType || ""}
-              onChange={handleJobChange}
-              className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="">Select Location Type</option>
-              <option value="Remote">Remote</option>
-              <option value="On Site">On-site</option>
-              <option value="Hybrid">Hybrid</option>
-            </select>
-          </div>
+        {jobSteps === 0 && <>
+          {/* Title */}
+          <label htmlFor="title" className="font-medium">
+            Title
+          </label>
+          <input
+            type="text"
+            name="title"
+            value={jobData.title || ""}
+            onChange={handleJobChange}
+            className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+            placeholder="Title"
+          />
 
           {/* Main Category */}
           <div className="flex flex-col">
@@ -178,6 +158,18 @@ const JobForm = () => {
             </select>
           </div>
 
+          <button type="button" onClick={(e) => {
+            if (!jobData.title && !jobData.category) {
+              toast.error('Missing Details')
+            } else {
+              setjobSteps(1);
+            }
+          }}>
+            Next
+          </button>
+        </>}
+
+        {jobSteps === 1 && <>
           {/* Sub Category */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold mb-1">Sub Category</label>
@@ -196,87 +188,192 @@ const JobForm = () => {
               ))}
             </select>
           </div>
+          <h3 className="font-medium">Details</h3>
+          <div className="flex flex-wrap gap-4">
+            {/* Location Type */}
+            <div className="flex flex-col">
+              <label className="text-sm font-semibold mb-1">Location Type</label>
+              <select
+                name="locationType"
+                value={jobData.locationType || ""}
+                onChange={handleJobChange}
+                className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">Select Location Type</option>
+                <option value="Remote">Remote</option>
+                <option value="On Site">On-site</option>
+                <option value="Hybrid">Hybrid</option>
+              </select>
+            </div>
 
-          {/* Job Type */}
-          <div className="flex flex-col">
-            <label className="text-sm font-semibold mb-1">Job Type</label>
-            <select
-              name="jobType"
-              value={jobData.jobType || ""}
-              onChange={handleJobChange}
-              className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="">Select Job Type</option>
-              <option value="Full Time">Full Time</option>
-              <option value="Part Time">Part Time</option>
-              <option value="Contract">Contract</option>
-            </select>
+            {/* Job Type */}
+            <div className="flex flex-col">
+              <label className="text-sm font-semibold mb-1">Job Type</label>
+              <select
+                name="jobType"
+                value={jobData.jobType || ""}
+                onChange={handleJobChange}
+                className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">Select Job Type</option>
+                <option value="Full Time">Full Time</option>
+                <option value="Part Time">Part Time</option>
+                <option value="Contract">Contract</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        {/* Experience */}
-        <label htmlFor="experience">Experience Required</label>
-        <input
-          type="text"
-          name="experience"
-          value={jobData.experience || ""}
-          onChange={handleJobChange}
-          className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-          placeholder="Experience (e.g., 2 Years)"
-        />
+          <button type="button" onClick={() => {
+            if (!jobData.subCategory && !jobData.jobType && !jobData.locationType) {
+              toast.error("Job Details Required")
+            } else {
+              setjobSteps(2);
+            }
+          }}>
+            Next
+          </button>
+        </>}
 
-        {/* Application Deadline */}
-        <label htmlFor="applicationDeadline">Application Deadline (in days)</label>
-        <input
-          type="number"
-          name="applicationDeadline"
-          value={jobData.applicationDeadline || ""}
-          onChange={handleJobChange}
-          className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-          placeholder="30"
-        />
+        {jobSteps === 2 && <div>
+          {/* Description */}
+          <h3 className="font-bold">
+            Description
+          </h3>
+          <label htmlFor="description" className="font-medium">
+            Description
+          </label>
+          <JoditEditor
+            ref={editor}
+            value={jobData.description || ""}
+            onChange={(content) =>
+              setJobData((prev) => ({ ...prev, description: content }))
+            }
+          />
+          <button type="button" className="mt-4" onClick={() => {
+            if (!jobData.description) {
+              toast.error("Missing Description")
+            } else {
+              setjobSteps(3);
+            }
+          }}>
+            Next
+          </button>
+        </div>}
 
-        {/* City */}
-        <label htmlFor="location">City</label>
-        <input
-          type="text"
-          name="location"
-          value={jobData.location || ""}
-          onChange={handleJobChange}
-          className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-          placeholder="Enter City"
-        />
 
+        {jobSteps === 4 && <div className="flex flex-col gap-6">
+          {/* Experience */}
+          <h3 className="font-bold">
+            Experience
+          </h3>
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="experience">Experience Required</label>
+            <input
+              type="text"
+              name="experience"
+              value={jobData.experience || ""}
+              onChange={handleJobChange}
+              className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+              placeholder="Experience (e.g., 2 Years)"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+
+            {/* Application Deadline */}
+            <label htmlFor="applicationDeadline">Application Deadline (in days)</label>
+            <input
+              type="number"
+              name="applicationDeadline"
+              value={jobData.applicationDeadline || ""}
+              onChange={handleJobChange}
+              className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+              placeholder="30"
+            />
+          </div>
+
+          <button type="button" className="mt-4" onClick={() => {
+            if (!jobData.experience && !jobData.applicationDeadline) {
+              toast.error('Experience Details Required')
+            } else {
+              setjobSteps(4);
+            }
+          }}>
+            Next
+          </button>
+        </div>}
+
+        {jobSteps === 4 && <div className="flex flex-col gap-2">
+          <h3 className="font-bold">Location Details</h3>
+          {/* City */}
+          <label htmlFor="location" className="mt-8">City</label>
+          <input
+            type="text"
+            name="location"
+            value={jobData.location || ""}
+            onChange={handleJobChange}
+            className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+            placeholder="Enter City"
+          />
+
+          <button type="button" onClick={() => {
+            if (!jobData.location) {
+              toast.error('Location Details Required')
+            } else {
+              setjobSteps(5);
+            }
+          }}>
+            Next
+          </button>
+        </div>}
+
+        {jobSteps === 5 && <div>
+          <h3 className="font-bold">Salary</h3>
+          <label className="mt-8" htmlFor="salary">Salary $</label>
+          <input
+            type="number"
+            name="salary"
+            value={jobData.salary || ""}
+            onChange={handleJobChange}
+            className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+            placeholder="In Dollars $"
+          />
+          <button type="button" onClick={() => {
+            if (!jobData.salary) {
+              toast.error('Salary Details Required')
+            } else {
+              setjobSteps(6);
+            }
+          }}>
+            Next
+          </button>
+        </div>}
         {/* Salary */}
-        <label htmlFor="salary">Salary ($)</label>
-        <input
-          type="number"
-          name="salary"
-          value={jobData.salary || ""}
-          onChange={handleJobChange}
-          className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-          placeholder="In Dollars $"
-        />
 
-        {/* Skills */}
-        <label htmlFor="skills" className="font-medium mt-2">
-          Skills
-        </label>
-        <input
-          type="text"
-          name="skills"
-          value={jobData.skills || ""}
-          onChange={handleJobChange}
-          className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-          placeholder="Enter Skills (comma separated)"
-        />
-
-        <button
-          type="submit"
-          className="bg-[var(--primary-color)] text-white px-4 py-2 rounded mt-2"
-        >
-          Save
-        </button>
+        {jobSteps === 6 && <div>
+          {/* Skills */}
+          <h3 className="font-bold">
+            Skills Needed
+          </h3>
+          <label htmlFor="skills" className="font-medium mt-8">
+            Skills
+          </label>
+          <input
+            type="text"
+            name="skills"
+            value={jobData.skills || ""}
+            onChange={handleJobChange}
+            className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+            placeholder="Enter Skills (comma separated)"
+          />
+          <button
+            type="submit"
+            className="bg-[var(--primary-color)] text-white px-4 py-2 rounded mt-2"
+          >
+            List
+          </button>
+        </div>}
       </form>
     </div>
   );

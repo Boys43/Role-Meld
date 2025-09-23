@@ -21,7 +21,7 @@ const Search = ({ Param }) => {
   return (
     <section
       id="search"
-      className="shadow-2xl w-[70vw] mx-auto border-[1px] border-[var(--primary-color)] rounded-2xl"
+      className="shadow-2xl backdrop-blur-xs w-[70vw] mx-auto border-[1px] border-[var(--primary-color)] rounded-2xl"
     >
       <form onSubmit={handleSubmit} className="flex w-full items-center">
         <div className="flex w-full text-[var(--primary-color)] relative">

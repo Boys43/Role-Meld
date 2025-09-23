@@ -1,6 +1,9 @@
 import { FaBriefcase } from "react-icons/fa";
 import assets from "../assets/assets";
 import Search from "../components/Search";
+import Marquee from 'react-fast-marquee'
+import FeaturedJobCard from "../components/FeaturedJobCard";
+
 
 // React Icons
 import { MdComputer } from "react-icons/md";       // IT & Software
@@ -12,10 +15,36 @@ import { MdBusinessCenter } from "react-icons/md"; // Business Development
 import { MdEngineering } from "react-icons/md";    // Engineering
 import { MdWeb } from "react-icons/md";            // Website Development
 import { useNavigate } from "react-router-dom";
+import { MdFeaturedPlayList } from "react-icons/md";
+import axios from "axios";
+import { useContext, useState } from "react";
+import { AppContext } from "../context/AppContext";
+import { toast } from "react-toastify";
+import { MdRateReview } from "react-icons/md";
+
+// Swiper Slides
+import 'swiper/css';
+import 'swiper/css/autoplay';
+import Testimonials from "../components/Testimonials";
+import FeaturedJobs from "../components/FeaturedJobs";
 
 
 const Home = () => {
   const navigate = useNavigate();
+  const { backendUrl } = useContext(AppContext);
+
+  const [sponsoredJobs, setSponsoredJobs] = useState([])
+  // Getting Sponsored Jobs
+  const getSponsoredJobs = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/jobs/getsponsoredjobs`);
+      if (data.success) {
+        setSponsoredJobs(data.sponsoredJobs);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
     <>
@@ -24,12 +53,12 @@ const Home = () => {
           <h1 className="text-white">
             Welcome to <span className="text-[var(--accent-color)] font-bold italic">Role Meld</span>
           </h1>
-          <p className="text-[var(--accent-color)]">
+          <p className="text-[var(--accent-color)] text-center">
             Find the perfect job for you in just a few clicks with Role Meld
           </p>
           <Search />
         </section>
-        <section className="border flex items-center justify-evenly rounded-2xl p-4 mt-4 shadow-xl">
+        <section className="border gap-4 flex flex-wrap items-center justify-evenly rounded-2xl p-4 mt-4 shadow-xl">
           <img src={assets.nt} alt="Netflix" className="w-20" />
           <img src={assets.am} alt="Amazon" className="w-20" />
           <img src={assets.sm} alt="samsung" className="w-20" />
@@ -39,46 +68,190 @@ const Home = () => {
           <img src={assets.fb} alt="Facebook" className="w-20" />
         </section>
         <section className="mt-20">
-          <h1 className="font-bold my-8 flex items-center gap-8">
-            <FaBriefcase className="text-[var(--primary-color)]" />  Choose Your Career Path
+          <h1 className="font-bold my-8 flex items-center gap-4">
+            <FaBriefcase className="text-[var(--primary-color)]" />  Choose Your <span className="text-[var(--primary-color)]">Career Path</span>
           </h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <h3 className="py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2  border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300"
-              onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("IT & Software"))}
-            >
-              <MdComputer size={30} />
-              IT & Software
-            </h3>
-            <h3 className="py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2  border-[var(--primary-color)]  hover:text-white hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300">
-              <MdCampaign size={30} />
-              Digital Marketing
-            </h3>
-            <h3 className="py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2  border-[var(--primary-color)]  hover:text-white hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300">
-              <MdDesignServices size={30} />
-              Design & Creative
-            </h3>
-            <h3 className="py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2  border-[var(--primary-color)]  hover:text-white hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300">
-              <MdAccountBalance size={30} />
-              Finance & Accounting
-            </h3>
-            <h3 className="py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2  border-[var(--primary-color)]  hover:text-white hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300">
-              <MdPeople size={30} />
-              Human Resources
-            </h3>
-            <h3 className="py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2  border-[var(--primary-color)]  hover:text-white hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300">
-              <MdBusinessCenter size={30} />
-              Business Development
-            </h3>
-            <h3 className="py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2  border-[var(--primary-color)]  hover:text-white hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300">
-              <MdEngineering size={30} />
-              Engineering
-            </h3>
-            <h3 className="py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2  border-[var(--primary-color)]  hover:text-white hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300">
-              <MdWeb size={30} />
-              Website Development
-            </h3>
-          </div>
+          <div className="flex flex-col gap-4">
+            <Marquee pauseOnHover gradient={false} speed={40}>
+              <div className="flex gap-8">
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                  <MdComputer size={30}
+                    onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("IT & Software"))}
+                  />
+                  IT & Software
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
 
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Digital Marketing"))}
+                >
+                  <MdCampaign size={30} />
+                  Digital Marketing
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Design & Creative"))}
+                >
+                  <MdDesignServices size={30} />
+                  Design & Creative
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Finance & Accounting"))}
+                >
+                  <MdAccountBalance size={30} />
+                  Finance & Accounting
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                  <MdComputer size={30}
+                    onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("IT & Software"))}
+                  />
+                  IT & Software
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Digital Marketing"))}
+                >
+                  <MdCampaign size={30} />
+                  Digital Marketing
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Design & Creative"))}
+                >
+                  <MdDesignServices size={30} />
+                  Design & Creative
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Finance & Accounting"))}
+                >
+                  <MdAccountBalance size={30} />
+                  Finance & Accounting
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                  <MdComputer size={30}
+                    onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("IT & Software"))}
+                  />
+                  IT & Software
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Digital Marketing"))}
+                >
+                  <MdCampaign size={30} />
+                  Digital Marketing
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Design & Creative"))}
+                >
+                  <MdDesignServices size={30} />
+                  Design & Creative
+                </h3>
+                <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Finance & Accounting"))}
+                >
+                  <MdAccountBalance size={30} />
+                  Finance & Accounting
+                </h3>
+              </div>
+            </Marquee>
+
+            <Marquee pauseOnHover pauseOnClick speed={60}>
+              <div className="flex gap-8">
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Human Resources"))}
+                >
+                  <MdPeople size={30} />
+                  Human Resources
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Business Development"))}
+                >
+                  <MdBusinessCenter size={30} />
+                  Business Development
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Engineering"))}
+                >
+                  <MdEngineering size={30} />
+                  Engineering
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Website Development"))}
+                >
+                  <MdWeb size={30} />
+                  Website Development
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Human Resources"))}
+                >
+                  <MdPeople size={30} />
+                  Human Resources
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Business Development"))}
+                >
+                  <MdBusinessCenter size={30} />
+                  Business Development
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Engineering"))}
+                >
+                  <MdEngineering size={30} />
+                  Engineering
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Website Development"))}
+                >
+                  <MdWeb size={30} />
+                  Website Development
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Human Resources"))}
+                >
+                  <MdPeople size={30} />
+                  Human Resources
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Business Development"))}
+                >
+                  <MdBusinessCenter size={30} />
+                  Business Development
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Engineering"))}
+                >
+                  <MdEngineering size={30} />
+                  Engineering
+                </h3>
+                <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Website Development"))}
+                >
+                  <MdWeb size={30} />
+                  Website Development
+                </h3>
+              </div>
+            </Marquee>
+          </div>
+        </section>
+        <section className="p-4 w-full mt-20">
+          <h1 className="font-bold flex items-center gap-4">
+            <MdFeaturedPlayList className="text-[var(--primary-color)]" /> Featured <span className="text-[var(--primary-color)]">Jobs</span>
+          </h1>
+          <FeaturedJobs />
+        </section>
+        <section className="p-4 w-full mt-20">
+          <h1 className="font-bold flex items-center gap-4">
+            <MdRateReview className="text-[var(--primary-color)]" /> Testimonials
+          </h1>
+          <div className="">
+            <Testimonials />
+          </div>
         </section>
       </main>
     </>
