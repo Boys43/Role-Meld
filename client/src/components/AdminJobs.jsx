@@ -21,7 +21,6 @@ const AdminJobs = () => {
 
   React.useEffect(() => {
     getJobs()
-
   }, [])
   
 

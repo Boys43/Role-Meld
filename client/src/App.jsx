@@ -13,6 +13,7 @@ import AdminDashboard from './pages/AdminDashboard'
 import axios from 'axios'
 import FindJobs from './pages/FindJobs'
 import CategoryJobs from './pages/CategoryJobs'
+import BlogsDetails from './pages/BlogsDetails'
 
 const AdminRoute = () => {
   const { backendUrl } = useContext(AppContext);
@@ -65,6 +66,7 @@ const App = () => {
         <Route path="/admin" element={<AdminRoute />} />
         <Route path="/find-jobs" element={<FindJobs />} />
         <Route path="/category-jobs" element={<CategoryJobs />} />
+        <Route path="/blogdetails/:slug" element={<BlogsDetails />} />
       </Routes>
       <Footer />
     </>

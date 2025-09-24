@@ -14,6 +14,7 @@ import { AppContext } from '../context/AppContext';
 const AdminBlog = () => {
   const { backendUrl } = useContext(AppContext);
   const [blogSteps, setBlogSteps] = useState(0);
+  const [formData, setFormData] = useState({});
   const [Tags, setTags] = useState([])
   const [tag, setTag] = useState('')
   const handleTagKeyDown = (e) => {
@@ -32,27 +33,54 @@ const AdminBlog = () => {
     setFormData({ ...formData, tags: newTags });
   };
 
-
   const editor = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value, tags: Tags });
+
+    if (name === "title") {
+      setFormData({
+        ...formData,
+        title: value,
+        slug: slugify(value, { replacement: "_", lower: true }), // auto-generate slug
+        tags: Tags,
+      });
+    } else {
+      setFormData({ ...formData, [name]: value, tags: Tags });
+    }
   };
 
+
   const createBlog = async () => {
-    const formData = new FormData();  
-    try {<bdo dir="ltr"></bdo>
-      const { data } = await axios.post(`${backendUrl}/api/blog/createblog`, formData );
+    try {
+      // Build FormData to send text + file
+      const fd = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === "tags") {
+          fd.append("tags", JSON.stringify(value)); // tags array as string
+        } else {
+          fd.append(key, value);
+        }
+      });
+
+      const { data } = await axios.post(
+        `${backendUrl}/api/blog/createblog`,
+        fd,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
       if (data.success) {
         toast.success(data.message);
-        setFormData({})
+        setFormData({});
+        setTags([]);
         setBlogSteps(0);
       }
     } catch (error) {
-      toast.error(error);
+      toast.error(error.message || "Something went wrong");
     }
-  }
+  };
 
   return (
     <main className='w-full p-6 '>
@@ -72,7 +100,7 @@ const AdminBlog = () => {
                 type='text'
                 name='slug'
                 id='slug'
-                value={slugify(formData?.title, { replacement: "_", lower: true }) || formData?.slug || ''}
+                value={formData?.slug || ''}
                 onChange={handleChange}
                 placeholder='Slug'
                 className=' w-full p-2 border-2 border-[var(--primary-color)] rounded-md' />
