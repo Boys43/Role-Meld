@@ -8,7 +8,7 @@ const blogSchema = new mongoose.Schema({
   excerpt: String,
   coverImage: String,
   category: String,
-  tags: [String],
+  tags: Array,
   status: { type: String, enum: ["draft", "published"], default: "draft" },
   views: { type: Number, default: 0 },
   likes: { type: Number, default: 0 },

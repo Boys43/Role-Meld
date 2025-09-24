@@ -3,6 +3,7 @@ import assets from "../assets/assets";
 import Search from "../components/Search";
 import Marquee from 'react-fast-marquee'
 import FeaturedJobCard from "../components/FeaturedJobCard";
+import { FaBloggerB } from "react-icons/fa";
 
 
 // React Icons
@@ -27,6 +28,7 @@ import 'swiper/css';
 import 'swiper/css/autoplay';
 import Testimonials from "../components/Testimonials";
 import FeaturedJobs from "../components/FeaturedJobs";
+import BlogsSection from "../components/BlogsSection";
 
 
 const Home = () => {
@@ -261,6 +263,13 @@ const Home = () => {
             <MdRateReview className="text-[var(--primary-color)]" /> Testimonials
           </h1>
           <Testimonials />
+        </section>
+        {/* Blogs */}
+        <section className="p-4 w-full mt-20">
+          <h1 className="font-bold flex items-center gap-4">
+            <FaBloggerB className="text-[var(--primary-color)]" /> Our <span className="text-[var(--primary-color)]">Blogs</span>
+          </h1>
+          <BlogsSection />
         </section>
       </main>
     </>
