@@ -6,6 +6,10 @@ import { AppContext } from "../context/AppContext";
 import "react-step-progress-bar/styles.css";
 import { ProgressBar } from "react-step-progress-bar";
 
+// React Icons
+import { MdSubtitles } from "react-icons/md";
+import { IoChevronBack } from "react-icons/io5";
+
 // Define categories and subcategories
 const categories = {
   "IT & Software": [
@@ -99,6 +103,7 @@ const JobForm = () => {
       if (data.success) {
         toast.success(data.message);
         setJobData({});
+        setjobSteps(0)
         setSubCategories([]);
       } else {
         toast.error(data.message);
@@ -116,7 +121,7 @@ const JobForm = () => {
     <div className="w-full p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto">
       <h1 className="text-[var(--primary-color)] mb-8 font-semibold">List New Jobs</h1>
       <ProgressBar
-        percent={jobSteps * 14.285714285714286}
+        percent={jobSteps * 14.285714285714286 + 14.285714285714286}
         filledBackground="linear-gradient(to right, var(--primary-color), var(--secondary-color)"
       />
       <form
@@ -124,22 +129,32 @@ const JobForm = () => {
           e.preventDefault();
           postJob();
         }}
-        className="flex flex-col gap-2 mt-4"
+        className="flex flex-col gap-4 px-16 py-10 mt-4"
       >
+        <button className="h-9 w-9"
+          disabled={jobSteps === 0}
+        >
+          <IoChevronBack />
+        </button>
         {jobSteps === 0 && <>
-          {/* Title */}
-          <label htmlFor="title" className="font-medium">
-            Title
-          </label>
-          <input
-            type="text"
-            name="title"
-            value={jobData.title || ""}
-            onChange={handleJobChange}
-            className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-            placeholder="Title"
-          />
+          <h2 className="font-semibold flex items-center gap-3">
+            <MdSubtitles className="text-[var(--primary-color)]" /> Add Title
+          </h2>
+          <div className="flex flex-col mt-2">
+            {/* Title */}
+            <label htmlFor="title" className="font-medium">
+              Title
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={jobData.title || ""}
+              onChange={handleJobChange}
+              className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
+              placeholder="Title"
+            />
 
+          </div>
           {/* Main Category */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold mb-1">Job Category</label>
@@ -236,17 +251,34 @@ const JobForm = () => {
 
         {jobSteps === 2 && <div>
           {/* Description */}
-          <h3 className="font-bold">
+          <h3 className="font-bold mb-4">
             Description
           </h3>
-          <label htmlFor="description" className="font-medium">
-            Description
-          </label>
           <JoditEditor
             ref={editor}
-            value={jobData.description || ""}
-            onChange={(content) =>
-              setJobData((prev) => ({ ...prev, description: content }))
+            // remove value here OR set defaultValue
+            defaultValue={jobData.description || ""}
+            config={{
+              readonly: false,
+              height: 400,
+              uploader: { insertImageAsBase64URI: true },
+              buttons: [
+                "bold",
+                "italic",
+                "|",
+                "paragraph",
+                "h1",
+                "h2",
+                "h3",
+                "|",
+                "link",
+                "image",
+                "blockquote",
+              ],
+              toolbarAdaptive: false,
+            }}
+            onBlur={(newContent) =>
+              setJobData((prev) => ({ ...prev, description: newContent }))
             }
           />
           <button type="button" className="mt-4" onClick={() => {
@@ -261,7 +293,7 @@ const JobForm = () => {
         </div>}
 
 
-        {jobSteps === 4 && <div className="flex flex-col gap-6">
+        {jobSteps === 3 && <div className="flex flex-col gap-6">
           {/* Experience */}
           <h3 className="font-bold">
             Experience
@@ -274,7 +306,7 @@ const JobForm = () => {
               name="experience"
               value={jobData.experience || ""}
               onChange={handleJobChange}
-              className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+              className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
               placeholder="Experience (e.g., 2 Years)"
             />
           </div>
@@ -288,7 +320,7 @@ const JobForm = () => {
               name="applicationDeadline"
               value={jobData.applicationDeadline || ""}
               onChange={handleJobChange}
-              className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+              className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
               placeholder="30"
             />
           </div>
@@ -313,7 +345,7 @@ const JobForm = () => {
             name="location"
             value={jobData.location || ""}
             onChange={handleJobChange}
-            className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+            className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
             placeholder="Enter City"
           />
 
@@ -328,15 +360,14 @@ const JobForm = () => {
           </button>
         </div>}
 
-        {jobSteps === 5 && <div>
+        {jobSteps === 5 && <div className="flex flex-col gap-2">
           <h3 className="font-bold">Salary</h3>
-          <label className="mt-8" htmlFor="salary">Salary $</label>
           <input
             type="number"
             name="salary"
             value={jobData.salary || ""}
             onChange={handleJobChange}
-            className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+            className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
             placeholder="In Dollars $"
           />
           <button type="button" onClick={() => {
@@ -351,7 +382,7 @@ const JobForm = () => {
         </div>}
         {/* Salary */}
 
-        {jobSteps === 6 && <div>
+        {jobSteps === 6 && <div className="flex flex-col gap-2">
           {/* Skills */}
           <h3 className="font-bold">
             Skills Needed
@@ -364,7 +395,7 @@ const JobForm = () => {
             name="skills"
             value={jobData.skills || ""}
             onChange={handleJobChange}
-            className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
+            className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
             placeholder="Enter Skills (comma separated)"
           />
           <button
