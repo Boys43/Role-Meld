@@ -1,28 +1,64 @@
-import React, { useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import slugify from 'slugify'
 // React Icons
 import { FaBloggerB } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
+import { IoChevronBack } from "react-icons/io5";
 import { toast } from 'react-toastify';
 
 // Rte
-import { HtmlEditor, Image, Inject, Link, QuickToolbar, RichTextEditorComponent, Toolbar } from '@syncfusion/ej2-react-richtexteditor';
+import JoditEditor from "jodit-react";
+import axios from 'axios';
+import { AppContext } from '../context/AppContext';
 
 const AdminBlog = () => {
+  const { backendUrl } = useContext(AppContext);
   const [blogSteps, setBlogSteps] = useState(0);
-  const [formData, setFormData] = useState('');
   const [Tags, setTags] = useState([])
   const [tag, setTag] = useState('')
+  const handleTagKeyDown = (e) => {
+    if (e.key === "Enter" && tag.trim() !== "") {
+      e.preventDefault();
+      const newTags = [...Tags, tag.trim()];
+      setTags(newTags);
+      setFormData({ ...formData, tags: newTags });
+      setTag(""); // reset input
+    }
+  };
+
+  const removeTag = (index) => {
+    const newTags = Tags.filter((_, i) => i !== index);
+    setTags(newTags);
+    setFormData({ ...formData, tags: newTags });
+  };
+
+
+  const editor = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value, tags: Tags });
   };
 
+  const createBlog = async () => {
+    const formData = new FormData();  
+    try {<bdo dir="ltr"></bdo>
+      const { data } = await axios.post(`${backendUrl}/api/blog/createblog`, formData );
+      if (data.success) {
+        toast.success(data.message);
+        setFormData({})
+        setBlogSteps(0);
+      }
+    } catch (error) {
+      toast.error(error);
+    }
+  }
+
   return (
     <main className='w-full p-6 '>
       <h1 className='font-bold flex items-center gap-4'><FaBloggerB className='text-[var(--primary-color)]' />Add new Blog</h1>
-      <section className='mt-20'>
+      <section className='mt-10'>
+        <button disabled={blogSteps === 0} className='my-5 bg-[var(--primary-color)] text-white p-2 rounded-md' onClick={() => setBlogSteps(blogSteps - 1)}><IoChevronBack /></button>
         <form className='flex flex-col gap-4 min-h-[50vh]'>
           {blogSteps === 0 && <div className='flex flex-col gap-2'>
             <h2 className='font-semibold'>Add Title of the Blog</h2>
@@ -36,7 +72,7 @@ const AdminBlog = () => {
                 type='text'
                 name='slug'
                 id='slug'
-                value={slugify(formData?.title || formData?.slug || '', { replacement: "_", lower: true })}
+                value={slugify(formData?.title, { replacement: "_", lower: true }) || formData?.slug || ''}
                 onChange={handleChange}
                 placeholder='Slug'
                 className=' w-full p-2 border-2 border-[var(--primary-color)] rounded-md' />
@@ -95,9 +131,33 @@ const AdminBlog = () => {
               <h2 className='font-semibold'>Enter Main Content Here</h2>
               <div className='flex flex-col gap-2'>
                 <label htmlFor="Cateogry">Content</label>
-                <RichTextEditorComponent name='content' value={formData?.content || ""} onChange={handleChange}>
-                  <Inject services={[Toolbar, Image, Link, HtmlEditor, QuickToolbar]} />
-                </RichTextEditorComponent>
+                <JoditEditor
+                  ref={editor}
+                  // remove value here OR set defaultValue
+                  defaultValue={formData?.content || ""}
+                  config={{
+                    readonly: false,
+                    height: 400,
+                    uploader: { insertImageAsBase64URI: true },
+                    buttons: [
+                      "bold",
+                      "italic",
+                      "|",
+                      "paragraph",
+                      "h1",
+                      "h2",
+                      "h3",
+                      "|",
+                      "link",
+                      "image",
+                      "blockquote",
+                    ],
+                    toolbarAdaptive: false,
+                  }}
+                  onBlur={(newContent) =>
+                    setFormData((prev) => ({ ...prev, content: newContent }))
+                  }
+                />
               </div>
               <div className='flex justify-end mt-5'>
                 <button
@@ -119,28 +179,30 @@ const AdminBlog = () => {
               <div className='flex flex-col gap-4'>
                 <label htmlFor="Cateogry">Tags</label>
                 <div className='flex items-center gap-4'>
-                  <input type="text" name='tags' placeholder='Enter Comma Separated Tags'
-                    value={tag || ''}
+                  <input
+                    type="text"
+                    value={tag}
                     onChange={(e) => setTag(e.target.value)}
-                    className=' w-full p-2 border-2 border-[var(--primary-color)] rounded-md' />
-                  <button type='button' onClick={(e) => {
-                    Tags.push(tag)
-                    setTag('')
-                  }}>
-                    Add
-                  </button>
+                    onKeyDown={handleTagKeyDown}
+                    placeholder="Type a tag and press Enter"
+                    className=' w-full p-2 border-2 border-[var(--primary-color)] rounded-md'
+                  />
                 </div>
-                <div>
+                <div className='flex items-center'>
                   {/* tags */}
-                  {Tags.map((tag, index) => <span key={index} className='bg-gray-200 px-2 py-1 rounded-md mr-2'>{tag}</span>)}
+                  {Tags.map((t, i) => (
+                    <div key={i} className=" px-2 py-1 rounded flex items-center gap-1">
+                      <span className='bg-gray-300 px-2 py-1 rounded' onClick={() => removeTag(i)}>{t}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
               <div className='flex justify-end mt-5'>
                 <button
                   type='button'
                   onClick={() => {
-                    if (!formData?.category) {
-                      toast.error('Please fill all the fields')
+                    if (formData?.tags?.length < 3) {
+                      toast.error('Add at least 3 Tags')
                     } else {
                       setBlogSteps(blogSteps + 1)
                     }
@@ -153,29 +215,41 @@ const AdminBlog = () => {
             <div className='flex flex-col gap-4'>
               <h2 className='font-semibold'>Add Cover / Featured Image</h2>
               <div className='flex flex-col gap-4'>
-                <div className='flex flex-col justify-center gap-4'>
-                  <input type="file" name='coverImage'
-                    onChange={(e) => setFormData({ ...formData, coverImage: e.target.files[0] })}
-                    className=' w-full p-2 border-2 border-[var(--primary-color)] rounded-md' />
-                    <div className='max-w-20 max-h-20 '>
-                      {formData?.cover}
-                    </div>
-                </div>
-                <div>
-                  {/* tags */}
-                  {Tags.map((tag, index) => <span key={index} className='bg-gray-200 px-2 py-1 rounded-md mr-2'>{tag}</span>)}
+                <div className="relative w-full h-[300px] border-2 border-[var(--primary-color)] rounded-2xl overflow-hidden bg-gray-50 flex justify-center items-center">
+                  {formData?.coverImage ? (
+                    <img
+                      src={URL.createObjectURL(formData.coverImage)}
+                      alt="preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <p className="text-gray-400">No image selected</p>
+                  )}
+
+                  {/* File input at the bottom */}
+                  <div className="absolute bottom-2 left-0 w-full flex justify-center">
+                    <input
+                      type="file"
+                      name="coverImage"
+                      onChange={(e) =>
+                        setFormData({ ...formData, coverImage: e.target.files[0] })
+                      }
+                      className="p-2 border rounded-md cursor-pointer bg-white"
+                    />
+                  </div>
                 </div>
               </div>
               <div className='flex justify-end mt-5'>
                 <button
                   type='button'
-                  onClick={() => {
-                    if (!formData?.category) {
-                      toast.error('Please fill all the fields')
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (!formData?.coverImage) {
+                      toast.error('Please upload the image')
                     } else {
-                      setBlogSteps(blogSteps + 1)
+                      createBlog();
                     }
-                  }}>Next <MdNavigateNext /></button>
+                  }}>Post</button>
               </div>
             </div>
           }
