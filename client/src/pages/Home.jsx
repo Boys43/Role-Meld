@@ -51,10 +51,10 @@ const Home = () => {
       <main className="py-6 w-[95vw] mx-auto">
         <section className="shadow-2xl py-14 bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] p-6 w-full rounded-2xl flex flex-col gap-4 items-center">
           <h1 className="text-white">
-            Welcome to <span className="text-[var(--accent-color)] font-bold italic">Role Meld</span>
+            Welcome to <span className="text-[var(--accent-color)] font-bold italic">Alfa Career</span>
           </h1>
           <p className="text-[var(--accent-color)] text-center">
-            Find the perfect job for you in just a few clicks with Role Meld
+            Find the perfect job for you in just a few clicks with Alfa Career
           </p>
           <Search />
         </section>
