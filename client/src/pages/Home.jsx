@@ -1,13 +1,15 @@
-import { FaBriefcase } from "react-icons/fa";
+import axios from "axios";
 import assets from "../assets/assets";
 import Search from "../components/Search";
 import Marquee from 'react-fast-marquee'
-import FeaturedJobCard from "../components/FeaturedJobCard";
-import { FaBloggerB } from "react-icons/fa";
+import Testimonials from "../components/Testimonials";
+import FeaturedJobs from "../components/FeaturedJobs";
+import BlogsSection from "../components/BlogsSection";
+import LeaveReview from "../components/LeaveReview";
 
 
 // React Icons
-import { MdComputer } from "react-icons/md";       // IT & Software
+import { MdComputer, MdMessage } from "react-icons/md";       // IT & Software
 import { MdCampaign } from "react-icons/md";       // Digital Marketing
 import { MdDesignServices } from "react-icons/md"; // Design & Creative
 import { MdAccountBalance } from "react-icons/md"; // Finance & Accounting
@@ -17,18 +19,17 @@ import { MdEngineering } from "react-icons/md";    // Engineering
 import { MdWeb } from "react-icons/md";            // Website Development
 import { useNavigate } from "react-router-dom";
 import { MdFeaturedPlayList } from "react-icons/md";
-import axios from "axios";
 import { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 import { MdRateReview } from "react-icons/md";
+import { FaBloggerB } from "react-icons/fa";
+import { FaBriefcase } from "react-icons/fa";
 
 // Swiper Slides
 import 'swiper/css';
 import 'swiper/css/autoplay';
-import Testimonials from "../components/Testimonials";
-import FeaturedJobs from "../components/FeaturedJobs";
-import BlogsSection from "../components/BlogsSection";
+
 
 
 const Home = () => {
@@ -267,9 +268,16 @@ const Home = () => {
         {/* Blogs */}
         <section className="p-4 w-full mt-20">
           <h1 className="font-bold flex items-center gap-4">
-            <FaBloggerB className="text-[var(--primary-color)]" /> Our <span className="text-[var(--primary-color)]">Blogs</span>
+            <FaBloggerB className="text-[var(--primary-color)] my-4" /> Our <span className="text-[var(--primary-color)]">Blogs</span>
           </h1>
           <BlogsSection className={'grid-cols-1 lg:grid-cols-2'} />
+        </section>
+        {/* Leave a Review */}
+        <section className="p-4 w-full mt-20">
+          <h1 className='flex items-center gap-3 font-bold'>
+            <MdMessage className='text-[var(--primary-color)]' /> Leave a Review
+          </h1>
+          <LeaveReview />
         </section>
       </main>
     </>

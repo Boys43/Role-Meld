@@ -14,13 +14,10 @@ const FindJobs = () => {
   const { backendUrl, userData } = useContext(AppContext)
   const [loading, setLoading] = useState(false)
 
-
-
   // Using Parameters for getting the job 
   const search = new URLSearchParams(location.search);
   const Param = search.get('job');
   const categoryParam = search.get('category');
-  console.log(Param);
 
   const [searchedCategories, setSearchedCategories] = useState([]);
   const [approvedCategoryJobs, setApprovedCategoryJobs] = useState([]);
@@ -55,9 +52,6 @@ const FindJobs = () => {
       getAllJobs();
     }, []);
   }
-
-  console.log(searchedCategories);
-
 
   const [filterCateogry, setFilterCateogry] = useState(categoryParam || 'category');
   const [filterLocationType, setFilterLocationType] = useState('locationType');
