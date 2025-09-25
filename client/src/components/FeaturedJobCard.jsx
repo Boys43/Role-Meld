@@ -40,9 +40,9 @@ const FeaturedJobCard = () => {
 
     return (
         <>
-            <div className='px-4 py-8 w-full grid gird-cols-1 md:grid-cols-2 relative rounded-lg bg-white border border-gray-300'>
+            <div className='px-4 py-8 w-full grid gird-cols-1 md:grid-cols-2 rounded-lg bg-white border border-gray-300'>
                 <div className='w-full flex flex-col gap-6'>
-                    <span className='absolute top-2 right-2 bg-gray-300 px-3 text-sm rounded '>
+                    <span className='absolute top-4 right-4 bg-gray-300 px-3 text-sm rounded '>
                         Sponsored
                     </span>
                     <div className='flex items-center gap-2 px-4 font-semibold'>

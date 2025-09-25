@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { CiBookmark } from "react-icons/ci";
 import { FaBookmark } from "react-icons/fa";
 import { MdCancel } from 'react-icons/md';
+import LoginModel from './LoginModel';
 
 const JobCard = ({ e }) => {
     const { backendUrl, isLoggedIn, userData, toggleSaveJob, savedJobs } = useContext(AppContext);
@@ -110,19 +111,11 @@ const JobCard = ({ e }) => {
 
             {/* Login Reminder Pop up */}
             <div className={`fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center z-100 justify-center ${loginReminder ? 'flex' : 'hidden'}`}>
-                <div className='relative bg-white flex flex-col items-center gap-4 shadow-2xl rounded-lg p-8'>
-                    <span className='absolute top-4 right-4 cursor-pointer'>
+                <div className='bg-white flex flex-col items-center gap-4 shadow-2xl rounded-lg p-8'>
+                    <span className='cursor-pointer'>
                         <MdCancel onClick={() => setLoginReminder(false)} />
                     </span>
-                    <h3 className='font-bold'>
-                        Please Login First
-                    </h3>
-                    <button className='w-full' onClick={() => navigate('/login')}>
-                        Login
-                    </button>
-                    <p>
-                        You need to be <span className='font-semibold'>Login</span> to continue
-                    </p>
+                    <LoginModel />
                 </div>
             </div>
         </>
