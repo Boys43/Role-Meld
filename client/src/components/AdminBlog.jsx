@@ -103,7 +103,7 @@ const AdminBlog = () => {
                 value={formData?.slug || ''}
                 onChange={handleChange}
                 placeholder='Slug'
-                className=' w-full p-2 border-2 border-[var(--primary-color)] rounded-md' />
+                className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"/>
             </div>
             <div className='flex justify-end mt-5'>
               <button
@@ -262,7 +262,7 @@ const AdminBlog = () => {
                       onChange={(e) =>
                         setFormData({ ...formData, coverImage: e.target.files[0] })
                       }
-                      className="p-2 border rounded-md cursor-pointer bg-white"
+                      cclassName="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
                     />
                   </div>
                 </div>
