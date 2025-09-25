@@ -7,7 +7,7 @@ const BlogCard = ({ blog }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="rounded-2xl shadow-lg bg-white hover:shadow-2xl transition-all duration-300 overflow-hidden mt-6">
+        <div className="rounded-2xl bg-white hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-300">
             {/* Image Section */}
             <div className="overflow-hidden">
                 <img

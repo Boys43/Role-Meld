@@ -269,7 +269,7 @@ const Home = () => {
           <h1 className="font-bold flex items-center gap-4">
             <FaBloggerB className="text-[var(--primary-color)]" /> Our <span className="text-[var(--primary-color)]">Blogs</span>
           </h1>
-          <BlogsSection />
+          <BlogsSection className={'grid-cols-1 lg:grid-cols-2'} />
         </section>
       </main>
     </>

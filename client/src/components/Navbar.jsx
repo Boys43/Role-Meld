@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
@@ -11,7 +11,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { isLoggedIn, loading, backendUrl, setIsLoggedIn, setUserData, userData } =
     useContext(AppContext);
-
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
 
@@ -33,6 +32,23 @@ const Navbar = () => {
       toast.error(error.response?.data?.message || error.message);
     }
   };
+
+  const [isAdmin, setIsAdmin] = useState(false)
+  const checkIsAdmin = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
+      if (data.success) {
+        setIsAdmin(data.isAdmin)
+      } 
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+  useEffect(() => {
+    checkIsAdmin();
+  }, [])
+  
 
   if (loading) {
     return <nav className="p-4">Loading...</nav>;
@@ -77,7 +93,6 @@ const Navbar = () => {
               Dashboard
             </NavLink>
           </div>}
-
         </div>
 
         {/* Right Section */}
@@ -109,8 +124,21 @@ const Navbar = () => {
               </div>
 
               {showDropdown && (
-                <div className="absolute top-full right-0 z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
-                  <ul className="py-2">
+                <div
+                tabIndex={0}
+                onBlur={() => setShowDropdown(false)}
+                className="absolute top-full right-0 z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
+                  <ul className="py-2 flex flex-col gap-2">
+                    {isAdmin &&
+                      <li 
+                      onClick={() => {
+                        navigate('/admin');
+                        setShowDropdown(false);
+                      }}
+                      className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                        Admin
+                      </li>
+                    }
                     <li
                       onClick={logout}
                       className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"

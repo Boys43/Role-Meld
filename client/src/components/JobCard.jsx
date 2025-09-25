@@ -1,19 +1,17 @@
-import React, { useEffect } from 'react'
 import { useContext } from 'react'
 import { AppContext } from '../context/AppContext'
 import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { MdCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 // React Icons
 import { CiBookmark } from "react-icons/ci";
 import { FaBookmark } from "react-icons/fa";
+import { MdCancel } from 'react-icons/md';
 
 const JobCard = ({ e }) => {
     const { backendUrl, isLoggedIn, userData, toggleSaveJob, savedJobs } = useContext(AppContext);
-    console.log([...savedJobs]);
 
     const [toggleApplyJob, setToggleApplyJob] = useState(false)
     const [applJobId, setapplJobId] = useState('')
@@ -34,14 +32,10 @@ const JobCard = ({ e }) => {
 
     // Login Reminder Pop Up
     const [loginReminder, setLoginReminder] = useState(false);
-
-    function vewDetails(id) {
-        navigate(`/jobdetails/` + id);
-    }
-
+    
     return (
         <>
-            <li className='p-6 border relative border-blue-500 rounded-lg shadow hover:shadow-lg transition-shadow flex flex-col gap-4 bg-blue-50'>
+            <li className='p-6 border relative border-gray-300 rounded-lg hover:shadow-lg transition-shadow flex flex-col gap-4 cursor-pointer'>
                 {/* Company Info */}
                 <div className='flex items-center gap-3'>
                     <img
@@ -78,13 +72,13 @@ const JobCard = ({ e }) => {
                             } else {
                                 setLoginReminder(true)
                             }
-                        }} className='flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded transition'
+                        }}
 
                     >
                         Apply Now
                     </button>
                     <button className='flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded transition'
-                        onClick={() => vewDetails(e?._id)}
+                        onClick={() => navigate(`/jobdetails/` + e?._id)}
                     >
                         View Details
                     </button>

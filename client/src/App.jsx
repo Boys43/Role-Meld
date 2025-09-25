@@ -14,6 +14,8 @@ import axios from 'axios'
 import FindJobs from './pages/FindJobs'
 import CategoryJobs from './pages/CategoryJobs'
 import BlogsDetails from './pages/BlogsDetails'
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const AdminRoute = () => {
   const { backendUrl } = useContext(AppContext);
@@ -52,7 +54,12 @@ const AdminRoute = () => {
 
 
 const App = () => {
-
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+    });
+  }, []);
   return (
     <>
       <ToastContainer />

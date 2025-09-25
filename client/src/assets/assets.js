@@ -7,6 +7,7 @@ import tcs from './tcs.png'
 import sm from './sm.png'
 import am from './am.png'
 import mt from './mt.png'
+import not_found from './not_found.png'
 
 const assets = {
     home_bg,
@@ -17,7 +18,8 @@ const assets = {
     nt,
     tcs,
     sm,
-    am
+    am,
+    not_found
 }
 
 export default assets;
