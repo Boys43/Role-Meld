@@ -3,8 +3,9 @@ import BlogCard from './BlogCard'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import assets from '../assets/assets';
 
-const BlogsSection = () => {
+const BlogsSection = ({className}) => {
   const { backendUrl } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [blogs, setBlogs] = useState([])
@@ -33,10 +34,15 @@ const BlogsSection = () => {
   }
 
   return (
-    <section className='w-full grid grid-cols-1 lg:grid-cols-2 items-center gap-4'>
-      {blogs?.map((blog, index) =>(
+    <section className={`w-full grid ${className} items-center gap-4`}>
+      {blogs.length > 0 ? blogs?.map((blog, index) => (
         <BlogCard key={index} blog={blog} />
-      ))}
+      )) :
+        <h2 className='col-span-full text-center mt-5 flex flex-col justify-center items-center gap-4 font-semibold'>
+          <img src={assets.not_found} alt="Not Found" className='w-20' />
+          No Recent Blogs
+        </h2>
+      }
     </section>
   )
 }

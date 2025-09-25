@@ -1,12 +1,10 @@
-import React, { useContext, useRef, useState } from 'react'
-import slugify from 'slugify'
-// React Icons
+import React, { useContext, useRef, useState } from 'react';
+import slugify from 'slugify';
 import { FaBloggerB } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { IoChevronBack } from "react-icons/io5";
 import { toast } from 'react-toastify';
-
-// Rte
+import { motion, AnimatePresence } from "framer-motion";
 import JoditEditor from "jodit-react";
 import axios from 'axios';
 import { AppContext } from '../context/AppContext';
@@ -15,15 +13,31 @@ const AdminBlog = () => {
   const { backendUrl } = useContext(AppContext);
   const [blogSteps, setBlogSteps] = useState(0);
   const [formData, setFormData] = useState({});
-  const [Tags, setTags] = useState([])
-  const [tag, setTag] = useState('')
+  const [Tags, setTags] = useState([]);
+  const [tag, setTag] = useState('');
+  const editor = useRef(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "title") {
+      setFormData({
+        ...formData,
+        title: value,
+        slug: slugify(value, { replacement: "_", lower: true }),
+        tags: Tags,
+      });
+    } else {
+      setFormData({ ...formData, [name]: value, tags: Tags });
+    }
+  };
+
   const handleTagKeyDown = (e) => {
     if (e.key === "Enter" && tag.trim() !== "") {
       e.preventDefault();
       const newTags = [...Tags, tag.trim()];
       setTags(newTags);
       setFormData({ ...formData, tags: newTags });
-      setTag(""); // reset input
+      setTag("");
     }
   };
 
@@ -33,43 +47,17 @@ const AdminBlog = () => {
     setFormData({ ...formData, tags: newTags });
   };
 
-  const editor = useRef(null);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "title") {
-      setFormData({
-        ...formData,
-        title: value,
-        slug: slugify(value, { replacement: "_", lower: true }), // auto-generate slug
-        tags: Tags,
-      });
-    } else {
-      setFormData({ ...formData, [name]: value, tags: Tags });
-    }
-  };
-
-
   const createBlog = async () => {
     try {
-      // Build FormData to send text + file
       const fd = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-        if (key === "tags") {
-          fd.append("tags", JSON.stringify(value)); // tags array as string
-        } else {
-          fd.append(key, value);
-        }
+        if (key === "tags") fd.append("tags", JSON.stringify(value));
+        else fd.append(key, value);
       });
 
-      const { data } = await axios.post(
-        `${backendUrl}/api/blog/createblog`,
-        fd,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      const { data } = await axios.post(`${backendUrl}/api/blog/createblog`, fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       if (data.success) {
         toast.success(data.message);
@@ -82,48 +70,94 @@ const AdminBlog = () => {
     }
   };
 
-  return (
-    <main className='w-full p-6 '>
-      <h1 className='font-bold flex items-center gap-4'><FaBloggerB className='text-[var(--primary-color)]' />Add new Blog</h1>
-      <section className='mt-10'>
-        <button disabled={blogSteps === 0} className='my-5 bg-[var(--primary-color)] text-white p-2 rounded-md' onClick={() => setBlogSteps(blogSteps - 1)}><IoChevronBack /></button>
-        <form className='flex flex-col gap-4 min-h-[50vh]'>
-          {blogSteps === 0 && <div className='flex flex-col gap-2'>
-            <h2 className='font-semibold'>Add Title of the Blog</h2>
-            <div className='flex flex-col gap-2'>
-              <label htmlFor="title">Title</label>
-              <input type="text" name='title' id='title' value={formData?.title} onChange={handleChange} placeholder='Title' className='w-full p-2 border-2 border-[var(--primary-color)] rounded-md' />
-            </div>
-            <div className='flex flex-col gap-2'>
-              <label htmlFor="content">Slug</label>
-              <input
-                type='text'
-                name='slug'
-                id='slug'
-                value={formData?.slug || ''}
-                onChange={handleChange}
-                placeholder='Slug'
-                className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"/>
-            </div>
-            <div className='flex justify-end mt-5'>
-              <button
-                type='button'
-                onClick={() => {
-                  if (!formData?.title && !formData?.slug) {
-                    toast.error('Please fill all the fields')
-                  } else {
-                    setBlogSteps(blogSteps + 1)
-                  }
-                }}>Next <MdNavigateNext /></button>
-            </div>
-          </div>
-          }
+  const stepVariants = {
+    initial: { opacity: 0, x: 50 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -50 }
+  };
 
-          {blogSteps === 1 &&
-            <div className='flex flex-col gap-4'>
-              <h2 className='font-semibold'>Choose Category</h2>
-              <div className='flex flex-col gap-2'>
-                <label htmlFor="Cateogry">Category</label>
+  return (
+    <main className="w-full p-6 overflow-x-hidden">
+      <h1 className="font-bold flex items-center gap-4">
+        <FaBloggerB className='text-[var(--primary-color)]' /> Add New Blog
+      </h1>
+
+      <section className="mt-10">
+        <form className="flex flex-col gap-4 py-10 px-16 min-h-[50vh]">
+
+          <button
+            disabled={blogSteps === 0}
+            className="w-9 h-9 bg-[var(--primary-color)] text-white p-2 rounded-md"
+            type="button"
+            onClick={() => setBlogSteps(blogSteps - 1)}
+          >
+            <IoChevronBack />
+          </button>
+
+          <AnimatePresence mode="wait">
+            {blogSteps === 0 && (
+              <motion.div
+                key="step0"
+                variants={stepVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.5 }}
+                className="flex flex-col gap-4"
+              >
+                <h2 className="font-semibold">Add Title of the Blog</h2>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="title">Title</label>
+                  <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    value={formData?.title || ""}
+                    onChange={handleChange}
+                    placeholder="Title"
+                    className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="slug">Slug</label>
+                  <input
+                    type="text"
+                    name="slug"
+                    id="slug"
+                    value={formData?.slug || ""}
+                    onChange={handleChange}
+                    placeholder="Slug"
+                    className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
+                  />
+                </div>
+                <div className="flex justify-end mt-5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!formData?.title || !formData?.slug) {
+                        toast.error("Please fill all the fields");
+                        return;
+                      }
+                      setBlogSteps(blogSteps + 1);
+                    }}
+                  >
+                    Next <MdNavigateNext />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {blogSteps === 1 && (
+              <motion.div
+                key="step1"
+                variants={stepVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.5 }}
+                className="flex flex-col gap-4"
+              >
+                <h2 className="font-semibold">Choose Category</h2>
                 <select
                   name="category"
                   value={formData.category || ""}
@@ -139,110 +173,125 @@ const AdminBlog = () => {
                   <option value="Sales & Business Development">Sales & Business Development</option>
                   <option value="Engineering & Architecture">Engineering & Architecture</option>
                 </select>
-              </div>
-              <div className='flex justify-end mt-5'>
-                <button
-                  type='button'
-                  onClick={() => {
-                    if (!formData?.category) {
-                      toast.error('Please fill all the fields')
-                    } else {
-                      setBlogSteps(blogSteps + 1)
-                    }
-                  }}>Next <MdNavigateNext /></button>
-              </div>
-            </div>
-          }
+                <div className="flex justify-end mt-5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!formData?.category) {
+                        toast.error("Please fill all the fields");
+                        return;
+                      }
+                      setBlogSteps(blogSteps + 1);
+                    }}
+                  >
+                    Next <MdNavigateNext />
+                  </button>
+                </div>
+              </motion.div>
+            )}
 
-          {blogSteps === 2 &&
-            <div>
-              <h2 className='font-semibold'>Enter Main Content Here</h2>
-              <div className='flex flex-col gap-2'>
-                <label htmlFor="Cateogry">Content</label>
+            {blogSteps === 2 && (
+              <motion.div
+                key="step2"
+                variants={stepVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.5 }}
+                className="flex flex-col gap-4"
+              >
+                <h2 className="font-semibold">Enter Main Content Here</h2>
                 <JoditEditor
                   ref={editor}
-                  // remove value here OR set defaultValue
                   defaultValue={formData?.content || ""}
                   config={{
                     readonly: false,
                     height: 400,
                     uploader: { insertImageAsBase64URI: true },
-                    buttons: [
-                      "bold",
-                      "italic",
-                      "|",
-                      "paragraph",
-                      "h1",
-                      "h2",
-                      "h3",
-                      "|",
-                      "link",
-                      "image",
-                      "blockquote",
-                    ],
+                    buttons: ["bold", "italic", "|", "paragraph", "|", "link", "image", "blockquote"],
                     toolbarAdaptive: false,
                   }}
                   onBlur={(newContent) =>
                     setFormData((prev) => ({ ...prev, content: newContent }))
                   }
                 />
-              </div>
-              <div className='flex justify-end mt-5'>
-                <button
-                  type='button'
-                  onClick={() => {
-                    if (!formData?.content) {
-                      toast.error('Please fill all the fields')
-                    } else {
-                      setBlogSteps(blogSteps + 1)
-                    }
-                  }}>Next <MdNavigateNext /></button>
-              </div>
-            </div>
-          }
+                <div className="flex justify-end mt-5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!formData?.content) {
+                        toast.error("Please fill all the fields");
+                        return;
+                      }
+                      setBlogSteps(blogSteps + 1);
+                    }}
+                  >
+                    Next <MdNavigateNext />
+                  </button>
+                </div>
+              </motion.div>
+            )}
 
-          {blogSteps === 3 &&
-            <div className='flex flex-col gap-4'>
-              <h2 className='font-semibold'>Enter Related Tags</h2>
-              <div className='flex flex-col gap-4'>
-                <label htmlFor="Cateogry">Tags</label>
-                <div className='flex items-center gap-4'>
+            {blogSteps === 3 && (
+              <motion.div
+                key="step3"
+                variants={stepVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.5 }}
+                className="flex flex-col gap-4"
+              >
+                <h2 className="font-semibold">Enter Related Tags</h2>
+                <div className="flex flex-col gap-2">
                   <input
                     type="text"
                     value={tag}
                     onChange={(e) => setTag(e.target.value)}
                     onKeyDown={handleTagKeyDown}
                     placeholder="Type a tag and press Enter"
-                    className=' w-full p-2 border-2 border-[var(--primary-color)] rounded-md'
+                    className="w-full p-2 border-2 border-[var(--primary-color)] rounded-md"
                   />
+                  <div className="flex flex-wrap gap-2">
+                    {Tags.map((t, i) => (
+                      <span
+                        key={i}
+                        className="bg-gray-300 px-2 py-1 rounded cursor-pointer"
+                        onClick={() => removeTag(i)}
+                      >
+                        {t} &times;
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className='flex items-center'>
-                  {/* tags */}
-                  {Tags.map((t, i) => (
-                    <div key={i} className=" px-2 py-1 rounded flex items-center gap-1">
-                      <span className='bg-gray-300 px-2 py-1 rounded' onClick={() => removeTag(i)}>{t}</span>
-                    </div>
-                  ))}
+                <div className="flex justify-end mt-5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (formData?.tags?.length < 3) {
+                        toast.error("Add at least 3 tags");
+                        return;
+                      }
+                      setBlogSteps(blogSteps + 1);
+                    }}
+                  >
+                    Next <MdNavigateNext />
+                  </button>
                 </div>
-              </div>
-              <div className='flex justify-end mt-5'>
-                <button
-                  type='button'
-                  onClick={() => {
-                    if (formData?.tags?.length < 3) {
-                      toast.error('Add at least 3 Tags')
-                    } else {
-                      setBlogSteps(blogSteps + 1)
-                    }
-                  }}>Next <MdNavigateNext /></button>
-              </div>
-            </div>
-          }
+              </motion.div>
+            )}
 
-          {blogSteps === 4 &&
-            <div className='flex flex-col gap-4'>
-              <h2 className='font-semibold'>Add Cover / Featured Image</h2>
-              <div className='flex flex-col gap-4'>
+            {blogSteps === 4 && (
+              <motion.div
+                key="step4"
+                variants={stepVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.5 }}
+                className="flex flex-col gap-4"
+              >
+                <h2 className="font-semibold">Add Cover / Featured Image</h2>
                 <div className="relative w-full h-[300px] border-2 border-[var(--primary-color)] rounded-2xl overflow-hidden bg-gray-50 flex justify-center items-center">
                   {formData?.coverImage ? (
                     <img
@@ -253,38 +302,36 @@ const AdminBlog = () => {
                   ) : (
                     <p className="text-gray-400">No image selected</p>
                   )}
-
-                  {/* File input at the bottom */}
-                  <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                    <input
-                      type="file"
-                      name="coverImage"
-                      onChange={(e) =>
-                        setFormData({ ...formData, coverImage: e.target.files[0] })
-                      }
-                      cclassName="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className='flex justify-end mt-5'>
-                <button
-                  type='button'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    if (!formData?.coverImage) {
-                      toast.error('Please upload the image')
-                    } else {
-                      createBlog();
+                  <input
+                    type="file"
+                    name="coverImage"
+                    onChange={(e) =>
+                      setFormData({ ...formData, coverImage: e.target.files[0] })
                     }
-                  }}>Post</button>
-              </div>
-            </div>
-          }
+                    className="absolute bottom-2 left-0 w-full px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
+                  />
+                </div>
+                <div className="flex justify-end mt-5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!formData?.coverImage) {
+                        toast.error("Please upload the image");
+                        return;
+                      }
+                      createBlog();
+                    }}
+                  >
+                    Post
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </form>
       </section>
     </main>
-  )
-}
+  );
+};
 
-export default AdminBlog
+export default AdminBlog;
