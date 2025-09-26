@@ -14,7 +14,8 @@ const Testimonials = () => {
                 loop={true}
                 autoplay={{
                     delay: 2500,
-                    disableOnInteraction: false,
+                    disableOnInteraction: true,
+                    pauseOnMouseEnter: true,
                 }}
                 breakpoints={{
                     320: {
