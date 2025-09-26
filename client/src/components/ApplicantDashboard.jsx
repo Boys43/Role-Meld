@@ -83,7 +83,7 @@ const ApplicantDashboard = () => {
   };
 
 
-  const updateProfile = async (e) => {
+  const updateProfile = async (updatedSkills) => {
     e.preventDefault()
     try {
       const { data } = await axios.post(`${backendUrl}/api/user/updateprofile`, { updateUser: formData })
