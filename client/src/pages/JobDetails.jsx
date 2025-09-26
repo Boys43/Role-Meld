@@ -80,14 +80,14 @@ const JobDetails = () => {
     }
 
     return (
-        <main className='p-6'>
+        <main className='p-2 md:p-4 lg:p-6'>
             <section className='p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                <div className='col-span-2'>
+                <div className='col-span-2 order-2 md:order-1'>
                     <h4 className='p-4 flex items-center text-lg gap-4 font-semibold'>
                         <IoHomeOutline size={25} className='' /> <span className='text-[var(--primary-color)]'>/</span> {jobData?.category} <span className='text-[var(--primary-color)]'>/</span> {jobData?.subCategory}
                     </h4>
-                    <div className='my-4 border rounded-2xl p-4 shadow-lg bg-[var(--primary-color)]/10 flex items-center justify-between'>
-                        <div>
+                    <div className='my-4 w-full border rounded-2xl p-4 shadow-lg bg-[var(--primary-color)]/10 flex items-center justify-between'>
+                        <div className=''>
                             <div className='flex items-center gap-4'>
                                 <img src={`${backendUrl}/uploads/${jobData?.companyProfile}`} alt={jobData?.companyProfile} className='w-8 object-cover h-8 rounded-full border-2 border-[var(--primary-color)]' />
                                 <h4 className='font-bold'>
@@ -115,8 +115,8 @@ const JobDetails = () => {
                         <div className='ml-8' dangerouslySetInnerHTML={{ __html: jobData?.description }} />
                     </div>
                 </div>
-                <div className=''>
-                    <div className='border p-4 shadow-lg flex flex-col  sticky top-0'>
+                <div className='w-full flex justify-center'>
+                    <div className='border rounded-lg p-2 md:p-4 sticky top-4 shadow-lg flex flex-col '>
                         <h2 className='font-bold flex items-center gap-4 bg-gray-300 border-2 border-[var(--secondary-color)] px-4 py-2 rounded-lg'>
                             <FaDollarSign />{jobData?.salary}
                         </h2>
@@ -137,8 +137,18 @@ const JobDetails = () => {
                         <div className='p-2 border-2 border-[var(--primary-color)] bg-[var(--primary-color)]/10 rounded-lg'>
                             {userData?.resume ? <h4><span className='text-[var(--primary-color)] font-bold'>Resume:</span>{userData?.resume}</h4> : <h4 className='text-red-500 flex gap-4 items-center'>No resume uploaded <span onClick={() => isLoggedIn ? navigate('/dashboard') : setLoginReminder(true)} className='text-sm underline text-black'>Upload</span></h4>}
                         </div>
-                        <button className='mt-4'
-                            onClick={() => isLoggedIn ? setapplJobId(true) : setLoginReminder(true)}
+                        <button
+                            disabled={userData?.appliedJobs?.includes(jobData?._id)}
+                            onClick={() => {
+                                if (isLoggedIn) {
+                                    setapplJobId(jobData?._id)
+                                    setToggleApplyJob(true)
+                                } else {
+                                    setLoginReminder(true)
+                                }
+                            }}
+                            className='mt-4'
+
                         >
                             Apply Now
                         </button>
@@ -147,8 +157,9 @@ const JobDetails = () => {
             </section>
 
             <section className='my-4 min-h-[40vh] w-full'>
-                <h2 className='font-semibold'>More Jobs from <span className='font-bold'>{jobData?.company}</span></h2>
-                <ul className='grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                <h2 className='font-semibold'>More Jobs <span className='font-bold'>
+                    {jobData?.company === "Individual" ? "" : 'from' + jobData?.company} </span></h2>
+                <ul className='grid mt-4 gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {companyJobs?.filter(job => job._id !== jobData?._id).length > 0 ? companyJobs?.filter(job => job._id !== jobData?._id)?.map((e, i) => (
                         <JobCard key={i} e={e} />
                     )) :

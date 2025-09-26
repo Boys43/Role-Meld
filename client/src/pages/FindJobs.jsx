@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 // React Icons
 import { FaFilter } from "react-icons/fa";
 import JobCard from '../components/JobCard'
+import CategoryJobs from './CategoryJobs'
 
 const FindJobs = () => {
   const location = useLocation();
@@ -23,6 +24,7 @@ const FindJobs = () => {
   const [approvedCategoryJobs, setApprovedCategoryJobs] = useState([]);
   if (Param !== null) {
     const seachedJobs = async () => {
+      setLoading(true)
       try {
         const { data } = await axios.post(`${backendUrl}/api/jobs/searchjobs`, { search: Param })
         if (data.success) {
@@ -31,13 +33,16 @@ const FindJobs = () => {
         }
       } catch (error) {
         toast.error(error.response.data.message);
+      }finally{
+        setLoading(false)
       }
-    }
+      }
     useEffect(() => {
       seachedJobs();
     }, [Param]);
   } else {
     const getAllJobs = async () => {
+      setLoading(true)
       try {
         const { data } = await axios.get(`${backendUrl}/api/jobs/getapprovedjobs`)
         if (data.success) {
@@ -46,11 +51,13 @@ const FindJobs = () => {
         }
       } catch (error) {
         toast.error(error.response.data.message);
+      }finally{
+        setLoading(false)
       }
     }
     useEffect(() => {
       getAllJobs();
-    }, []);
+    }, [Param]);
   }
 
   const [filterCateogry, setFilterCateogry] = useState(categoryParam || 'category');
@@ -72,8 +79,6 @@ const FindJobs = () => {
     </div>
   }
 
-  // View Details
-
   return (
     <>
       <div className='px-6'>
@@ -82,9 +87,10 @@ const FindJobs = () => {
         </div>
         <div className='my-6 px-2 md:px-5 lg:px-10'>
           {/* Jobs */}
-          <h1>
-            <span className='font-bold'>Results For:</span> {Param}
-          </h1>
+          {Param && categoryParam && <h1>
+            <span className='font-bold'>Results For:</span> {Param || categoryParam}
+          </h1>}
+
           <section className='flex flex-wrap items-center gap-8 mt-6'>
             <h3 className='flex items-center gap-2 font-semibold'>
               <FaFilter size={20} className='text-[var(--primary-color)]' /> Filter:
