@@ -1,3 +1,4 @@
+import assets from '../assets/assets'
 import LoginModel from '../components/LoginModel'
 
 
