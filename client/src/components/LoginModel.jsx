@@ -21,13 +21,10 @@ const LoginModel = () => {
             );
 
             if (data.success) {
-                toast.success(data.message);
                 setIsLoggedIn(true);
-
-                // ✅ Fetch full user data before navigating
-                await getUserData();
-
+                getUserData();
                 navigate("/dashboard");
+                toast.success(data.message);
             } else {
                 toast.error(data.message);
                 setIsLoggedIn(false);

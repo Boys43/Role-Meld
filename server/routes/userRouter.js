@@ -1,11 +1,9 @@
 import { saveJob } from "../controllers/jobsController.js";
 import userAuth from "../middlewares/userAuth.js";
-import { applyJob, checkProfileScore, fetchApplicants, getUserData, updateProfile, updateProfilePicture, updateResume } from "../middlewares/userController.js";
+import { applyJob, checkProfileScore, fetchApplicants, getUserData, updateProfile, updateProfilePicture, updateResume, getAllRecruiters, getAllUsers } from "../controllers/userController.js";
 import express from 'express'
 import multer from "multer";
 import path from 'path'
-import { checkAdmin } from "../controllers/authController.js";
-import { getAllRecruiters, getAllUsers } from "../controllers/userController.js";
 
 const userRouter = express.Router()
 
