@@ -34,21 +34,22 @@ const Navbar = () => {
   };
 
   const [isAdmin, setIsAdmin] = useState(false)
-  const checkIsAdmin = async () => {
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
-      if (data.success) {
-        setIsAdmin(data.isAdmin)
+  if (isLoggedIn) {
+    const checkIsAdmin = async () => {
+      try {
+        const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
+        if (data.success) {
+          setIsAdmin(data.isAdmin)
+        }
+      } catch (error) {
+        toast.error(error.message)
       }
-    } catch (error) {
-      toast.error(error.message)
     }
+
+    useEffect(() => {
+      checkIsAdmin();
+    }, [])
   }
-
-  useEffect(() => {
-    checkIsAdmin();
-  }, [])
-
 
   if (loading) {
     return <nav className="p-4">Loading...</nav>;
@@ -103,6 +104,12 @@ const Navbar = () => {
                 Hi, {userData?.name || "Buddy"}
               </h4>
               <div
+                className="h-10 w-10 flex rounded-full items-center justify-center hover:bg-[var(--primary-color)]/15 transition-all cursor-pointer border"
+                onClick={() => navigate("/savedjobs")}
+              >
+                <IoBookmark size={25} className="text-[var(--primary-color)]" />
+              </div>
+              <div
                 onClick={() => setShowDropdown(!showDropdown)}
                 className="h-10 flex justify-center items-center w-10 text-white rounded-full bg-black cursor-pointer overflow-hidden hover:ring-2 hover:ring-blue-300 transition-all duration-200 relative"
               >
@@ -122,7 +129,7 @@ const Navbar = () => {
                   tabIndex={0}
                   onBlur={() => setShowDropdown(false)}
                   className="absolute top-full right-0 z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
-                  <ul className="py-2 flex flex-col gap-2">
+                  <ul className="py-2 flex flex-col gap-1">
                     {isAdmin &&
                       <li
                         onClick={() => {
