@@ -77,7 +77,7 @@ const FindJobs = () => {
   return (
     <>
       <div className='px-6'>
-        <div className='sticky top-0 py-6'>
+        <div className='sticky top-0 z-2 py-6'>
           <Search Param={Param} />
         </div>
         <div className='my-6 px-2 md:px-5 lg:px-10'>
