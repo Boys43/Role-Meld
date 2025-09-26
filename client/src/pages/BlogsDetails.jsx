@@ -52,7 +52,7 @@ const BlogsDetails = () => {
         </h1>
         <div dangerouslySetInnerHTML={{ __html: blogData?.content }} />
       </div>
-      <div className='bg-white w-[30%] rounded-2xl px-4 w-300'>
+      <div className='bg-white rounded-2xl px-4 w-300'>
         <h3 className='font-bold flex items-center gap-3 my-3 text-center'>
           <FaBloggerB className='text-[var(--primary-color)]' /> Related Blogs
         </h3>
