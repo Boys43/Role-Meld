@@ -7,7 +7,7 @@ const authSchema = new mongoose.Schema({
     role: { type: String, enum: ['user', 'recruiter'], default: 'user' },
     isAdmin: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
-    verificationOTP: { type: Number, default: 0 },
+    verificationOTP: { type: String, default: "" },
 }, { timestamps: true });
 
 const authModel = mongoose.model("User", authSchema);

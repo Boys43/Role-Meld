@@ -8,6 +8,7 @@ import sm from './sm.png'
 import am from './am.png'
 import mt from './mt.png'
 import not_found from './not_found.png'
+import register_side from './register_side.webp'
 
 const assets = {
     home_bg,
@@ -19,7 +20,8 @@ const assets = {
     tcs,
     sm,
     am,
-    not_found
+    not_found,
+    register_side
 }
 
 export default assets;
