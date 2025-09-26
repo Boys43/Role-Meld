@@ -7,7 +7,9 @@ const BlogCard = ({ blog }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="rounded-2xl bg-white hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-300">
+        <div
+            onClick={() => navigate(`/blogdetails/${blog?.slug}?id=${blog._id}`)}
+            className="rounded-2xl cursor-pointer bg-white hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-300">
             {/* Image Section */}
             <div className="overflow-hidden">
                 <img
@@ -36,8 +38,8 @@ const BlogCard = ({ blog }) => {
                 </h3>
 
                 {/* Description */}
-                <span className="line-clamp-3 text-sm text-gray-600">
-                    {blog?.excerpt}
+                <span className="line-clamp-3 min-h-[50px] text-sm text-gray-600">
+                    {blog?.content?.match(/<p[^>]*>(.*?)<\/p>/i)?.[1]?.replace(/<[^>]+>/g, '').slice(0, 100) }
                 </span>
 
                 {/* Button */}
