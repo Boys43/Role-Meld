@@ -13,8 +13,9 @@ const FeaturedJobs = () => {
         loop={true}
         autoplay={{
           delay: 3500,
-          disableOnInteraction: false,
-        }}
+          disableOnInteraction: true,
+          pauseOnMouseEnter: true
+        }}        
         breakpoints={{
           320: {
             slidesPerView: 1,

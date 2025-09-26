@@ -54,7 +54,6 @@ export const AppContextProvider = (props) => {
         if (data.profile.role === "user")
           setProfileScore(data.profile.profileScore);
       } else {
-        toast.error(data.message);
         setUserData(false);
       }
     } catch (error) {
@@ -105,9 +104,10 @@ export const AppContextProvider = (props) => {
   return (
     <AppContext.Provider value={value}>
       {loading ? (
-        // ✅ Replace this with your own loader/spinner component
-        <div className="flex items-center justify-center min-h-screen">
-          <h2 className="text-xl font-semibold">Loading...</h2>
+        <div className="flex items-center justify-center h-screen">
+          <div
+            className="w-16 h-16 border-4 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"
+          ></div>
         </div>
       ) : (
         props.children

@@ -33,25 +33,34 @@ const Navbar = () => {
     }
   };
 
-  const [isAdmin, setIsAdmin] = useState(false)
-  const checkIsAdmin = async () => {
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
-      if (data.success) {
-        setIsAdmin(data.isAdmin)
-      } 
-    } catch (error) {
-      toast.error(error.message)
+
+  if (isLoggedIn) {
+    const [isAdmin, setIsAdmin] = useState(false)
+    const checkIsAdmin = async () => {
+      try {
+        const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
+        if (data.success) {
+          setIsAdmin(data.isAdmin)
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
+
+    useEffect(() => {
+      checkIsAdmin();
+    }, [])
   }
 
-  useEffect(() => {
-    checkIsAdmin();
-  }, [])
-  
 
   if (loading) {
-    return <nav className="p-4">Loading...</nav>;
+    return <div class="min-h-screen flex items-center justify-center bg-gray-50">
+      <div role="status" aria-label="Loading" class="flex flex-col items-center gap-4">
+        <div class="w-20 h-20 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-xl animate-spin"></div>
+        <span class="text-sm text-gray-500">Loading, please wait…</span>
+      </div>
+    </div>
+
   }
 
   return (
@@ -125,17 +134,17 @@ const Navbar = () => {
 
               {showDropdown && (
                 <div
-                tabIndex={0}
-                onBlur={() => setShowDropdown(false)}
-                className="absolute top-full right-0 z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
+                  tabIndex={0}
+                  onBlur={() => setShowDropdown(false)}
+                  className="absolute top-full right-0 z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
                   <ul className="py-2 flex flex-col gap-2">
                     {isAdmin &&
-                      <li 
-                      onClick={() => {
-                        navigate('/admin');
-                        setShowDropdown(false);
-                      }}
-                      className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                      <li
+                        onClick={() => {
+                          navigate('/admin');
+                          setShowDropdown(false);
+                        }}
+                        className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
                         Admin
                       </li>
                     }

@@ -45,14 +45,14 @@ const BlogsDetails = () => {
 
   return (
     <div className='w-full p-10 bg-gray-100 flex gap-4'>
-      <div className='bg-white border border-gray-300 rounded-2xl p-4'>
+      <div className='bg-white w-[70%] border border-gray-300 rounded-2xl p-4'>
         <img src={`${backendUrl}/${blogData.coverImage}`} alt={blogData?.coverImage} className='border rounded-2xl  border-gray-300' />
         <h1 className='w-full flex justify-center font-bold mt-5 underline underline-offset-8'>
           {blogData?.title}
         </h1>
         <div dangerouslySetInnerHTML={{ __html: blogData?.content }} />
       </div>
-      <div className='bg-white rounded-2xl px-4 w-300'>
+      <div className='bg-white w-[30%] rounded-2xl px-4 w-300'>
         <h3 className='font-bold flex items-center gap-3 my-3 text-center'>
           <FaBloggerB className='text-[var(--primary-color)]' /> Related Blogs
         </h3>
