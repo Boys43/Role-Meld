@@ -177,7 +177,6 @@ export const checkProfileScore = async (req, res) => {
 
 export const updateProfilePicture = async (req, res) => {
     const userId = req.user._id;
-    console.log("Incoming file:", req.file);  // 👈 Debug here
 
     try {
         const authUser = await authModel.findOne(userId);

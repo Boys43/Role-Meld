@@ -7,18 +7,13 @@ import { FaCamera, FaPhone } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { MdCancel } from "react-icons/md";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { IoMdMail } from "react-icons/io";
 
 const ApplicantDashboard = () => {
   const { userData, setUserData, backendUrl, profileScore } = useContext(AppContext);
-  const [profilePicture, setProfilePicture] = useState('')
-  const [showSubmit, setShowSubmit] = useState(false);
   const [updatePopUpState, setUpdatePopUpState] = useState('hidden');
-  const [resume, setResume] = useState('');
 
-  // Navigate
-  const navigate = useNavigate()
-
-  const changePicture = async (e) => {
+  const changePicture = async (profilePicture) => {
     const formData = new FormData();
     formData.append("profilePicture", profilePicture);
 
@@ -44,7 +39,7 @@ const ApplicantDashboard = () => {
     }
   };
 
-  const changeResume = async (e) => {
+  const changeResume = async (resume) => {
     const formData = new FormData();
     formData.append("resume", resume);
 
@@ -83,7 +78,7 @@ const ApplicantDashboard = () => {
   };
 
 
-  const updateProfile = async (updatedSkills) => {
+  const updateProfile = async (e) => {
     e.preventDefault()
     try {
       const { data } = await axios.post(`${backendUrl}/api/user/updateprofile`, { updateUser: formData })
@@ -120,11 +115,6 @@ const ApplicantDashboard = () => {
 
             {/* Upload Form */}
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                changePicture();
-                setShowSubmit(false); // hide button again after upload
-              }}
               className="mt-2"
             >
               {/* Hidden File Input */}
@@ -134,8 +124,7 @@ const ApplicantDashboard = () => {
                 name="profilePicture"
                 className="hidden"
                 onChange={(e) => {
-                  setProfilePicture(e.target.files[0]);
-                  setShowSubmit(true); // show button after file chosen
+                  changePicture(e.target.files[0]);
                 }}
               />
 
@@ -146,15 +135,6 @@ const ApplicantDashboard = () => {
               >
                 <FaCamera className="text-gray-600 text-sm" />
               </label>
-
-              {/* Show Submit Button only after file chosen */}
-              {showSubmit && (
-                <button
-                  type="submit"
-                >
-                  Upload
-                </button>
-              )}
             </form>
           </div>
           <div className="p-4">
@@ -168,10 +148,11 @@ const ApplicantDashboard = () => {
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
 
-              <div className="flex items-center gap-4"><FaLocationDot className="text-[var(--primary-color)]" />{userData?.city}, {userData?.address}, {userData?.postal}</div>
+              <div className="flex items-center gap-4"><FaLocationDot className="text-[var(--primary-color)]" />{userData?.city || '-'}, {userData?.address || '-'}, {userData?.postal || '-'}</div>
               <div className="flex items-center gap-4"><FaPhone className="text-[var(--primary-color)]" />{userData?.phone ? userData.phone : '-'}</div>
               <div className="flex items-center gap-4">
-                {userData?.email}
+                <IoMdMail className="text-[var(--primary-color)]" />
+                {userData?.email || '-'}
               </div>
             </div>
             <div className="h-full flex items-center w-full justify-center"><HiOutlinePencilSquare className="cursor-pointer text-[var(--primary-color)]" onClick={() => setUpdatePopUpState('block')} /></div>
@@ -194,10 +175,6 @@ const ApplicantDashboard = () => {
 
             {/* Update Resume Form */}
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                changeResume();
-              }}
               className="flex items-center gap-3 bg-[var(--primary-color)]/10 p-3 rounded-xl border-2 border-[var(--primary-color)]"
             >
               <input
@@ -211,24 +188,14 @@ const ApplicantDashboard = () => {
                    file:bg-[var(--primary-color)]/80 file:text-white 
                    hover:file:bg-[var(--primary-color)]/100 
                    cursor-pointer"
-                onChange={(e) => setResume(e.target.files[0])}
+                onChange={(e) => changeResume(e.target.files[0])}
               />
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-[var(--primary-color)] text-white font-medium hover:bg-[var(--primary-color)]/90 transition"
-              >
-                Update
-              </button>
             </form>
           </div>
         ) : (
           <div className="space-y-3">
             <h3 className="text-lg font-semibold text-gray-700">Upload Resume</h3>
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                changeResume();
-              }}
               className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-300"
             >
               <input
@@ -242,14 +209,8 @@ const ApplicantDashboard = () => {
                    file:bg-[var(--primary-color)]/80 file:text-white 
                    hover:file:bg-[var(--primary-color)]/100 
                    cursor-pointer"
-                onChange={(e) => setResume(e.target.files[0])}
+                onChange={(e) => changeResume(e.target.files[0])}
               />
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-[var(--primary-color)] text-white font-medium hover:bg-[var(--primary-color)]/90 transition"
-              >
-                Upload
-              </button>
             </form>
           </div>
         )}
