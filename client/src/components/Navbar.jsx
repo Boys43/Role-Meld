@@ -21,7 +21,7 @@ const Navbar = () => {
       const { data } = await axios.post(`${backendUrl}/api/auth/logout`);
       if (data.success) {
         setIsLoggedIn(false);
-        setUserData(false);
+        setUserData(null);
         setShowDropdown(false);
         navigate("/");
         toast.success(data.message);
