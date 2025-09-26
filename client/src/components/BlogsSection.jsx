@@ -5,7 +5,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import assets from '../assets/assets';
 
-const BlogsSection = ({className}) => {
+const BlogsSection = ({ className }) => {
   const { backendUrl } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [blogs, setBlogs] = useState([])
@@ -35,9 +35,11 @@ const BlogsSection = ({className}) => {
 
   return (
     <section className={`w-full grid ${className} items-center gap-4`}>
-      {blogs.length > 0 ? blogs?.map((blog, index) => (
-        <BlogCard key={index} blog={blog} />
-      )) :
+      {blogs.length > 0 ? blogs?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // newest first
+        .slice(0, 4) 
+        .map((blog, index) => (
+          <BlogCard key={index} blog={blog} />
+        )) :
         <h2 className='col-span-full text-center mt-5 flex flex-col justify-center items-center gap-4 font-semibold'>
           <img src={assets.not_found} alt="Not Found" className='w-20' />
           No Recent Blogs

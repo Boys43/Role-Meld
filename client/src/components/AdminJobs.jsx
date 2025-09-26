@@ -24,8 +24,6 @@ const AdminJobs = () => {
   }, [])
   
 
-  // Fetch jobs from backend (functionality to be implemented)
-
   return (
     <div className='p-6 bg-white rounded-lg w-full overflow-y-auto h-[calc(100vh-4.6rem)]'>
       <h1 className='text-2xl font-bold mb-4 flex items-center gap-2'>

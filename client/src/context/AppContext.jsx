@@ -76,7 +76,7 @@ export const AppContextProvider = (props) => {
       setIsLoggedIn(false);
       setUserData(null);
     } finally {
-      setLoading(false); // ✅ release loading after everything done
+      setLoading(false);
     }
   };
 

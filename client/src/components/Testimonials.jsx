@@ -48,7 +48,7 @@ const Testimonials = () => {
                         </p>
                         <p className="flex items-center gap-4">
                             <img
-                                src="https://via.placeholder.com/40"
+                                src="https://picsum.photos/300/300?random=1"
                                 alt="Alt"
                                 className="h-10 w-10 rounded-full object-cover border"
                             />{" "}
@@ -71,7 +71,7 @@ const Testimonials = () => {
                         </p>
                         <p className="flex items-center gap-4">
                             <img
-                                src="https://via.placeholder.com/40"
+                                src="https://picsum.photos/300/300?random=2"
                                 alt="Alt"
                                 className="h-10 w-10 rounded-full object-cover border"
                             />{" "}
@@ -94,7 +94,7 @@ const Testimonials = () => {
                         </p>
                         <p className="flex items-center gap-4">
                             <img
-                                src="https://via.placeholder.com/40"
+                                src="https://picsum.photos/300/300?random=3"
                                 alt="Alt"
                                 className="h-10 w-10 rounded-full object-cover border"
                             />{" "}
@@ -117,7 +117,7 @@ const Testimonials = () => {
                         </p>
                         <p className="flex items-center gap-4">
                             <img
-                                src="https://via.placeholder.com/40"
+                                src="https://picsum.photos/300/300?random=4"
                                 alt="Alt"
                                 className="h-10 w-10 rounded-full object-cover border"
                             />{" "}
@@ -140,7 +140,7 @@ const Testimonials = () => {
                         </p>
                         <p className="flex items-center gap-4">
                             <img
-                                src="https://via.placeholder.com/40"
+                                src="https://picsum.photos/300/300?random=5"
                                 alt="Alt"
                                 className="h-10 w-10 rounded-full object-cover border"
                             />{" "}

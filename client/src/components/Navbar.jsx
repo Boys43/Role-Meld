@@ -33,34 +33,25 @@ const Navbar = () => {
     }
   };
 
-
-  if (isLoggedIn) {
-    const [isAdmin, setIsAdmin] = useState(false)
-    const checkIsAdmin = async () => {
-      try {
-        const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
-        if (data.success) {
-          setIsAdmin(data.isAdmin)
-        }
-      } catch (error) {
-        toast.error(error.message);
+  const [isAdmin, setIsAdmin] = useState(false)
+  const checkIsAdmin = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
+      if (data.success) {
+        setIsAdmin(data.isAdmin)
       }
+    } catch (error) {
+      toast.error(error.message)
     }
-
-    useEffect(() => {
-      checkIsAdmin();
-    }, [])
   }
+
+  useEffect(() => {
+    checkIsAdmin();
+  }, [])
 
 
   if (loading) {
-    return <div class="min-h-screen flex items-center justify-center bg-gray-50">
-      <div role="status" aria-label="Loading" class="flex flex-col items-center gap-4">
-        <div class="w-20 h-20 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-xl animate-spin"></div>
-        <span class="text-sm text-gray-500">Loading, please wait…</span>
-      </div>
-    </div>
-
+    return <nav className="p-4">Loading...</nav>;
   }
 
   return (
@@ -111,12 +102,6 @@ const Navbar = () => {
               <h4 className="text-[var(--primary-color)]">
                 Hi, {userData?.name || "Buddy"}
               </h4>
-              <div
-                className="h-10 w-10 flex rounded-full items-center justify-center hover:bg-[var(--primary-color)]/15 transition-all cursor-pointer border"
-                onClick={() => navigate("/savedjobs")}
-              >
-                <IoBookmark size={25} className="text-[var(--primary-color)]" />
-              </div>
               <div
                 onClick={() => setShowDropdown(!showDropdown)}
                 className="h-10 flex justify-center items-center w-10 text-white rounded-full bg-black cursor-pointer overflow-hidden hover:ring-2 hover:ring-blue-300 transition-all duration-200 relative"
