@@ -6,9 +6,8 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 
-const RegisterModel = () => {
+const RegisterModel = ({ setRegStep }) => {
     const { backendUrl } = useContext(AppContext);
-    const navigate = useNavigate()
 
     // Data to sent
     const [name, setName] = useState('');
@@ -16,25 +15,28 @@ const RegisterModel = () => {
     const [password, setPassword] = useState('')
     const [role, setRole] = useState('user');
 
-
+    const [loading, setLoading] = useState(false)
     const register = async (e) => {
+        setLoading(true)
         e.preventDefault()
+        localStorage.setItem("email", email);
         axios.defaults.withCredentials = true;
         try {
-
             const { data } = await axios.post(`${backendUrl}/api/auth/register`, { name, email, password, role })
             if (data.success) {
-                toast.success(data.message)
-                navigate('/login');
+                toast.success(data.message);
+                setRegStep(1)
             } else {
                 toast.error(data.message)
             }
         } catch (error) {
             toast.error(error)
+        }finally{
+            setLoading(false)
         }
     }
     return <>
-        <div className="flex w-full lg:w-1/2 justify-center items-center bg-white" >
+        <div className="flex w-full justify-center items-center bg-white" >
             <div className="w-full px-8 md:px-32 lg:px-24">
                 <form className="bg-white rounded-md flex flex-col gap-2 shadow-2xl p-5" onSubmit={register}>
                     <h1 className="text-gray-800 font-bold text-2xl mb-1">Register</h1>
@@ -64,13 +66,16 @@ const RegisterModel = () => {
                             <option value="recruiter">Recruiter</option>
                         </select>
                     </div>
-                    <button type="submit" className="block w-full bg-indigo-600 mt-5 py-2 rounded-2xl hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold mb-2">Register</button>
+                    <button type="submit" className="block w-full bg-indigo-600 mt-5 py-2 rounded-2xl hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold mb-2"
+                    disabled={loading}
+                    >
+                        {loading ? "Registering..." : "Register"}
+                    </button>
                     <div className="flex justify-between mt-4">
                         <span className="text-sm ml-2 hover:text-blue-500 cursor-pointer hover:-translate-y-1 duration-500 transition-all">Forgot Password ?</span>
 
                         <Link to="/login" className="text-sm ml-2 hover:text-blue-500 cursor-pointer hover:-translate-y-1 duration-500 transition-all">Already have an account</Link>
                     </div>
-
                 </form>
             </div>
         </div>

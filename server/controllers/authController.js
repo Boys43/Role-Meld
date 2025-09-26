@@ -20,7 +20,7 @@ export const register = async (req, res) => {
             return res.json({ success: false, message: "User Already Exists!" });
         }
 
-        const verificationOTP = Math.floor(90000 * Math.random()) + 10000;
+        const verificationOTP = String(Math.floor(900000 * Math.random()) + 100000);
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const transporter = nodemailer.createTransport({
@@ -182,8 +182,8 @@ export const checkAdmin = async (req, res) => {
 export const verifyEmail = async (req, res) => {
     const { OTP, email } = req.body;
 
-    if (!OTP) {
-        return res.json({success: false, message: "OTP is required" });
+    if (!OTP || !email) {
+        return res.json({ success: false, message: "OTP is required" });
     }
 
     try {
@@ -197,7 +197,7 @@ export const verifyEmail = async (req, res) => {
         }
 
         authUser.isVerified = true;
-        authUser.verificationOTP = 0
+        authUser.verificationOTP = ""
         await authUser.save();
 
         return res.json({ success: true, message: "Email verified successfully" });
