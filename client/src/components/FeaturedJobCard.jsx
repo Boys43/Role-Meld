@@ -12,7 +12,6 @@ import axios from 'axios';
 
 const FeaturedJobCard = () => {
     const { backendUrl, isLoggedIn, userData, toggleSaveJob, savedJobs } = useContext(AppContext);
-    console.log([...savedJobs]);
 
     const [toggleApplyJob, setToggleApplyJob] = useState(false)
     const [applJobId, setapplJobId] = useState('')

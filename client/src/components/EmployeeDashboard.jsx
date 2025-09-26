@@ -95,17 +95,10 @@ const EmployeeDashboard = () => {
     }
   }
 
-  console.log(Applications);
-
   useEffect(() => {
     fetchJobs();
     jobs()
   }, [])
-
-  console.log(Jobs.filter((job) => {
-    return job.isActive === true && job?.company === userData?.company;
-  }));
-
 
   return (
     <div className='flex flex-col w-full p-6 bg-white rounded-lg h-[calc(100vh-4.6rem)] overflow-y-auto'>

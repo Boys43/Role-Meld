@@ -25,8 +25,6 @@ const RecruiterJobs = () => {
         getJobs();
     }, [])
 
-    console.log(jobs);
-
     const approvedJobs = jobs.filter(job => job.approved === "approved");
     const rejectedJobs = jobs.filter(job => job.approved === "rejected");
     const pendingJobs = jobs.filter(job => job.approved === "pending");
@@ -34,9 +32,6 @@ const RecruiterJobs = () => {
     const filteredJobs = jobs.filter((job) => {
         return filter === 'all' ? true : job.approved === filter;
     });
-
-
-    console.log(filteredJobs);
 
     return (
         <div className='w-full p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto '>
@@ -49,7 +44,7 @@ const RecruiterJobs = () => {
                             Approved Jobs<FaCircleCheck className='text-green-600' />
                         </h3>
                         <h6>
-                            {approvedJobs.length > 0 && <div className='bg-white text-green-600 font-bold px-4 py-1 rounded-full'>{approvedJobs.length}</div>}
+                            {approvedJobs.length > 0 ? <div className='bg-white text-green-600 font-bold px-4 py-1 rounded-full'>{approvedJobs.length}</div> : <div className='bg-white text-green-600 font-bold px-4 py-1 rounded-full'>0</div>}
                         </h6>
                     </div>
 
@@ -60,7 +55,7 @@ const RecruiterJobs = () => {
                             Rejected Jobs<MdCancel className='text-red-600' />
                         </h3>
                         <h5>
-                            {rejectedJobs.length > 0 && <div className='bg-white text-red-600 font-bold px-4 py-1 rounded-full'>{rejectedJobs.length}</div>}
+                            {rejectedJobs.length > 0 ? <div className='bg-white text-red-600 font-bold px-4 py-1 rounded-full'>{rejectedJobs.length}</div> : <div className='bg-white text-red-600 font-bold px-4 py-1 rounded-full'>0</div>}
                         </h5>
                     </div>
 
