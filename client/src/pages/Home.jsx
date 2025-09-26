@@ -90,7 +90,7 @@ const Home = () => {
                   onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("IT & Software"))}
                 >
                   <MdComputer size={30} />
-                  IT &/ Software
+                  IT & Software
                 </h3>
                 <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
 
