@@ -40,9 +40,14 @@ const AnalyticDashboard = () => {
 
 
   if (loading) {
-    return <p>Loading...</p>
+    return <div className='w-full'>
+      <div className="flex items-center justify-center h-screen">
+        <div
+          className="w-16 h-16 border-8 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"
+        ></div>
+      </div>
+    </div>
   }
-
 
   return (
     <div className='p-10 w-full h-[100vh-4.6rem] overflow-y-auto'>

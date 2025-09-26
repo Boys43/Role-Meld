@@ -7,9 +7,9 @@ const Search = ({ Param }) => {
 
   const [searchJob, setSearchJob] = useState('')
 
-  // Update state when URL changes (important for back/forward nav)
+  
   useEffect(() => {
-    setSearchJob(Param);
+    setSearchJob(Param ?? "");
   }, [Param]);
 
   const handleSubmit = (e) => {
