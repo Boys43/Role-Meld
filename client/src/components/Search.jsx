@@ -4,9 +4,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const Search = ({ Param }) => {
   const navigate = useNavigate();
+  const location = useLocation()
 
   const [searchJob, setSearchJob] = useState('')
-
   
   useEffect(() => {
     setSearchJob(Param ?? "");
@@ -24,7 +24,7 @@ const Search = ({ Param }) => {
       className="shadow-2xl backdrop-blur-xs w-[70vw] mx-auto border-[1px] border-[var(--primary-color)] rounded-2xl"
     >
       <form onSubmit={handleSubmit} className="flex w-full items-center">
-        <div className="flex w-full text-[var(--primary-color)] relative">
+        <div className={`flex w-full ${location.pathname === '/' ? "text-[var(--accent-color)]" : "text-[var(--primary-color)]"} relative`}>
           <FaSearch
             size={15}
             className="absolute left-6 top-1/2 -translate-y-1/2"
