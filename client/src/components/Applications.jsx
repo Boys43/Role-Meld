@@ -7,6 +7,8 @@ import { IoLocationSharp, IoMail, IoSettings, IoPerson } from "react-icons/io5";
 import { IoIosDownload, IoIosCheckmarkCircle } from "react-icons/io";
 import { ImCancelCircle } from "react-icons/im";
 import { toast } from 'react-toastify';
+import Loading from './Loading';
+import NotFound404 from './NotFound404';
 
 const Applications = () => {
     const { backendUrl } = useContext(AppContext);
@@ -95,12 +97,12 @@ const Applications = () => {
             </div>
 
             {loading ? (
-                <p>Loading jobs...</p> // 👈 show this while fetching
+                <Loading />
             ) : Applications.length === 0 ? (
-                <p>No jobs available</p>
+                <NotFound404 margin={"mt-20"} value={"No JObs Found"} />
             ) : (
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredApplications.map((app) => (
+                    {filteredApplications?.length !== 0 ? filteredApplications?.map((app) => (
                         <li
                             key={app._id}
                             className={`rounded-2xl border shadow-md transition-all duration-300 overflow-hidden
@@ -174,7 +176,10 @@ const Applications = () => {
                                 </div>
                             </div>
                         </li>
-                    ))}
+                    ))
+                :
+                <NotFound404 margin={"mt-20"} value={"No Jobs Found"} />
+                }
                 </ul>
             )}
         </div>

@@ -109,12 +109,6 @@ const Navbar = () => {
                 Hi, {userData?.name || "Buddy"}
               </h4>
               <div
-                className="h-10 w-10 flex rounded-full items-center justify-center hover:bg-[var(--primary-color)]/15 transition-all cursor-pointer border"
-                onClick={() => navigate("/savedjobs")}
-              >
-                <IoBookmark size={25} className="text-[var(--primary-color)]" />
-              </div>
-              <div
                 onClick={() => setShowDropdown(!showDropdown)}
                 className="h-10 flex justify-center items-center w-10 text-white rounded-full bg-black cursor-pointer overflow-hidden hover:ring-2 hover:ring-blue-300 transition-all duration-200 relative"
               >

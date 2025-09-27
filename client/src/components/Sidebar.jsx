@@ -115,7 +115,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 }}
                 className={`flex items-center gap-2 px-2 py-1 transition-all rounded cursor-pointer border border-[var(--primary-color)]/30
                   ${activeTab === e.key
-                    ? "text-[var(--primary-color)] translate-x-2 font-semibold bg-[var(--primary-color)]/30 border border-[var(--primary-color)]"
+                    ? "text-[var(--accent-color)] translate-x-2 font-semibold bg-[var(--primary-color)]/30 border border-[var(--primary-color)]"
                     : "hover:bg-[var(--primary-color)]/5"
                   }`}
               >

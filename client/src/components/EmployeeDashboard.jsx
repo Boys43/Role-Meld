@@ -8,6 +8,11 @@ import { IoPersonAddSharp } from "react-icons/io5";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { MdCancel } from "react-icons/md";
 
+// ChatJs 2
+import { Line, Doughnut } from 'react-chartjs-2'
+import { Chart as ChartJS, ArcElement, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement, Filler } from 'chart.js/auto'
+ChartJS.register(LineElement, ArcElement, Legend, PointElement, CategoryScale, LinearScale, BarElement);
+
 const EmployeeDashboard = () => {
   const { userData, backendUrl, setUserData } = useContext(AppContext);
   const [profilePicture, setProfilePicture] = useState(null);
@@ -158,13 +163,13 @@ const EmployeeDashboard = () => {
 
       {/* Stats */}
       <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5 w-full'>
-        <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-[var(--primary-color)] p-4 cursor-pointer flex flex-col items-center justify-center'>
+        <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-red-500 p-4 cursor-pointer flex flex-col items-center justify-center'>
           <h3 className='flex items-center gap-4 font-semibold'><LuGitPullRequest />Total Applications</h3>
           <h1>
             {Applications.length}
           </h1>
         </div>
-        <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-[var(--primary-color)] p-4 cursor-pointer flex flex-col items-center justify-center'>
+        <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-blue-500 p-4 cursor-pointer flex flex-col items-center justify-center'>
           <h3 className='flex items-center gap-4 font-semibold'><IoPersonAddSharp />Total Active Jobs</h3>
           <h1>
             {Jobs.filter((job) => {
@@ -172,7 +177,51 @@ const EmployeeDashboard = () => {
             }).length}
           </h1>
         </div>
+        <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-yellow-500 p-4 cursor-pointer flex flex-col items-center justify-center'>
+          <h3 className='flex items-center gap-4 font-semibold'><IoPersonAddSharp />Total Pending Jobs</h3>
+          <h1>
+            {Jobs.filter((job) => {
+              return job.approved === "pending" && job.company === userData.company;
+            }).length}
+          </h1>
+        </div>
       </div>
+
+      <section className='w-full grid grid-cols-1 md:gird-cols-2 lg:grid-cols-3 mt-5'>
+        <div className='w-full flex justify-center border border-gray-300 rounded-lg p-4 shadow'>
+          <Doughnut
+            data={{
+              labels: ["Approved Jobs", "Rejected Jobs", "Pending Jobs"],
+              datasets: [
+                {
+                  label: "Jobs Comparison",
+                  data: [Jobs.filter(job => job.approved === "approved" && job.company === userData.company).length, Jobs.filter(job => job.approved === "rejected" && job.company === userData.company).length, Jobs.filter(job => job.approved === "pending" && job.company === userData.company).length], // example: [12, 8]
+                  backgroundColor: [
+                    "rgba(54, 162, 235, 0.7)",
+                    "rgba(255, 99, 132, 0.7)",
+                    "rgba(255, 206, 86, 0.7)"
+                  ],
+                  borderColor: [
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 99, 132, 1)",
+                    "rgba(255, 206, 86, 1)"
+                  ],
+
+                  borderWidth: 1,
+                },
+              ],
+            }}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                },
+              },
+            }}
+          />
+        </div>
+      </section>
 
       {/* Update Profile Modal */}
       <div className={`fixed z-51 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-screen flex items-center justify-center backdrop-blur-sm ${updatePopUpState}`}>
