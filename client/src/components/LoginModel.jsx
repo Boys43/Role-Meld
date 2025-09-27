@@ -19,10 +19,9 @@ const LoginModel = () => {
             const { data } = await axios.post(`${backendUrl}/api/auth/login`, { email, password },
                 { withCredentials: true }
             );
-
             if (data.success) {
                 setIsLoggedIn(true);
-                getUserData();
+                await getUserData();
                 navigate("/dashboard");
                 toast.success(data.message);
             } else {
