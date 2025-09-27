@@ -1,9 +1,11 @@
 import React from 'react'
 import { useContext } from 'react';
-import { FaUsers } from "react-icons/fa";
+import { FaTrash, FaUsers } from "react-icons/fa";
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 import { useEffect } from 'react';
+import { HiOutlinePencil } from 'react-icons/hi2';
+import { toast } from 'react-toastify';
 
 const AdminUsers = () => {
   const { backendUrl } = useContext(AppContext);
@@ -23,6 +25,21 @@ const AdminUsers = () => {
   useEffect(() => {
     getUsers();
   }, [])
+
+  // Delete User
+  const deleteUser = async (id) => {
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/auth/delete-user`, {id});
+      if (data.success) {
+        getUsers();
+        toast.success(data.message)
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
 
   return (
     <div className='p-6 bg-white rounded-lg w-full overflow-y-scroll h-[calc(100vh-4.6rem)]'>
@@ -45,14 +62,16 @@ const AdminUsers = () => {
                   <th className="px-6 py-3">Portfolio</th>
                   <th className="px-6 py-3">Resume</th>
                   <th className="px-6 py-3 text-center">Applied Jobs</th>
+                  <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((user, index) => (
+                  
                   <tr
-                    key={user.id}
-                    className={`transition duration-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                      } hover:bg-blue-50`}
+                  key={index}
+                  className={`transition duration-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                  } hover:bg-blue-50`}
                   >
                     <td className="px-6 py-4 font-medium">{index + 1}</td>
                     <td className="px-6 py-4">{user.name}</td>
@@ -89,6 +108,11 @@ const AdminUsers = () => {
                       <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
                         {user.appliedJobs?.length || 0}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex justify-center items-center gap-4">
+                        <FaTrash onClick={() => deleteUser(user.authId)} className=' cursor-pointer text-red-300' />
+                      </div>
                     </td>
                   </tr>
                 ))}

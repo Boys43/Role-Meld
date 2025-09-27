@@ -187,15 +187,19 @@ const EmployeeDashboard = () => {
         </div>
       </div>
 
-      <section className='w-full grid grid-cols-1 md:gird-cols-2 lg:grid-cols-3 mt-5'>
-        <div className='w-full flex justify-center border border-gray-300 rounded-lg p-4 shadow'>
+      <section className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-5 gap-4">
+        <div className="w-full flex justify-center items-center border border-gray-300 rounded-lg p-4 shadow h-80">
           <Doughnut
             data={{
               labels: ["Approved Jobs", "Rejected Jobs", "Pending Jobs"],
               datasets: [
                 {
                   label: "Jobs Comparison",
-                  data: [Jobs.filter(job => job.approved === "approved" && job.company === userData.company).length, Jobs.filter(job => job.approved === "rejected" && job.company === userData.company).length, Jobs.filter(job => job.approved === "pending" && job.company === userData.company).length], // example: [12, 8]
+                  data: [
+                    Jobs.filter(job => job.approved === "approved" && job.company === userData.company).length,
+                    Jobs.filter(job => job.approved === "rejected" && job.company === userData.company).length,
+                    Jobs.filter(job => job.approved === "pending" && job.company === userData.company).length
+                  ],
                   backgroundColor: [
                     "rgba(54, 162, 235, 0.7)",
                     "rgba(255, 99, 132, 0.7)",
@@ -206,13 +210,13 @@ const EmployeeDashboard = () => {
                     "rgba(255, 99, 132, 1)",
                     "rgba(255, 206, 86, 1)"
                   ],
-
                   borderWidth: 1,
                 },
               ],
             }}
             options={{
               responsive: true,
+              maintainAspectRatio: false,
               plugins: {
                 legend: {
                   position: "bottom",
@@ -222,6 +226,7 @@ const EmployeeDashboard = () => {
           />
         </div>
       </section>
+
 
       {/* Update Profile Modal */}
       <div className={`fixed z-51 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-screen flex items-center justify-center backdrop-blur-sm ${updatePopUpState}`}>

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
+import assets from '../assets/assets';
 
 const BlogCard = ({ blog }) => {
     const { backendUrl } = useContext(AppContext);
@@ -13,9 +14,9 @@ const BlogCard = ({ blog }) => {
             {/* Image Section */}
             <div className="overflow-hidden">
                 <img
-                    src={`${backendUrl}/${blog.coverImage}`}
+                    src={blog.coverImage ? `${backendUrl}/${blog.coverImage}` : assets.preview_image}
                     alt="Blog"
-                    className="w-full h-[10rem] object-cover cursor-pointer transition-transform duration-500 hover:scale-110"
+                    className="w-full border border-gray-300 h-[10rem] object-cover cursor-pointer transition-transform duration-500 hover:scale-110"
                 />
             </div>
 
@@ -29,17 +30,17 @@ const BlogCard = ({ blog }) => {
                             className="bg-[var(--primary-color)] text-white text-xs font-medium rounded-full px-3 py-1 shadow-sm">
                             {tag}
                         </span>
-                    ))}
+                    )) || "Tags Here"}
                 </div>
 
                 {/* Title */}
                 <h3 className="font-bold text-lg leading-snug line-clamp-2 text-gray-800">
-                    {blog?.title}
+                    {blog?.title || "Title Here"}
                 </h3>
 
                 {/* Description */}
                 <span className="line-clamp-3 min-h-[50px] text-sm text-gray-600">
-                    {blog?.content?.match(/<p[^>]*>(.*?)<\/p>/i)?.[1]?.replace(/<[^>]+>/g, '').slice(0, 100) }
+                    {blog?.content?.match(/<p[^>]*>(.*?)<\/p>/i)?.[1]?.replace(/<[^>]+>/g, '').slice(0, 100) || "Expercept Here"}
                 </span>
 
                 {/* Button */}

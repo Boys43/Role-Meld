@@ -3,7 +3,8 @@ import { useContext } from 'react';
 import { useEffect } from 'react';
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
-import { FaUsers } from "react-icons/fa";
+import { FaTrash, FaUsers } from "react-icons/fa";
+import { toast } from 'react-toastify';
 
 const AdminRecruiters = () => {
   const { backendUrl } = useContext(AppContext);
@@ -20,10 +21,24 @@ const AdminRecruiters = () => {
     }
   }
 
-
   useEffect(() => {
     getRecruiters();
   }, [])
+
+  // Delete User
+  const deleteUser = async (id) => {
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/auth/delete-user`, { id });
+      if (data.success) {
+        await getRecruiters();
+        toast.success(data.message)
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
 
   return (
     <div className='p-6 bg-white rounded-lg w-full overflow-y-scroll h-[calc(100vh-4.6rem)]'>
@@ -46,6 +61,7 @@ const AdminRecruiters = () => {
                   <th className="px-6 py-3">Members</th>
                   <th className="px-6 py-3">Company</th>
                   <th className="px-6 py-3 text-center">Posted Jobs</th>
+                  <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -68,6 +84,11 @@ const AdminRecruiters = () => {
                       <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
                         {recruiter.sentJobs?.length || 0}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex justify-center items-center gap-4">
+                        <FaTrash onClick={() => deleteUser(recruiter.authId)} className=' cursor-pointer text-red-300' />
+                      </div>
                     </td>
                   </tr>
                 ))}

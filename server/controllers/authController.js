@@ -86,7 +86,7 @@ export const register = async (req, res) => {
             await recruiterProfileModel.create({ authId: auth._id, role: "recruiter", name: name, email: email })
         }
 
-        return res.json({ success: true, message: `You are registered as ${role}` });
+        return res.json({ success: true, message: `Please Verify Your Account` });
     } catch (error) {
         return res.json({ success: false, message: error.message });
     }
@@ -102,12 +102,12 @@ export const login = async (req, res) => {
     try {
         const user = await authModel.findOne({ email });
 
-        if (user.isVerified === false) {
-            return res.json({ success: false, message: "Please Verify Your Email First" });
-        }
-
         if (!user) {
             return res.json({ success: false, message: "Invalid Email" });
+        }
+
+        if (user.isVerified === false) {
+            return res.json({ success: false, message: "Please Verify Your Email First" });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -205,3 +205,31 @@ export const verifyEmail = async (req, res) => {
         return res.json({ success: false, message: error.message });
     }
 }
+
+export const deleteUser = async (req, res) => {
+    const { id } = req.body;
+
+    try {
+        const user = await authModel.findById(id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        let deletedProfile;
+        if (user.role === "user") {
+            deletedProfile = await userProfileModel.findOneAndDelete({ authId: user._id });
+        } else if (user.role === "recruiter") {
+            deletedProfile = await recruiterProfileModel.findOneAndDelete({ authId: user._id });
+        }
+
+        await authModel.findByIdAndDelete(id);
+
+        return res.json({
+            success: true,
+            message: "User and related profile deleted successfully"
+        });
+
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
