@@ -19,24 +19,47 @@ import 'aos/dist/aos.css';
 import Loading from './components/Loading'
 import EditBlog from './pages/EditBlog'
 
-const AdminRoute = () => {
-  const { isLoggedIn, userData } = useContext(AppContext);
+export const AdminRoute = ({ children }) => {
+  const { backendUrl, isLoggedIn } = useContext(AppContext);
+  const [isAdmin, setIsAdmin] = useState(null); // null = loading, true/false after check
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const checkAdmin = async () => {
+        try {
+          const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`, {
+            withCredentials: true,
+          });
+          setIsAdmin(data.isAdmin);
+        } catch (err) {
+          setIsAdmin(false);
+          toast.error("Failed to verify admin status");
+        }
+      };
+      checkAdmin();
+    }
+  }, [isLoggedIn, backendUrl]);
 
   if (!isLoggedIn) {
+    toast.error("Please Login First");
     return <Navigate to="/login" replace />;
+  }
+
+  if (isAdmin === null) {
+    return <Loading />;
+  }
+
+  if (isAdmin) {
+    return children;
   } else {
-    if (userData.isAdmin) {
-      return children;
-    } else {
-      toast.error("You are not authorized to access this page");
-      <Navigate to="/dashboard" replace />;
-    }
+    toast.error("You are not authorized to access this page");
+    return <Navigate to="/dashboard" replace />;
   }
 };
 
 export const ProtectedRoute = ({ children }) => {
   const { isLoggedIn } = useContext(AppContext);
-  
+
   if (!isLoggedIn) {
     toast.error("Please Login First")
     return <Navigate to="/login" replace />;

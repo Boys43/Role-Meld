@@ -23,7 +23,7 @@ const Search = ({ Param }) => {
       id="search"
       className="shadow-2xl backdrop-blur-xs w-[70vw] mx-auto border-[1px] border-[var(--primary-color)] rounded-2xl"
     >
-      <form onSubmit={handleSubmit} className="flex w-full items-center">
+      <form onSubmit={handleSubmit} className="flex gap-2 w-full items-center">
         <div className={`flex w-full ${location.pathname === '/' ? "text-[var(--accent-color)]" : "text-[var(--primary-color)]"} relative`}>
           <FaSearch
             size={15}

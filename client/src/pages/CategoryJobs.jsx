@@ -18,6 +18,7 @@ import JobCard from '../components/JobCard';
 import { FaFilter } from 'react-icons/fa';
 import { MdLoop } from "react-icons/md";
 import Loading from '../components/Loading';
+import NotFound404 from '../components/NotFound404';
 
 const CategoryJobs = () => {
     const location = useLocation();
@@ -159,7 +160,7 @@ const CategoryJobs = () => {
 
     // Loading
     if (loading) {
-        return   <Loading />
+        return  <Loading />
     }
 
     return (
@@ -237,9 +238,9 @@ const CategoryJobs = () => {
                     </div>
                 </div>
                 <div className='grid my-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    {filteredJobs?.map((e, i) => (
+                    {filteredJobs.length !== 0 ? filteredJobs?.map((e, i) => (
                         <JobCard key={i} e={e} />
-                    ))}
+                    )): <NotFound404 value={"No Jobs Found"} margin={"my-10"} />}
                 </div>
             </section>
         </main>
