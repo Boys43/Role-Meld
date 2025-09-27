@@ -8,6 +8,7 @@ import BlogsSection from '../components/BlogsSection';
 
 // React Icons
 import { FaBloggerB } from "react-icons/fa";
+import Loading from '../components/Loading';
 
 const BlogsDetails = () => {
   const { backendUrl } = useContext(AppContext);
@@ -38,9 +39,7 @@ const BlogsDetails = () => {
   }, [id])
 
   if (loading) {
-    return <div className="flex fixed top-1/2 left-1/2 tanslate-1/2 justify-center items-center py-10">
-      <div className="w-8 h-8 border-4 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>
-    </div>
+    return <Loading />
   }
 
   return (

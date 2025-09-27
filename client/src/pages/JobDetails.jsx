@@ -12,6 +12,7 @@ import { FaAudioDescription } from "react-icons/fa6";
 import { TbListDetails } from "react-icons/tb";
 import { IoIosMail } from "react-icons/io";
 import JobCard from '../components/JobCard';
+import Loading from '../components/Loading';
 
 const JobDetails = () => {
     const { backendUrl, isLoggedIn, userData } = useContext(AppContext);
@@ -74,9 +75,7 @@ const JobDetails = () => {
     }, [])
 
     if (loading) {
-        return <div className="flex fixed top-1/2 left-1/2 tanslate-1/2 justify-center items-center py-10">
-            <div className="w-8 h-8 border-4 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>
-        </div>
+        return <Loading />
     }
 
     return (

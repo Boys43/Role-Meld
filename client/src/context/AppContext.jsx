@@ -1,6 +1,7 @@
 import axios from "axios";
 import { createContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import Loading from "../components/Loading";
 
 export const AppContext = createContext();
 
@@ -104,11 +105,7 @@ export const AppContextProvider = (props) => {
   return (
     <AppContext.Provider value={value}>
       {loading ? (
-        <div className="flex items-center justify-center h-screen">
-          <div
-            className="w-16 h-16 border-4 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"
-          ></div>
-        </div>
+        <Loading />
       ) : (
         props.children
       )}

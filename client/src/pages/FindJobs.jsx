@@ -10,6 +10,7 @@ import { FaFilter } from "react-icons/fa";
 import JobCard from '../components/JobCard'
 import CategoryJobs from './CategoryJobs'
 import assets from '../assets/assets'
+import NotFound404 from '../components/NotFound404'
 
 const FindJobs = () => {
   const location = useLocation();
@@ -138,12 +139,11 @@ const FindJobs = () => {
               {filteredJobs.length !== 0 ? filteredJobs?.map((e, i) => (
                 <JobCard key={i} e={e} />
               )) :
-                <h2 className='col-span-full text-center mt-30 flex flex-col justify-center items-center gap-4'>
-                  <img src={assets.not_found} alt="Not Found" className='w-20' />
-                  <h2>
-                    No Matches Found related <span className='font-bold'>"{Param || categoryParam}"</span>
-                  </h2>
-                </h2>
+                  <NotFound404 margin={"mt-20"} value={
+                    <div>
+                      No Matches Found related <span className='font-bold'>"{Param || categoryParam}"</span>
+                    </div>
+                  } />
               }
             </ul>
           </section>

@@ -11,11 +11,16 @@ import { FaBriefcase } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import { FaCheckCircle } from "react-icons/fa";
 import { GiCancel } from "react-icons/gi";
+import Loading from './Loading';
+import BtnLoading from './BtnLoading';
 
 const AdminJobRequests = () => {
   const { backendUrl } = useContext(AppContext);
   const [pendingJobs, setPendingJobs] = useState([]);
+  const [loadingA, setLoadingA] = useState(false)
+  const [loadingB, setLoadingB] = useState(false)
   const getPendingJobs = async () => {
+    setLoadingA(true)
     try {
       const { data } = await axios.get(`${backendUrl}/api/jobs/getpendingjobs`);
       if (data.success) {
@@ -23,6 +28,8 @@ const AdminJobRequests = () => {
       }
     } catch (error) {
       toast.error("Error Fetching Pending Jobs" + error.message);
+    } finally {
+      setLoadingA(false);
     }
   }
 
@@ -31,6 +38,7 @@ const AdminJobRequests = () => {
   }, [])
 
   const updateJobStatus = async (id, status) => {
+    setLoadingB(true)
     try {
       const { data } = await axios.post(`${backendUrl}/api/jobs/updatejobstatus`, { jobId: id, status });
       if (data.success) {
@@ -42,7 +50,7 @@ const AdminJobRequests = () => {
       }
     } catch (error) {
       toast.error("Error updating job status" + error.message);
-    }
+    } finally { setLoadingB(false) }
   }
 
   const navigate = useNavigate();
@@ -78,17 +86,32 @@ const AdminJobRequests = () => {
               </span>
 
               <div className='flex mt-4'>
-                <button 
-                  onClick={() => updateJobStatus(job._id, "approved")} 
+                <button
+                  onClick={() => updateJobStatus(job._id, "approved")}
                   className='mt-4 bg-green-300 border-2 border-green-500 text-white px-4 py-2 rounded-lg mr-2 hover:bg-green-600 transition flex items-center gap-2'
-                  >
-                  Approve <FaCheckCircle className='text-green-500'/>
+                  disabled={loadingB}
+                >
+                  {loadingB ?
+                    <>
+                      "Loading"
+                    </> :
+                    <>
+                      Approve < FaCheckCircle className='text-green-500' />
+                    </>
+                  }
                 </button>
-                <button 
-                  onClick={() => updateJobStatus(job._id, "rejected")} 
+                <button
+                  onClick={() => updateJobStatus(job._id, "rejected")}
                   className='mt-4 bg-red-300 border-2 border-red-500 text-white px-4 py-2 rounded-lg mr-2 hover:bg-red-600 transition flex items-center gap-2'
-                  >
-                  Reject <GiCancel className='text-red-500'/>
+                >
+                  {loadingB ?
+                    <>
+                      "Loading"
+                    </> :
+                    <>
+                      Reject < GiCancel className='text-red-500' />
+                    </>
+                  }
                 </button>
               </div>
             </li>

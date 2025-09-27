@@ -17,6 +17,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import JobCard from '../components/JobCard';
 import { FaFilter } from 'react-icons/fa';
 import { MdLoop } from "react-icons/md";
+import Loading from '../components/Loading';
 
 const CategoryJobs = () => {
     const location = useLocation();
@@ -158,9 +159,7 @@ const CategoryJobs = () => {
 
     // Loading
     if (loading) {
-        return <div className="flex fixed top-1/2 left-1/2 tanslate-1/2 justify-center items-center py-10">
-            <div className="w-8 h-8 border-4 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>
-        </div>
+        return   <Loading />
     }
 
     return (
