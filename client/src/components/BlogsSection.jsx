@@ -4,6 +4,7 @@ import { AppContext } from '../context/AppContext'
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import assets from '../assets/assets';
+import NotFound404 from './NotFound404';
 
 const BlogsSection = ({ className }) => {
   const { backendUrl } = useContext(AppContext);
@@ -40,10 +41,7 @@ const BlogsSection = ({ className }) => {
         .map((blog, index) => (
           <BlogCard key={index} blog={blog} />
         )) :
-        <h2 className='col-span-full text-center mt-5 flex flex-col justify-center items-center gap-4 font-semibold'>
-          <img src={assets.not_found} alt="Not Found" className='w-20' />
-          No Recent Blogs
-        </h2>
+        <NotFound404 margin={"mt-10"} value={"No Recent Blogs"} />
       }
     </section>
   )

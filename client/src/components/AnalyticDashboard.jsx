@@ -10,6 +10,7 @@ ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, BarEleme
 // React Icons
 import { FaUsers, FaBriefcase, FaUser } from "react-icons/fa";
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
+import Loading from './Loading';
 const AnalyticDashboard = () => {
 
   const { backendUrl, } = useContext(AppContext);
@@ -41,11 +42,7 @@ const AnalyticDashboard = () => {
 
   if (loading) {
     return <div className='w-full'>
-      <div className="flex items-center justify-center h-screen">
-        <div
-          className="w-16 h-16 border-8 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"
-        ></div>
-      </div>
+      <Loading />
     </div>
   }
 

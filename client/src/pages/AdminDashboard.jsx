@@ -6,6 +6,7 @@ import AdminJobRequests from '../components/AdminJobRequests'
 import AdminJobs from '../components/AdminJobs'
 import AdminSidebar from '../components/AdminSidebar'
 import AdminBlog from '../components/AdminBlog'
+import AdminListedBlogs from '../components/AdminListedBlogs'
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('analytic-dashboard')
@@ -24,6 +25,8 @@ const AdminDashboard = () => {
         return <AdminJobs />
       case "blog":
         return <AdminBlog />
+      case "listed-blogs":
+        return <AdminListedBlogs />
       default:
         return <AnalyticDashboard />
     }

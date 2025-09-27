@@ -13,6 +13,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { GiCancel } from "react-icons/gi";
 import Loading from './Loading';
 import BtnLoading from './BtnLoading';
+import NotFound404 from './NotFound404';
 
 const AdminJobRequests = () => {
   const { backendUrl } = useContext(AppContext);
@@ -60,11 +61,11 @@ const AdminJobRequests = () => {
 
   return (
     <div className='p-6 bg-white w-full rounded-lg '>
-      <h1 className='text-2xl font-bold mb-4 flex items-center gap-2'>
-        <FaCodePullRequest /> Job Requests
+      <h1 className='text-2xl font-bold mb-4 flex items-center gap-4'>
+        <FaCodePullRequest className='text-[var(--primary-color)]' /> Job Requests
       </h1>
       {pendingJobs.length === 0 ? (
-        <p>No Pending Job Requests</p>
+        <NotFound404 margin={"mt-10"} value={"No Job Requests"} />
       ) : (
         <ul className='p-4 grid gap-4 overflow-y-auto grid-cols-auto-fit'>
           {pendingJobs.map((job) => (

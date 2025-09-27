@@ -1,6 +1,6 @@
 import express from 'express';
 import userAuth from '../middlewares/userAuth.js';
-import { createBlog, getAllBlogs, getBlog } from '../controllers/blogsController.js';
+import { createBlog, editBlog, getAllBlogs, getBlog, removeBlog } from '../controllers/blogsController.js';
 import multer  from 'multer'
 import path from 'path';
 
@@ -21,5 +21,7 @@ const upload = multer({ storage: storage });
 blogRouter.post('/createblog', userAuth, upload.single('coverImage'), createBlog);
 blogRouter.get('/getallblogs', getAllBlogs);
 blogRouter.post('/getblog', getBlog);
+blogRouter.post('/removeblog', removeBlog);
+blogRouter.post('/editblog', editBlog);
 
 export default blogRouter;

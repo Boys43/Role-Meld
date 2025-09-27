@@ -44,3 +44,30 @@ export const getBlog = async (req, res) => {
         return res.status(500).json({ success: false, message: error.message });
     }
 }
+
+// Remove the Blog
+export const removeBlog = async (req, res) => {
+    const {blogId} = req.body;
+    try {
+        await blogModel.findByIdAndDelete(blogId);
+        return res.status(200).json({ success: true, message: 'Blog deleted successfully' });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+// Edit the Blog
+export const editBlog = async (req, res) => {
+    const { updatedBlog, blogId } = req.body;
+
+    if (!updatedBlog || !blogId) {
+        return res.status(400).json({ success: false, message: 'Please provide all the required fields' });   
+    }
+    try {
+        const blog = await blogModel.findByIdAndUpdate(blogId, {$set: updatedBlog}, { new: true }, runva);
+
+        return res.json({ success: true, blog });
+    } catch (error) {
+        return res.json({success: false, message: error.message });
+    }
+}
