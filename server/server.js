@@ -1,5 +1,5 @@
-import express from "express"
-import cors from "cors"
+import express from "express";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 import jobsRouter from "./routes/jobsRouter.js";
@@ -12,21 +12,22 @@ import analyticRouter from "./routes/analyticRoutes.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
 import blogRouter from "./routes/blogRoutes.js";
-
-
+import axios from 'axios';
+import cron from 'node-cron';
 
 const app = express();
-app.use(cookieParser())
-app.use(express.json())
+app.use(cookieParser());
+app.use(express.json());
+
 const allowedOrigins = [
-    "http://localhost:5173",           // local dev
-    "https://role-meld.onrender.com",  // backend (API)
-    "https://role-meld-1.onrender.com" // frontend
+    "http://localhost:5173",           
+    "https://role-meld.onrender.com",  
+    "https://role-meld-1.onrender.com"
 ];
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files from "uploads" folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(
@@ -44,12 +45,27 @@ app.use(
 
 const PORT = 4000;
 
+// Lightweight ping route
+app.get('/ping', (req, res) => res.sendStatus(200));
+
 app.get('/', (req, res) => {
     res.send("I am Working Bitch!")
-})
+});
 
 connectDB();
 startJobsCron();
+
+// Ping backend every 5 minutes to prevent cold start
+const SELF_URL = process.env.SELF_URL || 'http://localhost:4000/ping';
+
+cron.schedule('*/5 * * * *', async () => {
+    try {
+        await axios.get(SELF_URL);
+        console.log('Pinged self at', new Date().toLocaleTimeString());
+    } catch (err) {
+        console.log('Error pinging self:', err.message);
+    }
+});
 
 app.use('/api/jobs', jobsRouter);
 app.use('/api/auth', authRouter);
@@ -60,5 +76,4 @@ app.use('/api/blog', blogRouter);
 
 app.listen(PORT, () => {
     console.log(`App Listening on http://localhost:${PORT}`);
-})
-
+});
