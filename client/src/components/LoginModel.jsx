@@ -37,7 +37,7 @@ const LoginModel = () => {
     return (
         <div className="flex w-full justify-center items-center bg-white" >
             <div className="w-full px-8 md:px-32 lg:px-24">
-                <form className="bg-white rounded-md shadow-2xl p-5 flex flex-col gap-2" onSubmit={login}>
+                <form className="bg-white rounded-md border border-gray-300 p-5 flex flex-col gap-2" onSubmit={login}>
                     <h1 className="text-gray-800 font-bold text-2xl mb-1">Login</h1>
                     <p className="text-sm font-normal text-gray-600 mb-8">Hello Again!</p>
                     <div className="flex items-center border-2 py-2 px-3 rounded-2xl">
