@@ -87,45 +87,64 @@ const AnalyticDashboard = () => {
         {/* Analytics */}
         <div className='grid mt-4 w-full grid-cols-1 lg:grid-cols-2 gap-4'>
           <div className='shadow-lg border p-4 rounded-2xl'>
-            <Line data={{
-              labels: jobData.map((job) => job.day.split("-")[1] + '-' + job.day.split("-")[2]),
-              datasets: [
-                {
-                  label: "Jobs",
-                  data: jobData.map((job) => job.jobs),
-                  borderColor: "rgb(0, 201, 81)",
-                  backgroundColor: "rgb(185, 248, 207)",
-                },
-              ],
-            }} />
-          </div>
-          <div className='shadow-lg border p-4 rounded-2xl'>
-            <Bar data={{
-              labels: userData.map((user) => user.day.split("-")[1] + '-' + user.day.split("-")[2]),
-              datasets: [
-                {
-                  label: "Users",
-                  data: userData.map((user) => user.users),
-                  borderColor: "rgb(251, 44, 54)",
-                  backgroundColor: "rgb(255, 201, 201)",
-                },
-              ],
-            }} />
+            <Line
+              data={{
+                labels: jobData.map((job) => job.day.split("-")[1] + '-' + job.day.split("-")[2]),
+                datasets: [
+                  {
+                    label: "Jobs",
+                    data: jobData.map((job) => job.jobs),
+                    borderColor: "rgb(0, 201, 81)",
+                    backgroundColor: "rgb(185, 248, 207)",
+                  },
+                ],
+              }}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+              }}
+            />
           </div>
 
           <div className='shadow-lg border p-4 rounded-2xl'>
-            <Line data={{
-              labels: recruiterData.map((recruiters) => recruiters.day.split("-")[1] + '-' + recruiters.day.split("-")[2]),
-              datasets: [
-                {
-                  fill: true,
-                  label: "Recruiters",
-                  data: recruiterData.map((recruiters) => recruiters.users),
-                  borderColor: "rgb(240, 177, 0)",
-                  backgroundColor: "rgb(255, 240, 133)",
-                },
-              ],
-            }} />
+            <Bar
+              data={{
+                labels: userData.map((user) => user.day.split("-")[1] + '-' + user.day.split("-")[2]),
+                datasets: [
+                  {
+                    label: "Users",
+                    data: userData.map((user) => user.users),
+                    borderColor: "rgb(251, 44, 54)",
+                    backgroundColor: "rgb(255, 201, 201)",
+                  },
+                ],
+              }}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+              }}
+            />
+          </div>
+
+          <div className='shadow-lg border p-4 rounded-2xl'>
+            <Line
+              data={{
+                labels: recruiterData.map((recruiters) => recruiters.day.split("-")[1] + '-' + recruiters.day.split("-")[2]),
+                datasets: [
+                  {
+                    fill: true,
+                    label: "Recruiters",
+                    data: recruiterData.map((recruiters) => recruiters.users),
+                    borderColor: "rgb(240, 177, 0)",
+                    backgroundColor: "rgb(255, 240, 133)",
+                  },
+                ],
+              }}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+              }}
+            />
           </div>
         </div>
       </div>

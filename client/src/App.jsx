@@ -1,6 +1,6 @@
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -17,42 +17,33 @@ import BlogsDetails from './pages/BlogsDetails'
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Loading from './components/Loading'
+import EditBlog from './pages/EditBlog'
 
 const AdminRoute = () => {
-  const { backendUrl } = useContext(AppContext);
-  const [isAdmin, setIsAdmin] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { isLoggedIn, userData } = useContext(AppContext);
 
-  useEffect(() => {
-    const checkAdmin = async () => {
-      try {
-        const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
-        if (data.success) {
-          setIsAdmin(data.isAdmin);
-        } else {
-          setIsAdmin(false);
-        }
-      } catch (error) {
-        console.error("Error checking admin status:", error);
-        setIsAdmin(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAdmin();
-  }, [backendUrl]);
-
-  if (loading) return <Loading />;
-
-  if (isAdmin) {
-    return <AdminDashboard />;
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
   } else {
-    toast.error("Access Denied - Admins Only");
-    return <Dashboard />;
+    if (userData.isAdmin) {
+      return children;
+    } else {
+      toast.error("You are not authorized to access this page");
+      <Navigate to="/dashboard" replace />;
+    }
   }
 };
 
+export const ProtectedRoute = ({ children }) => {
+  const { isLoggedIn } = useContext(AppContext);
+  
+  if (!isLoggedIn) {
+    toast.error("Please Login First")
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
 
 const App = () => {
   useEffect(() => {
@@ -69,9 +60,23 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
         <Route path="/jobdetails/:id" element={<JobDetails />} />
-        <Route path="/admin" element={<AdminRoute />} />
+
+        <Route path="/admin" element={
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        } />
+        <Route path="/editblog" element={
+          <AdminRoute>
+            <EditBlog />
+          </AdminRoute>
+        } />
         <Route path="/find-jobs" element={<FindJobs />} />
         <Route path="/category-jobs" element={<CategoryJobs />} />
         <Route path="/blogdetails/:slug" element={<BlogsDetails />} />

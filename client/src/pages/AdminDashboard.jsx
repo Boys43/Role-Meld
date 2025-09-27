@@ -23,9 +23,11 @@ const AdminDashboard = () => {
         return <AdminJobRequests />
       case 'jobs':
         return <AdminJobs />
-      case "blog":
+      case 'blog-management':
+        return <AdminListedBlogs setActiveTab={setActiveTab} />
+      case 'add-blog':
         return <AdminBlog />
-      case "listed-blogs":
+      case 'listed-blogs':
         return <AdminListedBlogs />
       default:
         return <AnalyticDashboard />
