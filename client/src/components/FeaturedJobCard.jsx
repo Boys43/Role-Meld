@@ -81,7 +81,7 @@ const FeaturedJobCard = () => {
                     </span>
                     <div className='flex h-full items-end justify-end gap-4 py-10'>
                         <button
-                            disabled={userData?.appliedJobs?.includes(e?._id)}
+                            // disabled={userData?.appliedJobs?.includes(e?._id)}
                             onClick={() => {
                                 if (isLoggedIn) {
                                     // setapplJobId(e?._id)
