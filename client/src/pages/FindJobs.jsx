@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 import { FaFilter } from "react-icons/fa";
 import JobCard from '../components/JobCard'
 import CategoryJobs from './CategoryJobs'
+import assets from '../assets/assets'
 
 const FindJobs = () => {
   const location = useLocation();
@@ -33,10 +34,10 @@ const FindJobs = () => {
         }
       } catch (error) {
         toast.error(error.response.data.message);
-      }finally{
+      } finally {
         setLoading(false)
       }
-      }
+    }
     useEffect(() => {
       seachedJobs();
     }, [Param]);
@@ -51,7 +52,7 @@ const FindJobs = () => {
         }
       } catch (error) {
         toast.error(error.response.data.message);
-      }finally{
+      } finally {
         setLoading(false)
       }
     }
@@ -81,7 +82,7 @@ const FindJobs = () => {
 
   return (
     <>
-      <div className='px-6'>
+      <div className='px-6 min-h-[calc(100vh-4.6rem)]'>
         <div className='sticky top-0 z-2 py-6'>
           <Search Param={Param} />
         </div>
@@ -134,9 +135,16 @@ const FindJobs = () => {
           </section>
           <section className='my-4'>
             <ul className='grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              {filteredJobs?.map((e, i) => (
+              {filteredJobs.length !== 0 ? filteredJobs?.map((e, i) => (
                 <JobCard key={i} e={e} />
-              ))}
+              )) :
+                <h2 className='col-span-full text-center mt-30 flex flex-col justify-center items-center gap-4'>
+                  <img src={assets.not_found} alt="Not Found" className='w-20' />
+                  <h2>
+                    No Matches Found related <span className='font-bold'>"{Param || categoryParam}"</span>
+                  </h2>
+                </h2>
+              }
             </ul>
           </section>
         </div>
