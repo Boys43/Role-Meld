@@ -11,6 +11,7 @@ import JobCard from '../components/JobCard'
 import CategoryJobs from './CategoryJobs'
 import assets from '../assets/assets'
 import NotFound404 from '../components/NotFound404'
+import Loading from '../components/Loading'
 
 const FindJobs = () => {
   const location = useLocation();
@@ -24,43 +25,33 @@ const FindJobs = () => {
 
   const [searchedCategories, setSearchedCategories] = useState([]);
   const [approvedCategoryJobs, setApprovedCategoryJobs] = useState([]);
-  if (Param !== null) {
-    const seachedJobs = async () => {
-      setLoading(true)
+  useEffect(() => {
+    const fetchJobs = async () => {
+      setLoading(true);
       try {
-        const { data } = await axios.post(`${backendUrl}/api/jobs/searchjobs`, { search: Param })
-        if (data.success) {
-          setSearchedCategories(data.categorySet);
-          setApprovedCategoryJobs(data.approvedCategoryJobs);
+        if (Param !== null) {
+          const { data } = await axios.post(`${backendUrl}/api/jobs/searchjobs`, { search: Param });
+          if (data.success) {
+            setSearchedCategories(data.categorySet);
+            setApprovedCategoryJobs(data.approvedCategoryJobs);
+          }
+        } else {
+          const { data } = await axios.get(`${backendUrl}/api/jobs/getapprovedjobs`);
+          if (data.success) {
+            setSearchedCategories(data.categorySet);
+            setApprovedCategoryJobs(data.jobs);
+          }
         }
       } catch (error) {
-        toast.error(error.response.data.message);
+        toast.error(error.response?.data?.message || error.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    useEffect(() => {
-      seachedJobs();
-    }, [Param]);
-  } else {
-    const getAllJobs = async () => {
-      setLoading(true)
-      try {
-        const { data } = await axios.get(`${backendUrl}/api/jobs/getapprovedjobs`)
-        if (data.success) {
-          setSearchedCategories(data.categorySet);
-          setApprovedCategoryJobs(data.jobs);
-        }
-      } catch (error) {
-        toast.error(error.response.data.message);
-      } finally {
-        setLoading(false)
-      }
-    }
-    useEffect(() => {
-      getAllJobs();
-    }, [Param]);
-  }
+    };
+
+    fetchJobs();
+  }, [Param, backendUrl]);
+
 
   const [filterCateogry, setFilterCateogry] = useState(categoryParam || 'category');
   const [filterLocationType, setFilterLocationType] = useState('locationType');
@@ -76,9 +67,7 @@ const FindJobs = () => {
 
   // Loading
   if (loading) {
-    return <div className="flex fixed top-1/2 left-1/2 tanslate-1/2 justify-center items-center py-10">
-      <div className="w-8 h-8 border-4 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>
-    </div>
+    return <Loading />
   }
 
   return (
@@ -139,11 +128,11 @@ const FindJobs = () => {
               {filteredJobs.length !== 0 ? filteredJobs?.map((e, i) => (
                 <JobCard key={i} e={e} />
               )) :
-                  <NotFound404 margin={"mt-20"} value={
-                    <div>
-                      No Matches Found related <span className='font-bold'>"{Param || categoryParam}"</span>
-                    </div>
-                  } />
+                <NotFound404 margin={"mt-20"} value={
+                  <div>
+                    No Matches Found related <span className='font-bold'>"{Param || categoryParam}"</span>
+                  </div>
+                } />
               }
             </ul>
           </section>
