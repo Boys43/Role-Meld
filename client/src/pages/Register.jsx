@@ -7,10 +7,10 @@ const Register = () => {
   const [regStep, setRegStep] = useState(0);
   return <>
     <div className="h-screen overflow-hidden w-full flex justify-center items-center">
-      <div className="w-1/2 py-10 overflow-y-auto">
+      <div className="md:w-1/2 py-10 overflow-y-auto">
         {regStep === 0 ? <RegisterModel setRegStep={setRegStep} /> : <VerificationModel />}
       </div>
-      <div className="border border-l-3 border-[var(--primary-color)] w-1/2">
+      <div className="border hidden md:block border-l-3 border-[var(--primary-color)] md:w-1/2">
         <img src={assets.register_side} alt="Register Side" />
       </div>
     </div>

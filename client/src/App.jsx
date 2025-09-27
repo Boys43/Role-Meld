@@ -16,6 +16,7 @@ import CategoryJobs from './pages/CategoryJobs'
 import BlogsDetails from './pages/BlogsDetails'
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import Loading from './components/Loading'
 
 const AdminRoute = () => {
   const { backendUrl } = useContext(AppContext);
@@ -42,7 +43,7 @@ const AdminRoute = () => {
     checkAdmin();
   }, [backendUrl]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
 
   if (isAdmin) {
     return <AdminDashboard />;

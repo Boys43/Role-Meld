@@ -38,7 +38,7 @@ const RegisterModel = ({ setRegStep }) => {
     return <>
         <div className="flex w-full justify-center items-center bg-white" >
             <div className="w-full px-8 md:px-32 lg:px-24">
-                <form className="bg-white rounded-md flex flex-col gap-2 shadow-2xl p-5" onSubmit={register}>
+                <form className="bg-white rounded-md flex flex-col gap-2 border border-gray-300 p-5" onSubmit={register}>
                     <h1 className="text-gray-800 font-bold text-2xl mb-1">Register</h1>
                     <p className="text-sm font-normal text-gray-600 mb-8">Create a new account</p>
                     <div className="flex items-center border-2 py-2 px-3 rounded-2xl">

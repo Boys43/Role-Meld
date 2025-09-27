@@ -5,6 +5,7 @@ import axios from "axios";
 import { IoBookmark } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { FiMenu, FiX } from "react-icons/fi";
+import Loading from "./Loading";
 
 const Navbar = () => {
   const location = useLocation();
@@ -33,26 +34,30 @@ const Navbar = () => {
     }
   };
 
-  const [isAdmin, setIsAdmin] = useState(false)
-  if (isLoggedIn) {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
     const checkIsAdmin = async () => {
       try {
         const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
         if (data.success) {
-          setIsAdmin(data.isAdmin)
+          setIsAdmin(data.isAdmin);
         }
       } catch (error) {
-        toast.error(error.message)
+        toast.error(error.message);
       }
-    }
+    };
 
-    useEffect(() => {
+    if (isLoggedIn) {
       checkIsAdmin();
-    }, [])
-  }
+    } else {
+      setIsAdmin(false); // reset when logged out
+    }
+  }, [isLoggedIn, backendUrl]);
+
 
   if (loading) {
-    return <nav className="p-4">Loading...</nav>;
+    return <Loading />;
   }
 
   return (
