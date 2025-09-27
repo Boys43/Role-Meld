@@ -50,8 +50,6 @@ const AdminListedBlogs = () => {
         }
     }
 
-    
-
     // Edit Blog
     const [blogEditLoading, setBlogEditLoading] = useState(false);
     const [updatedBlogData, setUpdateBlogdData] = useState({});
