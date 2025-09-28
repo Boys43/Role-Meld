@@ -104,7 +104,7 @@ const JobForm = () => {
 
   return (
     <main className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 overflow-x-hidden p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto">
-      <section className="lg:col-span-2"> 
+      <section className="lg:col-span-2">
         <h1 className="text-[var(--primary-color)] mb-8 font-semibold">List New Jobs</h1>
 
         <ProgressBar
@@ -133,8 +133,32 @@ const JobForm = () => {
         >
           <AnimatePresence mode="wait" custom={direction}>
 
-            {/* Step 0: Title & Main Category */}
+            {/*  Sponsored or not */}
             {jobSteps === 0 && (
+              <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
+                <h2 className="font-semibold flex items-center gap-3">
+                  Sponsor
+                </h2>
+                <div className="w-full flex flex-col mt-2">
+                  <label htmlFor="sponsored" className="font-medium">Sponsored</label>
+                  <select
+                    name="sponsored"
+                    required
+                    value={jobData.sponsored || ""}
+                    onChange={handleJobChange}
+                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                  >
+                    <option value="">--- Select ---</option>
+                    <option value="true">Sponsored</option>
+                    <option value="false">Not Sponsored</option>
+                  </select>
+                </div>
+                
+              </motion.div>
+            )}
+
+            {/* Step 0: Title & Main Category */}
+            {jobSteps === 1 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
                 <h2 className="font-semibold flex items-center gap-3">
                   <MdSubtitles className="text-[var(--primary-color)]" /> Add Title
@@ -158,7 +182,7 @@ const JobForm = () => {
                     onChange={handleJobChange}
                     className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
-                    <option value="">Select Category</option>
+                    <option value="">--- Select ---</option>
                     {Object.keys(categories).map((cat) => (
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
@@ -172,7 +196,7 @@ const JobForm = () => {
             )}
 
             {/* Step 1: Sub Category & Job Details */}
-            {jobSteps === 1 && (
+            {jobSteps === 2 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
                 <div className="flex flex-col">
                   <label className="text-sm font-semibold mb-1">Sub Category</label>
@@ -230,7 +254,7 @@ const JobForm = () => {
             )}
 
             {/* Step 2: Description */}
-            {jobSteps === 2 && (
+            {jobSteps === 3 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
                 <h3 className="font-bold mb-4">Description</h3>
                 <JoditEditor
@@ -253,7 +277,7 @@ const JobForm = () => {
             )}
 
             {/* Step 3: Experience */}
-            {jobSteps === 3 && (
+            {jobSteps === 4 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }} className="flex flex-col gap-6">
                 <h3 className="font-bold">Experience</h3>
                 <div className="flex flex-col gap-2">
@@ -276,7 +300,7 @@ const JobForm = () => {
             )}
 
             {/* Step 4: Location */}
-            {jobSteps === 4 && (
+            {jobSteps === 5 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }} className="flex flex-col gap-2">
                 <h3 className="font-bold">Location Details</h3>
                 <label htmlFor="location" className="mt-4">City</label>
@@ -291,7 +315,7 @@ const JobForm = () => {
             )}
 
             {/* Step 5: Salary */}
-            {jobSteps === 5 && (
+            {jobSteps === 6 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }} className="flex flex-col gap-2">
                 <h3 className="font-bold">Salary</h3>
                 <input type="number" name="salary" value={jobData.salary || ""} onChange={handleJobChange}
@@ -305,7 +329,7 @@ const JobForm = () => {
             )}
 
             {/* Step 6: Skills & Submit */}
-            {jobSteps === 6 && (
+            {jobSteps === 7 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }} className="flex flex-col gap-2">
                 <h3 className="font-bold">Skills Needed</h3>
                 <label htmlFor="skills" className="font-medium mt-4">Skills</label>
