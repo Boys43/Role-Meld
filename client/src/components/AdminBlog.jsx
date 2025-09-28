@@ -10,7 +10,7 @@ import axios from 'axios';
 import { AppContext } from '../context/AppContext';
 import BlogCard from './BlogCard';
 
-const AdminBlog = () => {
+const AdminBlog = ({setActiveTab}) => {
   const { backendUrl } = useContext(AppContext);
   const [blogSteps, setBlogSteps] = useState(0);
   const [formData, setFormData] = useState({});
@@ -64,7 +64,9 @@ const AdminBlog = () => {
         toast.success(data.message);
         setFormData({});
         setTags([]);
+        setActiveTab("listed-blogs")
         setBlogSteps(0);
+        
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong");

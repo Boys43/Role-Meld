@@ -34,7 +34,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
               <span
                 onClick={() => setActiveTab(e.key)}
                 className={`px-4 py-2 rounded-xl cursor-pointer hover:bg-[var(--primary-color)]/10 flex items-center gap-3 text-white transition 
-                  ${isParentActive ? 'bg-[var(--primary-color)]/20 border-[var(--primary-color)] translate-x-2 border shadow-[var(--primary-color)]' : ''}
+                  ${isParentActive ? 'bg-[var(--primary-color)]/20 border-[var(--primary-color)] translate-x-4 border shadow-[var(--primary-color)]' : ''}
                 `}
               >
                 {e.icon}
@@ -43,7 +43,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
 
               {/* Render sub-tabs if parent is active */}
               {e.subTabs && isParentActive && (
-                <div className="flex flex-col gap-1 ml-8 mt-2">
+                <div className="flex flex-col gap-1 translate-x-10 mt-2">
                   {e.subTabs.map((sub, idx) => (
                     <span
                       key={idx}

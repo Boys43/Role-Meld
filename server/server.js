@@ -14,6 +14,7 @@ import { fileURLToPath } from 'url';
 import blogRouter from "./routes/blogRoutes.js";
 import axios from 'axios';
 import cron from 'node-cron';
+import chatRouter from "./routes/chatBotRoutes.js";
 
 const app = express();
 app.use(cookieParser());
@@ -73,6 +74,7 @@ app.use('/api/user', userRouter);
 app.use('/api/applications', applicationRouter);
 app.use('/api/analytics', analyticRouter);
 app.use('/api/blog', blogRouter);
+app.use('/api/chat', chatRouter)
 
 app.listen(PORT, () => {
     console.log(`App Listening on http://localhost:${PORT}`);

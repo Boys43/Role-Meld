@@ -1,20 +1,27 @@
-import React, { useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { AppContext } from '../context/AppContext'
+import { useLocation, useNavigate } from 'react-router-dom'
 import assets from '../assets/assets';
+import { useContext } from 'react';
+import { AppContext } from '../context/AppContext';
 
 const BlogCard = ({ blog }) => {
-    const { backendUrl } = useContext(AppContext);
+    const {backendUrl } = useContext(AppContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     return (
         <div
-            onClick={() => navigate(`/blogdetails/${blog?.slug}?id=${blog._id}`)}
+            onClick={
+                location.pathname !== "/admin"
+                    ? () => navigate(`/blogdetails/${blog?.slug}?id=${blog._id}`)
+                    : undefined
+            }
             className="rounded-2xl cursor-pointer bg-white hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-300">
             {/* Image Section */}
             <div className="overflow-hidden">
                 <img
-                    src={blog.coverImage ? `${backendUrl}/${blog.coverImage}` : assets.preview_image}
+                    src={blog.coverImage ? 
+                        location.pathname === "/editblog" 
+                        ? `${backendUrl}/${blog.coverImage}`: URL.createObjectURL(blog.coverImage) : assets.preview_image}
                     alt="Blog"
                     className="w-full border border-gray-300 h-[10rem] object-cover cursor-pointer transition-transform duration-500 hover:scale-110"
                 />
@@ -22,16 +29,9 @@ const BlogCard = ({ blog }) => {
 
             {/* Content Section */}
             <div className="p-5 flex flex-col gap-3">
-                {/* Tags */}
-                <div className="flex items-center gap-3 flex-wrap">
-                    {blog?.tags?.map((tag, index) => (
-                        <span
-                            key={index}
-                            className="bg-[var(--primary-color)] text-white text-xs font-medium rounded-full px-3 py-1 shadow-sm">
-                            {tag}
-                        </span>
-                    )) || "Tags Here"}
-                </div>
+                <span className="font-medium text-sm leading-snug line-clamp-2 text-gray-800">
+                    {blog?.category || "Category Here"}
+                </span>
 
                 {/* Title */}
                 <h3 className="font-bold text-lg leading-snug line-clamp-2 text-gray-800">
@@ -45,7 +45,11 @@ const BlogCard = ({ blog }) => {
 
                 {/* Button */}
                 <button className="mt-2 self-start text-[var(--primary-color)] font-semibold text-sm"
-                    onClick={() => navigate(`/blogdetails/${blog?.slug}?id=${blog._id}`)}
+                    onClick={
+                        location.pathname !== "/admin"
+                            ? () => navigate(`/blogdetails/${blog?.slug}?id=${blog._id}`)
+                            : undefined
+                    }
                 >
                     Read More
                 </button>

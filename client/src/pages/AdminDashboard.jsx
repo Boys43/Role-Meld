@@ -26,7 +26,7 @@ const AdminDashboard = () => {
       case 'blog-management':
         return <AdminListedBlogs setActiveTab={setActiveTab} />
       case 'add-blog':
-        return <AdminBlog />
+        return <AdminBlog setActiveTab={setActiveTab} />
       case 'listed-blogs':
         return <AdminListedBlogs />
       default:

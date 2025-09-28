@@ -69,9 +69,9 @@ export const editBlog = async (req, res) => {
         return res.status(400).json({ success: false, message: 'Please provide all the required fields' });   
     }
     try {
-        const blog = await blogModel.findByIdAndUpdate(blogId, {$set: updatedBlog}, { new: true }, runva);
+        const blog = await blogModel.findByIdAndUpdate(blogId, {$set: updatedBlog}, { new: true });
 
-        return res.json({ success: true, blog });
+        return res.json({ success: true, message: "Blog Updated Successfully" });
     } catch (error) {
         return res.json({success: false, message: error.message });
     }
