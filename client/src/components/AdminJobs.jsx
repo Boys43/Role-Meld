@@ -3,10 +3,14 @@ import { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 import { FaUsers } from 'react-icons/fa';
+import { FaTrash } from "react-icons/fa";
+import { FaRegEye } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 const AdminJobs = () => {
   const { backendUrl } = useContext(AppContext);
   const [jobs, setJobs] = React.useState([]);
+  const navigate = useNavigate()
 
   const getJobs = async () => {
     try {
@@ -23,6 +27,16 @@ const AdminJobs = () => {
     getJobs()
   }, [])
   
+  const removeJob = async (jobId) => {
+    try {
+      const {data} = await axios.post(`${backendUrl}/api/jobs/removejob`, {jobId})
+      if(data.success){
+        getJobs()
+      }
+    } catch (error) {
+      
+    }
+  }
 
   return (
     <div className='p-6 bg-white rounded-lg w-full overflow-y-auto h-[calc(100vh-4.6rem)]'>
@@ -45,6 +59,7 @@ const AdminJobs = () => {
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Company</th>
                   <th className="px-6 py-3 text-center">Deadline Date</th>
+                  <th className="px-6 py-3 text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -69,10 +84,16 @@ const AdminJobs = () => {
                       <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
                         {
                           new Date(job.applicationDeadline) < new Date()
-                            ? "Expired"
+                          ? "Expired"
                             : job.applicationDeadline ? new Date(job.applicationDeadline).toLocaleDateString() : "N/A"
                         }
                       </span>
+                    </td>
+                    <td className="px-6 py-4 flex items-center justify-center">
+                      <div className='flex gap-4 items-center'>
+                        <FaRegEye className='text-blue-300' onClick={() => navigate('/jobdetails/'+job._id)} size={15} />
+                        <FaTrash className='text-red-300' size={15} onClick={()=> removeJob(job._id)} />
+                      </div>
                     </td>
                   </tr>
                 ))}

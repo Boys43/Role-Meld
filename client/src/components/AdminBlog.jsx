@@ -9,8 +9,9 @@ import JoditEditor from "jodit-react";
 import axios from 'axios';
 import { AppContext } from '../context/AppContext';
 import BlogCard from './BlogCard';
+import { MdOutlinePreview } from "react-icons/md";
 
-const AdminBlog = ({setActiveTab}) => {
+const AdminBlog = ({ setActiveTab }) => {
   const { backendUrl } = useContext(AppContext);
   const [blogSteps, setBlogSteps] = useState(0);
   const [formData, setFormData] = useState({});
@@ -66,7 +67,7 @@ const AdminBlog = ({setActiveTab}) => {
         setTags([]);
         setActiveTab("listed-blogs")
         setBlogSteps(0);
-        
+
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong");
@@ -80,15 +81,13 @@ const AdminBlog = ({setActiveTab}) => {
   };
 
   return (
-    <main className="w-full grid grid-cols-3 p-6 overflow-x-hidden">
-      <div className='col-span-2'>
+    <main className="w-full grid grid-cols-3 gap-4 p-6 overflow-x-hidden bg-gray-50">
+      <div className='col-span-2 p-4 border border-gray-300 shadow-md bg-white'>
         <h1 className="font-bold flex items-center gap-4">
           <FaBloggerB className='text-[var(--primary-color)]' /> Add New Blog
         </h1>
-
-        <section className="mt-10">
-          <form className="flex flex-col gap-4 py-10 px-16 min-h-[50vh]">
-
+        <section className="mt-10 rounded-md">
+          <form className="flex flex-col gap-4 py-8 px-12 min-h-[50vh]">
             <button
               disabled={blogSteps === 0}
               className="w-9 h-9 bg-[var(--primary-color)] text-white p-2 rounded-md"
@@ -335,9 +334,11 @@ const AdminBlog = ({setActiveTab}) => {
           </form>
         </section>
       </div>
-      <div className='p-2'>
-        <div className='sticky top-4'>
-          <p>Refresh</p>
+      <div className='p-2 bg-white border border-gray-300 shadow-md rounded-md'>
+        <h2 className='font-semibold my-2 flex gap-3 items-center'>
+          <MdOutlinePreview className='text-[var(--primary-color)]' /> Preview
+        </h2>
+        <div className='sticky top-0'>
           <BlogCard blog={formData} />
         </div>
       </div>

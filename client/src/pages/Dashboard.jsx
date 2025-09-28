@@ -27,7 +27,7 @@ const Dashboard = () => {
       case "applications":
         return <Applications />;
       case "list-job":
-        return <JobForm />
+        return <JobForm setActiveTab={setActiveTab} />
       case "listed-jobs":
         return <RecruiterJobs />
       default:

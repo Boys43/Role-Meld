@@ -108,7 +108,7 @@ export const getCompanyJobs = async (req, res) => {
     }
 
     try {
-        const companyJobs = await jobsModel.find({ company: company, isActive: true, approved: "approved" });
+        const companyJobs = await jobsModel.find({ company: company, isActive: true });
 
         if (!companyJobs || companyJobs.length <= 0) {
             return res.json({ success: false, message: "No Jobs Found" });
@@ -207,10 +207,10 @@ export const searchJob = async (req, res) => {
             approved: "approved",
             isActive: true
         });
-        
+
         // Get unique categories of matched jobs
         const categorySet = new Set(approvedJobs.map(job => job.category));
-        
+
         const approvedCategoryJobs = await jobsModel.find({
             category: { $in: [...categorySet] },
             approved: "approved",
@@ -259,6 +259,27 @@ export const getSponsoredJobs = async (req, res) => {
             success: true,
             sponsoredJobs
         });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+// Remove Jobs
+export const removeJob = async (req, res) => {
+    const { jobId } = req.body;
+
+    if (!jobId) {
+        return res.status(400).json({ success: false, message: "Job ID is required" });
+    }
+    try {
+        const job = await jobsModel.findById(jobId);
+        if (!job) {
+            return res.status(404).json({ success: false, message: "Job not found" });
+        }
+
+        await jobsModel.findByIdAndDelete(jobId);
+
+        return res.status(200).json({ success: true, message: "Job removed successfully" });
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }

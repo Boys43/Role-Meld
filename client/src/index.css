@@ -106,3 +106,7 @@ button:disabled {
   scrollbar-width: none;
   /* Firefox */
 }
+
+select{
+  cursor: pointer;
+}

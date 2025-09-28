@@ -46,7 +46,7 @@ const variants = {
   exit: (direction) => ({ x: direction > 0 ? -300 : 300, opacity: 0 }),
 };
 
-const JobForm = () => {
+const JobForm = ({setActiveTab}) => {
   const { backendUrl, userData } = useContext(AppContext);
   const editor = useRef(null);
 
@@ -55,7 +55,7 @@ const JobForm = () => {
   const [jobSteps, setJobSteps] = useState(0);
   const [direction, setDirection] = useState(0);
 
-  const totalSteps = 7;
+  const totalSteps = 8;
 
   const handleJobChange = (e) => {
     const { name, value } = e.target;
@@ -86,6 +86,7 @@ const JobForm = () => {
         setJobData({});
         setJobSteps(0);
         setSubCategories([]);
+        setActiveTab("listed-jobs")
       } else toast.error(data.message);
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -103,7 +104,7 @@ const JobForm = () => {
   };
 
   return (
-    <main className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 overflow-x-hidden p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto">
+    <main className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 overflow-x-hidden p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto relative">
       <section className="lg:col-span-2">
         <h1 className="text-[var(--primary-color)] mb-8 font-semibold">List New Jobs</h1>
 
@@ -137,9 +138,9 @@ const JobForm = () => {
             {jobSteps === 0 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
                 <h2 className="font-semibold flex items-center gap-3">
-                  Sponsor
+                  Sponsore
                 </h2>
-                <div className="w-full flex flex-col mt-2">
+                <div className="w-full flex flex-col mt-2 gap-2">
                   <label htmlFor="sponsored" className="font-medium">Sponsored</label>
                   <select
                     name="sponsored"
@@ -153,7 +154,105 @@ const JobForm = () => {
                     <option value="false">Not Sponsored</option>
                   </select>
                 </div>
-                
+                <div className="text-sm text-gray-600 text-center mt-4">
+                  Non Sponsored Jobs will be Listed as Simple Jobs
+                </div>
+                {jobData.sponsored === "true" &&
+                  <div className="flex flex-col gap-4">
+                    {/* Cardholder Name */}
+                    <div>
+                      <label htmlFor="name" className="block font-medium mb-1">
+                        Cardholder Name
+                      </label>
+                      <input
+                        type="text"
+                        name="cardName"
+                        value={jobData.cardName}
+                        onChange={handleJobChange}
+                        placeholder="John Doe"
+                        required
+                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
+                      />
+                    </div>
+
+                    {/* Card Number */}
+                    <div>
+                      <label htmlFor="cardNumber" className="block font-medium mb-1">
+                        Card Number
+                      </label>
+                      <input
+                        type="text"
+                        name="cardNumber"
+                        value={jobData.cardNumber}
+                        onChange={handleJobChange}
+                        placeholder="1234 5678 9012 3456"
+                        maxLength="16"
+                        required
+                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
+                      />
+                    </div>
+
+                    {/* Expiry & CVV */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="expiry" className="block font-medium mb-1">
+                          Expiry Date
+                        </label>
+                        <input
+                          type="month"
+                          name="expiryDate"
+                          value={jobData.expiryDate}
+                          onChange={handleJobChange}
+                          required
+                          className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="cvv" className="block font-medium mb-1">
+                          CVV
+                        </label>
+                        <input
+                          type="password"
+                          name="cvv"
+                          value={jobData.cvv}
+                          onChange={handleJobChange}
+                          placeholder="123"
+                          maxLength="4"
+                          required
+                          className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Amount */}
+                    <div>
+                      <label htmlFor="amount" className="block font-medium mb-1">
+                        Amount (USD)
+                      </label>
+                      <input
+                        type="number"
+                        name="amount"
+                        value='10'
+                        readOnly
+                        placeholder="50"
+                        required
+                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
+                      />
+                    </div>
+
+                    {/* Submit */}
+                    <button
+                      type="submit"
+                      className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold transition"
+                    >
+                      Pay Now
+                    </button>
+                  </div>
+                }
+                <button type="button" className="mt-4 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
+                  onClick={() => (!jobData.sponsored ? toast.error("Salary Details Required") : nextStep())}>
+                  Next
+                </button>
               </motion.div>
             )}
 
@@ -343,9 +442,11 @@ const JobForm = () => {
           </AnimatePresence>
         </form>
       </section>
-      <section className="p-2 sticky top-4 hidden lg:block">
-        <h1>Preview</h1>
-        <JobCard e={jobData} />
+      <section className="p-2 hidden relative lg:block">
+        <div className="sticky top-2">
+          <h1>Preview</h1>
+          <JobCard e={jobData} />
+        </div>
       </section>
     </main>
   );
