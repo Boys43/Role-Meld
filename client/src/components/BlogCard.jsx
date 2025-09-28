@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 
 const BlogCard = ({ blog }) => {
-    const {backendUrl } = useContext(AppContext);
+    const { backendUrl } = useContext(AppContext);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -19,12 +19,19 @@ const BlogCard = ({ blog }) => {
             {/* Image Section */}
             <div className="overflow-hidden">
                 <img
-                    src={blog.coverImage ? 
-                        location.pathname === "/editblog" 
-                        ? `${backendUrl}/${blog.coverImage}`: URL.createObjectURL(blog.coverImage) : assets.preview_image}
+                    src={
+                        blog.coverImage
+                            ? location.pathname === "/editblog"
+                                ? `${backendUrl}/${blog.coverImage}` // already saved file path
+                                : blog.coverImage instanceof File || blog.coverImage instanceof Blob
+                                    ? URL.createObjectURL(blog.coverImage) // local file
+                                    : `${backendUrl}/${blog.coverImage}` // fallback if it's a string URL
+                            : assets.preview_image // default preview
+                    }
                     alt="Blog"
                     className="w-full border border-gray-300 h-[10rem] object-cover cursor-pointer transition-transform duration-500 hover:scale-110"
                 />
+
             </div>
 
             {/* Content Section */}

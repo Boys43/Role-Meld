@@ -18,6 +18,8 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Loading from './components/Loading'
 import EditBlog from './pages/EditBlog'
+import ChatBotBubble from './components/ChatBotBubble'
+import HelpCenter from './pages/HelpCenter'
 
 export const AdminRoute = ({ children }) => {
   const { backendUrl, isLoggedIn } = useContext(AppContext);
@@ -100,10 +102,13 @@ const App = () => {
             <EditBlog />
           </AdminRoute>
         } />
+
+        <Route path="/help-center" element={<HelpCenter />} />
         <Route path="/find-jobs" element={<FindJobs />} />
         <Route path="/category-jobs" element={<CategoryJobs />} />
         <Route path="/blogdetails/:slug" element={<BlogsDetails />} />
       </Routes>
+      <ChatBotBubble />
       <Footer />
     </>
   )

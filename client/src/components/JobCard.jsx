@@ -11,6 +11,7 @@ import { FaBookmark } from "react-icons/fa";
 import { MdCancel } from 'react-icons/md';
 import LoginModel from './LoginModel';
 import { FaChevronRight } from "react-icons/fa";
+import assets from '../assets/assets';
 
 const JobCard = ({ e }) => {
     const { backendUrl, isLoggedIn, userData, toggleSaveJob, savedJobs } = useContext(AppContext);
@@ -42,7 +43,7 @@ const JobCard = ({ e }) => {
                 <div className='flex items-center gap-3'>
                     <img
                         className='w-12 h-12 rounded-full object-cover border border-gray-300'
-                        src={backendUrl + "/uploads/" + e?.companyProfile}
+                        src={e?.companyProfile ?backendUrl + "/uploads/" + e?.companyProfile: assets.preview_image}
                         alt={e?.company}
                     />
                     <h3 className='font-semibold text-lg text-gray-800'>{e?.company}</h3>

@@ -8,7 +8,7 @@ import { FaQuoteRight } from "react-icons/fa";
 
 const Testimonials = () => {
     return (
-        <div className="mt-4">
+        <div className="mt-4 relative z-0">
             <Swiper
                 modules={[Autoplay]}
                 loop={true}

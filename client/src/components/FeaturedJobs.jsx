@@ -7,7 +7,7 @@ import FeaturedJobCard from "./FeaturedJobCard";
 
 const FeaturedJobs = () => {
   return (
-    <div className="my-4">
+    <div className="my-4 z-0 relative">
       <Swiper
         modules={[Autoplay]}
         loop={true}
@@ -15,7 +15,7 @@ const FeaturedJobs = () => {
           delay: 3500,
           disableOnInteraction: true,
           pauseOnMouseEnter: true
-        }}        
+        }}
         breakpoints={{
           320: {
             slidesPerView: 1,

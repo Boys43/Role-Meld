@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 import jobsRouter from "./routes/jobsRouter.js";
-import "dotenv/config";
+import dotenv from "dotenv";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRouter.js";
 import applicationRouter from "./routes/applicationRoutes.js";
@@ -17,6 +17,7 @@ import cron from 'node-cron';
 import chatRouter from "./routes/chatBotRoutes.js";
 
 const app = express();
+dotenv.config()
 app.use(cookieParser());
 app.use(express.json());
 

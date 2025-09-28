@@ -58,8 +58,8 @@ const Home = () => {
           </p>
           <Search />
         </section>
-        <section className="border   rounded-2xl p-4 mt-4 shadow-xl">
-          <Marquee pauseOnHover>
+        <section className="border z-0 rounded-2xl p-4 mt-4 shadow-xl">
+          <Marquee className="z-0" pauseOnHover>
             <div className="flex flex-wrap items-center justify-evenly gap-10 md:gap-20 lg:gap-30 w-full">
               <img src={assets.nt} alt="Netflix" className="w-20" />
               <img src={assets.am} alt="Amazon" className="w-20" />
@@ -83,7 +83,7 @@ const Home = () => {
             <FaBriefcase className="text-[var(--primary-color)]" />  Choose Your <span className="text-[var(--primary-color)]">Career Path</span>
           </h1>
           <div className="flex flex-col gap-4">
-            <Marquee pauseOnHover gradient={false} speed={40}>
+            <Marquee className="z-0" pauseOnHover gradient={false} speed={40}>
               <div className="flex gap-8">
                 <h3 className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
 
@@ -164,7 +164,7 @@ const Home = () => {
                 </h3>
               </div>
             </Marquee>
-            <Marquee pauseOnHover pauseOnClick speed={60} direction="">
+            <Marquee className="z-0" pauseOnHover pauseOnClick speed={60} direction="">
               <div className="flex gap-8">
                 <h3 className="py-8 w-[400px] font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                   onClick={() => navigate('/category-jobs?category=' + encodeURIComponent("Human Resources"))}
