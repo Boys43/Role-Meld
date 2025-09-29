@@ -79,6 +79,8 @@ const FindJobs = () => {
       if (data.success) {
         toast.success(data.message);
         setToggleApplyJob(false);
+      }else{
+        toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.response.data.message);

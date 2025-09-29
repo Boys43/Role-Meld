@@ -205,7 +205,8 @@ export const searchJob = async (req, res) => {
         const approvedJobs = await jobsModel.find({
             title: { $regex: search, $options: "i" },
             approved: "approved",
-            isActive: true
+            isActive: true,
+            sponsored: false
         });
 
         // Get unique categories of matched jobs
@@ -214,7 +215,8 @@ export const searchJob = async (req, res) => {
         const approvedCategoryJobs = await jobsModel.find({
             category: { $in: [...categorySet] },
             approved: "approved",
-            isActive: true
+            isActive: true,
+            sponsored: false
         })
 
         return res.json({

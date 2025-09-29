@@ -13,7 +13,7 @@ const LoginReminderModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center z-100 justify-center">
+    <div data-aos="fade-up" className="fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center z-100 justify-center">
       {showLoginForm ? (
         // Login form version (used in FindJobs)
         <div className="bg-white flex flex-col items-center gap-4 shadow-2xl rounded-lg p-8">

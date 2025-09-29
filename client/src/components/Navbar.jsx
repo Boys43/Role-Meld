@@ -7,6 +7,9 @@ import { toast } from "react-toastify";
 import { FiMenu, FiX } from "react-icons/fi";
 import Loading from "./Loading";
 
+// React iCONS
+import { IoMdPerson } from "react-icons/io";
+
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,33 +73,28 @@ const Navbar = () => {
           </NavLink>
 
           {isLoggedIn && <div className="hidden md:flex items-baseline gap-6">
-            {userData?.role === "user" && (
-              <>
-                <NavLink
-                  to={"/find-jobs"}
-                  className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/find-jobs" ? "font-bold text-[var(--primary-color)]" : ""
-                    }`}
-                >
-                  Find Jobs
-                </NavLink>
-                <NavLink
-                  to={"/company-reviews"}
-                  className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/company-reviews"
-                    ? "font-bold text-[var(--primary-color)]"
-                    : ""
-                    }`}
-                >
-                  Company Reviews
-                </NavLink>
-              </>
-            )}
-
             <NavLink
-              to={"/dashboard"}
-              className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/dashboard" ? "font-bold text-[var(--primary-color)]" : ""
+              to={"/"}
+              className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/" ? "font-bold text-[var(--primary-color)]" : ""
                 }`}
             >
-              Dashboard
+              Home
+            </NavLink>
+            <NavLink
+              to={"/find-jobs"}
+              className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/find-jobs" ? "font-bold text-[var(--primary-color)]" : ""
+                }`}
+            >
+              Find Jobs
+            </NavLink>
+            <NavLink
+              to={"/company-reviews"}
+              className={`relative ${isLoggedIn && "hidden"} text-[0.9rem] pb-[0.5rem] ${location.pathname === "/company-reviews"
+                ? "font-bold text-[var(--primary-color)]"
+                : ""
+                }`}
+            >
+              Company Reviews
             </NavLink>
           </div>}
         </div>
@@ -108,6 +106,9 @@ const Navbar = () => {
               <h4 className="text-[var(--primary-color)]">
                 Hi, {userData?.name || "Buddy"}
               </h4>
+              <NavLink to={'/dashboard'} className="p-2 border border-gray-300 bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-full">
+                <IoMdPerson size={25} />
+              </NavLink>
               <div
                 onClick={() => setShowDropdown(!showDropdown)}
                 className="h-10 flex justify-center items-center w-10 text-white rounded-full bg-black cursor-pointer overflow-hidden hover:ring-2 hover:ring-blue-300 transition-all duration-200 relative"
@@ -175,16 +176,12 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {mobileMenu && (
         <div className="md:hidden bg-white border-t border-gray-200 shadow-lg p-4 space-y-4">
-          {userData?.role === "user" && (
-            <>
-              <NavLink to="/find-jobs" onClick={() => setMobileMenu(false)}>
-                Find Jobs
-              </NavLink>
-              <NavLink to="/company-reviews" onClick={() => setMobileMenu(false)}>
-                Company Reviews
-              </NavLink>
-            </>
-          )}
+          <NavLink to="/find-jobs" onClick={() => setMobileMenu(false)}>
+            Find Jobs
+          </NavLink>
+          <NavLink to="/company-reviews" onClick={() => setMobileMenu(false)}>
+            Company Reviews
+          </NavLink>
           <NavLink to="/dashboard" onClick={() => setMobileMenu(false)}>
             Dashboard
           </NavLink>

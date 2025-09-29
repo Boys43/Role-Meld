@@ -7,6 +7,8 @@ import { IoMdHeart } from "react-icons/io";
 import { CiHeart } from "react-icons/ci";
 import { FaChevronRight } from "react-icons/fa";
 import assets from '../assets/assets';
+import { FaDollarSign } from "react-icons/fa";
+import { FaClock } from "react-icons/fa";
 
 const JobCard = ({ e, setLoginReminder, setToggleApplyJob, setapplJobId }) => {
     const { backendUrl, isLoggedIn, userData, toggleSaveJob, savedJobs } = useContext(AppContext);
@@ -18,11 +20,20 @@ const JobCard = ({ e, setLoginReminder, setToggleApplyJob, setapplJobId }) => {
             <li className='p-4 border relative border-gray-300 rounded-lg hover:shadow-md transition-shadow flex flex-col gap-4 cursor-pointer'>
                 {/* Company Info */}
                 <div className='flex items-center gap-3'>
-                    <img
-                        className='w-12 h-12 rounded-xl object-cover border border-gray-300'
-                        src={e?.companyProfile ? backendUrl + "/uploads/" + e?.companyProfile : assets.preview_image}
-                        alt={e?.company}
-                    />
+                    {e?.companyProfile ? (
+                        <>
+                            <img
+                                className="w-12  h-12 rounded-xl object-cover border border-gray-300"
+                                src={backendUrl + "/uploads/" + e?.companyProfile}
+                                alt={e?.company}
+                            />
+                        </>
+                    ) : (
+                        <div className="w-12 h-12 rounded-xl border border-gray-300 flex items-center justify-center bg-gray-100 text-gray-700 font-bold">
+                            {e?.company?.slice(0, 1)?.toUpperCase()}
+                        </div>
+                    )}
+
                     <div>
                         <h4 className='font-semibold text-lg text-gray-800'>{e?.company}</h4>
                         <span className='text-xs'>Net Followers</span>
@@ -40,8 +51,8 @@ const JobCard = ({ e, setLoginReminder, setToggleApplyJob, setapplJobId }) => {
                 </div>
 
                 {/* Salary */}
-                <div className='text-gray-600 font-medium px-2 rounded border border-gray-300 bg-gray-200 w-max'>
-                    {e?.salary} $
+                <div className='text-gray-600 font-medium px-2 rounded border border-gray-300 bg-gray-200 flex items-center gap-3 w-max'>
+                    <FaDollarSign className='text-[var(--primary-color)]' /> {e?.salary}$
                 </div>
 
                 {/* Buttons */}
@@ -71,6 +82,20 @@ const JobCard = ({ e, setLoginReminder, setToggleApplyJob, setapplJobId }) => {
                     <span>
                         {[...savedJobs].includes(e?._id) ? <IoMdHeart size={20} /> : <CiHeart size={20} />}
                     </span>
+                </span>
+                <span className='flex text-sm self-end items-center gap-2 '>
+                    <FaClock className='text-gray-400' size={15}/>
+                    {e?.createdAt ? (() => {
+                        const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+                        const diff = (new Date() - new Date(e?.createdAt)) / 1000; // in seconds
+
+                        if (diff < 60) return rtf.format(-Math.floor(diff), "second");
+                        if (diff < 3600) return rtf.format(-Math.floor(diff / 60), "minute");
+                        if (diff < 86400) return rtf.format(-Math.floor(diff / 3600), "hour");
+                        if (diff < 2592000) return rtf.format(-Math.floor(diff / 86400), "day");
+                        if (diff < 31536000) return rtf.format(-Math.floor(diff / 2592000), "month");
+                        return rtf.format(-Math.floor(diff / 31536000), "year");
+                    })() : "Unknown"}
                 </span>
             </li>
 

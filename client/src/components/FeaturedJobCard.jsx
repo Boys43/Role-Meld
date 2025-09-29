@@ -24,12 +24,22 @@ const FeaturedJobCard = ({ data, setToggleApplyJob, setapplJobId, setLoginRemind
                         <IoHomeOutline size={15} /> <span className='text-[var(--primary-color)]'>/</span> {data.category} <span className='text-[var(--primary-color)]'>/</span> {data.subCategory}
                     </div>
                     <div className='p-4'>
-                        <h3 className='font-semibold mb-4 flex items-center gap-4'>
-                            <img src={`${backendUrl}/uploads/${data.companyProfile}`} alt="Alt" className='h-13 w-13 object-cover rounded-full border' />{data.company}
-                        </h3>
-                        <h2 className='font-medium mb-4 whitespace-nowrap'>
-                            {data.title}
-                        </h2>
+                        <span className='font-semibold mb-4 flex items-center gap-4'>
+                            {data?.companyProfile ? (
+                                <img
+                                    className="w-12  h-12 rounded-xl object-cover border border-gray-300"
+                                    src={backendUrl + "/uploads/" + data?.companyProfile}
+                                    alt={data?.company}
+                                />
+                            ) : (
+                                <div className="w-12 h-12 rounded-xl border border-gray-300 flex items-center justify-center bg-gray-100 text-gray-700 font-bold">
+                                    {data?.company?.slice(0, 1)?.toUpperCase()}
+                                </div>
+                            )}
+                            <h3 className='font-semibold mb-4 whitespace-nowrap'>
+                                {data.title}
+                            </h3>
+                        </span>
                         {/* <div dangerouslySetInnerHTML={{_html: "Description Here"}}/> */}
                         <span className='bg-gray-300 px-4 rounded font-medium '>
                             {data.salary ? `${data.salary} $` : `${data.minSalary} - ${data.maxSalary}`}
@@ -46,14 +56,17 @@ const FeaturedJobCard = ({ data, setToggleApplyJob, setapplJobId, setLoginRemind
                     </div>
                     <span className='px-4 text-sm flex items-center gap-2 text-gray-500'>
                         <FaClock />{" "}
-                        {data.createdAt
-                            ? new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(
-                                -Math.floor(
-                                    (new Date() - new Date(data.createdAt)) / (1000 * 60 * 60 * 24)
-                                ),
-                                "day"
-                            )
-                            : "Unknown"}
+                        {data.createdAt ? (() => {
+                            const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+                            const diff = (new Date() - new Date(data.createdAt)) / 1000; // in seconds
+
+                            if (diff < 60) return rtf.format(-Math.floor(diff), "second");
+                            if (diff < 3600) return rtf.format(-Math.floor(diff / 60), "minute");
+                            if (diff < 86400) return rtf.format(-Math.floor(diff / 3600), "hour");
+                            if (diff < 2592000) return rtf.format(-Math.floor(diff / 86400), "day");
+                            if (diff < 31536000) return rtf.format(-Math.floor(diff / 2592000), "month");
+                            return rtf.format(-Math.floor(diff / 31536000), "year");
+                        })() : "Unknown"}
                     </span>
                 </div>
                 <div className='w-full relative p-4'>

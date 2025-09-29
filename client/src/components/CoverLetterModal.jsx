@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdCancel } from 'react-icons/md';
+import { toast } from 'react-toastify';
 
 const CoverLetterModal = ({ 
   isOpen, 
@@ -9,9 +10,10 @@ const CoverLetterModal = ({
   onApply 
 }) => {
   if (!isOpen) return null;
+  
 
   return (
-    <div className="fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center z-100 justify-center">
+    <div data-aos="fade-up" data-aos-duration='500' className="fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center z-100 justify-center">
       <div className="w-[500px] relative bg-white shadow-2xl rounded-lg p-8">
         <span className="absolute top-4 right-4 cursor-pointer">
           <MdCancel onClick={onClose} />
