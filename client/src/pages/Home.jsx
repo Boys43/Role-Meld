@@ -61,20 +61,20 @@ const Home = () => {
         <section className="border z-0 rounded-2xl p-4 mt-4 shadow-xl">
           <Marquee className="z-0" pauseOnHover>
             <div className="flex flex-wrap items-center justify-evenly gap-10 md:gap-20 lg:gap-30 w-full">
-              <img src={assets.nt} alt="Netflix" className="w-20" />
-              <img src={assets.am} alt="Amazon" className="w-20" />
-              <img src={assets.sm} alt="samsung" className="w-20" />
-              <img src={assets.apple} alt="Apple" className="w-20" />
-              <img src={assets.tcs} alt="Tcs" className="w-15" />
-              <img src={assets.mt} alt="Microsoft" className="w-20" />
-              <img src={assets.fb} alt="Facebook" className="w-20" />
-              <img src={assets.nt} alt="Netflix" className="w-20" />
-              <img src={assets.am} alt="Amazon" className="w-20" />
-              <img src={assets.sm} alt="samsung" className="w-20" />
-              <img src={assets.apple} alt="Apple" className="w-20" />
-              <img src={assets.tcs} alt="Tcs" className="w-15" />
-              <img src={assets.mt} alt="Microsoft" className="w-20" />
-              <img src={assets.fb} alt="Facebook" className="w-20 mr-10 lg:mr-15" />
+              <img loading="lazy" src={assets.nt} alt="Netflix" className="w-20" />
+              <img loading="lazy" src={assets.am} alt="Amazon" className="w-20" />
+              <img loading="lazy" src={assets.sm} alt="samsung" className="w-20" />
+              <img loading="lazy" src={assets.apple} alt="Apple" className="w-20" />
+              <img loading="lazy" src={assets.tcs} alt="Tcs" className="w-15" />
+              <img loading="lazy" src={assets.mt} alt="Microsoft" className="w-20" />
+              <img loading="lazy" src={assets.fb} alt="Facebook" className="w-20" />
+              <img loading="lazy" src={assets.nt} alt="Netflix" className="w-20" />
+              <img loading="lazy" src={assets.am} alt="Amazon" className="w-20" />
+              <img loading="lazy" src={assets.sm} alt="samsung" className="w-20" />
+              <img loading="lazy" src={assets.apple} alt="Apple" className="w-20" />
+              <img loading="lazy" src={assets.tcs} alt="Tcs" className="w-15" />
+              <img loading="lazy" src={assets.mt} alt="Microsoft" className="w-20" />
+              <img loading="lazy" src={assets.fb} alt="Facebook" className="w-20 mr-10 lg:mr-15" />
             </div>
           </Marquee>
         </section>

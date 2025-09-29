@@ -87,7 +87,7 @@ const AdminListedBlogs = ({ setActiveTab }) => {
                                     } hover:bg-blue-50`}
                             >
                                 <td className="px-6 py-4 font-medium">{index + 1}</td>
-                                <td className="px-6 py-4 "><img className='rounded-lg w-15 object-cover h-15 border' src={`${backendUrl}/${blog.coverImage}`} alt="" /></td>
+                                <td className="px-6 py-4 "><img loading='lazy' className='rounded-lg w-15 object-cover h-15 border' src={`${backendUrl}/${blog.coverImage}`} alt="" /></td>
                                 <td className="px-6 py-4">{blog.title}</td>
                                 <td className="px-6 py-4 font-semibold">{blog.category}</td>
                                 <td className="px-6 py-4">

@@ -27,6 +27,7 @@ const FeaturedJobCard = ({ data, setToggleApplyJob, setapplJobId, setLoginRemind
                         <span className='font-semibold mb-4 flex items-center gap-4'>
                             {data?.companyProfile ? (
                                 <img
+                                loading='lazy'
                                     className="w-12  h-12 rounded-xl object-cover border border-gray-300"
                                     src={backendUrl + "/uploads/" + data?.companyProfile}
                                     alt={data?.company}

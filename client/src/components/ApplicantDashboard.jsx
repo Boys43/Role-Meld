@@ -122,6 +122,7 @@ const ApplicantDashboard = () => {
             <div className="w-20 h-20 border-2 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
               {userData?.profilePicture ? (
                 <img
+                loading="lazy"
                   src={`${backendUrl}/uploads/${userData.profilePicture}`}
                   alt="Profile"
                   className="w-full h-full object-cover"

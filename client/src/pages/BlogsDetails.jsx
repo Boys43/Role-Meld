@@ -45,7 +45,7 @@ const BlogsDetails = () => {
   return (
     <div className='w-full p-10 bg-gray-100 flex gap-4'>
       <div className='bg-white w-[70%] border border-gray-300 rounded-2xl p-4'>
-        <img src={`${backendUrl}/${blogData.coverImage}`} alt={blogData?.coverImage} className='border rounded-2xl  border-gray-300' />
+        <img loading='lazy' src={`${backendUrl}/${blogData.coverImage}`} alt={blogData?.coverImage} className='border rounded-2xl  border-gray-300' />
         <h1 className='w-full flex justify-center font-bold mt-5 underline underline-offset-8'>
           {blogData?.title}
         </h1>

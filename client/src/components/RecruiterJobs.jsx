@@ -12,9 +12,6 @@ const RecruiterJobs = () => {
     const { userData, backendUrl } = useContext(AppContext);
     const [filter, setFilter] = useState('all')
     const [jobs, setJobs] = useState([]);
-
-    console.log('userData.company', userData.company)
-
     const getJobs = async () => {
         try {
             const { data } = await axios.post(`${backendUrl}/api/jobs/getcompanyjobs`, { company: userData.company });

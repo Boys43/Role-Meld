@@ -298,6 +298,7 @@ const AdminBlog = ({ setActiveTab }) => {
                   <div className="relative w-full h-[300px] border-2 border-[var(--primary-color)] rounded-2xl overflow-hidden bg-gray-50 flex justify-center items-center">
                     {formData?.coverImage ? (
                       <img
+                      loading='lazy'
                         src={URL.createObjectURL(formData.coverImage)}
                         alt="preview"
                         className="w-full h-full object-cover"

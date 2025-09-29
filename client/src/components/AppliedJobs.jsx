@@ -27,10 +27,7 @@ const AppliedJobs = () => {
     useEffect(() => {
         getJobDetails();
     }, [])
-
-    console.log('', jobData);
-
-
+    
     return (
         <div className='p-5 w-full h-[calc(100vh-4.6rem)] overflow-y-auto'>
             {loading ? <div>Loading...</div> : <>

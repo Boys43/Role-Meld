@@ -23,6 +23,7 @@ const JobCard = ({ e, setLoginReminder, setToggleApplyJob, setapplJobId }) => {
                     {e?.companyProfile ? (
                         <>
                             <img
+                            loading='lazy'
                                 className="w-12  h-12 rounded-xl object-cover border border-gray-300"
                                 src={backendUrl + "/uploads/" + e?.companyProfile}
                                 alt={e?.company}

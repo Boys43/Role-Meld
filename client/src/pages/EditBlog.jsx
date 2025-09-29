@@ -188,6 +188,7 @@ const EditBlog = () => {
                     <div className="relative w-full h-[280px] border-2 border-dashed rounded-xl flex flex-col justify-center items-center bg-gray-50 hover:bg-gray-100 transition overflow-hidden">
                         {blogData?.coverImage ? (
                             <img
+                            loading='lazy'
                                 src={
                                     typeof blogData.coverImage === "string"
                                         ? `${backendUrl}/${blogData.coverImage}`

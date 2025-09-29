@@ -37,7 +37,6 @@ export const getAllBlogs = async (req, res) => {
 
 export const getBlog = async (req, res) => {
     const {blogId} = req.body;
-    console.log(blogId);
     try {
         const blog = await blogModel.findById(blogId);
 

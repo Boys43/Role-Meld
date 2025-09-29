@@ -10,7 +10,7 @@ const Login = () => {
         <LoginModel />
       </div>
       <div className="border hidden md:block md:w-1/2 border-l-3 border-[var(--primary-color)]">
-        <img src={assets.register_side} alt="Register Side" />
+        <img loading='lazy' src={assets.register_side} alt="Register Side" />
       </div>
     </main>
   )

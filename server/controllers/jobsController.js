@@ -166,10 +166,7 @@ export const getApprovedJobs = async (req, res) => {
     try {
         const jobs = await jobsModel.find({ approved: "approved", isActive: true });
 
-        console.log(jobs);
-
         const categorySet = new Set(jobs.map(job => job.category));
-        console.log(categorySet);
 
         return res.json({ success: true, jobs, categorySet: [...categorySet] });
     } catch (error) {

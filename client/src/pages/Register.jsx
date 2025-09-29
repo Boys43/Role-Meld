@@ -11,7 +11,7 @@ const Register = () => {
         {regStep === 0 ? <RegisterModel setRegStep={setRegStep} /> : <VerificationModel />}
       </div>
       <div className="border hidden md:block border-l-3 border-[var(--primary-color)] md:w-1/2">
-        <img src={assets.register_side} alt="Register Side" />
+        <img loading="lazy" src={assets.register_side} alt="Register Side" />
       </div>
     </div>
   </>

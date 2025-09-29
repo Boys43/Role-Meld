@@ -9,13 +9,11 @@ import { FaTrashAlt } from "react-icons/fa";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { FaBookmark } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar';
 
 const SavedJobs = () => {
   const { backendUrl, userData, toggleSaveJob } = useContext(AppContext);
   const [allsavedJobs, setAllsavedJobs] = useState([]);
   const navigte = useNavigate();
-  console.log(userData.savedJobs);
 
   const savedJobsIds = userData.savedJobs;
 
@@ -38,8 +36,6 @@ const SavedJobs = () => {
   function viewDetails(id) {
     navigte(`/jobdetails/${id}`)
   }
-
-  console.log('', allsavedJobs);
   
 
   return (

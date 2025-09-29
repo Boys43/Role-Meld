@@ -19,6 +19,7 @@ const BlogCard = ({ blog }) => {
             {/* Image Section */}
             <div className="overflow-hidden">
                 <img
+                loading='lazy'
                     src={
                         blog.coverImage
                             ? location.pathname === "/editblog"

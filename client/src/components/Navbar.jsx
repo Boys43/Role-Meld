@@ -115,6 +115,7 @@ const Navbar = () => {
               >
                 {userData?.profilePicture ? (
                   <img
+                  loading="lazy"
                     src={`${backendUrl}/uploads/${userData.profilePicture}`}
                     alt="Profile"
                     className="w-full h-full object-cover"

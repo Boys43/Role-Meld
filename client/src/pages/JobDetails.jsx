@@ -88,7 +88,7 @@ const JobDetails = () => {
                     <div className='my-4 w-full border rounded-2xl p-4 shadow-lg bg-[var(--primary-color)]/10 flex items-center justify-between'>
                         <div className=''>
                             <div className='flex items-center gap-4'>
-                                <img src={`${backendUrl}/uploads/${jobData?.companyProfile}`} alt={jobData?.companyProfile} className='w-8 object-cover h-8 rounded-full border-2 border-[var(--primary-color)]' />
+                                <img loading='lazy' src={`${backendUrl}/uploads/${jobData?.companyProfile}`} alt={jobData?.companyProfile} className='w-8 object-cover h-8 rounded-full border-2 border-[var(--primary-color)]' />
                                 <h4 className='font-bold'>
                                     {jobData?.company}
                                 </h4>

@@ -4,7 +4,6 @@ import { useContext, useEffect, useState, Suspense, lazy } from "react";
 import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import useGlobalLazyImages from "./hooks/useGlobalLazyImages";
 
 import { AppContext } from "./context/AppContext";
 import Loading from "./components/Loading";
@@ -80,8 +79,6 @@ export const ProtectedRoute = ({ children }) => {
 
 // 🌍 Main App
 const App = () => {
-  useGlobalLazyImages();
-
   useEffect(() => {
     AOS.init({
       duration: 800,
