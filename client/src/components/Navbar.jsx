@@ -88,6 +88,13 @@ const Navbar = () => {
               Find Jobs
             </NavLink>
             <NavLink
+              to={"/help-center"}
+              className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/help-center" ? "font-bold text-[var(--primary-color)]" : ""
+                }`}
+            >
+              Help Center
+            </NavLink>
+            <NavLink
               to={"/company-reviews"}
               className={`relative ${isLoggedIn && "hidden"} text-[0.9rem] pb-[0.5rem] ${location.pathname === "/company-reviews"
                 ? "font-bold text-[var(--primary-color)]"

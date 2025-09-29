@@ -33,7 +33,7 @@ export const register = async (req, res) => {
             },
         });
 
-        await transporter.sendMail({
+        transporter.sendMail({
             from: '"Alfa Career" <movietrendmaker2244@gmail.com>',
             to: email,
             subject: "🔑 Verify Your Alfa Career Account",
