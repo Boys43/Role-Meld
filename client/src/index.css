@@ -50,7 +50,7 @@ body {
 
 
 button {
-  padding: 0.5rem 0.7rem;
+  padding: 0.4rem 0.7rem;
   /* More balanced padding */
   display: inline-flex;
   justify-content: center;
@@ -58,9 +58,9 @@ button {
   gap: 0.5rem;
   /* Space for icons + text */
 
-  border-radius: 0.8rem;
+  border-radius: 0.4rem;
   /* Softer rounded edges */
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.5px;
 

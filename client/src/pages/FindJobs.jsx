@@ -4,19 +4,22 @@ import { useLocation, } from 'react-router-dom'
 import axios from 'axios'
 import { AppContext } from '../context/AppContext'
 import { toast } from 'react-toastify'
+import FeaturedJobs from '../components/FeaturedJobs'
+import JobCard from '../components/JobCard'
+import NotFound404 from '../components/NotFound404'
+import Loading from '../components/Loading'
+import CoverLetterModal from '../components/CoverLetterModal'
+import LoginReminderModal from '../components/LoginReminderModal'
 
 // React Icons
 import { FaFilter } from "react-icons/fa";
-import JobCard from '../components/JobCard'
-import CategoryJobs from './CategoryJobs'
-import assets from '../assets/assets'
-import NotFound404 from '../components/NotFound404'
-import Loading from '../components/Loading'
+import { FaClockRotateLeft } from "react-icons/fa6";
+import { MdFeaturedPlayList } from "react-icons/md";
 
 const FindJobs = () => {
   const location = useLocation();
   const { backendUrl, userData } = useContext(AppContext)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   // Using Parameters for getting the job 
   const search = new URLSearchParams(location.search);
@@ -65,6 +68,27 @@ const FindJobs = () => {
     );
   });
 
+  const [toggleApplyJob, setToggleApplyJob] = useState(false)
+  const [applJobId, setapplJobId] = useState('');
+  const [coverLetter, setCoverLetter] = useState('');
+
+  const applyJob = async (id) => {
+    try {
+      const { data } = await axios.post(backendUrl + '/api/user/applyjob', { jobId: id, resume: userData?.resume, coverLetter: coverLetter });
+
+      if (data.success) {
+        toast.success(data.message);
+        setToggleApplyJob(false);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
+  // Login Reminder Pop Up
+  const [loginReminder, setLoginReminder] = useState(false);
+
+
   // Loading
   if (loading) {
     return <Loading />
@@ -76,14 +100,14 @@ const FindJobs = () => {
         <div className='sticky top-0 z-2 py-6'>
           <Search Param={Param} />
         </div>
-        <div className='my-6 px-2 md:px-5 lg:px-10'>
+        <div className='my-10 px-2 md:px-5 lg:px-10'>
           {/* Jobs */}
-          {Param && categoryParam && <h1>
-            <span className='font-bold'>Results For:</span> {Param || categoryParam}
-          </h1>}
+          {Param || categoryParam ? <h1>
+            <span className='font-bold'>Search Results For:</span> {Param || categoryParam}
+          </h1> : null}
 
-          <section className='flex flex-wrap items-center gap-8 mt-6'>
-            <h3 className='flex items-center gap-2 font-semibold'>
+          <section className='flex flex-wrap items-center gap-8 mt-8'>
+            <h3 className='flex items-center gap-3 font-semibold'>
               <FaFilter size={20} className='text-[var(--primary-color)]' /> Filter:
             </h3>
             <select
@@ -124,10 +148,24 @@ const FindJobs = () => {
             </select>
           </section>
           <section className='my-4'>
-            <ul className='grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              {filteredJobs.length !== 0 ? filteredJobs?.map((e, i) => (
-                <JobCard key={i} e={e} />
-              )) :
+            <h3 className='mt-8 mb-4 flex items-center gap-3 font-semibold'>
+              <FaClockRotateLeft className='text-[var(--primary-color)]' /> Recent Jobs
+            </h3>
+            <ul className='grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7'>
+              {filteredJobs.length !== 0 ? filteredJobs
+                ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))?.map((e, i) => (
+                  <>
+                    <JobCard setLoginReminder={setLoginReminder} setToggleApplyJob={setToggleApplyJob} setapplJobId={setapplJobId} key={i} e={e} />
+                    {i === 5 &&
+                      <li className='col-span-full'>
+                        <h3 className='flex items-center gap-3 font-semibold'>
+                          <MdFeaturedPlayList className='text-[var(--primary-color)]' /> Sponsored Jobs
+                        </h3>
+                        <FeaturedJobs />
+                      </li>
+                    }
+                  </>
+                )) :
                 <NotFound404 margin={"mt-20"} value={
                   <div>
                     No Matches Found related <span className='font-bold'>"{Param || categoryParam}"</span>
@@ -138,7 +176,23 @@ const FindJobs = () => {
           </section>
         </div>
       </div >
+
+      {/* Apply Job Modal */}
+      <CoverLetterModal
+        isOpen={toggleApplyJob}
+        onClose={() => setToggleApplyJob(false)}
+        coverLetter={coverLetter}
+        setCoverLetter={setCoverLetter}
+        onApply={() => applyJob(applJobId)}
+      />
+
+      {/* Login Reminder Modal */}
+      <LoginReminderModal
+        isOpen={loginReminder}
+        onClose={() => setLoginReminder(false)}
+        showLoginForm={true}
+      />
     </>
   )
 }
-export default FindJobs
+export default FindJobs;
