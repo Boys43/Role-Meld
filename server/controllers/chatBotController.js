@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const MODEL = "meta-llama/llama-3.3-8b-instruct:free";
+const MODEL = "x-ai/grok-4-fast:free";
 
 export const chatBot = async (req, res) => {
   const { question } = req.body;
@@ -10,7 +10,7 @@ export const chatBot = async (req, res) => {
   }
 
   try {
-    const resp = await axios.post(
+    const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
         model: MODEL,
@@ -30,10 +30,6 @@ You are AlfaCareer Assistant, a chatbot for the AlfaCareer job portal.
 - Friendly, professional, short, actionable
 - Use → arrows for steps
 - Escalate complex issues to support: "Please contact support@alfacareer.com"
-
-✅ Reference Map:
-- Answer common questions, guide navigation, provide basic troubleshooting
-- Keep responses concise (<50 words) and clear
 
 ## Common FAQs
 
@@ -87,7 +83,6 @@ Support Contact: "If unresolved, contact support@alfacareer.com"
 - Friendly, professional
 - Offer follow-up help
 - If unsure, direct to support
-
             `,
           },
           {
@@ -95,6 +90,8 @@ Support Contact: "If unresolved, contact support@alfacareer.com"
             content: question,
           },
         ],
+        max_tokens: 500, // adjust if needed
+        temperature: 0.5,
       },
       {
         headers: {
@@ -104,9 +101,14 @@ Support Contact: "If unresolved, contact support@alfacareer.com"
       }
     );
 
-    const reply = resp.data?.choices?.[0]?.message?.content.replace(/\n/g, "<br />") || "Sorry, I couldn’t generate a response.";
-    return res.json({ success: true, data: reply });
+    // GPT-OSS can return content in a few formats; handle safely
+    const reply =
+      response.data?.choices?.[0]?.message?.content ||
+      response.data?.choices?.[0]?.content ||
+      response.data?.output_text ||
+      "Sorry, I couldn’t generate a response.";
 
+    return res.json({ success: true, data: reply.replace(/\n/g, "<br />") });
   } catch (error) {
     console.error("ChatBot Error:", error.response?.data || error.message);
     return res.status(500).json({
