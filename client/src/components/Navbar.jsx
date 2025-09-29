@@ -69,7 +69,7 @@ const Navbar = () => {
         {/* Left Logo */}
         <div className="flex items-center gap-6">
           <NavLink to={"/"}>
-            <img src="/logo.png" className="w-32" alt="" />
+            <img src="/logo.webp" className="w-32" alt="" />
           </NavLink>
 
           {isLoggedIn && <div className="hidden md:flex items-baseline gap-6">

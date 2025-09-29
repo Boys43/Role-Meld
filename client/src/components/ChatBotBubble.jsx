@@ -43,7 +43,7 @@ const ChatBotBubble = () => {
         onClick={() => setShowChat(!showChat)}
         className="w-15 h-15 cursor-pointer group border border-[var(--primary-color)] fixed bottom-5 right-5 p-3 bg-white rounded-full"
       >
-        <img src="/fav_logo.png" className="w-full pointer-events-none h-full" alt="" />
+        <img src="/fav_logo.webp" className="w-full pointer-events-none h-full" alt="" />
       </div>
       <div
         className={`w-80 fixed bottom-15 right-15 z-50 h-100 rounded-2xl rounded-br-none border border-[var(--primary-color)] bg-white shadow-xl transform transition-all overflow-y-auto duration-300 origin-bottom-right ${showChat ? "scale-100 opacity-100" : "scale-0 opacity-0"

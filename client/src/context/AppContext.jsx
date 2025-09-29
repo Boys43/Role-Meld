@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useState, useMemo } from "react";
 import { toast } from "react-toastify";
 import Loading from "../components/Loading";
 
@@ -10,10 +10,11 @@ export const AppContextProvider = (props) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ loading state
+  const [loading, setLoading] = useState(true);
   const [profileScore, setProfileScore] = useState(0);
   const [jobId, setJobId] = useState("");
   const [savedJobs, setSavedJobs] = useState(() => new Set());
+
   axios.defaults.withCredentials = true;
 
   const toggleSaveJob = async (id) => {
@@ -28,9 +29,8 @@ export const AppContextProvider = (props) => {
         toast.success("Job Saved");
       }
 
-      // Backend call
-      const arrJobs = Array.from(newSet);
-      axios.post(`${backendUrl}/api/user/savejob`, { savedJobs: arrJobs })
+      // Sync with backend
+      axios.post(`${backendUrl}/api/user/savejob`, { savedJobs: Array.from(newSet) })
         .catch((error) => {
           toast.error(error.message || "Something went wrong");
         });
@@ -39,26 +39,24 @@ export const AppContextProvider = (props) => {
     });
   };
 
-
   const getUserData = async () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/user/data`);
-
       if (data.success) {
         setUserData(data.profile);
 
-        // ✅ Sync savedJobs state with backend
         if (Array.isArray(data.profile.savedJobs)) {
           setSavedJobs(new Set(data.profile.savedJobs));
         }
 
-        if (data.profile.role === "user")
+        if (data.profile.role === "user") {
           setProfileScore(data.profile.profileScore);
+        }
       } else {
-        setUserData(false);
+        setUserData(null);
       }
-    } catch (error) {
-      setUserData(false);
+    } catch {
+      setUserData(null);
     }
   };
 
@@ -73,7 +71,7 @@ export const AppContextProvider = (props) => {
         setIsLoggedIn(false);
         setUserData(null);
       }
-    } catch (error) {
+    } catch {
       setIsLoggedIn(false);
       setUserData(null);
     } finally {
@@ -85,7 +83,7 @@ export const AppContextProvider = (props) => {
     getUserState();
   }, []);
 
-  const value = {
+  const value = useMemo(() => ({
     backendUrl,
     isLoggedIn,
     setIsLoggedIn,
@@ -100,15 +98,19 @@ export const AppContextProvider = (props) => {
     savedJobs,
     setSavedJobs,
     toggleSaveJob
-  };
+  }), [
+    backendUrl,
+    isLoggedIn,
+    userData,
+    profileScore,
+    loading,
+    jobId,
+    savedJobs
+  ]);
 
   return (
     <AppContext.Provider value={value}>
-      {loading ? (
-        <Loading />
-      ) : (
-        props.children
-      )}
+      {loading ? <Loading /> : props.children}
     </AppContext.Provider>
   );
 };
