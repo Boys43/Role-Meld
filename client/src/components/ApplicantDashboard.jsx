@@ -8,6 +8,10 @@ import { MdCancel } from "react-icons/md";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { IoMdMail } from "react-icons/io";
 
+// Cirsluar Profile score
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+
 const ApplicantDashboard = () => {
   const { userData, setUserData, backendUrl, profileScore } = useContext(AppContext);
   const [updatePopUpState, setUpdatePopUpState] = useState("hidden");
@@ -26,29 +30,6 @@ const ApplicantDashboard = () => {
 
       if (data.success) {
         setUserData(data.user);
-        toast.success(data.message);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || error.message);
-    }
-  };
-
-  // ---------- Resume Update ----------
-  const changeResume = async (resume) => {
-    const formData = new FormData();
-    formData.append("resume", resume);
-
-    try {
-      const { data } = await axios.post(
-        `${backendUrl}/api/user/updateresume`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-
-      if (data.success) {
-        setUserData(data.profile);
         toast.success(data.message);
       } else {
         toast.error(data.message);
@@ -113,24 +94,54 @@ const ApplicantDashboard = () => {
     }
   };
 
+
   return (
     <>
       <div className="p-5 w-full h-[calc(100vh-4.6rem)] overflow-y-scroll">
         {/* Profile Header */}
-        <div className="p-4 flex gap-4 items-center border-b-1">
-          <div className="relative w-20 h-20">
-            <div className="w-20 h-20 border-2 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
+        <div className="p-4 flex gap-4 items-center">
+          <div className="relative">
+            <div className="relative w-32 h-32 mx-auto">
+              {/* Circular Progress */}
+              <CircularProgressbar
+                value={profileScore}
+                text={""} // hide default text
+                styles={{
+                  path: {
+                    stroke:
+                      profileScore <= 25
+                        ? "#ef4444"
+                        : profileScore <= 50
+                          ? "#f97316"
+                          : profileScore <= 75
+                            ? "#facc15"
+                            : "#22c55e",
+                    strokeLinecap: "round",
+                    transition: "stroke-dashoffset 0.5s ease",
+                  },
+                  trail: { stroke: "#f3f4f6" }, // lighter gray for trail
+                }}
+              />
+
+              {/* Profile Image or Initial */}
               {userData?.profilePicture ? (
                 <img
                   loading="lazy"
                   src={`${backendUrl}/uploads/${userData.profilePicture}`}
                   alt="Profile"
-                  className="w-full h-full object-cover"
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-25 h-25 rounded-full object-cover z-10 shadow-xl"
                 />
               ) : (
-                userData?.name?.[0] || "?"
+                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-gray-700 z-10">
+                  {userData?.name?.[0] || "?"}
+                </span>
               )}
+
+              {/* <h3 className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-white z-10 border border-gray-300 rounded-full text-sm font-semibold text-gray-600 shadow-sm">
+                {profileScore} %
+              </h3> */}
             </div>
+
 
             <input
               type="file"
@@ -150,10 +161,10 @@ const ApplicantDashboard = () => {
             <h1 className="font-bold">Hi, {userData?.name}</h1>
             <p>{userData?.email}</p>
           </div>
-        </div>
+        </div >
 
         {/* User Info */}
-        <div className="p-2 mt-5">
+        {/* <div div className="p-2 mt-5" >
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-4">
@@ -177,44 +188,19 @@ const ApplicantDashboard = () => {
               />
             </div>
           </div>
-        </div>
+        </div > */}
 
+        <div className="shadow-md mt-4 border-2 border-gray-300 rounded-md p-4">
+          <h2 className="font-semibold">
+            Latest Notifications
+          </h2>
+          <p className="mt-4">
+            No Notifications Yet
+          </p>
+        </div>
         <hr className="mt-5" />
 
-        {/* Resume */}
-        <h2 className="text-2xl font-bold my-4 text-[var(--primary-color)]">📄 Resume</h2>
-        {userData?.resume ? (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between bg-white shadow-md rounded-xl border border-gray-200 p-4">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-600">Uploaded File:</span>
-                <strong className="text-[var(--primary-color)]">{userData.resume}</strong>
-              </div>
-            </div>
-            <form className="flex items-center gap-3 bg-[var(--primary-color)]/10 p-3 rounded-xl border-2 border-[var(--primary-color)]">
-              <input
-                type="file"
-                name="resume"
-                accept=".pdf,.doc,.docx"
-                className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-color)]/80 file:text-white hover:file:bg-[var(--primary-color)]/100 cursor-pointer"
-                onChange={(e) => changeResume(e.target.files[0])}
-              />
-            </form>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold text-gray-700">Upload Resume</h3>
-            <form className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-300">
-              <input
-                type="file"
-                name="resume"
-                accept=".pdf,.doc,.docx"
-                className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-color)]/80 file:text-white hover:file:bg-[var(--primary-color)]/100 cursor-pointer"
-                onChange={(e) => changeResume(e.target.files[0])}
-              />
-            </form>
-          </div>
-        )}
+        
 
         <hr className="mt-5" />
 
@@ -225,12 +211,12 @@ const ApplicantDashboard = () => {
           <div className="w-full mt-3 bg-gray-200 h-3 rounded-full overflow-hidden">
             <div
               className={`h-full ${profileScore <= 25
-                  ? "bg-red-500"
-                  : profileScore <= 50
-                    ? "bg-orange-500"
-                    : profileScore <= 75
-                      ? "bg-yellow-400"
-                      : "bg-green-500"
+                ? "bg-red-500"
+                : profileScore <= 50
+                  ? "bg-orange-500"
+                  : profileScore <= 75
+                    ? "bg-yellow-400"
+                    : "bg-green-500"
                 } transition-all duration-500`}
               style={{ width: `${profileScore}%` }}
             ></div>
@@ -349,7 +335,7 @@ const ApplicantDashboard = () => {
             </form>
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 };

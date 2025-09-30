@@ -12,6 +12,11 @@ import { FiMenu } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { IoDocumentOutline } from "react-icons/io5";
+import { FaTrash } from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
+import { IoLockClosedOutline } from "react-icons/io5";
+import { HiOutlineHeart } from "react-icons/hi";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const { userData, backendUrl } = useContext(AppContext);
@@ -34,21 +39,24 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
   let navLinks;
   if (userData?.role === "recruiter") {
     navLinks = [
-      { name: "Dashboard", key: "recruiterdashboard", icon: <MdOutlineDashboard size={30} /> },
-      { name: "Applications", key: "applications", icon: <MdFindInPage size={30} /> },
+      { name: "Dashboard", key: "recruiterdashboard", icon: <MdOutlineDashboard size={23} /> },
+      { name: "Applications", key: "applications", icon: <MdFindInPage size={23} /> },
       {
-        name: "Jobs", key: "listed-jobs", icon: <CiViewList size={30} />,
+        name: "Jobs", key: "listed-jobs", icon: <CiViewList size={23} />,
         subTabs: [
-          { name: "Listed Job", key: "listed-jobs", icon: <CiViewList size={30} /> },
-          { name: "List Job", key: "list-job", icon: <CiViewList size={30} /> },
+          { name: "Listed Job", key: "listed-jobs", icon: <CiViewList size={23} /> },
+          { name: "List Job", key: "list-job", icon: <CiViewList size={23} /> },
         ]
       },
     ];
   } else {
     navLinks = [
-      { name: "Dashboard", key: "userdashboard", icon: <MdOutlineDashboard size={30} /> },
-      { name: "Saved Jobs", key: "savedjobs", icon: <CiBookmarkCheck size={30} /> },
-      { name: "Applied Jobs", key: "applied-jobs", icon: <VscGitStashApply size={30} /> },
+      { name: "Dashboard", key: "userdashboard", icon: <MdOutlineDashboard size={23} /> },
+      { name: "Saved Jobs", key: "savedjobs", icon: <HiOutlineHeart size={23} /> },
+      { name: "Applied Jobs", key: "applied-jobs", icon: <VscGitStashApply size={23} /> },
+      { name: "My Resumes", key: "my-resume", icon: <IoDocumentOutline size={23} /> },
+      { name: "My Profile", key: "my-profile", icon: <CgProfile size={23} /> },
+      { name: "Change Passowrd", key: "change-password", icon: <IoLockClosedOutline size={23} /> },
     ];
   }
 
@@ -88,7 +96,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       <aside
         className={`${toggleNav ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           ${toggleNav ? (isMobile ? "w-64 h-[100vh]" : "w-20  h-[calc(100vh-4.6rem)]") : "w-72"} 
-          fixed lg:sticky top-0 left-0 bg-[var(--secondary-color)] 
+          fixed text-sm lg:sticky top-0 left-0 bg-[var(--secondary-color)] 
           transition-all duration-300 border-r border-[var(--primary-color)] 
           text-white flex flex-col justify-between z-40`}
       >
@@ -117,7 +125,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 <div key={i} className="overflow-x-hidden">
                   <span
                     onClick={() => setActiveTab(e.key)}
-                    className={`px-4 py-2 rounded-xl cursor-pointer hover:bg-[var(--primary-color)]/10 flex items-center gap-3 text-white transition 
+                    className={`px-3 py-2 rounded-xl cursor-pointer hover:bg-[var(--primary-color)]/10 flex items-center gap-3 text-white transition 
                   ${isParentActive ? 'bg-[var(--primary-color)]/20 border-[var(--primary-color)] translate-x-4 border shadow-[var(--primary-color)]' : ''}
                 `}
                   >
@@ -143,6 +151,15 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 </div>
               )
             })}
+            <li>
+              <span
+                onClick={() => setActiveTab('delete-account')}
+                className={`px-3 py-2 rounded-l-xl cursor-pointer bg-red-400 hover:bg-red-500 flex items-center gap-3 text-white transition border border-red-500
+                `}
+              >
+                <FaTrash className="text-red-600" /> Delete Account
+              </span>
+            </li>
           </ul>
 
           {/* Toggle Button (Desktop only) */}
@@ -162,10 +179,10 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           onClick={logout}
         >
           {toggleNav ? (
-            <IoMdExit size={25} />
+            <IoMdExit size={23} />
           ) : (
             <>
-              Logout <IoMdExit size={25} />
+              Logout <IoMdExit size={23} />
             </>
           )}
         </div>

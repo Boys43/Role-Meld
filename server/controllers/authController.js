@@ -224,9 +224,87 @@ export const deleteUser = async (req, res) => {
 
         await authModel.findByIdAndDelete(id);
 
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+
         return res.json({
             success: true,
             message: "User and related profile deleted successfully"
+        });
+
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const changePassword = async (req, res) => {
+    const { email, password, newPassword } = req.body;
+
+    if (!email || !password || !newPassword) {
+        return res.status(400).json({ success: false, message: "Please provide all fields" });
+    }
+
+    try {
+        const user = await authModel.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: "Incorrect password" });
+        }
+
+        const hashedPassword = bcrypt.hashSync(newPassword, 10);
+
+        user.password = hashedPassword;
+
+        await user.save();
+
+        return res.json({ success: true, message: "Password changed successfully" });
+    } catch {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export const deleteAccount = async (req, res) => {
+    const { password, email } = req.body;
+
+    try {
+        const user = await authModel.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: "Incorrect password" });
+        }
+
+        let deletedProfile;
+        if (user.role === "user") {
+            deletedProfile = await userProfileModel.findOneAndDelete({ email: user.email });
+        } else if (user.role === "recruiter") {
+            deletedProfile = await recruiterProfileModel.findOneAndDelete({ email: user.email });
+        }
+
+        await authModel.findOneAndDelete({ email: user.email });
+
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+
+        return res.json({
+            success: true,
+            message: "Account deleted successfully"
         });
 
     } catch (error) {

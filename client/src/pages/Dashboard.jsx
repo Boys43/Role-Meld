@@ -9,6 +9,10 @@ import JobForm from "../components/JobsForm";
 import { AppContext } from "../context/AppContext";
 import RecruiterJobs from "../components/RecruiterJobs";
 import AdminBlog from "../components/AdminBlog";
+import MyResume from "../components/MyResume";
+import MyProfile from "../components/MyProfile";
+import ChangePassword from "../components/ChangePassword";
+import DeleteProfile from "../components/DeleteProfile";
 
 const Dashboard = () => {
   const { userData } = useContext(AppContext);
@@ -30,6 +34,14 @@ const Dashboard = () => {
         return <JobForm setActiveTab={setActiveTab} />
       case "listed-jobs":
         return <RecruiterJobs />
+      case "my-resume":
+        return <MyResume />
+      case "my-profile":
+        return <MyProfile />
+      case "change-password":
+        return <ChangePassword />
+      case "delete-account":
+        return <DeleteProfile setActiveTab={setActiveTab} />
       default:
         if (userData?.role === "user") return <ApplicantDashboard />;
         if (userData?.role === "recruiter") return <EmployeeDashboard />;
