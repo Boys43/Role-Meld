@@ -15,6 +15,7 @@ import blogRouter from "./routes/blogRoutes.js";
 import axios from 'axios';
 import cron from 'node-cron';
 import chatRouter from "./routes/chatBotRoutes.js";
+import reviewRouter from "./routes/reviewRoutes.js";
 
 const app = express();
 dotenv.config()
@@ -75,7 +76,8 @@ app.use('/api/user', userRouter);
 app.use('/api/applications', applicationRouter);
 app.use('/api/analytics', analyticRouter);
 app.use('/api/blog', blogRouter);
-app.use('/api/chat', chatRouter)
+app.use('/api/chat', chatRouter);
+app.use('/api/reviews', reviewRouter);
 
 app.listen(PORT, () => {
     console.log(`App Listening on http://localhost:${PORT}`);

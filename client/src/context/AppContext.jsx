@@ -18,6 +18,9 @@ export const AppContextProvider = (props) => {
   axios.defaults.withCredentials = true;
 
   const toggleSaveJob = async (id) => {
+    if (!isLoggedIn) {
+      return toast.error("Please Login to Save Jobs");
+    }
     setSavedJobs((prev) => {
       const newSet = new Set(prev);
 

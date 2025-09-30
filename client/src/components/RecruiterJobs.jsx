@@ -97,7 +97,7 @@ const RecruiterJobs = () => {
                     <span className='px-4 py-1 bg-green-200 border border-green-500 rounded-md'
                     onClick={() => setFilter('approved')}
                     >
-                        Approved <span className='ml-2 font-bold text-green-500'>{jobs.filter(job => job.status === 'approved').length}</span>
+                        Approved <span className='ml-2 font-bold text-green-500'>{jobs.filter(job => job.approved === 'approved').length}</span>
                     </span>
                     <span className='px-4 py-1 bg-red-200 border border-red-500 rounded-md'
                     onClick={() => setFilter('rejected')}
@@ -111,7 +111,6 @@ const RecruiterJobs = () => {
                     </span>
                 </div>
 
-                <h1 className='my-8 text-center font-bold text-shadow-lg' onClick={() => setFilter('all')}>All Jobs</h1>
                 <div className="overflow-x-auto">
                     <table className="w-full border shadow-lg rounded-lg overflow-x-scroll">
                         <thead>

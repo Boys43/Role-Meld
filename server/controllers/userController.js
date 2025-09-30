@@ -28,17 +28,10 @@ function calculateProfileScore(user) {
     let score = 0;
 
     // Resume uploaded (any one of work/edu/skills filled)
-    if (
-        user.resume &&
-        (
-            (Array.isArray(user.resume.workExperience) && user.resume.workExperience.length > 0) ||
-            (user.resume.education?.college?.trim?.() !== "") ||
-            (Array.isArray(user.resume.skills) && user.resume.skills.length > 0)
-        )
-    ) {
+    if (user.resume && user.resume.trim() !== "") {
         score += 20;
     }
-
+    
     // Profile picture
     if (user.profilePicture && user.profilePicture.trim() !== "") {
         score += 20;
@@ -53,15 +46,19 @@ function calculateProfileScore(user) {
         score += 10;
     }
 
-    if (user.country && user.country.trim() !== "") {
+    if (user.portfolio && user.portfolio.trim() !== "") {
         score += 10;
     }
 
-    if (Array.isArray(user.resume?.skills) && user.resume.skills.length >= 3) {
-        score += 20;
+    if (user.city && user.city.trim() !== "") {
+        score += 10;
     }
 
-    if (Array.isArray(user.resume?.workExperience) && user.resume.workExperience.length > 0) {
+    if (user.address && user.address.trim() !== "") {
+        score += 10;
+    }
+
+    if (user.postal && user.postal.trim() !== "") {
         score += 10;
     }
 

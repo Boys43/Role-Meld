@@ -122,7 +122,7 @@ const ApplicantDashboard = () => {
             <div className="w-20 h-20 border-2 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
               {userData?.profilePicture ? (
                 <img
-                loading="lazy"
+                  loading="lazy"
                   src={`${backendUrl}/uploads/${userData.profilePicture}`}
                   alt="Profile"
                   className="w-full h-full object-cover"
@@ -182,7 +182,7 @@ const ApplicantDashboard = () => {
         <hr className="mt-5" />
 
         {/* Resume */}
-        <h2 className="text-2xl font-bold mb-4 text-[var(--primary-color)]">📄 Resume</h2>
+        <h2 className="text-2xl font-bold my-4 text-[var(--primary-color)]">📄 Resume</h2>
         {userData?.resume ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between bg-white shadow-md rounded-xl border border-gray-200 p-4">
@@ -224,15 +224,14 @@ const ApplicantDashboard = () => {
           <h3 className="text-2xl font-bold text-[var(--primary-color)] mt-1">{profileScore}%</h3>
           <div className="w-full mt-3 bg-gray-200 h-3 rounded-full overflow-hidden">
             <div
-              className={`h-full ${
-                profileScore <= 25
+              className={`h-full ${profileScore <= 25
                   ? "bg-red-500"
                   : profileScore <= 50
-                  ? "bg-orange-500"
-                  : profileScore <= 75
-                  ? "bg-yellow-400"
-                  : "bg-green-500"
-              } transition-all duration-500`}
+                    ? "bg-orange-500"
+                    : profileScore <= 75
+                      ? "bg-yellow-400"
+                      : "bg-green-500"
+                } transition-all duration-500`}
               style={{ width: `${profileScore}%` }}
             ></div>
           </div>

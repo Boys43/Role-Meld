@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { Suspense, useContext, useEffect, useState } from 'react'
 import Search from '../components/Search'
 import { useLocation, } from 'react-router-dom'
 import axios from 'axios'
 import { AppContext } from '../context/AppContext'
 import { toast } from 'react-toastify'
-import FeaturedJobs from '../components/FeaturedJobs'
+const FeaturedJobs = React.lazy(() => import('../components/FeaturedJobs'))
 import JobCard from '../components/JobCard'
 import NotFound404 from '../components/NotFound404'
 import Loading from '../components/Loading'
@@ -79,7 +79,7 @@ const FindJobs = () => {
       if (data.success) {
         toast.success(data.message);
         setToggleApplyJob(false);
-      }else{
+      } else {
         toast.error(data.message);
       }
     } catch (error) {
@@ -163,7 +163,9 @@ const FindJobs = () => {
                         <h3 className='flex items-center gap-3 font-semibold'>
                           <MdFeaturedPlayList className='text-[var(--primary-color)]' /> Sponsored Jobs
                         </h3>
-                        <FeaturedJobs />
+                        <Suspense fallback={<p>Loading...</p>}>
+                          <FeaturedJobs />
+                        </Suspense>
                       </li>
                     }
                   </>

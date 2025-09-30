@@ -20,7 +20,6 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
         { name: "Add Blog", key: "add-blog" }
       ]
     },
-    { name: 'Listed Blogs', key: "listed-blogs", icon: <IoPersonSharp size={25} /> },
   ]
 
   return (

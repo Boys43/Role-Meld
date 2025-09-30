@@ -9,7 +9,7 @@ export const getAllApplications = async (req, res) => {
 
     try {
         const applications = await applicationModel.find({ applicant: userId })
-            .populate("job", "title company location jobType salary")
+            .populate("job", "title company location jobType salary companyProfile")
             .populate("recruiter", "name email")
             .populate("applicant", "name email");
 

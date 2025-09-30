@@ -1,12 +1,47 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
 
 // React Icons
 import { FaQuoteRight } from "react-icons/fa";
+import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import Loading from "./Loading";
 
 const Testimonials = () => {
+    const { backendUrl } = useContext(AppContext);
+    const [testimonials, setTestimonials] = useState([])
+
+    const [getReviewsLoading, setGetReviewsLoading] = useState(false)
+    const getReviews = async () => {
+        setGetReviewsLoading(true)
+        try {
+            const { data } = await axios.get(`${backendUrl}/api/reviews/get-reviews`)
+            
+            if (data.success) {
+                setTestimonials(data.reviews);
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        } finally {
+            setGetReviewsLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        getReviews();
+    }, [])
+
+    console.log(testimonials);
+
+    if (getReviewsLoading) {
+        return <Loading />
+    }
+
     return (
         <div className="mt-4 relative z-0">
             <Swiper
@@ -32,127 +67,30 @@ const Testimonials = () => {
                     },
                 }}
             >
-                {/** Testimonial card repeated */}
-                <SwiperSlide>
-                    <div className="p-8 max-w-[400px] flex flex-col gap-4 rounded-2xl border shadow-xl bg-white">
-                        <h2 className="flex items-center gap-4 font-semibold">
-                            <FaQuoteRight
-                                className="text-[var(--primary-color)]"
-                                size={50}
-                            />
-                        </h2>
-                        <p className="line-clamp-5">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi
-                            aliquam qui officia commodi mollitia tenetur explicabo quidem,
-                            cupiditate quia, eaque, dolorem corrupti consectetur.
-                        </p>
-                        <p className="flex items-center gap-4">
-                            <img
-                            loading="lazy"
-                                src="https://picsum.photos/300/300?random=1"
-                                alt="Alt"
-                                className="h-10 w-10 rounded-full object-cover border"
-                            />{" "}
-                            Nouman Tariq
-                        </p>
-                    </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="p-8 max-w-[400px] flex flex-col gap-4 rounded-2xl border shadow-xl bg-white">
-                        <h2 className="flex items-center gap-4 font-semibold">
-                            <FaQuoteRight
-                                className="text-[var(--primary-color)]"
-                                size={50}
-                            />
-                        </h2>
-                        <p className="line-clamp-5">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi
-                            aliquam qui officia commodi mollitia tenetur explicabo quidem,
-                            cupiditate quia, eaque, dolorem corrupti consectetur.
-                        </p>
-                        <p className="flex items-center gap-4">
-                            <img
-                            loading="lazy"
-                                src="https://picsum.photos/300/300?random=2"
-                                alt="Alt"
-                                className="h-10 w-10 rounded-full object-cover border"
-                            />{" "}
-                            Nouman Tariq
-                        </p>
-                    </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="p-8 max-w-[400px] flex flex-col gap-4 rounded-2xl border shadow-xl bg-white">
-                        <h2 className="flex items-center gap-4 font-semibold">
-                            <FaQuoteRight
-                                className="text-[var(--primary-color)]"
-                                size={50}
-                            />
-                        </h2>
-                        <p className="line-clamp-5">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi
-                            aliquam qui officia commodi mollitia tenetur explicabo quidem,
-                            cupiditate quia, eaque, dolorem corrupti consectetur.
-                        </p>
-                        <p className="flex items-center gap-4">
-                            <img
-                            loading="lazy"
-                                src="https://picsum.photos/300/300?random=3"
-                                alt="Alt"
-                                className="h-10 w-10 rounded-full object-cover border"
-                            />{" "}
-                            Nouman Tariq
-                        </p>
-                    </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="p-8 max-w-[400px] flex flex-col gap-4 rounded-2xl border shadow-xl bg-white">
-                        <h2 className="flex items-center gap-4 font-semibold">
-                            <FaQuoteRight
-                                className="text-[var(--primary-color)]"
-                                size={50}
-                            />
-                        </h2>
-                        <p className="line-clamp-5">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi
-                            aliquam qui officia commodi mollitia tenetur explicabo quidem,
-                            cupiditate quia, eaque, dolorem corrupti consectetur.
-                        </p>
-                        <p className="flex items-center gap-4">
-                            <img
-                            loading="lazy"
-                                src="https://picsum.photos/300/300?random=4"
-                                alt="Alt"
-                                className="h-10 w-10 rounded-full object-cover border"
-                            />{" "}
-                            Nouman Tariq
-                        </p>
-                    </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div className="p-8 max-w-[400px] flex flex-col gap-4 rounded-2xl border shadow-xl bg-white">
-                        <h2 className="flex items-center gap-4 font-semibold">
-                            <FaQuoteRight
-                                className="text-[var(--primary-color)]"
-                                size={50}
-                            />
-                        </h2>
-                        <p className="line-clamp-5">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi
-                            aliquam qui officia commodi mollitia tenetur explicabo quidem,
-                            cupiditate quia, eaque, dolorem corrupti consectetur.
-                        </p>
-                        <p className="flex items-center gap-4">
-                            <img
-                            loading="lazy"
-                                src="https://picsum.photos/300/300?random=5"
-                                alt="Alt"
-                                className="h-10 w-10 rounded-full object-cover border"
-                            />{" "}
-                            Nouman Tariq
-                        </p>
-                    </div>
-                </SwiperSlide>
+                {testimonials?.slice(0, 10)?.map((e, i) => (
+                    <SwiperSlide key={i}>
+                        <div className="p-8 max-w-[400px] flex flex-col gap-4 rounded-2xl border shadow-xl bg-white">
+                            <h2 className="flex items-center gap-4 font-semibold">
+                                <FaQuoteRight
+                                    className="text-[var(--primary-color)]"
+                                    size={50}
+                                />
+                            </h2>
+                            <p className="line-clamp-5 min-h-[100px]">
+                                {e.review}
+                            </p>
+                            <p className="flex items-center gap-4">
+                                <img
+                                    loading="lazy"
+                                    src={e.profilePicture.includes("picsum") ? e.profilePicture: backendUrl + "/uploads/" + e.profilePicture}
+                                    alt={String(i)}
+                                    className="h-10 w-10 rounded-full object-cover border"
+                                />{" "}
+                                {e.name}
+                            </p>
+                        </div>
+                    </SwiperSlide>
+                ))}
             </Swiper>
         </div>
     );

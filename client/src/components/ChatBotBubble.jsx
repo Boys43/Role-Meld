@@ -1,13 +1,13 @@
 import axios from 'axios';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext';
 import { toast } from 'react-toastify';
-
+import { motion } from 'framer-motion'
 import ReactMarkdown from 'react-markdown';
 
 
 const ChatBotBubble = () => {
-  const { backendUrl } = useContext(AppContext)
+  const { backendUrl, userData } = useContext(AppContext)
   const [showChat, setShowChat] = useState(false);
   const [question, setQuestion] = useState('');
 
@@ -43,14 +43,46 @@ const ChatBotBubble = () => {
     }
   };
 
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShow(true);
+      setTimeout(() => setShow(false), 3000);
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
-      <div
+      <motion.div
         onClick={() => setShowChat(!showChat)}
-        className="w-15 h-15 cursor-pointer group border border-[var(--primary-color)] fixed bottom-5 right-5 p-3 bg-white rounded-full"
+        className="w-16 p-3 h-16 cursor-pointer fixed bottom-5 right-5 
+             flex items-center justify-center rounded-full 
+             border-2 border-[var(--primary-color)] 
+             bg-white shadow-lg"
+        animate={{ y: [0, -6, 0] }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
       >
-        <img loading='lazy' src="/fav_logo.webp" className="w-full pointer-events-none h-full" alt="" />
-      </div>
+        <div>
+          <img src="/fav_logo.webp" alt="Logo" />
+        </div>
+        <div
+          className={`absolute whitespace-nowrap py-1 text-sm bg-white rounded-md transition-all overflow-hidden duration-500 border flex justify-center right-[120%] ${show ? "w-65" : "w-0 border-0"
+            }`}
+        >
+          Need Some Help
+          <span className="font-semibold">
+            , {userData?.name?.split(" ")[0] || ""}
+          </span>
+        </div>
+      </motion.div>
+
       <div
         className={`w-80 fixed bottom-15 right-15 z-50 -h-100 rounded-2xl rounded-br-none border border-[var(--primary-color)] bg-white shadow-xl transform transition-all overflow-y-auto duration-300 origin-bottom-right ${showChat ? "scale-100 opacity-100" : "scale-0 opacity-0"
           }`}

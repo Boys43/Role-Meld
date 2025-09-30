@@ -36,8 +36,13 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     navLinks = [
       { name: "Dashboard", key: "recruiterdashboard", icon: <MdOutlineDashboard size={30} /> },
       { name: "Applications", key: "applications", icon: <MdFindInPage size={30} /> },
-      { name: "List Job", key: "list-job", icon: <CiViewList size={30} /> },
-      { name: "Listed Jobs", key: "listed-jobs", icon: <CiViewList size={30} /> },
+      {
+        name: "Jobs", key: "listed-jobs", icon: <CiViewList size={30} />,
+        subTabs: [
+          { name: "Listed Job", key: "listed-jobs", icon: <CiViewList size={30} /> },
+          { name: "List Job", key: "list-job", icon: <CiViewList size={30} /> },
+        ]
+      },
     ];
   } else {
     navLinks = [
@@ -88,7 +93,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           text-white flex flex-col justify-between z-40`}
       >
         {/* User Info */}
-        <div className="flex flex-col gap-4 p-4 relative">
+        <div className="flex flex-col gap-4 py-4 pl-4 relative">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full border flex items-center justify-center overflow-hidden">
 
@@ -106,23 +111,38 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
           {/* Navigation */}
           <ul className="flex flex-col gap-2 mt-4">
-            {navLinks.map((e) => (
-              <li
-                key={e.key}
-                onClick={() => {
-                  setActiveTab(e.key);
-                  if (isMobile) setToggleNav(false); // auto close sidebar on mobile
-                }}
-                className={`flex items-center gap-2 px-2 py-1 transition-all rounded cursor-pointer border border-[var(--primary-color)]/30
-                  ${activeTab === e.key
-                    ? "text-[var(--accent-color)] translate-x-2 font-semibold bg-[var(--primary-color)]/30 border border-[var(--primary-color)]"
-                    : "hover:bg-[var(--primary-color)]/5"
-                  }`}
-              >
-                {e.icon}
-                {!toggleNav && <span>{e.name}</span>}
-              </li>
-            ))}
+            {navLinks.map((e, i) => {
+              const isParentActive = activeTab === e.key || (e.subTabs && e.subTabs.some(sub => sub.key === activeTab));
+              return (
+                <div key={i} className="overflow-x-hidden">
+                  <span
+                    onClick={() => setActiveTab(e.key)}
+                    className={`px-4 py-2 rounded-xl cursor-pointer hover:bg-[var(--primary-color)]/10 flex items-center gap-3 text-white transition 
+                  ${isParentActive ? 'bg-[var(--primary-color)]/20 border-[var(--primary-color)] translate-x-4 border shadow-[var(--primary-color)]' : ''}
+                `}
+                  >
+                    {e.icon}
+                    {e.name}
+                  </span>
+
+                  {e.subTabs && isParentActive && (
+                    <div className="flex flex-col gap-1 translate-x-10 mt-2">
+                      {e.subTabs.map((sub, idx) => (
+                        <span
+                          key={idx}
+                          onClick={() => setActiveTab(sub.key)}
+                          className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition 
+                        ${activeTab === sub.key ? 'bg-[var(--primary-color)]/20 border-[var(--primary-color)] border shadow-[var(--primary-color)]' : ''}
+                      `}
+                        >
+                          {sub.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </ul>
 
           {/* Toggle Button (Desktop only) */}

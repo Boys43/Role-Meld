@@ -49,7 +49,6 @@ export const AdminRoute = ({ children }) => {
   }, [isLoggedIn, backendUrl]);
 
   if (!isLoggedIn) {
-    toast.error("Please Login First");
     return <Navigate to="/login" replace />;
   }
 
@@ -70,7 +69,6 @@ export const ProtectedRoute = ({ children }) => {
   const { isLoggedIn } = useContext(AppContext);
 
   if (!isLoggedIn) {
-    toast.error("Please Login First");
     return <Navigate to="/login" replace />;
   }
 

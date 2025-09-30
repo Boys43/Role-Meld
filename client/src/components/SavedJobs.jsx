@@ -9,6 +9,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { FaBookmark } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
+import NotFound404 from './NotFound404';
 
 const SavedJobs = () => {
   const { backendUrl, userData, toggleSaveJob } = useContext(AppContext);
@@ -32,47 +33,35 @@ const SavedJobs = () => {
   useEffect(() => {
     getSavedJobs();
   }, [])
-
-  function viewDetails(id) {
-    navigte(`/jobdetails/${id}`)
-  }
-  
-
   return (
     <>
-      <div className='flex w-full h-[calc(100vh-4.6rem)] overflow-y-auto'>
-        <div className='p-4 flex flex-col gap-4 max-w-[1500px] w-full mx-auto'>
-          <h1 className='font-bold text-[var(--primary-color)] flex items-center gap-4'><FaBookmark size={30} />Saved Jobs</h1>
-          <div className='flex flex-col gap-4'>
-            {allsavedJobs.length > 0 ? allsavedJobs.map((e, i) => (
-              <div key={i} className='py-2 px-4 grid grid-cols-2 items-center border rounded-xl bg-[var(--primary-color)]/10'>
-                <div className='grid grid-cols-4 items-center gap-4'>
-                  <h3 className='flex items-center gap-4 font-medium'><PiSubtitlesFill className='text-[var(--primary-color)]' size={20} /> {e?.title}</h3>
-                  <p className='flex items-center gap-4 italic'><FaBriefcase className='text-[var(--primary-color)]' size={10} /> {e?.company}</p>
-                  <p className='flex items-center gap-4 italic text-red-400'><IoIosWarning className='text-red-500' size={15} />{e?.applicationDeadline ? new Date(e?.applicationDeadline).toISOString().split("T")[0] : "No deadline"}</p>
-                </div>
-                <div className='flex items-center justify-evenly gap-4'>
-                  <button onClick={() => viewDetails(e?._id)}>
-                    View Details
-                  </button>
-                  <span
-                    onClick={() => {
-                      toggleSaveJob(e?._id);
-                      setAllsavedJobs((prev) => prev.filter((job) => job._id !== e._id));
-                    }}
-                    className='p-3 bg-red-300 border border-red-500 rounded-full'>
-                    <FaTrashAlt className='text-red-500 cursor-pointer' />
-                  </span>
-                </div>
+      <div className='p-6 flex flex-col w-full min-h-[calc(100vh-4.6rem)] overflow-y-auto'>
+        <h1 className='font-bold flex items-center gap-4'><FaBookmark className='text-[var(--primary-color)] ' size={30} />Saved Jobs</h1>
+        <div className='flex flex-col gap-4'>
+          {allsavedJobs.length > 0 ? allsavedJobs.map((e, i) => (
+            <div key={i} className='py-2 px-4 grid grid-cols-2 items-center border rounded-xl bg-[var(--primary-color)]/10'>
+              <div className='grid grid-cols-4 items-center gap-4'>
+                <h3 className='flex items-center gap-4 font-medium'><PiSubtitlesFill className='text-[var(--primary-color)]' size={20} /> {e?.title}</h3>
+                <p className='flex items-center gap-4 italic'><FaBriefcase className='text-[var(--primary-color)]' size={10} /> {e?.company}</p>
+                <p className='flex items-center gap-4 italic text-red-400'><IoIosWarning className='text-red-500' size={15} />{e?.applicationDeadline ? new Date(e?.applicationDeadline).toISOString().split("T")[0] : "No deadline"}</p>
               </div>
-            )) :
-              <div className='w-full py-20 gap-4 flex flex-col items-center'>
-                <IoBookmarkOutline size={50} className='text-[var(--primary-color)]' />
-                <h3 className='font-bold '>No Saved Jobs</h3>
+              <div className='flex items-center justify-evenly gap-4'>
+                <button onClick={() => navigte(`/jobdetails/${e?.id}`)}>
+                  View Details
+                </button>
+                <span
+                  onClick={() => {
+                    toggleSaveJob(e?._id);
+                    setAllsavedJobs((prev) => prev.filter((job) => job._id !== e._id));
+                  }}
+                  className='p-3 bg-red-300 border border-red-500 rounded-full'>
+                  <FaTrashAlt className='text-red-500 cursor-pointer' />
+                </span>
               </div>
-            }
-
-          </div>
+            </div>
+          )) :
+            <NotFound404 value={"No Saved Job"} margin={"mt-20"} />
+          }
         </div>
       </div>
     </>

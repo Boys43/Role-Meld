@@ -1,11 +1,11 @@
-import axios from "axios";
+import React, { Suspense, lazy } from "react";
 import assets from "../assets/assets";
-import Search from "../components/Search";
 import Marquee from 'react-fast-marquee'
-import Testimonials from "../components/Testimonials";
-import FeaturedJobs from "../components/FeaturedJobs";
-import BlogsSection from "../components/BlogsSection";
-import LeaveReview from "../components/LeaveReview";
+const Search = lazy(() => import("../components/Search"));
+const Testimonials = lazy(() => import("../components/Testimonials"));
+const FeaturedJobs = lazy(() => import("../components/FeaturedJobs"));
+const BlogsSection = lazy(() => import("../components/BlogsSection"));
+const LeaveReview = lazy(() => import("../components/LeaveReview"));
 
 
 // React Icons
@@ -18,9 +18,6 @@ import { MdBusinessCenter } from "react-icons/md"; // Business Development
 import { MdEngineering } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { MdFeaturedPlayList } from "react-icons/md";
-import { useContext, useState } from "react";
-import { AppContext } from "../context/AppContext";
-import { toast } from "react-toastify";
 import { MdRateReview } from "react-icons/md";
 import { FaBloggerB } from "react-icons/fa";
 import { FaBriefcase } from "react-icons/fa";
@@ -31,20 +28,6 @@ import 'swiper/css/autoplay';
 
 const Home = () => {
   const navigate = useNavigate();
-  const { backendUrl } = useContext(AppContext);
-
-  const [sponsoredJobs, setSponsoredJobs] = useState([])
-  // Getting Sponsored Jobs
-  const getSponsoredJobs = async () => {
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/jobs/getsponsoredjobs`);
-      if (data.success) {
-        setSponsoredJobs(data.sponsoredJobs);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
 
   return (
     <>
@@ -56,7 +39,9 @@ const Home = () => {
           <p className="text-[var(--accent-color)] text-center">
             Find the perfect job for you in just a few clicks with Alfa Career
           </p>
-          <Search />
+          <Suspense fallback={<div>Loading...</div>}>
+            <Search />
+          </Suspense>
         </section>
         <section className="border z-0 rounded-2xl p-4 mt-4 shadow-xl">
           <Marquee className="z-0" pauseOnHover>
@@ -235,27 +220,35 @@ const Home = () => {
           <h1 className="font-bold flex items-center gap-4">
             <MdFeaturedPlayList className="text-[var(--primary-color)]" /> Featured <span className="text-[var(--primary-color)]">Jobs</span>
           </h1>
-          <FeaturedJobs />
+          <Suspense fallback={<div>Loading Featured Jobs...</div>}>
+            <FeaturedJobs />
+          </Suspense>
         </section>
         <section className="p-4 w-full mt-20">
           <h1 className="font-bold flex items-center gap-4">
             <MdRateReview className="text-[var(--primary-color)]" /> Testimonials
           </h1>
-          <Testimonials />
+          <Suspense fallback={<div>Loading Testimonials Jobs...</div>}>
+            <Testimonials />
+          </Suspense>
         </section>
         {/* Blogs */}
         <section className="p-4 w-full mt-20">
           <h1 className="font-bold flex items-center gap-4">
             <FaBloggerB className="text-[var(--primary-color)] my-4" /> Our <span className="text-[var(--primary-color)]">Blogs</span>
           </h1>
-          <BlogsSection className={'grid-cols-1 lg:grid-cols-2'} />
+          <Suspense fallback={<div>Loading Featured Jobs...</div>}>
+            <BlogsSection className={'grid-cols-1 lg:grid-cols-2'} />
+          </Suspense>
         </section>
         {/* Leave a Review */}
         <section className="p-4 w-full mt-20">
           <h1 className='flex items-center gap-3 font-bold'>
             <MdMessage className='text-[var(--primary-color)]' /> Leave a Review
           </h1>
-          <LeaveReview />
+          <Suspense fallback={<div>Loading Featured Jobs...</div>}>
+            <LeaveReview />
+          </Suspense>
         </section>
       </main>
     </>
