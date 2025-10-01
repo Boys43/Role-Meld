@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { FaCamera } from 'react-icons/fa';
+import { User, Phone, Link, MapPin, Briefcase, Save } from 'lucide-react'
 
 const MyProfile = () => {
     const { userData, backendUrl, setUserData, profileScore } = useContext(AppContext);
@@ -78,179 +79,235 @@ const MyProfile = () => {
     };
 
     return (
-        <div className='w-full h-[calc(100vh-4.6rem)] overflow-y-auto p-6 '>
-            <h1 className="font-semibold">Update Your Profile</h1>
-            <div className="grid grid-cols-1 lg:grid-cols-3 relative bg-white shadow-md rounded-md overflow-y-auto mt-8 gap-8">
-                <form onSubmit={updateProfile} className="col-span-2 border border-gray-300 rounded-md p-2 flex flex-col gap-2">
-                    <button
-                        type="submit"
-                        className="mt-4 self-end bg-[var(--primary-color)] text-white py-2 rounded hover:opacity-90 transition"
-                    >
-                        Save
-                    </button>
-                    <label className="font-medium">Name</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder={userData?.name || "Name"}
-                        className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                    />
-
-                    <label className="font-medium">Phone</label>
-                    <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder={userData?.phone || "e.g, +92 123 456789"}
-                        className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                    />
-
-                    <label className="font-medium">Headline</label>
-                    <input
-                        type="text"
-                        name="headline"
-                        value={formData.headline}
-                        onChange={handleChange}
-                        placeholder={userData?.headline || "e.g, Web Developer"}
-                        className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                    />
-
-                    <label className="font-medium">Portfolio</label>
-                    <input
-                        type="text"
-                        name="portfolio"
-                        value={formData.portfolio}
-                        onChange={handleChange}
-                        placeholder={userData?.portfolio || "e.g, https://github.com/username"}
-                        className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                    />
-
-                    <hr className="mt-5" />
-                    <h2 className="text-[var(--primary-color)]">Location </h2>
-
-                    <div className='flex flex-col gap-3'>
-                        <label className="font-medium">Address</label>
-                        <input
-                            type="text"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                            placeholder={userData?.address || "e.g, Block A New London "}
-                            className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                        />
-
-                        <div className='flex gap-3 items-center w-full justify-between'>
-                            <label className="font-medium">City</label>
-                            <input
-                                type="text"
-                                name="city"
-                                value={formData.city}
-                                placeholder={userData?.city || "e.g, Lahore"}
-                                onChange={handleChange}
-                                className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                            />
-
-                            <label className="font-medium">Postal Code</label>
-                            <input
-                                type="text"
-                                name="postal"
-                                value={formData.postal}
-                                onChange={handleChange}
-                                placeholder={userData?.postal || "e.g, 12345"}
-                                className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                            />
-                        </div>
-
-                    </div>
-                    <hr className="mt-5" />
-                    <h2 className="text-[var(--primary-color)]">Work </h2>
-
-                    <label className="font-medium">Skills</label>
-                    <input
-                        type="text"
-                        name="skills"
-                        value={formData.skills.join(", ")}
-                        onChange={(e) =>
-                            setFormData((prev) => ({
-                                ...prev,
-                                skills: e.target.value.split(",").map((s) => s.trim()),
-                            }))
-                        }
-                        placeholder='e.g, Web Development, Graphic Design'
-                        className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-                    />
-                </form>
-                <div className='p-2 flex flex-col items-center relative border border-gray-300 rounded-md'>
-                    {/* Profile Picture with Profile Score */}
-                    <div className='relative w-32 h-32 '>
-                        <div className="relative w-32 h-32 mx-auto">
-                            {/* Circular Progress */}
-                            <CircularProgressbar
-                                value={profileScore}
-                                text={""} // hide default text
-                                styles={{
-                                    path: {
-                                        stroke:
-                                            profileScore <= 25
-                                                ? "#ef4444"
-                                                : profileScore <= 50
-                                                    ? "#f97316"
-                                                    : profileScore <= 75
-                                                        ? "#facc15"
-                                                        : "#22c55e",
-                                        strokeLinecap: "round",
-                                        transition: "stroke-dashoffset 0.5s ease",
-                                    },
-                                    trail: { stroke: "#f3f4f6" }, // lighter gray for trail
-                                }}
-                            />
-
-                            {/* Profile Image or Initial */}
-                            {userData?.profilePicture ? (
-                                <img
-                                    loading="lazy"
-                                    src={`${backendUrl}/uploads/${userData.profilePicture}`}
-                                    alt="Profile"
-                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-25 h-25 rounded-full object-cover z-10 shadow-xl"
-                                />
-                            ) : (
-                                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-gray-700 z-10">
-                                    {userData?.name?.[0] || "?"}
-                                </span>
-                            )}
-                        </div>
-
-                        <input
-                            type="file"
-                            id="profilePicture"
-                            name="profilePicture"
-                            className="hidden"
-                            onChange={(e) => changePicture(e.target.files[0])}
-                        />
-                        <label
-                            htmlFor="profilePicture"
-                            className="absolute bottom-0 right-0 bg-white rounded-full p-1 cursor-pointer shadow"
-                        >
-                            <FaCamera className="text-gray-600 text-sm" />
-                        </label>
-                    </div>
-                    {/* Profile Score as Percenteag */}
-                    <div className='p-3 shadow-md bg-gradient-to-br from-blue-100 to-blue-200 mt-4 rounded-lg border border-blue-500 w-full text-center text-gray-600'>
-                        {profileScore === 100 &&
-                            <span className='font-semibold mr-1'>
-                                Congratulations!
-                            </span>
-
-                        }You are at <span className='font-bold text-blue-400'>{profileScore}%</span>
-                    </div>
+        <div className='w-full h-[calc(100vh-4.6rem)] overflow-y-auto p-6 bg-gradient-to-br from-gray-50 to-gray-100'>
+            <div className='max-w-7xl mx-auto'>
+                <div className='mb-6'>
+                    <h1 className="text-3xl font-bold text-gray-800">Update Your Profile</h1>
+                    <p className='text-sm text-gray-600 mt-1'>Keep your information up to date</p>
                 </div>
 
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2 bg-white shadow-lg rounded-xl border border-gray-200 p-6 flex flex-col gap-5">
+                        <div className='flex items-center justify-between pb-4 border-b-2 border-gray-100'>
+                            <h2 className='text-xl font-semibold text-gray-800'>Personal Information</h2>
+                            <button
+                                onClick={updateProfile}
+                                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg"
+                            >
+                                <Save className='w-4 h-4' />
+                                Save
+                            </button>
+                        </div>
+
+                        <div className='space-y-2'>
+                            <label className="flex items-center gap-2 font-medium text-gray-700">
+                                <User className='w-4 h-4 text-gray-500' />
+                                Name
+                            </label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                placeholder={userData?.name || "Name"}
+                                className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                            />
+                        </div>
+
+                        <div className='space-y-2'>
+                            <label className="flex items-center gap-2 font-medium text-gray-700">
+                                <Phone className='w-4 h-4 text-gray-500' />
+                                Phone
+                            </label>
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                placeholder={userData?.phone || "e.g, +92 123 456789"}
+                                className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                            />
+                        </div>
+
+                        <div className='space-y-2'>
+                            <label className="flex items-center gap-2 font-medium text-gray-700">
+                                <Briefcase className='w-4 h-4 text-gray-500' />
+                                Headline
+                            </label>
+                            <input
+                                type="text"
+                                name="headline"
+                                value={formData.headline}
+                                onChange={handleChange}
+                                placeholder={userData?.headline || "e.g, Web Developer"}
+                                className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                            />
+                        </div>
+
+                        <div className='space-y-2'>
+                            <label className="flex items-center gap-2 font-medium text-gray-700">
+                                <Link className='w-4 h-4 text-gray-500' />
+                                Portfolio
+                            </label>
+                            <input
+                                type="text"
+                                name="portfolio"
+                                value={formData.portfolio}
+                                onChange={handleChange}
+                                placeholder={userData?.portfolio || "e.g, https://github.com/username"}
+                                className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                            />
+                        </div>
+
+                        <hr className="mt-2" />
+                        <h2 className="flex items-center gap-2 text-lg font-semibold text-blue-600">
+                            <MapPin className='w-5 h-5' />
+                            Location
+                        </h2>
+
+                        <div className='flex flex-col gap-4'>
+                            <div className='space-y-2'>
+                                <label className="font-medium text-gray-700">Address</label>
+                                <input
+                                    type="text"
+                                    name="address"
+                                    value={formData.address}
+                                    onChange={handleChange}
+                                    placeholder={userData?.address || "e.g, Block A New London"}
+                                    className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                />
+                            </div>
+
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                                <div className='space-y-2'>
+                                    <label className="font-medium text-gray-700">City</label>
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        value={formData.city}
+                                        placeholder={userData?.city || "e.g, Lahore"}
+                                        onChange={handleChange}
+                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                    />
+                                </div>
+
+                                <div className='space-y-2'>
+                                    <label className="font-medium text-gray-700">Postal Code</label>
+                                    <input
+                                        type="text"
+                                        name="postal"
+                                        value={formData.postal}
+                                        onChange={handleChange}
+                                        placeholder={userData?.postal || "e.g, 12345"}
+                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr className="mt-2" />
+                        <h2 className="flex items-center gap-2 text-lg font-semibold text-blue-600">
+                            <Briefcase className='w-5 h-5' />
+                            Work
+                        </h2>
+
+                        <div className='space-y-2'>
+                            <label className="font-medium text-gray-700">Skills</label>
+                            <input
+                                type="text"
+                                name="skills"
+                                value={formData.skills.join(", ")}
+                                onChange={(e) =>
+                                    setFormData((prev) => ({
+                                        ...prev,
+                                        skills: e.target.value.split(",").map((s) => s.trim()),
+                                    }))
+                                }
+                                placeholder='e.g, Web Development, Graphic Design'
+                                className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                            />
+                            <p className='text-xs text-gray-500 mt-1'>Separate each skill with a comma</p>
+                        </div>
+                    </div>
+
+                    <div className='flex flex-col gap-6'>
+                        <div className='bg-white shadow-lg rounded-xl border border-gray-200 p-6 flex flex-col items-center'>
+                            <h3 className='text-lg font-semibold text-gray-800 mb-4 self-start'>Profile Picture</h3>
+
+                            <div className='relative w-36 h-36 mb-4'>
+                                <div className="relative w-36 h-36">
+                                    <CircularProgressbar
+                                        value={profileScore}
+                                        text={""}
+                                        styles={{
+                                            path: {
+                                                stroke:
+                                                    profileScore <= 25
+                                                        ? "#ef4444"
+                                                        : profileScore <= 50
+                                                            ? "#f97316"
+                                                            : profileScore <= 75
+                                                                ? "#facc15"
+                                                                : "#22c55e",
+                                                strokeLinecap: "round",
+                                                transition: "stroke-dashoffset 0.5s ease",
+                                            },
+                                            trail: { stroke: "#f3f4f6" },
+                                        }}
+                                    />
+
+                                    {userData?.profilePicture ? (
+                                        <img
+                                            loading="lazy"
+                                            src={`${backendUrl}/uploads/${userData.profilePicture}`}
+                                            alt="Profile"
+                                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full object-cover z-10 shadow-xl"
+                                        />
+                                    ) : (
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-xl z-10">
+                                            <span className="text-4xl font-bold text-blue-600">
+                                                {userData?.name?.[0] || "?"}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <input
+                                    type="file"
+                                    id="profilePicture"
+                                    name="profilePicture"
+                                    className="hidden"
+                                    onChange={(e) => changePicture(e.target.files[0])}
+                                />
+                                <label
+                                    htmlFor="profilePicture"
+                                    className="absolute bottom-1 right-1 bg-blue-600 hover:bg-blue-700 rounded-full p-2.5 cursor-pointer shadow-lg transition-colors"
+                                >
+                                    <FaCamera className="text-white text-base" />
+                                </label>
+                            </div>
+
+                            <div className={`p-4 shadow-md bg-gradient-to-br ${profileScore <= 25 ? 'from-red-50 to-red-100 border-red-300' :
+                                    profileScore <= 50 ? 'from-orange-50 to-orange-100 border-orange-300' :
+                                        profileScore <= 75 ? 'from-yellow-50 to-yellow-100 border-yellow-300' :
+                                            'from-green-50 to-green-100 border-green-300'
+                                } rounded-lg border-2 w-full text-center text-gray-700`}>
+                                {profileScore === 100 && (
+                                    <span className='font-semibold mr-1 block mb-1'>
+                                        🎉 Congratulations!
+                                    </span>
+                                )}
+                                <p>Profile Completion: <span className={`font-bold text-xl ${profileScore <= 25 ? 'text-red-500' :
+                                        profileScore <= 50 ? 'text-orange-500' :
+                                            profileScore <= 75 ? 'text-yellow-600' :
+                                                'text-green-500'
+                                    }`}>{profileScore}%</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
     )
 }
 

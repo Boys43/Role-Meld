@@ -16,6 +16,7 @@ import axios from 'axios';
 import cron from 'node-cron';
 import chatRouter from "./routes/chatBotRoutes.js";
 import reviewRouter from "./routes/reviewRoutes.js";
+import adminRouter from "./routes/adminRoutes.js";
 
 const app = express();
 dotenv.config()
@@ -52,7 +53,7 @@ const PORT = 4000;
 app.get('/ping', (req, res) => res.sendStatus(200));
 
 app.get('/', (req, res) => {
-    res.send("I am Working Bitch!")
+    res.send("I am Working Bitch!");
 });
 
 connectDB();
@@ -78,6 +79,7 @@ app.use('/api/analytics', analyticRouter);
 app.use('/api/blog', blogRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/reviews', reviewRouter);
+app.use('/api/admin', adminRouter);
 
 app.listen(PORT, () => {
     console.log(`App Listening on http://localhost:${PORT}`);

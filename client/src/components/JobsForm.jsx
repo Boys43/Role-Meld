@@ -1,4 +1,4 @@
-import React, { useRef, useState, useContext } from "react";
+import React, { useRef, useState, useContext, useEffect } from "react";
 import JoditEditor from "jodit-react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -13,31 +13,31 @@ import { IoChevronBack } from "react-icons/io5";
 import JobCard from "./JobCard";
 
 // Categories & subcategories
-const categories = {
-  "IT & Software": [
-    "Frontend Developer", "Backend Developer", "Full Stack Developer", "Mobile App Developer",
-    "UI/UX Designer", "Data Scientist", "AI / ML Engineer", "DevOps Engineer", "QA / Tester",
-  ],
-  "Digital Marketing": [
-    "SEO Specialist", "Content Marketing", "Social Media Marketing", "Email Marketing",
-    "PPC / Ads", "Affiliate Marketing",
-  ],
-  "Design & Creative": [
-    "Graphic Designer", "Illustrator", "Animator", "Product Designer", "Presentation Designer",
-  ],
-  "Finance & Accounting": [
-    "Accountant", "Bookkeeper", "Financial Analyst", "Tax Consultant", "Audit & Compliance",
-  ],
-  "Human Resources": [
-    "HR Manager", "Recruiter", "Training & Development", "Virtual Assistant",
-  ],
-  "Sales & Business Development": [
-    "Sales Executive", "Business Development Manager", "Account Manager", "Lead Generation",
-  ],
-  "Engineering & Architecture": [
-    "Civil Engineer", "Mechanical Engineer", "Electrical Engineer", "Architect", "Project Manager",
-  ],
-};
+// const categories = {
+//   "IT & Software": [
+//     "Frontend Developer", "Backend Developer", "Full Stack Developer", "Mobile App Developer",
+//     "UI/UX Designer", "Data Scientist", "AI / ML Engineer", "DevOps Engineer", "QA / Tester",
+//   ],
+//   "Digital Marketing": [
+//     "SEO Specialist", "Content Marketing", "Social Media Marketing", "Email Marketing",
+//     "PPC / Ads", "Affiliate Marketing",
+//   ],
+//   "Design & Creative": [
+//     "Graphic Designer", "Illustrator", "Animator", "Product Designer", "Presentation Designer",
+//   ],
+//   "Finance & Accounting": [
+//     "Accountant", "Bookkeeper", "Financial Analyst", "Tax Consultant", "Audit & Compliance",
+//   ],
+//   "Human Resources": [
+//     "HR Manager", "Recruiter", "Training & Development", "Virtual Assistant",
+//   ],
+//   "Sales & Business Development": [
+//     "Sales Executive", "Business Development Manager", "Account Manager", "Lead Generation",
+//   ],
+//   "Engineering & Architecture": [
+//     "Civil Engineer", "Mechanical Engineer", "Electrical Engineer", "Architect", "Project Manager",
+//   ],
+// };
 
 // Motion variants for sliding animation
 const variants = {
@@ -46,12 +46,38 @@ const variants = {
   exit: (direction) => ({ x: direction > 0 ? -300 : 300, opacity: 0 }),
 };
 
-const JobForm = ({setActiveTab}) => {
+const JobForm = ({ setActiveTab }) => {
   const { backendUrl, userData } = useContext(AppContext);
   const editor = useRef(null);
 
-  const [jobData, setJobData] = useState({});
+  // Remove the static categories object
+
+  const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+
+  const getCategories = async () => {
+    setCategoriesLoading(true);
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/admin/categories`);
+      if (data.success) {
+        setCategories(data.categories); // Expecting data.categories = [{name, subcategories: []}]
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+
+  const [jobData, setJobData] = useState({});
   const [jobSteps, setJobSteps] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -59,17 +85,19 @@ const JobForm = ({setActiveTab}) => {
 
   const handleJobChange = (e) => {
     const { name, value } = e.target;
+
     if (name === "category") {
-      setSubCategories(categories[value] || []);
-      setJobData((prev) => ({
+      const selectedCategory = categories.find(cat => cat.name === value);
+      setSubCategories(selectedCategory?.subcategories || []);
+      setJobData(prev => ({
         ...prev,
         category: value,
-        subCategory: "",
+        subCategory: "", // reset subcategory
         companyProfile: userData.profilePicture,
         company: userData.company,
       }));
     } else {
-      setJobData((prev) => ({
+      setJobData(prev => ({
         ...prev,
         [name]: value,
         companyProfile: userData.profilePicture,
@@ -77,6 +105,7 @@ const JobForm = ({setActiveTab}) => {
       }));
     }
   };
+
 
   const postJob = async () => {
     try {
@@ -282,8 +311,8 @@ const JobForm = ({setActiveTab}) => {
                     className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="">--- Select ---</option>
-                    {Object.keys(categories).map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
+                    {categories.map((cat) => (
+                      <option key={cat.name} value={cat.name}>{cat.name}</option>
                     ))}
                   </select>
                 </div>

@@ -2,21 +2,16 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { PiSubtitlesFill } from "react-icons/pi";
-import { FaBriefcase } from "react-icons/fa";
-import { IoIosWarning } from "react-icons/io";
-import { FaTrashAlt } from "react-icons/fa";
-import { IoBookmarkOutline } from "react-icons/io5";
-import { FaBookmark } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import NotFound404 from './NotFound404';
 
 const SavedJobs = () => {
-  const { backendUrl, userData, toggleSaveJob } = useContext(AppContext);
+  const { backendUrl, userData, toggleSaveJob, setUserData } = useContext(AppContext);
   const [allsavedJobs, setAllsavedJobs] = useState([]);
-  const navigte = useNavigate();
+  const navigate = useNavigate();
 
-  const savedJobsIds = userData.savedJobs;
+  const savedJobsIds = userData?.savedJobs || [];
 
   const getSavedJobs = async () => {
     try {
@@ -31,40 +26,87 @@ const SavedJobs = () => {
   }
 
   useEffect(() => {
-    getSavedJobs();
-  }, [])
+    if (savedJobsIds.length > 0) {
+      getSavedJobs();
+    }
+  }, [savedJobsIds]);
+
+
   return (
-    <>
-      <div className='p-6 flex flex-col w-full min-h-[calc(100vh-4.6rem)] overflow-y-auto'>
-        <h1 className='font-bold flex items-center gap-4'><FaBookmark className='text-[var(--primary-color)] ' size={30} />Saved Jobs</h1>
-        <div className='flex flex-col gap-4'>
-          {allsavedJobs.length > 0 ? allsavedJobs.map((e, i) => (
-            <div key={i} className='py-2 px-4 grid grid-cols-2 items-center border rounded-xl bg-[var(--primary-color)]/10'>
-              <div className='grid grid-cols-4 items-center gap-4'>
-                <h3 className='flex items-center gap-4 font-medium'><PiSubtitlesFill className='text-[var(--primary-color)]' size={20} /> {e?.title}</h3>
-                <p className='flex items-center gap-4 italic'><FaBriefcase className='text-[var(--primary-color)]' size={10} /> {e?.company}</p>
-                <p className='flex items-center gap-4 italic text-red-400'><IoIosWarning className='text-red-500' size={15} />{e?.applicationDeadline ? new Date(e?.applicationDeadline).toISOString().split("T")[0] : "No deadline"}</p>
-              </div>
-              <div className='flex items-center justify-evenly gap-4'>
-                <button onClick={() => navigte(`/jobdetails/${e?.id}`)}>
-                  View Details
-                </button>
-                <span
-                  onClick={() => {
-                    toggleSaveJob(e?._id);
-                    setAllsavedJobs((prev) => prev.filter((job) => job._id !== e._id));
-                  }}
-                  className='p-3 bg-red-300 border border-red-500 rounded-full'>
-                  <FaTrashAlt className='text-red-500 cursor-pointer' />
-                </span>
-              </div>
-            </div>
-          )) :
-            <NotFound404 value={"No Saved Job"} margin={"mt-20"} />
-          }
+    <div className="p-6 w-full h-[calc(100vh-4.6rem)] overflow-y-auto">
+      <>
+        <h1 className="font-bold text-xl flex items-center gap-3">
+          Saved Jobs
+        </h1>
+
+        <div className="mt-6">
+          <div className="overflow-x-auto bg-white shadow-xl rounded-2xl border border-gray-200">
+            <table className="w-full text-sm text-left border-collapse">
+              <thead className="bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] text-white sticky top-0">
+                <tr>
+                  <th className="px-6 py-3 font-semibold">#</th>
+                  <th className="px-6 py-3 font-semibold">Job Title</th>
+                  <th className="px-6 py-3 font-semibold">Company</th>
+                  <th className="px-6 py-3 font-semibold text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allsavedJobs?.length !== 0 ? (
+                  allsavedJobs?.map((job, index) => (
+                    <tr
+                      key={job._id}
+                      className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 transition"
+                    >
+                      {/* Index */}
+                      <td className="px-6 py-4 text-gray-700">{index + 1}</td>
+
+                      {/* Job Title */}
+                      <td className="px-6 py-4 font-medium text-gray-900">
+                        {job?.title || "Title not found"}
+                      </td>
+
+                      {/* Company */}
+                      <td className="px-6 py-4 text-gray-700">
+                        <div className="flex font-semibold items-center gap-3">
+                          <span className="border p-2 rounded-xl border-gray-300">
+                            <img
+                              src={job?.companyProfile ? `${backendUrl}/uploads/${job.companyProfile}` : "/default-company.png"}
+                              alt="Company"
+                              decoding="async"
+                              loading="lazy"
+                              width="30"
+                              height="30"
+                              className="rounded-md object-cover"
+                            />
+                          </span>
+                          {job?.company || "Company not found"}
+                        </div>
+                      </td>
+
+                      {/* Action */}
+                      <td className="px-6 py-4 text-center">
+                        <span onClick={() => {
+                          toggleSaveJob(job._id)
+                          setAllsavedJobs(allsavedJobs.filter(job1 => job1._id !== job._id))
+                        }} className="cursor-pointer text-red-600 hover:text-red-800">
+                          <FaTrash size={18} />
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="text-center py-10">
+                      <NotFound404 value={"No  Jobs"} />
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </>
+      </>
+    </div>
   )
 }
 

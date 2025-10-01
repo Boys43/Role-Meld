@@ -12,12 +12,17 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
     { name: 'Job Requests', key: "job-requests", icon: <PiOfficeChairFill size={25} /> },
     { name: 'Users', key: "users", icon: <FaCodePullRequest size={25} /> },
     { name: 'Recruiters', key: "recruiters", icon: <RiAdminLine size={25} /> },
-    { name: 'Jobs', key: "jobs", icon: <IoPersonSharp size={25} /> },
-    { 
+    {
+      name: 'Jobs', key: "jobs", icon: <IoPersonSharp size={25} />,
+      subTabs: [
+        { name: 'Category', key: "category-manager" },
+      ]
+    },
+    {
       name: 'Blog', key: "blog-management", icon: <IoPersonSharp size={25} />,
       subTabs: [
         { name: "Blog Management", key: "blog-management" },
-        { name: "Add Blog", key: "add-blog" }
+        { name: "Add Blog", key: "add-blog" },
       ]
     },
   ]
