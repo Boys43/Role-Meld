@@ -35,7 +35,7 @@ const JobCard = ({ e, setLoginReminder, setToggleApplyJob, setapplJobId }) => {
                         </div>
                     )}
 
-                    <div>
+                    <div onClick={() => navigate(`/company-profile/` + e?.postedBy)}>
                         <h4 className='font-semibold text-lg text-gray-800'>{e?.company}</h4>
                         <span className='text-xs'>Net Followers</span>
                     </div>

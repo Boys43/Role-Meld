@@ -25,5 +25,5 @@ const jobsSchema = new mongoose.Schema({
     subCategory: { type: String, default: '' },
 }, { timestamps: true });
 
-const jobsModel = mongoose.models.Jobs || mongoose.model("Jobs", jobsSchema);
+const jobsModel = mongoose.models?.Jobs || mongoose.model("Jobs", jobsSchema);
 export default jobsModel;

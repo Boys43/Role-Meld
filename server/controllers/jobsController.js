@@ -283,3 +283,23 @@ export const removeJob = async (req, res) => {
         return res.status(500).json({ success: false, message: error.message });
     }
 }
+
+export const getCompanyJobsById = async (req, res) => {
+    const { id } = req.body;
+
+    if (!id) {
+        return res.json({ success: false, message: "No Company Found" });
+    }
+
+    try {
+        const companyJobs = await jobsModel.find({ postedBy: id, isActive: true });
+
+        if (!companyJobs || companyJobs.length <= 0) {
+            return res.json({ success: false, message: "No Jobs Found" });
+        }
+
+        return res.json({ success: true, companyJobs });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+}

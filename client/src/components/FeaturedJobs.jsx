@@ -63,7 +63,7 @@ const FeaturedJobs = () => {
     <div className="my-4 z-0 relative">
       <Swiper
         modules={[Autoplay]}
-        loop={true}
+        loop={sponsoredJobs.length >= 2}
         autoplay={{
           delay: 3500,
           disableOnInteraction: true,

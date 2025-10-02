@@ -55,9 +55,6 @@ const Home = () => {
     getCategories()
   }, [])
 
-  console.log('categories', categories);
-
-
   return (
     <>
       <main className="py-6 w-[95vw] mx-auto">

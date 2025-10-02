@@ -18,23 +18,27 @@
   width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(0,0,0,0.25);
+  background-color: rgba(0, 0, 0, 0.25);
   border-radius: 8px;
-  border: 2px solid transparent; /* gives a tiny gap look */
+  border: 2px solid transparent;
+  /* gives a tiny gap look */
   background-clip: padding-box;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0,0,0,0.35);
+  background-color: rgba(0, 0, 0, 0.35);
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0,0,0,0.25) transparent;
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
 }
 
 
@@ -106,6 +110,27 @@ button:disabled {
   /* Firefox */
 }
 
-select{
+select {
   cursor: pointer;
+}
+
+.follow-btn {
+  padding: 10px 25px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 2rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.follow-btn.unfollow {
+  background-color: white;
+  color: #0076b5;
+  border: 2px solid #0076b5;
+}
+
+.follow-btn.unfollow:hover {
+  background-color: #0076b5;
+  color: white;
 }

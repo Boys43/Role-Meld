@@ -26,7 +26,8 @@ app.use(express.json());
 const allowedOrigins = [
     "http://localhost:5173",           
     "https://role-meld.onrender.com",  
-    "https://role-meld-1.onrender.com"
+    "https://role-meld-1.onrender.com",
+    "http://localhost:5174"
 ];
 
 const __filename = fileURLToPath(import.meta.url);
@@ -47,7 +48,7 @@ app.use(
     })
 );
 
-const PORT = 4000;
+const PORT = process.env.PORT || 5000;
 
 // Lightweight ping route
 app.get('/ping', (req, res) => res.sendStatus(200));

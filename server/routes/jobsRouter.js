@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJob, getAllJobs, getApprovedJobs, getCategoryJobs, getCompanyJobs, getJob, getPendingJobs, getSavedJobs, getSponsoredJobs, removeJob, searchJob, updateJobStatus } from '../controllers/jobsController.js'
+import { addJob, getAllJobs, getApprovedJobs, getCategoryJobs, getCompanyJobs, getCompanyJobsById, getJob, getPendingJobs, getSavedJobs, getSponsoredJobs, removeJob, searchJob, updateJobStatus } from '../controllers/jobsController.js'
 import userAuth from '../middlewares/userAuth.js';
 
 const jobsRouter = express.Router()
@@ -16,5 +16,6 @@ jobsRouter.post('/searchjobs', searchJob);
 jobsRouter.post('/getcategoryjobs', getCategoryJobs);
 jobsRouter.get('/getsponsoredjobs', getSponsoredJobs);
 jobsRouter.post('/removejob', removeJob);
+jobsRouter.post('/getcompanyjobsbyid', getCompanyJobsById);
 
 export default jobsRouter;

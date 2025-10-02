@@ -254,7 +254,8 @@ export const changePassword = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(password, user.password)
+
         if (!isMatch) {
             return res.status(400).json({ success: false, message: "Incorrect password" });
         }
@@ -266,7 +267,7 @@ export const changePassword = async (req, res) => {
         await user.save();
 
         return res.json({ success: true, message: "Password changed successfully" });
-    } catch {
+    } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }
 }

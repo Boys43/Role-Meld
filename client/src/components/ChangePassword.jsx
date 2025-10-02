@@ -15,23 +15,35 @@ const ChangePassword = () => {
 
     const [changePasswordLoading, setChangePasswordLoading] = useState(false)
     const onSubmitHandler = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         setChangePasswordLoading(true);
+
         try {
-            const { data } = await axios.post(`${backendUrl}/api/auth/change-password`, { password: oldPassword, newPassword: newPassword, email: userData.email })
+            const { data } = await axios.post(`${backendUrl}/api/auth/change-password`, {
+                password: oldPassword,
+                newPassword: newPassword,
+                email: userData.email
+            });
+
             if (data.success) {
-                toast.success(data.message)
-                setOldPassword("")
-                setNewPassword("")
+                toast.success(data.message);
+                setOldPassword("");
+                setNewPassword("");
             } else {
-                toast.error(data.message)
+                toast.error(data.message);
             }
         } catch (error) {
-            toast.error(error.message)
-        }finally{
-            setChangePasswordLoading(false)
+            // Properly handle Axios errors
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error(error.message || "Something went wrong");
+            }
+        } finally {
+            setChangePasswordLoading(false);
         }
-    }
+    };
+
 
     return (
         <div className='w-full min-h-[calc(100vh-4.6rem)] overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100'>
@@ -111,7 +123,7 @@ const ChangePassword = () => {
                             type='submit'
                             disabled={changePasswordLoading}
                         >
-                            {changePasswordLoading ? "Changing...": "Change Password"}
+                            {changePasswordLoading ? "Changing..." : "Change Password"}
                         </button>
                     </form>
                 </div>

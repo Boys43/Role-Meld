@@ -16,7 +16,7 @@ export const userAuth = async (req, res, next) => {
             return res.status(401).json({ success: false, message: "Invalid or expired token" });
         }
 
-        const user = await authModel.findById(tokenDecode.userId)
+        const user = await authModel.findById(tokenDecode.userId);
 
         if (!user) {
             return res.json({ success: false, message: "User Not Found" })
