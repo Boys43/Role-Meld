@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { getCompanyJobs } from '../../../server/controllers/jobsController';
 import Loading from '../components/Loading';
 
 export const CompanyJobs = () => {
