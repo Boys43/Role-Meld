@@ -9,7 +9,9 @@ const recruiterProfileSchema = new mongoose.Schema({
   website: { type: String, default: "" },
   role: { type: String, default: "user" }, // applicant, recruiter
   profilePicture: { type: String, default: "" },
-  sentJobs: {type: Array, default: []}
+  sentJobs: {type: Array, default: []},
+  followers: {type: Number, default: 0 },
+  followersId: {type: Array, default: [] },
 }, { timestamps: true });
 
 export default mongoose.model("RecruiterProfile", recruiterProfileSchema);

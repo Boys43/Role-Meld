@@ -1,56 +1,100 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Img from '../components/Image'
 import assets from '../assets/assets'
-import { ArrowUpFromLine, CircleUser, Link, PercentSquareIcon, PersonStanding, Users } from "lucide-react"
+import { ArrowUpFromLine, CircleUser, Filter, Link, PercentSquareIcon, PersonStanding, Users } from "lucide-react"
 import copy from 'copy-to-clipboard';
 import { toast } from 'react-toastify';
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../components/Loading';
+import JobCard from '../components/JobCard';
+import NotFound404 from '../components/NotFound404';
 
 export const CompanyJobs = () => {
-  const { backendUrl, userData } = useContext(AppContext);
-  const param = useParams()
-  const id = param.id
+  const { backendUrl } = useContext(AppContext);
+  const { id } = useParams();
 
-  console.log('id', id)
+  const [companyJobs, setCompanyJobs] = useState([]);
+  const [companyLoading, setCompanyLoading] = useState(false);
+  const [filter, setFilter] = useState("recent"); // default filter
 
-
-  const [CompanyJobs, setCompanyJobs] = useState([])
-  const [companyLoading, setCompanyLoading] = useState(false)
-  const getcompanyJobs = async () => {
-    setCompanyLoading(true)
+  // Fetch company jobs
+  const getCompanyJobs = async () => {
+    setCompanyLoading(true);
     try {
-      const { data } = await axios.post(`${backendUrl}/api/jobs/getcompanyjobsbyid`, { id })
+      const { data } = await axios.post(`${backendUrl}/api/jobs/getcompanyjobsbyid`, { id });
       if (data.success) {
-        setCompanyJobs(data.data)
+        setCompanyJobs(data.companyJobs);
       } else {
-        toast.error(data.message)
+        toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message)
-    }finally{
-      setCompanyLoading(false)
+      toast.error(error.message);
+    } finally {
+      setCompanyLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    getcompanyJobs();
-  })
+    getCompanyJobs();
+  }, [id]);
 
-  if (companyLoading) {
-    return <Loading />
-  }
+  // Apply filter
+  const filteredJobs = companyJobs
+    .slice() // copy array before sorting
+    .filter((job) => {
+      if (filter === "featured") return job.sponsored === true;
+      return true; // recent shows all
+    })
+    .sort((a, b) => {
+      if (filter === "recent") {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      return 0;
+    });
+
+  if (companyLoading) return <Loading />;
 
   return (
-    <div>
-      {CompanyJobs?.map((job, i)=>(
-        job._id
-      ))}
+    <div className="p-4 flex items-start gap-8 ">
+      <div className="w-[70%]">
+        {/* Filters */}
+        <div className="flex items-center gap-4 p-4">
+          <h3 className='font-semibold flex items-center gap-3'>
+            <Filter className='text-[var(--primary-color)]' />
+            Filter:
+          </h3>
+          {["recent", "featured"].map((f) => (
+            <span
+              key={f}
+              className={`cursor-pointer px-4 py-2 rounded-lg ${filter === f ? "bg-[var(--primary-color)]/50 border border-[var(--primary-color)] text-white" : "bg-gray-200"
+                }`}
+              onClick={() => setFilter(f)}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)}
+            </span>
+          ))}
+        </div>
+
+        {/* Jobs list */}
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredJobs.length > 0 ? (
+            filteredJobs.map((job) => <JobCard key={job._id} e={job} />)
+          ) : (
+            <NotFound404 value={"No Job Found"} margin={"mt-5"} />
+          )}
+        </ul>
+      </div>
+
+      <div className="w-[30%] border p-4">
+        {/* Sidebar or additional info */}
+        <h2 className="font-bold text-lg">Company Info</h2>
+      </div>
     </div>
-  )
-}
+  );
+};
+
 
 export const CompanyReviews = () => {
 
@@ -63,6 +107,37 @@ export const CompanyReviews = () => {
 
 const CompanyProfile = () => {
   const [activeTab, setActiveTab] = useState('jobs');
+  const { id } = useParams();
+
+  const { backendUrl, userData } = useContext(AppContext);
+
+  const [followLoading, setFollowLoading] = useState(false)
+
+  const followUnfollow = async () => {
+    if (!userData || !userData._id) {
+      toast.error("Please login to follow companies");
+      return;
+    }
+
+    setFollowLoading(true);
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/user/follow-unfollow-acc`, { 
+        companyId: id, 
+        followerId: userData._id 
+      });
+      
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Follow/Unfollow error:", error);
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setFollowLoading(false);
+    }
+  }
   return (
     <main className='p-4 min-h-[calc(100vh-4.6rem)]'>
       <section className='pb-8 border-b border-gray-300'>
@@ -102,8 +177,12 @@ const CompanyProfile = () => {
             </div>
           </div>
           <div>
-            <button className='follow-btn mr-20'>
-              Follow
+            <button 
+              onClick={followUnfollow} 
+              disabled={followLoading}
+              className='follow-btn mr-20'
+            >
+              {followLoading ? 'Loading...' : 'Follow'}
             </button>
           </div>
         </div>
@@ -125,9 +204,8 @@ const CompanyProfile = () => {
           </ul>
         </nav>
       </section>
-      <section>
+      <section className='min-h-[100vh]'>
         {activeTab === 'jobs' ? <CompanyJobs /> : <CompanyReviews />}
-
       </section>
     </main>
   )

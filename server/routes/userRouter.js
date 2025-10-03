@@ -1,6 +1,6 @@
 import { saveJob } from "../controllers/jobsController.js";
 import userAuth from "../middlewares/userAuth.js";
-import { applyJob, checkProfileScore, fetchApplicants, getUserData, updateProfile, updateProfilePicture, updateResume, getAllRecruiters, getAllUsers } from "../controllers/userController.js";
+import { applyJob, checkProfileScore, fetchApplicants, getUserData, updateProfile, updateProfilePicture, updateResume, getAllRecruiters, getAllUsers, followUnfollowAccount } from "../controllers/userController.js";
 import express from 'express'
 import multer from "multer";
 import path from 'path'
@@ -29,5 +29,6 @@ userRouter.post('/applyjob', userAuth, applyJob);
 userRouter.get('/fetchapplicants', userAuth, fetchApplicants)
 userRouter.get('/allusers', userAuth, getAllUsers);
 userRouter.get('/allrecruiters', userAuth, getAllRecruiters);
+userRouter.post('/follow-unfollow-acc', followUnfollowAccount);
 
 export default userRouter;

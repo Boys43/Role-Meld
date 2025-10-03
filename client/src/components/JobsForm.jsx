@@ -109,7 +109,7 @@ const JobForm = ({ setActiveTab }) => {
 
   const postJob = async () => {
     try {
-      const { data } = await axios.post(`${backendUrl}/api/jobs/addjob`, { jobData });
+      const { data } = await axios.post(`${backendUrl}/api/jobs/addjob`, { jobData, userId: userData._id });
       if (data.success) {
         toast.success(data.message);
         setJobData({});
@@ -333,7 +333,6 @@ const JobForm = ({ setActiveTab }) => {
                     value={jobData.subCategory || ""}
                     onChange={handleJobChange}
                     className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                    disabled={!subCategories.length}
                   >
                     <option value="">Select Sub Category</option>
                     {subCategories.map((sub) => (
@@ -375,7 +374,7 @@ const JobForm = ({ setActiveTab }) => {
                 </div>
 
                 <button type="button" className="mt-4 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
-                  onClick={() => (!jobData.subCategory || !jobData.jobType || !jobData.locationType ? toast.error("Job Details Required") : nextStep())}>
+                  onClick={() => ( !jobData.jobType || !jobData.locationType ? toast.error("Job Details Required") : nextStep())}>
                   Next
                 </button>
               </motion.div>

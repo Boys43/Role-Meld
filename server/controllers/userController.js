@@ -31,7 +31,7 @@ function calculateProfileScore(user) {
     if (user.resume && user.resume.trim() !== "") {
         score += 20;
     }
-    
+
     // Profile picture
     if (user.profilePicture && user.profilePicture.trim() !== "") {
         score += 20;
@@ -109,7 +109,7 @@ export const updateProfile = async (req, res) => {
         if (authUser.role === "user") {
             updatedProfile = await userProfileModel.findOneAndUpdate(
                 { authId: userId },
-                { $set: updateUser },   // 👈 directly update
+                { $set: updateUser },
                 { new: true }
             );
 
@@ -309,5 +309,57 @@ export const fetchApplicants = async (req, res) => {
             message: "Server error",
             error: error.message,
         });
+    }
+};
+
+
+export const followUnfollowAccount = async (req, res) => {
+    const { companyId, followerId } = req.body;
+
+    console.log('companyId:', companyId, 'followerId:', followerId);
+
+    if (!companyId || !followerId) {
+        return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+
+    try {
+        // Try to find company by authId first
+        let company = await recruiterProfileModel.findOne({ authId: companyId });
+        
+        // If not found by authId, try by _id (in case companyId is the profile _id)
+        if (!company) {
+            company = await recruiterProfileModel.findById(companyId);
+        }
+
+        console.log('Found company:', company);
+
+        if (!company) {
+            return res.status(404).json({ success: false, message: 'Company not found' });
+        }
+
+        let message;
+        const followerIdStr = followerId.toString();
+
+        // Check if already following (convert to strings for comparison)
+        const isFollowing = company.followersId.some(id => id.toString() === followerIdStr);
+
+        if (!isFollowing) {
+            // Follow
+            company.followersId.push(followerId);
+            company.followers = (company.followers || 0) + 1;
+            message = "Followed";
+        } else {
+            // Unfollow
+            company.followersId = company.followersId.filter(id => id.toString() !== followerIdStr);
+            company.followers = Math.max((company.followers || 1) - 1, 0);
+            message = "Unfollowed";
+        }
+
+        await company.save();
+
+        return res.json({ success: true, message: `Successfully ${message}`, company });
+    } catch (error) {
+        console.error('Follow/Unfollow error:', error);
+        return res.status(500).json({ success: false, message: error.message });
     }
 };

@@ -7,7 +7,7 @@ import userProfileModel from "../models/userProfileModel.js";
 
 export const addJob = async (req, res) => {
     const { jobData } = req.body;
-    const { _id: userId } = req.user
+    const userId = req.user._id;
 
     if (!jobData) {
         return res.status(400).json({ success: false, message: "Missing Details" });
