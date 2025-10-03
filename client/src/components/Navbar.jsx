@@ -2,13 +2,14 @@ import { useContext, useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
-import { IoBookmark } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { FiMenu, FiX } from "react-icons/fi";
 import Loading from "./Loading";
+import Img from "./Image";
 
 // React iCONS
 import { IoMdPerson } from "react-icons/io";
+import { ExternalLink, GalleryVerticalEnd, Link } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
@@ -63,6 +64,26 @@ const Navbar = () => {
     return <Loading />;
   }
 
+  const [companyDetails, setCompanyDetails] = useState([]);
+  const getCompanyDetails = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/user/followedaccounts`);
+      if (data.success) {
+        setCompanyDetails(data.companies);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+
+  useEffect(() => {
+    if (userData?.role === "user") getCompanyDetails();
+  }, []);
+
+  console.log('companyDetails', companyDetails)
+
   return (
     <>
       <nav className="flex items-center border-b-gray-200 border-b px-4 py-4 justify-between">
@@ -113,6 +134,39 @@ const Navbar = () => {
               <h4 className="text-[var(--primary-color)]">
                 Hi, {userData?.name || "Buddy"}
               </h4>
+              <div className="relative group">
+                {/* Trigger button */}
+                <span
+                  className="rounded-full flex border border-gray-300 p-2 bg-gray-100 hover:bg-gray-200 cursor-pointer">
+                  <GalleryVerticalEnd size={23} />
+                </span>
+
+                {/* Dropdown menu */}
+                <ul className="absolute w-80 right-0 bg-white border rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 
+    p-3 group-hover:pointer-events-auto transition-opacity duration-200 z-50 max-h-96 overflow-y-auto">
+                  <NavLink to={""} className="w-full items-center gap-3 text-xs flex justify-end mb-4">
+                    Followed Accounts<ExternalLink size={20} className="text-blue-500" />
+                  </NavLink>
+                  {companyDetails?.slice(0,5)?.map((com) => (
+                    <li
+                      key={com._id}
+                      className="flex border border-gray-300 items-center gap-3 px-3 py-1 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors duration-150"
+                      onClick={() => navigate('/company-profile/' + com.authId)}
+                    >
+                      <Img
+                        src={`${backendUrl}/uploads/${com.profilePicture}`}
+                        style={"w-10 h-10  rounded-full border border-gray-200 object-cover"}
+                      />
+                      <div className="flex-1 flex flex-col">
+                        <span className="font-semibold text-sm text-gray-800">{com.company || com.name}</span>
+                        <span className="text-xs text-gray-500">{com.followers} Followers</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+              </div>
+
               <NavLink to={'/dashboard'} className="p-2 border border-gray-300 bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-full">
                 <IoMdPerson size={25} />
               </NavLink>
@@ -122,7 +176,7 @@ const Navbar = () => {
               >
                 {userData?.profilePicture ? (
                   <img
-                  loading="lazy"
+                    loading="lazy"
                     src={`${backendUrl}/uploads/${userData.profilePicture}`}
                     alt="Profile"
                     className="w-full h-full object-cover"

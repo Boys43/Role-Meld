@@ -215,6 +215,39 @@ export const updateProfilePicture = async (req, res) => {
     }
 };
 
+export const updateBanner = async (req, res) => {
+    const userId = req.user._id;
+
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "No file uploaded" });
+        }
+
+        let user = await recruiterProfileModel.findOne({ authId: userId })
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User Not Found!" });
+        }
+
+        user.banner = req.file.filename;
+
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "Banner updated successfully",
+            user,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Server Error",
+            error: error.message,
+        });
+    }
+};
+
 
 export const updateResume = async (req, res) => {
     try {
@@ -325,7 +358,7 @@ export const followUnfollowAccount = async (req, res) => {
     try {
         // Try to find company by authId first
         let company = await recruiterProfileModel.findOne({ authId: companyId });
-        
+
         // If not found by authId, try by _id (in case companyId is the profile _id)
         if (!company) {
             company = await recruiterProfileModel.findById(companyId);
@@ -335,6 +368,12 @@ export const followUnfollowAccount = async (req, res) => {
 
         if (!company) {
             return res.status(404).json({ success: false, message: 'Company not found' });
+        }
+
+        const user = await userProfileModel.findById(followerId);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
         let message;
@@ -347,15 +386,18 @@ export const followUnfollowAccount = async (req, res) => {
             // Follow
             company.followersId.push(followerId);
             company.followers = (company.followers || 0) + 1;
+            user.followedAccounts.push(companyId);
             message = "Followed";
         } else {
             // Unfollow
             company.followersId = company.followersId.filter(id => id.toString() !== followerIdStr);
             company.followers = Math.max((company.followers || 1) - 1, 0);
+            user.followedAccounts = user.followedAccounts.filter(id => id.toString() !== companyId.toString());
             message = "Unfollowed";
         }
 
         await company.save();
+        await user.save();
 
         return res.json({ success: true, message: `Successfully ${message}`, company });
     } catch (error) {
@@ -363,3 +405,49 @@ export const followUnfollowAccount = async (req, res) => {
         return res.status(500).json({ success: false, message: error.message });
     }
 };
+
+export const getCompanyDetails = async (req, res) => {
+    const { companyId } = req.body;
+
+    if (!companyId) {
+        return res.status(400).json({ success: false, message: 'Company ID is required' });
+    }
+
+    try {
+        let company = await recruiterProfileModel.findOne({ authId: companyId })
+            .populate('followersId', 'name email');
+
+        if (!company) {
+            return res.status(404).json({ success: false, message: 'Company not found' });
+        }
+
+        return res.json({ success: true, company });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export const followedAccountsDetails = async (req, res) => {
+    const id = req.user._id
+
+    try {
+        const user = await userProfileModel.findOne({ authId: id });
+
+        console.log('user.followedAccounts', user.followedAccounts)
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const companies = await recruiterProfileModel.find(
+            { authId: { $in: user.followedAccounts } },
+            { _id: 1, name: 1, profilePicture: 1, followers: 1, company: 1, authId: 1 } // only these fields
+        );
+
+        console.log(companies);
+
+        return res.json({ success: true, companies });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}

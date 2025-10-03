@@ -3,13 +3,13 @@ import { AppContext } from '../context/AppContext'
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaTrash } from "react-icons/fa";
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import NotFound404 from './NotFound404';
 
 const SavedJobs = () => {
-  const { backendUrl, userData, toggleSaveJob, setUserData } = useContext(AppContext);
+  const { backendUrl, userData, toggleSaveJob } = useContext(AppContext);
   const [allsavedJobs, setAllsavedJobs] = useState([]);
-  const navigate = useNavigate();
+  const location = useLocation();
 
   const savedJobsIds = userData?.savedJobs || [];
 
@@ -29,8 +29,7 @@ const SavedJobs = () => {
     if (savedJobsIds.length > 0) {
       getSavedJobs();
     }
-  }, [savedJobsIds]);
-
+  }, [savedJobsIds, location.pathname]);
 
   return (
     <div className="p-6 w-full h-[calc(100vh-4.6rem)] overflow-y-auto">

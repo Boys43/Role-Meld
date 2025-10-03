@@ -110,9 +110,11 @@ const CompanyProfile = () => {
   const { id } = useParams();
 
   const { backendUrl, userData } = useContext(AppContext);
-
   const [followLoading, setFollowLoading] = useState(false)
 
+  const [isFollowing, setIsFollowing] = useState(
+    userData?.followedAccounts?.includes(id)
+  );
   const followUnfollow = async () => {
     if (!userData || !userData._id) {
       toast.error("Please login to follow companies");
@@ -121,13 +123,14 @@ const CompanyProfile = () => {
 
     setFollowLoading(true);
     try {
-      const { data } = await axios.post(`${backendUrl}/api/user/follow-unfollow-acc`, { 
-        companyId: id, 
-        followerId: userData._id 
+      const { data } = await axios.post(`${backendUrl}/api/user/follow-unfollow-acc`, {
+        companyId: id,
+        followerId: userData._id
       });
-      
+
       if (data.success) {
         toast.success(data.message);
+        setIsFollowing(!isFollowing)
       } else {
         toast.error(data.message);
       }
@@ -138,28 +141,68 @@ const CompanyProfile = () => {
       setFollowLoading(false);
     }
   }
+
+  const [companyDetails, setcompanyDetails] = useState({})
+  const [companyDetailsLoading, setCompanyDetailsLoading] = useState(false)
+
+  const getCompanyDetails = async (req, res) => {
+    setCompanyDetailsLoading(true)
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/user/getcompanydetails`, { companyId: id })
+      if (data.success) {
+        setcompanyDetails(data.company)
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setCompanyDetailsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getCompanyDetails()
+  }, [isFollowing]);
+
+  if (companyDetailsLoading) {
+    return <Loading />
+  }
+
+  console.log('companyDetails', companyDetails)
+
   return (
     <main className='p-4 min-h-[calc(100vh-4.6rem)]'>
       <section className='pb-8 border-b border-gray-300'>
         <div className='rounded-2xl overflow-hidden border-2 border-gray-500'>
-          <Img src={assets.register_side} style={"w-full h-[25vh] object-cover"} />
+          <Img src={`${backendUrl}/uploads/${companyDetails.banner}`} style={"w-full h-[25vh] object-cover"} />
         </div>
+
+        <div className='mt-3 w-full py-1 text-center'>
+          Headline Here
+        </div>
+
         <div className='flex items-center justify-between mt-4 px-8'>
           <div className='flex items-center gap-8'>
-            <Img src={assets.tcs} style={"w-32 h-32 rounded-full border-4 border-gray-500"} />
+            {companyDetails.profilePicture ? <Img src={`${backendUrl}/uploads/${companyDetails.profilePicture}`} style={"w-32 h-32 rounded-full border-4 border-gray-500"} /> :
+              <span className='w-32 h-32 rounded-full border-4 border-gray-500 flex items-center justify-center text-4xl font-bold text-gray-500'>
+                {companyDetails?.company?.slice(0, 1).toUpperCase()}
+              </span>
+            }
+
             <div className='flex flex-col gap-2'>
               <h1 className='font-bold'>
-                Company Name Here
+                {companyDetails.company}
               </h1>
               <div className='flex items-center gap-8'>
                 <p className='flex text-gray-500 items-center gap-2'>
-                  <CircleUser /> <span className='font-semibold'>120</span> Followers
+                  <CircleUser /> <span className='font-semibold'>{companyDetails.followers}</span> Followers
                 </p>
                 <p className='flex text-gray-500 items-center gap-2'>
-                  <ArrowUpFromLine /> <span className='font-semibold'>10</span> Jobs Posted
+                  <ArrowUpFromLine /> <span className='font-semibold'>{companyDetails?.sentJobs?.length}</span> Jobs Posted
                 </p>
                 <p className='flex text-gray-500 items-center gap-2'>
-                  <Users /> <span className='font-semibold'>20</span> Members
+                  <Users /> <span className='font-semibold'>{companyDetails.members}</span> Members
                 </p>
               </div>
               <div onClick={() => {
@@ -177,12 +220,12 @@ const CompanyProfile = () => {
             </div>
           </div>
           <div>
-            <button 
-              onClick={followUnfollow} 
+            <button
+              onClick={followUnfollow}
               disabled={followLoading}
               className='follow-btn mr-20'
             >
-              {followLoading ? 'Loading...' : 'Follow'}
+              {followLoading ? 'Loading...' : isFollowing ? 'Unfollow' : 'Follow'}
             </button>
           </div>
         </div>

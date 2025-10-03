@@ -1,5 +1,4 @@
 // AdminSidebar.jsx
-import React from 'react'
 import { MdDashboard } from "react-icons/md"
 import { PiOfficeChairFill } from "react-icons/pi"
 import { FaCodePullRequest } from "react-icons/fa6"

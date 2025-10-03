@@ -52,6 +52,32 @@ const EmployeeDashboard = () => {
     }
   };
 
+  const updateBanner = async (banner) => {
+    const formData = new FormData();
+    formData.append("banner", banner);
+
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/updatebanner`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (data.success) {
+        setUserData(data.user);
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
+
   const updateProfile = async (e) => {
     e.preventDefault();
     try {
@@ -107,6 +133,44 @@ const EmployeeDashboard = () => {
 
   return (
     <div className='flex flex-col w-full p-6 bg-white rounded-lg h-[calc(100vh-4.6rem)] overflow-y-auto'>
+      <div className="relative w-full h-100">
+        {/* Profile Circle */}
+        <div className="w-full h-[30vh] border-2 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
+          {userData?.profilePicture ? (
+            <img
+              loading='lazy'
+              src={`${backendUrl}/uploads/${userData?.banner}`}
+              alt="Banner"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            userData?.name?.[0] || "?"
+          )}
+        </div>
+
+        {/* Upload Form */}
+        <form
+          className="mt-2"
+        >
+          <input
+            type="file"
+            id="banner"
+            name="banner"
+            className="hidden"
+            accept="image/*"
+            onChange={(e) => {
+              e.preventDefault();
+              updateBanner(e.target.files[0]);
+            }}
+          />
+          <label
+            htmlFor="banner"
+            className="absolute bottom-0 right-0 bg-white rounded-full p-1 cursor-pointer shadow"
+          >
+            <FaCamera className="text-gray-600 text-sm" />
+          </label>
+        </form>
+      </div>
       {/* Profile Section */}
       <div className='flex items-center gap-6 pb-4'>
         <div className="relative w-20 h-20">
@@ -114,7 +178,7 @@ const EmployeeDashboard = () => {
           <div className="w-20 h-20 border-2 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
             {userData?.profilePicture ? (
               <img
-              loading='lazy'
+                loading='lazy'
                 src={`${backendUrl}/uploads/${userData?.profilePicture}`}
                 alt="Profile"
                 className="w-full h-full object-cover"

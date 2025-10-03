@@ -8,6 +8,7 @@ import "aos/dist/aos.css";
 import { AppContext } from "./context/AppContext";
 import Loading from "./components/Loading";
 import CompanyProfile from "./pages/CompanyProfile";
+import FollowedAccounts from "./pages/FollowedAccounts";
 
 // Lazy-loaded components
 const Navbar = lazy(() => import("./components/Navbar"));
@@ -124,6 +125,7 @@ const App = () => {
           <Route path="/company-profile/:id" element={<CompanyProfile />} />
           <Route path="/help-center" element={<HelpCenter />} />
           <Route path="/find-jobs" element={<FindJobs />} />
+          <Route path="/followed-accounts" element={<FollowedAccounts />} />
           <Route path="/category-jobs" element={<CategoryJobs />} />
           <Route path="/blogdetails/:slug" element={<BlogsDetails />} />
         </Routes>

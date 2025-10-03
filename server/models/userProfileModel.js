@@ -15,7 +15,7 @@ const userProfileSchema = new mongoose.Schema({
   address: { type: String, default: "" },
   postal: { type: String, default: "" },
   appliedJobs: { type: Array, default: [] },
-  followedAccounts: {type: Array, default: [] },
+  followedAccounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecruiterProfile" }],
 
   // 🆕 Resume & extra fields
   resume: { type: String, default: "" },   // file URL (PDF/Doc)
