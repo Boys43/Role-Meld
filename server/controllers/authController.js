@@ -23,76 +23,71 @@ export const register = async (req, res) => {
         const verificationOTP = String(Math.floor(900000 * Math.random()) + 100000);
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // ✅ Send email via Brevo Transactional API
-        try {
-            const emailResponse = await axios.post(
-                "https://api.brevo.com/v3/smtp/email",
-                {
-                    sender: { name: "Alfa Career", email: "your_verified_sender@domain.com" }, // Must be verified in Brevo
-                    to: [{ email, name }],
-                    subject: "🔑 Verify Your Alfa Career Account",
-                    htmlContent: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-              <div style="background: linear-gradient(90deg, #0076b5, #00bfa6); padding: 20px; text-align: center; color: white;">
-                <h2 style="margin: 0;">Alfa Career</h2>
-              </div>
-              <div style="padding: 25px; color: #333; font-size: 16px; line-height: 1.6;">
-                <p>Hey <b>${name}</b>,</p>
-                <p>Thank you for signing up with <b>Alfa Career</b>. To complete your account verification, please use the following OTP:</p>
-                <div style="text-align: center; margin: 30px 0;">
-                  <span style="display: inline-block; font-size: 28px; font-weight: bold; letter-spacing: 6px; background: #f3f9ff; padding: 15px 25px; border: 2px dashed #0076b5; border-radius: 8px; color: #0076b5;">
-                    ${verificationOTP}
-                  </span>
-                </div>
-                <p>This OTP is valid for <b>10 minutes</b>. Please do not share it with anyone for security reasons.</p>
-                <p>If you didn’t request this verification, you can safely ignore this email.</p>
-              </div>
-              <div style="background: #f9f9f9; padding: 15px; text-align: center; font-size: 13px; color: #777;">
-                <p>© ${new Date().getFullYear()} Alfa Career. All rights reserved.</p>
-              </div>
-            </div>
-          `,
-                },
-                {
-                    headers: {
-                        "api-key": process.env.BREVO_API_KEY,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
+        const transporter = nodemailer.createTransport({
+            host: "smtp-relay.brevo.com",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS,
+            },
+        });
 
-            console.log("✅ Email sent via Brevo API:", emailResponse.data);
-        } catch (err) {
-            console.error("❌ Brevo API email error:", err.response?.data || err.message);
-            return res.json({
-                success: false,
-                message: "Email not sent",
-                error: err.response?.data || err.message,
-            });
-        }
+        transporter.sendMail({
+            from: '"Alfa Career" <movietrendmaker2244@gmail.com>',
+            to: email,
+            subject: "🔑 Verify Your Alfa Career Account",
+            html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <!-- Header -->
+      <div style="background: linear-gradient(90deg, #0076b5, #00bfa6); padding: 20px; text-align: center; color: white;">
+        <h2 style="margin: 0;">Alfa Career</h2>
+      </div>
 
-        // ✅ Save user after email is successfully sent
+      <!-- Body -->
+      <div style="padding: 25px; color: #333; font-size: 16px; line-height: 1.6;">
+        <p>Hey <b>${name}</b>,</p>
+        <p>Thank you for signing up with <b>Alfa Career</b>. To complete your account verification, please use the following OTP:</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <span style="display: inline-block; font-size: 28px; font-weight: bold; letter-spacing: 6px; background: #f3f9ff; padding: 15px 25px; border: 2px dashed #0076b5; border-radius: 8px; color: #0076b5;">
+            ${verificationOTP}
+          </span>
+        </div>
+
+        <p>This OTP is valid for <b>10 minutes</b>. Please do not share it with anyone for security reasons.</p>
+        <p>If you didn’t request this verification, you can safely ignore this email.</p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background: #f9f9f9; padding: 15px; text-align: center; font-size: 13px; color: #777;">
+        <p>© ${new Date().getFullYear()} Alfa Career. All rights reserved.</p>
+      </div>
+    </div>
+  `,
+        });
+
         const auth = new authModel({
             name,
             email,
             password: hashedPassword,
             role,
-            verificationOTP,
+            verificationOTP: verificationOTP,
         });
 
-        if (email === ADMIN_EMAIL) auth.isAdmin = true;
-
+        if (email === ADMIN_EMAIL) {
+            auth.isAdmin = true;
+        }
         await auth.save();
 
         if (role === "user") {
-            await userProfileModel.create({ authId: auth._id, role: "user", name, email });
+            await userProfileModel.create({ authId: auth._id, role: "user", name: name, email: email });
         } else {
-            await recruiterProfileModel.create({ authId: auth._id, role: "recruiter", name, email });
+            await recruiterProfileModel.create({ authId: auth._id, role: "recruiter", name: name, email: email })
         }
 
-        return res.json({ success: true, message: "Please Verify Your Account" });
+        return res.json({ success: true, message: `Please Verify Your Account` });
     } catch (error) {
-        console.error("❌ Register error:", error);
         return res.json({ success: false, message: error.message });
     }
 };
