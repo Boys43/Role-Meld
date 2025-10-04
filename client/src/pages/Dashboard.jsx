@@ -13,6 +13,7 @@ import MyResume from "../components/MyResume";
 import MyProfile from "../components/MyProfile";
 import ChangePassword from "../components/ChangePassword";
 import DeleteProfile from "../components/DeleteProfile";
+import RecruiterProfile from "../components/RecruiterProfile";
 
 const Dashboard = () => {
   const { userData } = useContext(AppContext);
@@ -38,6 +39,8 @@ const Dashboard = () => {
         return <MyResume />
       case "my-profile":
         return <MyProfile />
+      case "recruiter-profile":
+        return <RecruiterProfile />
       case "change-password":
         return <ChangePassword />
       case "delete-account":

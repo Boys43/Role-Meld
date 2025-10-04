@@ -9,7 +9,7 @@ import Img from "./Image";
 
 // React iCONS
 import { IoMdPerson } from "react-icons/io";
-import { ExternalLink, GalleryVerticalEnd, Link } from "lucide-react";
+import { BanIcon, ExternalLink, GalleryVerticalEnd, Link } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
@@ -134,7 +134,7 @@ const Navbar = () => {
               <h4 className="text-[var(--primary-color)]">
                 Hi, {userData?.name || "Buddy"}
               </h4>
-              <div className="relative group">
+              {userData?.role === "user" && <div className="relative group">
                 {/* Trigger button */}
                 <span
                   className="rounded-full flex border border-gray-300 p-2 bg-gray-100 hover:bg-gray-200 cursor-pointer">
@@ -144,10 +144,10 @@ const Navbar = () => {
                 {/* Dropdown menu */}
                 <ul className="absolute w-80 right-0 bg-white border rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 
     p-3 group-hover:pointer-events-auto transition-opacity duration-200 z-50 max-h-96 overflow-y-auto">
-                  <NavLink to={""} className="w-full items-center gap-3 text-xs flex justify-end mb-4">
+                  <NavLink to={"/followed-accounts"} className="w-full items-center gap-3 text-xs flex justify-end mb-4">
                     Followed Accounts<ExternalLink size={20} className="text-blue-500" />
                   </NavLink>
-                  {companyDetails?.slice(0,5)?.map((com) => (
+                  {companyDetails?.length === 0 ? <div className="w-full justify-center flex items-center gap-3 text-sm"><BanIcon size={20} />  No Followed Accounts </div> : companyDetails?.slice(0, 5)?.map((com) => (
                     <li
                       key={com._id}
                       className="flex border border-gray-300 items-center gap-3 px-3 py-1 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors duration-150"
@@ -165,7 +165,8 @@ const Navbar = () => {
                   ))}
                 </ul>
 
-              </div>
+              </div>}
+
 
               <NavLink to={'/dashboard'} className="p-2 border border-gray-300 bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-full">
                 <IoMdPerson size={25} />

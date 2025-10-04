@@ -22,7 +22,7 @@ const LoginModel = () => {
             if (data.success) {
                 setIsLoggedIn(true);
                 await getUserData();
-                navigate("/dashboard");
+                await navigate("/dashboard");
                 toast.success(data.message);
             } else {
                 toast.error(data.message);

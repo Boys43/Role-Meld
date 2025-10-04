@@ -11,6 +11,7 @@ import { MdCancel } from "react-icons/md";
 // ChatJs 2
 import { Line, Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement, Filler } from 'chart.js/auto'
+import Img from './Image';
 ChartJS.register(LineElement, ArcElement, Legend, PointElement, CategoryScale, LinearScale, BarElement);
 
 const EmployeeDashboard = () => {
@@ -136,12 +137,10 @@ const EmployeeDashboard = () => {
       <div className="relative w-full h-100">
         {/* Profile Circle */}
         <div className="w-full h-[30vh] border-2 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
-          {userData?.profilePicture ? (
-            <img
-              loading='lazy'
+          {userData?.banner ? (
+            <Img
               src={`${backendUrl}/uploads/${userData?.banner}`}
-              alt="Banner"
-              className="w-full h-full object-cover"
+              style={"w-full h-full object-cover"}
             />
           ) : (
             userData?.name?.[0] || "?"
@@ -177,11 +176,9 @@ const EmployeeDashboard = () => {
           {/* Profile Circle */}
           <div className="w-20 h-20 border-2 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
             {userData?.profilePicture ? (
-              <img
-                loading='lazy'
+              <Img
                 src={`${backendUrl}/uploads/${userData?.profilePicture}`}
-                alt="Profile"
-                className="w-full h-full object-cover"
+                style={"w-full h-full object-cover"}
               />
             ) : (
               userData?.name?.[0] || "?"

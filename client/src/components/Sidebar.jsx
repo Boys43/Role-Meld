@@ -17,6 +17,7 @@ import { FaTrash } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { HiOutlineHeart } from "react-icons/hi";
+import Img from "./Image";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const { userData, backendUrl } = useContext(AppContext);
@@ -41,6 +42,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     navLinks = [
       { name: "Dashboard", key: "recruiterdashboard", icon: <MdOutlineDashboard size={23} /> },
       { name: "Applications", key: "applications", icon: <MdFindInPage size={23} /> },
+      { name: "My Profile", key: "recruiter-profile", icon: <MdFindInPage size={23} /> },
       {
         name: "Jobs", key: "listed-jobs", icon: <CiViewList size={23} />,
         subTabs: [
@@ -103,13 +105,16 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         {/* User Info */}
         <div className="flex flex-col gap-4 py-4 pl-4 relative">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full border flex items-center justify-center overflow-hidden">
-
-              <img
+            <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden">
+              {userData?.profilePicture ? <Img
                 src={`${backendUrl}/uploads/${userData?.profilePicture}`}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+                style={"w-full h-full object-cover"}
+              />:
+              <span>
+                {userData?.name?.charAt(0).toUpperCase()}
+              </span>
+              }
+              
             </div>
             {!toggleNav && <h4 className={`font-bold ${toggleNav ? "hidden lg:block" : "block"}`}>
               {userData?.name}

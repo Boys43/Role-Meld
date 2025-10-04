@@ -9,6 +9,7 @@ import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Loading from "./Loading";
+import NotFound404 from "./NotFound404";
 
 const Testimonials = () => {
     const { backendUrl } = useContext(AppContext);
@@ -57,7 +58,7 @@ const Testimonials = () => {
                 }}
             >
 
-                {testimonials?.slice(0, 10)?.map((e, i) => (
+                {testimonials?.length === 0 ? <NotFound404 value={"No Testimonals Yet"} margin={"mt-5"} /> :testimonials?.slice(0, 10)?.map((e, i) => (
                     <SwiperSlide key={i}>
                         <div className="p-8 max-w-[400px] flex flex-col gap-4 rounded-2xl border shadow-xl bg-white">
                             <h2 className="flex items-center gap-4 font-semibold">

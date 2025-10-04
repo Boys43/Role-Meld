@@ -11,7 +11,16 @@ const recruiterProfileSchema = new mongoose.Schema({
   role: { type: String, default: "user" }, // applicant, recruiter
   profilePicture: { type: String, default: "" },
   banner: { type: String, default: "" },
+  city: { type: String, default: "" },
+  country: { type: String, default: "" },
+  establishedDate: { type: Date, default: Date.now },
+  state: { type: String, default: "" },
+  contactNumber: { type: String, default: "" },
+  about: { type: String, default: "" },
+  industry: { type: String, default: "" },
   sentJobs: { type: Array, default: [] },
+  followedAccounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecruiterProfile" }],
+  savedApplicants: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" }],
   followers: { type: Number, default: 0 },
   followersId: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" }]
 }, { timestamps: true });

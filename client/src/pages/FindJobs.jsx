@@ -157,7 +157,7 @@ const FindJobs = () => {
               {filteredJobs.length !== 0 ? filteredJobs
                 ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))?.map((e, i) => (
                   <>
-                    <JobCard setLoginReminder={setLoginReminder} setToggleApplyJob={setToggleApplyJob} setapplJobId={setapplJobId} key={i} e={e} />
+                    <JobCard setLoginReminder={setLoginReminder} setToggleApplyJob={setToggleApplyJob} setapplJobId={setapplJobId} key={e._id} e={e} />
                     {i === 5 &&
                       <li className='col-span-full'>
                         <h3 className='flex items-center gap-3 font-semibold'>
@@ -170,9 +170,14 @@ const FindJobs = () => {
                     }
                   </>
                 )) :
-                <NotFound404 margin={"mt-20"} value={
+                <NotFound404 margin={"mt-10"} value={
                   <div>
-                    No Matches Found related <span className='font-bold'>"{Param || categoryParam}"</span>
+                    {Param || categoryParam ?
+                      <>
+                        No Matches Found related <span className='font-bold'>"{Param || categoryParam}"</span>
+                      </>:
+                      "Not Jobs Posted Yet"
+                  }
                   </div>
                 } />
               }

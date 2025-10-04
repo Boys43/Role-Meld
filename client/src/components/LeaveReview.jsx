@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import {motion} from 'framer-motion'
+import { Star } from "lucide-react";
 // Lazy Heavy Components
 const ReviewAnalytics = React.lazy(() => import("./ReviewAnalytics"));
 
@@ -42,7 +43,7 @@ const LeaveReview = () => {
       </Suspense>
       <div className="bg-gray-50 rounded-xl p-6 my-6 shadow-sm">
         <h2 className="text-xl font-semibold mb-4 text-gray-800 flex items-center gap-2">
-          Rate Us <span className="text-yellow-400">⭐</span>
+          Rate Us <span className="text-yellow-400"><Star /></span>
         </h2>
 
         <div className="flex mb-4 justify-start gap-2">
