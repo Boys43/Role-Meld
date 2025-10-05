@@ -24,6 +24,7 @@ const RecruiterProfile = () => {
         industry: userData?.industry || "",
         postal: userData?.postal || "",
         address: userData?.address || "",
+        isPhysical: userData?.isPhysical || false,
     });
 
 
@@ -45,7 +46,6 @@ const RecruiterProfile = () => {
             if (data.success) {
                 setUserData(data.profile);
                 toast.success(data.message);
-                setUpdatePopUpState("hidden");
             } else {
                 toast.error(data.message);
             }
@@ -127,6 +127,40 @@ const RecruiterProfile = () => {
                                 className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
                             />
                         </div>
+                        <hr />
+                        <div className="flex items-center justify-between bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm w-full max-w-sm">
+                            <span className="text-gray-800 dark:text-gray-200 font-medium text-sm">
+                                Is your business physical?
+                            </span>
+
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    className="sr-only peer"
+                                    checked={formData?.isPhysical}
+                                    onChange={(e) =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            isPhysical: e.target.checked,
+                                        }))
+                                    }
+                                />
+
+                                <div
+                                    className="w-11 h-6 bg-gray-300 rounded-full peer peer-focus:outline-none peer-focus:ring-4 
+      peer-focus:ring-blue-200 dark:peer-focus:ring-blue-800 dark:bg-gray-600 
+      peer-checked:bg-blue-600 transition-colors duration-300"
+                                ></div>
+
+                                <div
+                                    className="absolute left-[2px] top-[2px] bg-white h-5 w-5 rounded-full 
+      border border-gray-300 dark:border-gray-500 transition-transform duration-300 
+      peer-checked:translate-x-full"
+                                ></div>
+                            </label>
+                        </div>
+
+                        <hr />
 
                         <h3>What's In Your Mind</h3>
                         <div className='space-y-2'>
@@ -309,9 +343,6 @@ const RecruiterProfile = () => {
                                 >
                                     <Camera size={20} className="text-white text-base" />
                                 </label>
-                            </div>
-                            <div className='w-full'>
-                                company
                             </div>
                         </div>
                     </div>

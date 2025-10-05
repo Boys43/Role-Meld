@@ -1,19 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Img from '../components/Image'
-import assets from '../assets/assets'
-import { ArrowUpFromLine, CircleUser, Filter, Link, PercentSquareIcon, PersonStanding, Users } from "lucide-react"
+import { ArrowUpFromLine, CircleUser, Filter, Link, Users } from "lucide-react"
+import { Mail, Phone, Globe, MapPin, Building2, Calendar } from 'lucide-react';
 import copy from 'copy-to-clipboard';
 import { toast } from 'react-toastify';
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Loading from '../components/Loading';
 import JobCard from '../components/JobCard';
 import NotFound404 from '../components/NotFound404';
 
 export const CompanyJobs = () => {
   const { backendUrl } = useContext(AppContext);
-  const { id } = useParams();
+  const { id } = useParams()
+  const locaiton = useLocation();
 
   const [companyJobs, setCompanyJobs] = useState([]);
   const [companyLoading, setCompanyLoading] = useState(false);
@@ -57,40 +58,33 @@ export const CompanyJobs = () => {
   if (companyLoading) return <Loading />;
 
   return (
-    <div className="p-4 flex items-start gap-8 ">
-      <div className="w-[70%]">
-        {/* Filters */}
-        <div className="flex items-center gap-4 p-4">
-          <h3 className='font-semibold flex items-center gap-3'>
-            <Filter className='text-[var(--primary-color)]' />
-            Filter:
-          </h3>
-          {["recent", "featured"].map((f) => (
-            <span
-              key={f}
-              className={`cursor-pointer px-4 py-2 rounded-lg ${filter === f ? "bg-[var(--primary-color)]/50 border border-[var(--primary-color)] text-white" : "bg-gray-200"
-                }`}
-              onClick={() => setFilter(f)}
-            >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-            </span>
-          ))}
-        </div>
-
-        {/* Jobs list */}
-        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredJobs.length > 0 ? (
-            filteredJobs.map((job) => <JobCard key={job._id} e={job} />)
-          ) : (
-            <NotFound404 value={"No Job Found"} margin={"mt-5"} />
-          )}
-        </ul>
+    <div className="w-full">
+      {/* Filters */}
+      <div className="flex items-center gap-4 p-4">
+        <h3 className='font-semibold flex items-center gap-3'>
+          <Filter className='text-[var(--primary-color)]' />
+          Filter:
+        </h3>
+        {["recent", "featured"].map((f) => (
+          <span
+            key={f}
+            className={`cursor-pointer px-4 py-2 rounded-lg ${filter === f ? "bg-[var(--primary-color)]/50 border border-[var(--primary-color)] text-white" : "bg-gray-200"
+              }`}
+            onClick={() => setFilter(f)}
+          >
+            {f.charAt(0).toUpperCase() + f.slice(1)}
+          </span>
+        ))}
       </div>
 
-      <div className="w-[30%] border p-4">
-        {/* Sidebar or additional info */}
-        <h2 className="font-bold text-lg">Company Info</h2>
-      </div>
+      {/* Jobs list */}
+      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {filteredJobs.length > 0 ? (
+          filteredJobs.map((job) => <JobCard key={job._id} e={job} />)
+        ) : (
+          <NotFound404 value={"No Job Found"} margin={"mt-5"} />
+        )}
+      </ul>
     </div>
   );
 };
@@ -109,7 +103,8 @@ const CompanyProfile = () => {
   const [activeTab, setActiveTab] = useState('jobs');
   const { id } = useParams();
 
-  const { backendUrl, userData } = useContext(AppContext);
+  const { backendUrl, userData, frontendUrl } = useContext(AppContext);
+
   const [followLoading, setFollowLoading] = useState(false)
 
   const [isFollowing, setIsFollowing] = useState(
@@ -165,11 +160,11 @@ const CompanyProfile = () => {
     getCompanyDetails()
   }, [isFollowing]);
 
+  console.log('companyDetails', companyDetails)
+
   if (companyDetailsLoading) {
     return <Loading />
   }
-
-  console.log('companyDetails', companyDetails)
 
   return (
     <main className='p-4 min-h-[calc(100vh-4.6rem)]'>
@@ -184,10 +179,11 @@ const CompanyProfile = () => {
 
         <div className='flex items-center justify-between mt-4 px-8'>
           <div className='flex items-center gap-8'>
-            {companyDetails.profilePicture ? <Img src={`${backendUrl}/uploads/${companyDetails.profilePicture}`} style={"w-32 h-32 rounded-full border-4 border-gray-500"} /> :
-              <span className='w-32 h-32 rounded-full border-4 border-gray-500 flex items-center justify-center text-4xl font-bold text-gray-500'>
-                {companyDetails?.company?.slice(0, 1).toUpperCase()}
-              </span>
+            {
+              companyDetails.profilePicture ? <Img src={`${backendUrl}/uploads/${companyDetails.profilePicture}`} style={"w-32 h-32 rounded-full border-4 border-gray-500"} /> :
+                <span className='w-32 h-32 rounded-full border-4 border-gray-500 flex items-center justify-center text-4xl font-bold text-gray-500'>
+                  {companyDetails?.company?.slice(0, 1).toUpperCase()}
+                </span>
             }
 
             <div className='flex flex-col gap-2'>
@@ -206,7 +202,7 @@ const CompanyProfile = () => {
                 </p>
               </div>
               <div onClick={() => {
-                copy('Profile Link')
+                copy(frontendUrl + location.pathname)
                 toast.success('Copied to clipboard')
 
               }}
@@ -214,7 +210,7 @@ const CompanyProfile = () => {
               >
                 <Link size={20} />
                 <span className='px-2 rounded-md bg-gray-200 cursor-pointer'>
-                  https://www.linkedin.com/company/company-name-here
+                  {frontendUrl + location.pathname}
                 </span>
               </div>
             </div>
@@ -247,9 +243,152 @@ const CompanyProfile = () => {
           </ul>
         </nav>
       </section>
-      <section className='min-h-[100vh]'>
-        {activeTab === 'jobs' ? <CompanyJobs /> : <CompanyReviews />}
+      <section className='min-h-[100vh] w-full flex'>
+        <div className='w-full'>
+          {activeTab === 'jobs' ? <CompanyJobs /> : <CompanyReviews />}
+        </div>
+
+        <aside className="w-[50%] bg-white border-l border-slate-200 overflow-y-auto shadow-lg">
+          <div className="sticky top-0 bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)] px-6 py-6 z-10">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="font-bold text-xl text-white">Company Profile</h2>
+            </div>
+          </div>
+
+          <div className='px-6 py-8 space-y-8'>
+            {/* About Section */}
+            <div className='bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 border border-slate-200'>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
+                <h3 className='text-xs font-bold text-slate-600 uppercase tracking-wider'>
+                  About
+                </h3>
+              </div>
+              <p className='text-xl font-bold text-slate-900 mb-3'>
+                {companyDetails?.company}
+              </p>
+              <p className='text-slate-600 leading-relaxed text-sm'>
+                {companyDetails?.about || (
+                  <span>
+                    {companyDetails?.company} was established on{' '}
+                    {companyDetails?.establishedAt
+                      ? new Date(companyDetails.establishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                      : new Date(companyDetails?.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                    }
+                  </span>
+                )}
+              </p>
+              {companyDetails?.establishedAt && (
+                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-200">
+                  <Calendar className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm text-slate-600">
+                    Established {new Date(companyDetails.establishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Contact Section */}
+            <div className='rounded-xl p-6 border border-slate-200 bg-white'>
+              <div className="flex items-center gap-2 mb-5">
+                <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
+                <h3 className='text-xs font-bold text-slate-600 uppercase tracking-wider'>
+                  Get in Touch
+                </h3>
+              </div>
+              <div className='space-y-4'>
+                {companyDetails?.email ? (
+                  <div className='flex items-start group'>
+                    <div className="bg-blue-50 p-2 rounded-lg mr-3 group-hover:bg-blue-100 transition-colors">
+                      <Mail className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-slate-500 mb-1">Email</p>
+                      <a href={`mailto:${companyDetails.email}`} className='text-blue-600 hover:text-blue-700 font-medium text-sm break-all'>
+                        {companyDetails.email}
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <p className='text-slate-400 italic text-sm'>No email available</p>
+                )}
+
+                {companyDetails?.contactNumber ? (
+                  <div className='flex items-start group'>
+                    <div className="bg-green-50 p-2 rounded-lg mr-3 group-hover:bg-green-100 transition-colors">
+                      <Phone className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-slate-500 mb-1">Phone</p>
+                      <span className='text-slate-700 font-medium text-sm'>{companyDetails.contactNumber}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className='text-slate-400 italic text-sm'>No phone available</p>
+                )}
+
+                {companyDetails?.website && (
+                  <div className='flex items-start group'>
+                    <div className="bg-purple-50 p-2 rounded-lg mr-3 group-hover:bg-purple-100 transition-colors">
+                      <Globe className="w-4 h-4 text-purple-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-slate-500 mb-1">Website</p>
+                      <a href={`https://${companyDetails.website}`} target="_blank" rel="noopener noreferrer" className='text-purple-600 hover:text-purple-700 font-medium text-sm break-all'>
+                        {companyDetails.website}
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Location Section */}
+            <div className='rounded-xl p-6 border border-slate-200 bg-white'>
+              <div className="flex items-center gap-2 mb-5">
+                <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
+                <h3 className='text-xs font-bold text-slate-600 uppercase tracking-wider'>
+                  Location
+                </h3>
+              </div>
+              <div className='flex items-start'>
+                <div className="bg-red-50 p-2 rounded-lg mr-3 flex-shrink-0">
+                  <MapPin className="w-4 h-4 text-red-600" />
+                </div>
+                <div className='text-slate-700'>
+                  {companyDetails?.city && <p className="font-medium text-sm">{companyDetails.city}</p>}
+                  {companyDetails?.state && <p className="text-sm text-slate-600">{companyDetails.state}</p>}
+                  {companyDetails?.country && <p className="text-sm text-slate-600">{companyDetails.country}</p>}
+                  {!companyDetails?.city && !companyDetails?.state && !companyDetails?.country && (
+                    <p className='text-slate-400 italic text-sm'>No location available</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
       </section>
+      {companyDetails?.isPhysical && <section>
+        <h2>
+          Find Us On:
+        </h2>
+        <iframe
+          width="100%"
+          height="450"
+          style={{ border: 0 }}
+          loading="lazy"
+          className='rounded-2xl shadow-lg'
+          allowFullScreen
+          referrerPolicy="no-referrer-when-downgrade"
+          src={`https://www.google.com/maps?q=${encodeURIComponent(
+            `${companyDetails?.address} ${companyDetails?.postal} ${companyDetails?.city} ${companyDetails?.country}`
+          )}&output=embed`}
+        />
+      </section>}
+
     </main>
   )
 }

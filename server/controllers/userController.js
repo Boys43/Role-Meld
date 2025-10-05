@@ -433,18 +433,12 @@ export const followedAccountsDetails = async (req, res) => {
     try {
         const user = await userProfileModel.findOne({ authId: id });
 
-        console.log('user.followedAccounts', user.followedAccounts)
-
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
         const companies = await recruiterProfileModel.find(
-            { authId: { $in: user.followedAccounts } },
-            { _id: 1, name: 1, profilePicture: 1, followers: 1, company: 1, authId: 1 } // only these fields
-        );
-
-        console.log(companies);
+            { authId: { $in: user.followedAccounts } });
 
         return res.json({ success: true, companies });
     } catch (error) {

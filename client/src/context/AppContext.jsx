@@ -7,6 +7,7 @@ export const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const frontendUrl = import.meta.env.VITE_FRONTEND_URL;
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -87,6 +88,7 @@ export const AppContextProvider = (props) => {
   }, []);
 
   const value = useMemo(() => ({
+    frontendUrl,
     backendUrl,
     isLoggedIn,
     setIsLoggedIn,
@@ -102,6 +104,7 @@ export const AppContextProvider = (props) => {
     setSavedJobs,
     toggleSaveJob
   }), [
+    frontendUrl,
     backendUrl,
     isLoggedIn,
     userData,
