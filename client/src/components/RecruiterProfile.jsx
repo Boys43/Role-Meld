@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { User, Phone, MapPin, Briefcase, Save, Building, FileText, Camera } from 'lucide-react'
 import Img from './Image';
+import LocationSelector from './LocationSelector';
 
 const RecruiterProfile = () => {
     const { userData, backendUrl, setUserData } = useContext(AppContext);
@@ -197,15 +198,22 @@ const RecruiterProfile = () => {
                                 />
                             </div>
 
+                            <LocationSelector
+                                selectedCountry={formData.country}
+                                selectedCity={formData.city}
+                                onCountryChange={(country) => setFormData(prev => ({ ...prev, country }))}
+                                onCityChange={(city) => setFormData(prev => ({ ...prev, city }))}
+                            />
+
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                                 <div className='space-y-2'>
-                                    <label className="font-medium text-gray-700">City</label>
+                                    <label className="font-medium text-gray-700">State/Province</label>
                                     <input
                                         type="text"
-                                        name="city"
-                                        value={formData.city}
-                                        placeholder={userData?.city || "e.g, Lahore"}
+                                        name="state"
+                                        value={formData.state}
                                         onChange={handleChange}
+                                        placeholder={userData?.state || "e.g, Punjab"}
                                         className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
                                     />
                                 </div>
@@ -221,24 +229,11 @@ const RecruiterProfile = () => {
                                         className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
                                     />
                                 </div>
-
-                                <div className='space-y-2'>
-                                    <label className="font-medium text-gray-700">Postal Code</label>
-                                    <input
-                                        type="text"
-                                        name="state"
-                                        value={formData.state}
-                                        onChange={handleChange}
-                                        placeholder={userData?.state || "e.g, Punjeab"}
-                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
-                                    />
-                                </div>
                             </div>
                         </div>
 
                         <hr className="mt-2" />
                         <h2 className="flex items-center gap-2 text-lg font-semibold text-blue-600">
-                            <Building className="w-5 h-5" />
                             Company Information
                         </h2>
 
