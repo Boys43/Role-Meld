@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Search, MapPin, X } from 'lucide-react';
 import locationService from '../services/locationService';
 
-const LocationSelector = ({ 
-  selectedCountry, 
-  selectedCity, 
-  onCountryChange, 
+const LocationSelector = ({
+  selectedCountry,
+  selectedCity,
+  onCountryChange,
   onCityChange,
-  disabled = false 
+  disabled = false
 }) => {
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
