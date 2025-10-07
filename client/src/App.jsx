@@ -93,46 +93,44 @@ const App = () => {
       <ToastContainer />
       <Suspense fallback={<Loading />}>
         <Navbar />
-        <div className="min-h-screen">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/jobdetails/:id" element={<JobDetails />} />
-            <Route
-              path="/admin"
-              element={
-                <AdminRoute>
-                  <AdminDashboard />
-                </AdminRoute>
-              }
-            />
-            <Route
-              path="/editblog"
-              element={
-                <AdminRoute>
-                  <EditBlog />
-                </AdminRoute>
-              }
-            />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/jobdetails/:id" element={<JobDetails />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/editblog"
+            element={
+              <AdminRoute>
+                <EditBlog />
+              </AdminRoute>
+            }
+          />
 
-            <Route path="/company-profile/:id" element={<CompanyProfile />} />
-            <Route path="/help-center" element={<HelpCenter />} />
-            <Route path="/find-jobs" element={<FindJobs />} />
-            <Route path="/test" element={<Test />} />
-            <Route path="/followed-accounts" element={<FollowedAccounts />} />
-            <Route path="/category-jobs" element={<CategoryJobs />} />
-            <Route path="/blogdetails/:slug" element={<BlogsDetails />} />
-          </Routes>
-        </div>
+          <Route path="/company-profile/:id" element={<CompanyProfile />} />
+          <Route path="/help-center" element={<HelpCenter />} />
+          <Route path="/find-jobs" element={<FindJobs />} />
+          <Route path="/test" element={<Test />} />
+          <Route path="/followed-accounts" element={<FollowedAccounts />} />
+          <Route path="/category-jobs" element={<CategoryJobs />} />
+          <Route path="/blogdetails/:slug" element={<BlogsDetails />} />
+        </Routes>
         <ChatBotBubble />
         <Footer />
       </Suspense>
