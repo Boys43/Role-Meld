@@ -27,7 +27,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
   ]
 
   return (
-    <aside className='w-72 pl-6 py-6 h-[calc(100vh-4.6rem)] overflow-y-auto bg-[var(--secondary-color)] flex flex-col gap-4 sticky top-0 border-r border-[var(--primary-color)] overflow-x-hidden'>
+    <aside className='w-72 pl-6 py-6 min-h-[calc(100vh-4.6rem)] overflow-y-auto bg-[var(--secondary-color)] flex flex-col gap-4 sticky top-0 border-r border-[var(--primary-color)] overflow-x-hidden'>
       <h1 className="text-white font-bold text-lg">Admin Panel</h1>
       <nav className="flex flex-col gap-2">
         {Navlinks.map((e, i) => {
