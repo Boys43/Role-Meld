@@ -10,6 +10,7 @@ import { FaPlus } from "react-icons/fa";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { FaTrash } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
+import { Cross, X } from 'lucide-react';
 const AdminListedBlogs = ({ setActiveTab }) => {
     const { backendUrl, userData } = useContext(AppContext);
     const [allBlogs, setAllBlogs] = useState([]);
@@ -54,13 +55,16 @@ const AdminListedBlogs = ({ setActiveTab }) => {
         }
     }
 
+    const [imageModel, setImageModel] = useState(false);
+    const [selectedImg, setSelectedImg] = useState('')
+
     if (loading) {
         return <div className='w-full flex justify-center'>
             <Loading />
         </div>
     }
     return (
-        <div className='w-full p-6'>
+        <div className='relative w-full p-6'>
             <h1 className='font-bold flex items-center gap-4'>
                 <CiViewList className='text-[var(--primary-color)]' /> Listed Blogs
             </h1>
@@ -87,7 +91,17 @@ const AdminListedBlogs = ({ setActiveTab }) => {
                                     } hover:bg-blue-50`}
                             >
                                 <td className="px-6 py-4 font-medium">{index + 1}</td>
-                                <td className="px-6 py-4 "><img loading='lazy' className='rounded-lg w-15 object-cover h-15 border' src={`${backendUrl}/${blog.coverImage}`} alt="" /></td>
+                                <td className="px-6 py-4 "><img
+                                    loading="lazy"
+                                    src={`${backendUrl}/${blog.coverImage}`}
+                                    alt="Blog Cover"
+                                    onClick={() => {
+                                        setSelectedImg(blog.coverImage);
+                                        setImageModel(true);
+                                    }}
+                                    className="w-20 h-20 object-cover rounded-lg border border-gray-300 cursor-pointer hover:scale-105 hover:shadow-md transition-transform duration-200"
+                                />
+                                </td>
                                 <td className="px-6 py-4">{blog.title}</td>
                                 <td className="px-6 py-4 font-semibold">{blog.category}</td>
                                 <td className="px-6 py-4">
@@ -95,9 +109,9 @@ const AdminListedBlogs = ({ setActiveTab }) => {
                                 </td>
                                 <td className="px-6 py-4 text-center">
                                     <div className="flex justify-center items-center gap-4">
-                                        <HiOutlinePencilSquare 
-                                        onClick={() => navigate('/editblog?id=' + encodeURIComponent(blog._id))}
-                                        className='cursor-pointer text-blue-300' />
+                                        <HiOutlinePencilSquare
+                                            onClick={() => navigate('/editblog?id=' + encodeURIComponent(blog._id))}
+                                            className='cursor-pointer text-blue-300' />
                                         <FaTrash onClick={() => removeBlog(blog._id)} className=' cursor-pointer text-red-300' />
                                     </div>
                                 </td>
@@ -106,6 +120,16 @@ const AdminListedBlogs = ({ setActiveTab }) => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Image Model */}
+            {imageModel &&
+                <div className='fixed top-0 left-0 w-full h-screen bg-black/50 flex items-center justify-center '>
+                    <div className='p-6 rounded-md bg-white relative '>
+                        <X onClick={() => setImageModel(false)} className=' cursor-pointer absolute top-3 right-3' />
+                        <img src={`${backendUrl}/${selectedImg}`} alt="Image Model" />
+                    </div>
+                </div>
+            }
         </div>
     )
 }
