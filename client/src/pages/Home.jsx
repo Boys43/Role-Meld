@@ -163,7 +163,7 @@ const Home = () => {
             <FaBloggerB className="text-[var(--primary-color)] my-4" /> Our <span className="text-[var(--primary-color)]">Blogs</span>
           </h1>
           <Suspense fallback={<div>Loading Featured Jobs...</div>}>
-            <BlogsSection className={'grid-cols-1 lg:grid-cols-2'} />
+            <BlogsSection className={'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} />
           </Suspense>
         </section>
         {/* Leave a Review */}

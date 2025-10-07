@@ -15,7 +15,7 @@ const BlogCard = ({ blog }) => {
                     ? () => navigate(`/blogdetails/${blog?.slug}?id=${blog._id}`)
                     : undefined
             }
-            className="rounded-2xl cursor-pointer bg-white hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-300">
+            className="rounded-md cursor-pointer bg-white hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-300">
             {/* Image Section */}
             <div className="overflow-hidden">
                 <img
