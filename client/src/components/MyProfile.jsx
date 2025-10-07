@@ -12,14 +12,15 @@ const MyProfile = () => {
     const { userData, backendUrl, setUserData, profileScore } = useContext(AppContext);
 
     const [formData, setFormData] = useState({
-        name: "",
-        phone: "",
-        headline: "",
-        portfolio: "",
-        address: "",
-        city: "",
-        postal: "",
-        skills: []
+        name: userData.name || "",
+        phone: userData.phone || "",
+        headline: userData.headline || "",
+        portfolio: userData.portfolio || "",
+        address: userData.address || "",
+        city: userData.city || "",
+        postal: userData.postal || "",
+        country: userData.country || "",
+        skills: userData.skills || [],
     });
 
     const handleChange = (e) => {
@@ -211,23 +212,56 @@ const MyProfile = () => {
                             Work
                         </h2>
 
-                        <div className='space-y-2'>
-                            <label className="font-medium text-gray-700">Skills</label>
+                        <div className="space-y-3">
+                            {/* Label */}
+                            <label className="font-semibold text-gray-800 text-sm">Skills</label>
+
+                            {/* Skills List */}
+                            <div className="flex flex-wrap gap-2">
+                                {formData?.skills?.map((skill, index) => (
+                                    <span
+                                        key={index}
+                                        className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full flex items-center gap-2 animate-fadeIn"
+                                    >
+                                        {skill}
+                                        <span
+                                            onClick={() =>
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    skills: prev.skills.filter((_, i) => i !== index),
+                                                }))
+                                            }
+                                            className="hover:text-red-500 text-gray-500 transition-colors cursor-pointer"
+                                        >
+                                            ✕
+                                        </span>
+                                    </span>
+                                ))}
+                            </div>
+
+                            {/* Input */}
                             <input
                                 type="text"
                                 name="skills"
-                                value={formData.skills.join(", ")}
-                                onChange={(e) =>
-                                    setFormData((prev) => ({
-                                        ...prev,
-                                        skills: e.target.value.split(",").map((s) => s.trim()),
-                                    }))
-                                }
-                                placeholder='e.g, Web Development, Graphic Design'
-                                className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Tab' || e.key === 'Enter') {
+                                        e.preventDefault();
+                                        if (formData?.skills?.includes(e.target.value)) return toast.error('Skill already exists')
+                                        
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            skills: [...prev.skills, e.target.value.trim()],
+                                        }));
+                                    }
+                                }}
+                                placeholder="e.g., Web Development, Graphic Design"
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                             />
-                            <p className='text-xs text-gray-500 mt-1'>Separate each skill with a comma</p>
+
+                            {/* Hint */}
+                            <p className="text-xs text-gray-500">Press <b>Enter</b> to add each skill</p>
                         </div>
+
                     </div>
 
                     <div className='flex flex-col gap-6'>
