@@ -79,7 +79,7 @@ const JobDetails = () => {
     }
 
     return (
-        <main className='p-2 md:p-4 h-[calc(100vh-4.6rem)] lg:p-6'>
+        <main className='p-2 md:p-4 h-screen lg:p-6'>
             <section className='p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                 <div className='col-span-2 order-2 md:order-1'>
                     <h4 className='p-4 flex items-center text-lg gap-4 font-semibold'>
