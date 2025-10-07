@@ -33,6 +33,12 @@ const MyProfile = () => {
 
     // ---------- Update Profile ----------
     const updateProfile = async (e) => {
+        if (!formData?.portfolio?.includes("http") && formData?.portfolio) {
+         return toast.error("Please add a vlaid portfolio link")   
+        }
+        if (!formData?.name) {
+            return toast.error("Name is Required")
+        }
         e.preventDefault();
         try {
             const { data } = await axios.post(`${backendUrl}/api/user/updateprofile`, {
