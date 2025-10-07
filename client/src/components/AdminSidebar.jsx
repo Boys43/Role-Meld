@@ -1,11 +1,15 @@
 // AdminSidebar.jsx
 import { MdDashboard } from "react-icons/md"
 import { PiOfficeChairFill } from "react-icons/pi"
-import { FaCodePullRequest } from "react-icons/fa6"
+import { FaBlog, FaCodePullRequest } from "react-icons/fa6"
 import { RiAdminLine } from "react-icons/ri"
 import { IoPersonSharp } from "react-icons/io5"
+import { useState } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 const AdminSidebar = ({ activeTab, setActiveTab }) => {
+
+  const [toggleNav, settoggleNav] = useState(false)
   const Navlinks = [
     { name: 'Analytics', key: "analytic-dashboard", icon: <MdDashboard size={25} /> },
     { name: 'Job Requests', key: "job-requests", icon: <PiOfficeChairFill size={25} /> },
@@ -18,7 +22,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
       ]
     },
     {
-      name: 'Blog', key: "blog-management", icon: <IoPersonSharp size={25} />,
+      name: 'Blog', key: "blog-management", icon: <FaBlog size={25} />,
       subTabs: [
         { name: "Blog Management", key: "blog-management" },
         { name: "Add Blog", key: "add-blog" },
@@ -27,13 +31,19 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
   ]
 
   return (
-    <aside className='w-72 pl-6 py-6 min-h-[calc(100vh-4.6rem)] overflow-y-auto bg-[var(--secondary-color)] flex flex-col gap-4 sticky top-0 border-r border-[var(--primary-color)] overflow-x-hidden'>
-      <h1 className="text-white font-bold text-lg">Admin Panel</h1>
-      <nav className="flex flex-col gap-2">
+    <aside className={`${!toggleNav ? 'w-72 pl-6' : 'pl-3 w-20'} transition-all  py-6 min-h-[calc(100vh-4.6rem)] overflow-y-auto bg-[var(--secondary-color)] flex flex-col gap-4 sticky top-0 border-r border-[var(--primary-color)] overflow-x-hidden`}>
+      <span className="p-2 bg-[var(--primary-color)] w-10 h-10 rounded-2xl text-white" onClick={() => settoggleNav(!toggleNav)}>
+        {!toggleNav ? <ChevronLeft /> : <ChevronRight />}
+      </span>
+      {!toggleNav &&
+        <h2 className="text-white font-bold whitespace-nowrap">Admin Panel</h2>
+      }
+
+      <nav className="flex flex-col gap-2 ">
         {Navlinks.map((e, i) => {
           const isParentActive = activeTab === e.key || (e.subTabs && e.subTabs.some(sub => sub.key === activeTab))
           return (
-            <div key={i}>
+            <div key={i} className="relative">
               <span
                 onClick={() => setActiveTab(e.key)}
                 className={`px-4 py-2 rounded-xl cursor-pointer hover:bg-[var(--primary-color)]/10 flex items-center gap-3 text-white transition 
@@ -41,11 +51,13 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
                 `}
               >
                 {e.icon}
-                {e.name}
+                {!toggleNav && <h4 className="whitespace-nowrap">
+                  {e?.name}
+                </h4>}
               </span>
 
               {/* Render sub-tabs if parent is active */}
-              {e.subTabs && isParentActive && (
+              {!toggleNav && e.subTabs && isParentActive && (
                 <div className="flex flex-col gap-1 translate-x-10 mt-2">
                   {e.subTabs.map((sub, idx) => (
                     <span

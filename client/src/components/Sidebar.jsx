@@ -109,14 +109,14 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
               {userData?.profilePicture ? <Img
                 src={`${backendUrl}/uploads/${userData?.profilePicture}`}
                 style={"w-full h-full object-cover"}
-              />:
-              <span>
-                {userData?.name?.charAt(0).toUpperCase()}
-              </span>
+              /> :
+                <span>
+                  {userData?.name?.charAt(0).toUpperCase()}
+                </span>
               }
-              
+
             </div>
-            {!toggleNav && <h4 className={`font-bold ${toggleNav ? "hidden lg:block" : "block"}`}>
+            {!toggleNav && <h4 className={`font-bold whitespace-nowrap`}>
               {userData?.name}
             </h4>}
 
@@ -135,7 +135,10 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 `}
                   >
                     {e.icon}
-                    {e.name}
+
+                    {!toggleNav && <h4 className="whitespace-nowrap">
+                      {e?.name}
+                    </h4>}
                   </span>
 
                   {e.subTabs && isParentActive && (
@@ -162,7 +165,9 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 className={`px-3 py-2 rounded-l-xl cursor-pointer bg-red-400 hover:bg-red-500 flex items-center gap-3 text-white transition border border-red-500
                 `}
               >
-                <FaTrash className="text-red-600" /> Delete Account
+                <FaTrash className="text-red-600" />  {!toggleNav && <h4 className="whitespace-nowrap">
+                 Delete Account
+                </h4>}
               </span>
             </li>
           </ul>

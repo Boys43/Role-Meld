@@ -215,15 +215,15 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex gap-4 items-center">
-              <button>
-                <NavLink
-                  to={"/login"}
-                  className={` ${location.pathname === "/login" ? "underline" : ""
-                    }`}
-                >
+              <NavLink
+                to={"/login"}
+                className={` ${location.pathname === "/login" ? "underline" : ""
+                  }`}
+              >
+                <button>
                   Sign In
-                </NavLink>
-              </button>
+                </button>
+              </NavLink>
             </div>
           )}
         </div>
