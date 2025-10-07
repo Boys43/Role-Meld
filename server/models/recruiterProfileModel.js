@@ -3,8 +3,7 @@ import mongoose from "mongoose";
 const recruiterProfileSchema = new mongoose.Schema({
   authId: { type: mongoose.Schema.Types.ObjectId, ref: "Auth", required: true },
   name: { type: String, default: '' },
-  headline: { type: String, default: '' },
-  isPhysical: { type: Boolean, default: false },
+  tagline: { type: String, default: '' },
   email: { type: String, default: '' },
   company: { type: String, default: 'Individual' },
   members: { type: Number, default: 1 },

@@ -1,36 +1,31 @@
 // components/Sidebar.jsx
 import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
-import { MdOutlineDashboard } from "react-icons/md";
-import { CiBookmarkCheck } from "react-icons/ci";
-import { MdFindInPage } from "react-icons/md";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { IoMdExit } from "react-icons/io";
-import { VscGitStashApply } from "react-icons/vsc";
+import { MdOutlineDashboard, MdFindInPage, MdPublish } from "react-icons/md";
 import { CiViewList } from "react-icons/ci";
+import { VscGitStashApply } from "react-icons/vsc";
+import { HiOutlineHeart } from "react-icons/hi";
+import { IoDocumentOutline, IoLockClosedOutline } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
+import { FaChevronLeft, FaChevronRight, FaTrash } from "react-icons/fa";
+import { IoMdExit } from "react-icons/io";
 import { FiMenu } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { IoDocumentOutline } from "react-icons/io5";
-import { FaTrash } from "react-icons/fa";
-import { CgProfile } from "react-icons/cg";
-import { IoLockClosedOutline } from "react-icons/io5";
-import { HiOutlineHeart } from "react-icons/hi";
 import Img from "./Image";
+import { ChevronLeft, ChevronRight, List } from "lucide-react";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
-  const { userData, backendUrl } = useContext(AppContext);
-
+  const { userData, backendUrl, setIsLoggedIn, setUserData } = useContext(AppContext);
   const [toggleNav, setToggleNav] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
   const navigate = useNavigate();
 
-  // Detect screen size
+  // detect screen size
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024); // below lg breakpoint = mobile/tablet
+      setIsMobile(window.innerWidth < 1024);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -42,13 +37,15 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     navLinks = [
       { name: "Dashboard", key: "recruiterdashboard", icon: <MdOutlineDashboard size={23} /> },
       { name: "Applications", key: "applications", icon: <MdFindInPage size={23} /> },
-      { name: "My Profile", key: "recruiter-profile", icon: <MdFindInPage size={23} /> },
+      { name: "My Profile", key: "recruiter-profile", icon: <CgProfile size={23} /> },
       {
-        name: "Jobs", key: "listed-jobs", icon: <CiViewList size={23} />,
+        name: "Jobs",
+        key: "listed-jobs",
+        icon: <CiViewList size={23} />,
         subTabs: [
-          { name: "Listed Job", key: "listed-jobs", icon: <CiViewList size={23} /> },
-          { name: "List Job", key: "list-job", icon: <CiViewList size={23} /> },
-        ]
+          { name: "Publish New Job", key: "list-job", icon: <MdPublish size={23} /> },
+          { name: "Listed Jobs", key: "listed-jobs", icon: <List size={23} /> },
+        ],
       },
     ];
   } else {
@@ -58,11 +55,9 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       { name: "Applied Jobs", key: "applied-jobs", icon: <VscGitStashApply size={23} /> },
       { name: "My Resumes", key: "my-resume", icon: <IoDocumentOutline size={23} /> },
       { name: "My Profile", key: "my-profile", icon: <CgProfile size={23} /> },
-      { name: "Change Passowrd", key: "change-password", icon: <IoLockClosedOutline size={23} /> },
+      { name: "Change Password", key: "change-password", icon: <IoLockClosedOutline size={23} /> },
     ];
   }
-
-  const { setIsLoggedIn, setUserData } = useContext(AppContext);
 
   axios.defaults.withCredentials = true;
 
@@ -97,77 +92,102 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       {/* Sidebar */}
       <aside
         className={`${toggleNav ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-          ${toggleNav ? (isMobile ? "w-64 h-[100vh]" : "w-20  h-[calc(100vh-4.6rem)]") : "w-72"} 
+          ${toggleNav ? (isMobile ? "w-64" : "w-20") : "w-72"} 
           fixed text-sm lg:sticky top-0 left-0 bg-[var(--secondary-color)] 
           transition-all duration-300 border-r border-[var(--primary-color)] 
-          text-white flex flex-col justify-between z-40`}
+          text-white flex flex-col justify-between h-screen z-40`}
       >
         {/* User Info */}
         <div className="flex flex-col gap-4 py-4 pl-4 relative">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden">
-              {userData?.profilePicture ? <Img
-                src={`${backendUrl}/uploads/${userData?.profilePicture}`}
-                style={"w-full h-full object-cover"}
-              /> :
-                <span>
-                  {userData?.name?.charAt(0).toUpperCase()}
-                </span>
-              }
-
+              {userData?.profilePicture ? (
+                <Img
+                  src={`${backendUrl}/uploads/${userData?.profilePicture}`}
+                  style={"w-full h-full object-cover"}
+                />
+              ) : (
+                <span>{userData?.name?.charAt(0).toUpperCase()}</span>
+              )}
             </div>
-            {!toggleNav && <h4 className={`font-bold whitespace-nowrap`}>
-              {userData?.name}
-            </h4>}
-
+            {!toggleNav && <h4 className="font-bold whitespace-nowrap">{userData?.name}</h4>}
           </div>
 
           {/* Navigation */}
           <ul className="flex flex-col gap-2 mt-4">
             {navLinks.map((e, i) => {
-              const isParentActive = activeTab === e.key || (e.subTabs && e.subTabs.some(sub => sub.key === activeTab));
+              const isParentActive =
+                activeTab === e.key || (e.subTabs && e.subTabs.some((sub) => sub.key === activeTab));
               return (
-                <div key={i} className="overflow-x-hidden">
+                <li key={i} className="relative group">
+                  {/* Parent tab */}
                   <span
-                    onClick={() => setActiveTab(e.key)}
-                    className={`px-3 py-2 rounded-xl cursor-pointer hover:bg-[var(--primary-color)]/10 flex items-center gap-3 text-white transition 
-                  ${isParentActive ? 'bg-[var(--primary-color)]/20 border-[var(--primary-color)] translate-x-4 border shadow-[var(--primary-color)]' : ''}
-                `}
+                    onClick={() => {
+                      if (isMobile && e.subTabs) {
+                        setActiveTab(e.key);
+                      } else if (!e.subTabs) {
+                        setActiveTab(e.key);
+                      }
+                    }}
+                    className={`px-3 py-2 rounded-xl cursor-pointer flex items-center justify-between gap-3 hover:bg-[var(--primary-color)]/10 transition 
+                      ${isParentActive ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)] shadow  px-1" : ""}
+                    `}
                   >
-                    {e.icon}
+                    <span className="flex items-center gap-3">
+                      {e.icon}
+                      {!toggleNav && <h4 className="whitespace-nowrap">{e.name}</h4>}
+                    </span>
+                    {!toggleNav && <span>
+                      {e.subTabs && <ChevronRight />}
+                    </span>}
 
-                    {!toggleNav && <h4 className="whitespace-nowrap">
-                      {e?.name}
-                    </h4>}
                   </span>
 
-                  {e.subTabs && isParentActive && (
-                    <div className="flex flex-col gap-1 translate-x-10 mt-2">
+                  {/* Floating submenu (desktop only) */}
+                  {e.subTabs && !isMobile && (
+                    <div className="absolute top-0 left-full ml-1 hidden group-hover:flex flex-col bg-[var(--secondary-color)] border border-[var(--primary-color)] rounded-xl shadow-lg p-2 z-50 min-w-[230px] animate-fadeIn">
+                      {e.subTabs.map((sub, idx) => (
+                        <span
+                          key={idx}
+                          onClick={() => setActiveTab(sub.key)}
+                          className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition flex items-center gap-2
+                            ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
+                          `}
+                        >
+                          {sub.icon}
+                          {sub.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Inline submenu (mobile only) */}
+                  {e.subTabs && isMobile && activeTab === e.key && (
+                    <div className="flex flex-col gap-1 pl-6 mt-1">
                       {e.subTabs.map((sub, idx) => (
                         <span
                           key={idx}
                           onClick={() => setActiveTab(sub.key)}
                           className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition 
-                        ${activeTab === sub.key ? 'bg-[var(--primary-color)]/20 border-[var(--primary-color)] border shadow-[var(--primary-color)]' : ''}
-                      `}
+                            ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
+                          `}
                         >
                           {sub.name}
                         </span>
                       ))}
                     </div>
                   )}
-                </div>
-              )
+                </li>
+              );
             })}
+
+            {/* Delete Account */}
             <li>
               <span
-                onClick={() => setActiveTab('delete-account')}
-                className={`px-3 py-2 rounded-l-xl cursor-pointer bg-red-400 hover:bg-red-500 flex items-center gap-3 text-white transition border border-red-500
-                `}
+                onClick={() => setActiveTab("delete-account")}
+                className="px-3 py-2 rounded-xl cursor-pointer bg-red-500 hover:bg-red-600 flex items-center gap-3 text-white transition border border-red-500"
               >
-                <FaTrash className="text-red-600" />  {!toggleNav && <h4 className="whitespace-nowrap">
-                 Delete Account
-                </h4>}
+                <FaTrash /> {!toggleNav && <h4 className="whitespace-nowrap">Delete Account</h4>}
               </span>
             </li>
           </ul>
@@ -188,15 +208,20 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           className={`cursor-pointer bg-[var(--primary-color)]/10 border-2 border-[var(--primary-color)] px-3 py-2 m-4 rounded-2xl text-[var(--primary-color)] flex items-center justify-between`}
           onClick={logout}
         >
-          {toggleNav ? (
-            <IoMdExit size={23} />
-          ) : (
-            <>
-              Logout <IoMdExit size={23} />
-            </>
-          )}
+          {toggleNav ? <IoMdExit size={23} /> : <>Logout <IoMdExit size={23} /></>}
         </div>
       </aside>
+
+      {/* Small fade animation */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateX(8px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-in-out;
+        }
+      `}</style>
     </>
   );
 };

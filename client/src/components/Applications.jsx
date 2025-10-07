@@ -136,14 +136,14 @@ const Applications = () => {
 
                                 {/* Applicant Info */}
                                 <div className="mt-3 bg-gray-50 p-3 rounded-lg flex flex-col gap-2">
-                                    <p className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                                    <spam className="text-sm font-medium text-gray-700 flex items-center gap-2">
                                         <IoPerson className="text-[var(--primary-color)] text-base" />
                                         {app.applicant?.name}
-                                    </p>
-                                    <p className="text-xs text-gray-500 flex items-center gap-2">
-                                        <IoMail className="text-[var(--primary-color)] text-base" />
+                                    </spam>
+                                    <span className="text-xs text-gray-500 flex items-center gap-2">
+                                        <IoMail className="text-[var(--primary-color)] text-sm" />
                                         {app.applicant?.email}
-                                    </p>
+                                    </span>
                                 </div>
 
                                 {/* Download Button */}
@@ -159,20 +159,20 @@ const Applications = () => {
                                 </a>
                                 <div className='flex items-center gap-2'>
 
-                                    <button className="w-full bg-green-400 text-white px-4 py-2 rounded-xl hover:bg-green-500 border-2 border-green-500 transition-colors duration-200 flex items-center justify-center gap-2 "
+                                    <span className="w-full bg-green-400 text-white px-4 py-2 rounded-xl hover:bg-green-500 border-2 border-green-500 transition-colors duration-200 flex items-center justify-center gap-2 "
                                         onClick={() => updateStatus(app._id, "hired")}
                                         disabled={app.status !== "applied"}
                                     >
                                         <IoIosCheckmarkCircle className="text-lg" />
                                         Approve
-                                    </button>
-                                    <button className="w-full bg-red-400 text-white px-4 py-2 rounded-xl hover:bg-red-500 border-2 border-red-500 transition-colors duration-200 flex items-center justify-center gap-2"
+                                    </span>
+                                    <span className="w-full bg-red-400 text-white px-4 py-2 rounded-xl hover:bg-red-500 border-2 border-red-500 transition-colors duration-200 flex items-center justify-center gap-2"
                                         onClick={() => updateStatus(app._id, "rejected")}
                                         disabled={app.status !== "applied"}
                                     >
                                         <ImCancelCircle className="text-lg" />
                                         Reject
-                                    </button>
+                                    </span>
                                 </div>
                             </div>
                         </li>

@@ -38,7 +38,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className='flex'>
+    <div className='flex min-h-[calc(100vh-4.6rem)]'>
       <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       {renderContent()}
     </div>

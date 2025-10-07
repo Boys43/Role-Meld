@@ -114,7 +114,7 @@ const VerificationModel = () => {
     return (
         <div className='w-full'>
             <div className="flex flex-col border-2 p-4 border-gray-300 rounded-2xl items-center justify-center min-h-screen gap-4">
-                <img loading="lazy" src="/favicon.png" alt="Logo" className="w-30" />
+                <img loading="lazy" src="/fav_logo.webp" alt="Logo" className="w-15" />
                 <h2 className="text-xl font-semibold">Enter OTP</h2>
                 <p>
                     An OTP has sent to your Registered Email

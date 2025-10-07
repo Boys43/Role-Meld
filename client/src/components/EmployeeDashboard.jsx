@@ -235,7 +235,7 @@ const EmployeeDashboard = () => {
           <h3 className='flex items-center gap-4 font-semibold'><IoPersonAddSharp />Total Active Jobs</h3>
           <h1>
             {Jobs.filter((job) => {
-              return job.isActive === true && job.company === userData.company;
+              return job.isActive === true && job.company === userData.authId;
             }).length}
           </h1>
         </div>
@@ -243,7 +243,7 @@ const EmployeeDashboard = () => {
           <h3 className='flex items-center gap-4 font-semibold'><IoPersonAddSharp />Total Pending Jobs</h3>
           <h1>
             {Jobs.filter((job) => {
-              return job.approved === "pending" && job.company === userData.company;
+              return job.approved === "pending" && job.company === userData.authId;
             }).length}
           </h1>
         </div>

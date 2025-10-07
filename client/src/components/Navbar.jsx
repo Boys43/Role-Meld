@@ -1,25 +1,63 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FiMenu, FiX } from "react-icons/fi";
 import Loading from "./Loading";
-import Img from "./Image";
+import Img from "./Image"; // Assuming this is a local component for image rendering
 
 // React iCONS
-import { IoMdPerson } from "react-icons/io";
-import { BanIcon, ExternalLink, GalleryVerticalEnd, Link } from "lucide-react";
+import { IoMdPerson, IoMdExit } from "react-icons/io";
+import { Gauge, Briefcase, HelpCircle, Building2, UserCircle, LogOut } from "lucide-react";
+
+// --- Configuration ---
+const USER_NAV_LINKS = [
+  { to: "/", icon: Gauge, label: "Home" },
+  { to: "/find-jobs", icon: Briefcase, label: "Find Jobs" },
+  { to: "/company-reviews", icon: Building2, label: "Company Reviews" },
+  { to: "/help-center", icon: HelpCircle, label: "Help Center" },
+];
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isLoggedIn, loading, backendUrl, setIsLoggedIn, setUserData, userData } =
     useContext(AppContext);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [mobileMenu, setMobileMenu] = useState(false);
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [followedAccounts, setFollowedAccounts] = useState([]);
+
+  // Refs for managing outside clicks
+  const userDropdownRef = useRef(null);
+  const mobileMenuRef = useRef(null);
+
+  // Set default credentials for Axios
   axios.defaults.withCredentials = true;
+
+  // --- Utility Functions ---
+
+  const toggleUserDropdown = () => {
+    setIsUserDropdownOpen((prev) => !prev);
+    // Ensure mobile menu is closed when opening dropdown
+    if (isMenuOpen) setIsMenuOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+    // Ensure dropdown is closed when opening mobile menu
+    if (isUserDropdownOpen) setIsUserDropdownOpen(false);
+  };
+
+  const handleLinkClick = (path) => {
+    navigate(path);
+    setIsUserDropdownOpen(false);
+    setIsMenuOpen(false);
+  };
+
+  // --- API Functions ---
 
   const logout = async () => {
     try {
@@ -27,9 +65,8 @@ const Navbar = () => {
       if (data.success) {
         setIsLoggedIn(false);
         setUserData(null);
-        setShowDropdown(false);
-        navigate("/");
         toast.success(data.message);
+        handleLinkClick("/"); // Navigates and closes menus
       } else {
         toast.error(data.message);
       }
@@ -38,241 +75,265 @@ const Navbar = () => {
     }
   };
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const checkIsAdmin = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
+      setIsAdmin(data.success && data.isAdmin);
+    } catch (error) {
+      console.error("Admin check failed:", error);
+      setIsAdmin(false);
+    }
+  };
 
-  useEffect(() => {
-    const checkIsAdmin = async () => {
+  const getFollowedAccounts = async () => {
+    if (userData?.role === "user") {
       try {
-        const { data } = await axios.get(`${backendUrl}/api/auth/check-admin`);
+        const { data } = await axios.get(`${backendUrl}/api/user/followedaccounts`);
         if (data.success) {
-          setIsAdmin(data.isAdmin);
+          setFollowedAccounts(data.companies);
         }
       } catch (error) {
-        toast.error(error.message);
+        console.error("Followed accounts fetch failed:", error);
       }
-    };
+    } else {
+      setFollowedAccounts([]);
+    }
+  };
 
+  // --- Effects ---
+
+  // Check Admin status on login change
+  useEffect(() => {
     if (isLoggedIn) {
       checkIsAdmin();
     } else {
-      setIsAdmin(false); // reset when logged out
+      setIsAdmin(false);
     }
   }, [isLoggedIn, backendUrl]);
 
+  // Fetch followed accounts when user logs in/out or role changes
+  useEffect(() => {
+    getFollowedAccounts();
+  }, [userData?.role, isLoggedIn, backendUrl]);
 
+  // Handle outside clicks for dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // User dropdown
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Show loading state
   if (loading) {
     return <Loading />;
   }
 
-  const [companyDetails, setCompanyDetails] = useState([]);
-  const getCompanyDetails = async () => {
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/user/followedaccounts`);
-      if (data.success) {
-        setCompanyDetails(data.companies);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  }
+  // --- Reusable Components/JSX ---
 
-  useEffect(() => {
-    if (userData?.role === "user") getCompanyDetails();
-  }, []);
+  const DesktopNavLinks = () => (
+    <div className="hidden md:flex items-baseline gap-6">
+      {USER_NAV_LINKS.map(({ to, label }) => (
+        <NavLink
+          key={to}
+          to={to}
+          className={`relative text-sm pb-2 transition-colors duration-200 ${location.pathname === to
+            ? "font-bold text-[var(--primary-color)] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[var(--primary-color)]"
+            : "text-gray-600 hover:text-[var(--primary-color)]"
+            }`}
+        >
+          {label}
+        </NavLink>
+      ))}
+    </div>
+  );
 
-  console.log('companyDetails', companyDetails)
+  const MobileNavLinks = () => (
+    <div
+      ref={mobileMenuRef}
+      className={`md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 shadow-lg p-4 space-y-4 transition-transform duration-300 ease-out z-40 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+    >
+      {USER_NAV_LINKS.map(({ to, icon: Icon, label }) => (
+        <NavLink
+          key={to}
+          to={to}
+          onClick={() => handleLinkClick(to)}
+          className="flex items-center gap-3 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <Icon size={20} className="text-[var(--primary-color)]" />
+          {label}
+        </NavLink>
+      ))}
 
-  return (
-    <>
-      <nav className="flex items-center border-b-gray-200 border-b px-4 py-4 justify-between">
-        {/* Left Logo */}
-        <div className="flex items-center gap-6">
-          <NavLink to={"/"}>
-            <img src="/logo.webp" className="w-32" alt="" />
-          </NavLink>
-
-          {isLoggedIn && <div className="hidden md:flex items-baseline gap-6">
-            <NavLink
-              to={"/"}
-              className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/" ? "font-bold text-[var(--primary-color)]" : ""
-                }`}
-            >
-              Home
-            </NavLink>
-            <NavLink
-              to={"/find-jobs"}
-              className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/find-jobs" ? "font-bold text-[var(--primary-color)]" : ""
-                }`}
-            >
-              Find Jobs
-            </NavLink>
-            <NavLink
-              to={"/help-center"}
-              className={`relative text-[0.9rem] pb-[0.5rem] ${location.pathname === "/help-center" ? "font-bold text-[var(--primary-color)]" : ""
-                }`}
-            >
-              Help Center
-            </NavLink>
-            <NavLink
-              to={"/company-reviews"}
-              className={`relative ${isLoggedIn && "hidden"} text-[0.9rem] pb-[0.5rem] ${location.pathname === "/company-reviews"
-                ? "font-bold text-[var(--primary-color)]"
-                : ""
-                }`}
-            >
-              Company Reviews
-            </NavLink>
-          </div>}
-        </div>
-
-        {/* Right Section */}
-        <div className="hidden md:flex items-center gap-6">
-          {isLoggedIn ? (
-            <div className="relative flex items-center gap-4">
-              <h4 className="text-[var(--primary-color)]">
-                Hi, {userData?.name || "Buddy"}
-              </h4>
-              {userData?.role === "user" && <div className="relative group">
-                {/* Trigger button */}
-                <span
-                  className="rounded-full flex border border-gray-300 p-2 bg-gray-100 hover:bg-gray-200 cursor-pointer">
-                  <GalleryVerticalEnd size={23} />
-                </span>
-
-                {/* Dropdown menu */}
-                <ul className="absolute w-80 right-0 bg-white border rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 
-    p-3 group-hover:pointer-events-auto transition-opacity duration-200 z-50 max-h-96 overflow-y-auto">
-                  <NavLink to={"/followed-accounts"} className="w-full items-center gap-3 text-xs flex justify-end mb-4">
-                    Followed Accounts<ExternalLink size={20} className="text-blue-500" />
-                  </NavLink>
-                  {companyDetails?.length === 0 ? <div className="w-full justify-center flex items-center gap-3 text-sm"><BanIcon size={20} />  No Followed Accounts </div> : companyDetails?.slice(0, 5)?.map((com) => (
-                    <li
-                      key={com._id}
-                      className="flex border border-gray-300 items-center gap-3 px-3 py-1 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors duration-150"
-                      onClick={() => navigate('/company-profile/' + com.authId)}
-                    >
-                      <Img
-                        src={`${backendUrl}/uploads/${com.profilePicture}`}
-                        style={"w-10 h-10  rounded-full border border-gray-200 object-cover"}
-                      />
-                      <div className="flex-1 flex flex-col">
-                        <span className="font-semibold text-sm text-gray-800">{com.company || com.name}</span>
-                        <span className="text-xs text-gray-500">{com.followers} Followers</span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-
-              </div>}
-
-
-              <NavLink to={'/dashboard'} className="p-2 border border-gray-300 bg-gray-100 hover:bg-gray-200 cursor-pointer rounded-full">
-                <IoMdPerson size={25} />
-              </NavLink>
-              <div
-                onClick={() => setShowDropdown(!showDropdown)}
-                className="h-10 flex justify-center items-center w-10 text-white rounded-full bg-black cursor-pointer overflow-hidden hover:ring-2 hover:ring-blue-300 transition-all duration-200 relative"
-              >
-                {userData?.profilePicture ? (
-                  <img
-                    loading="lazy"
-                    src={`${backendUrl}/uploads/${userData.profilePicture}`}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  userData?.name?.[0]?.toUpperCase() || "?"
-                )}
-              </div>
-
-              {showDropdown && (
-                <div
-                  tabIndex={0}
-                  onBlur={() => setShowDropdown(false)}
-                  className="absolute top-full right-0 z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
-                  <ul className="py-2 flex flex-col gap-1">
-                    {isAdmin &&
-                      <li
-                        onClick={() => {
-                          navigate('/admin');
-                          setShowDropdown(false);
-                        }}
-                        className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                        Admin
-                      </li>
-                    }
-                    <li
-                      onClick={logout}
-                      className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                    >
-                      Logout
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="flex gap-4 items-center">
-              <NavLink
-                to={"/login"}
-                className={` ${location.pathname === "/login" ? "underline" : ""
-                  }`}
-              >
-                <button>
-                  Sign In
-                </button>
-              </NavLink>
-            </div>
-          )}
-        </div>
-
-        {/* Mobile Hamburger */}
-        <div className="md:hidden">
-          <button onClick={() => setMobileMenu(!mobileMenu)}>
-            {mobileMenu ? <FiX size={28} /> : <FiMenu size={28} />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      {mobileMenu && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg p-4 space-y-4">
-          <NavLink to="/find-jobs" onClick={() => setMobileMenu(false)}>
-            Find Jobs
-          </NavLink>
-          <NavLink to="/company-reviews" onClick={() => setMobileMenu(false)}>
-            Company Reviews
-          </NavLink>
-          <NavLink to="/dashboard" onClick={() => setMobileMenu(false)}>
+      {isLoggedIn ? (
+        <>
+          <NavLink
+            to="/dashboard"
+            onClick={() => handleLinkClick("/dashboard")}
+            className="flex items-center gap-3 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <UserCircle size={20} className="text-[var(--primary-color)]" />
             Dashboard
           </NavLink>
-
-          {isLoggedIn ? (
-            <>
-              <button
-                onClick={() => {
-                  logout();
-                  setMobileMenu(false);
-                }}
-                className="text-left w-full text-red-600"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <button>
-                <NavLink to="/login" onClick={() => setMobileMenu(false)}>
-                  Sign In
-                </NavLink>
-              </button>
-            </>
+          {isAdmin && (
+            <NavLink
+              to="/admin"
+              onClick={() => handleLinkClick("/admin")}
+              className="flex items-center gap-3 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <Gauge size={20} className="text-red-500" />
+              Admin Panel
+            </NavLink>
           )}
+          <button
+            onClick={logout}
+            className="flex items-center gap-3 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full text-left"
+          >
+            <LogOut size={20} />
+            Logout
+          </button>
+        </>
+      ) : (
+        <NavLink
+          to="/login"
+          onClick={() => handleLinkClick("/login")}
+          className="flex items-center gap-3 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <IoMdExit size={20} className="text-[var(--primary-color)]" />
+          Sign In
+        </NavLink>
+      )}
+    </div>
+  );
+
+  const UserProfileDropdown = () => (
+    <div
+      ref={userDropdownRef}
+      className="relative flex items-center gap-4"
+    >
+      <h4 className="hidden lg:block text-sm text-[var(--primary-color)]">
+        Hi, {userData?.name || "Buddy"}
+      </h4>
+
+      {/* Profile/Followed Accounts Button */}
+      <span
+        onClick={toggleUserDropdown}
+        className="h-10 w-10 text-white rounded-full bg-black cursor-pointer overflow-hidden ring-2 ring-transparent hover:ring-blue-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        aria-label="User menu"
+      >
+        {userData?.profilePicture ? (
+          <img
+            loading="lazy"
+            src={`${backendUrl}/uploads/${userData.profilePicture}`}
+            alt="Profile"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <span className="text-lg font-semibold flex items-center justify-center h-full w-full">
+            {userData?.name?.[0]?.toUpperCase() || "?"}
+          </span>
+        )}
+      </span>
+
+      {/* Dropdown Menu */}
+      {isUserDropdownOpen && (
+        <div className="absolute top-full right-0 z-50 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-100">
+          <div className="p-4 border-b">
+            <p className="text-sm font-semibold text-gray-800">
+              {userData?.name}
+            </p>
+            <p className="text-xs text-gray-500">{userData?.role[0].toUpperCase() + userData?.role.substring(1)}</p>
+          </div>
+          <ul className="py-2 flex flex-col">
+            <li
+              onClick={() => handleLinkClick("/dashboard")}
+              className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3 transition-colors"
+            >
+              <UserCircle size={18} />
+              Dashboard
+            </li>
+            {isAdmin && (
+              <li
+                onClick={() => handleLinkClick("/admin")}
+                className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3 transition-colors border-t border-gray-100"
+              >
+                <Gauge size={18} className="text-red-500" />
+                Admin Panel
+              </li>
+            )}
+            <li
+              onClick={logout}
+              className="cursor-pointer px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors border-t border-gray-100"
+            >
+              <LogOut size={18} />
+              Logout
+            </li>
+          </ul>
         </div>
       )}
-    </>
+    </div>
+  );
+
+  const AuthButtons = () => (
+    <div className="flex items-center gap-6">
+      <NavLink
+        to={"/login"}
+        className="font-medium text-sm text-[var(--primary-color)] transition-colors duration-200"
+        onClick={() => setIsMenuOpen(false)}
+      >
+        Log In
+      </NavLink>
+      <NavLink
+        to={"/register"}
+        className="px-4 py-1 font-medium border border-[var(--primary-color)] text-white bg-[var(--primary-color)] text-sm rounded-lg hover:bg-white hover:text-[var(--primary-color)] transition-colors duration-200"
+        onClick={() => setIsMenuOpen(false)}
+      >
+        Sign Up
+      </NavLink>
+    </div>
+  );
+
+  // --- Main Render ---
+  return (
+    <nav className="bg-white border-b border-gray-200">
+      <div className="flex items-center h-16 px-4 justify-between">
+        {/* Left Section - Logo and Desktop Links */}
+        <div className="flex items-center gap-10">
+          <NavLink to={"/"}>
+            {/* The image styling should be outside the component if possible, or ensure it's responsive */}
+            <img src="/logo.webp" className="w-28 sm:w-32" alt="Company Logo" />
+          </NavLink>
+          <DesktopNavLinks />
+        </div>
+
+        {/* Right Section - Auth/User Actions */}
+        <div className="hidden md:flex items-center gap-4">
+          {isLoggedIn ? <UserProfileDropdown /> : <AuthButtons />}
+        </div>
+
+        {/* Mobile Hamburger/Close Button */}
+        <div className="md:hidden">
+          <button
+            onClick={toggleMobileMenu}
+            className="p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMenuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Content (Outside the main flex container for full width) */}
+      <MobileNavLinks />
+    </nav>
   );
 };
 

@@ -371,24 +371,6 @@ const CompanyProfile = () => {
           </div>
         </aside>
       </section>
-      {companyDetails?.isPhysical && <section>
-        <h2>
-          Find Us On:
-        </h2>
-        <iframe
-          width="100%"
-          height="450"
-          style={{ border: 0 }}
-          loading="lazy"
-          className='rounded-2xl shadow-lg'
-          allowFullScreen
-          referrerPolicy="no-referrer-when-downgrade"
-          src={`https://www.google.com/maps?q=${encodeURIComponent(
-            `${companyDetails?.address} ${companyDetails?.postal} ${companyDetails?.city} ${companyDetails?.country}`
-          )}&output=embed`}
-        />
-      </section>}
-
     </main>
   )
 }

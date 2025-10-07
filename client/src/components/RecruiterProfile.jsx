@@ -135,110 +135,23 @@ const RecruiterProfile = () => {
                             />
                         </div>
                         <hr />
-                        <div className="flex items-center justify-between bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm w-full max-w-sm">
-                            <span className="text-gray-800 dark:text-gray-200 font-medium text-sm">
-                                Is your business physical?
-                            </span>
 
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    className="sr-only peer"
-                                    checked={formData?.isPhysical}
-                                    onChange={(e) =>
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            isPhysical: e.target.checked,
-                                        }))
-                                    }
-                                />
-
-                                <div
-                                    className="w-11 h-6 bg-gray-300 rounded-full peer peer-focus:outline-none peer-focus:ring-4 
-      peer-focus:ring-blue-200 dark:peer-focus:ring-blue-800 dark:bg-gray-600 
-      peer-checked:bg-blue-600 transition-colors duration-300"
-                                ></div>
-
-                                <div
-                                    className="absolute left-[2px] top-[2px] bg-white h-5 w-5 rounded-full 
-      border border-gray-300 dark:border-gray-500 transition-transform duration-300 
-      peer-checked:translate-x-full"
-                                ></div>
-                            </label>
-                        </div>
-
-                        <hr />
-
-                        <h3>What's In Your Mind</h3>
+                        <h3>Add Your Tagline</h3>
                         <div className='space-y-2'>
                             <label className="flex items-center gap-2 font-medium text-gray-700">
                                 <Briefcase className='w-4 h-4 text-gray-500' />
-                                Headline
+                                Tagline
                             </label>
                             <input
                                 type="text"
-                                name="headline"
-                                value={formData.headline}
+                                name="tagline"
+                                value={formData.tagline}
                                 onChange={handleChange}
-                                placeholder={userData?.headline || "e.g, Web Developer"}
+                                placeholder={userData?.tagline || "e.g, Your Satisfaction our priority"}
                                 className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
                             />
                         </div>
 
-                        <hr className="mt-2" />
-                        <h2 className="flex items-center gap-2 text-lg font-semibold text-blue-600">
-                            <MapPin className='w-5 h-5' />
-                            Location
-                        </h2>
-
-                        <div className='flex flex-col gap-4'>
-                            <div className='space-y-2'>
-                                <label className="font-medium text-gray-700">Address</label>
-                                <input
-                                    type="text"
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleChange}
-                                    placeholder={userData?.address || "e.g, Block A New London"}
-                                    className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
-                                />
-                            </div>
-
-                            <LocationSelector
-                                selectedCountry={formData.country}
-                                selectedCity={formData.city}
-                                onCountryChange={(country) => setFormData(prev => ({ ...prev, country }))}
-                                onCityChange={(city) => setFormData(prev => ({ ...prev, city }))}
-                            />
-
-                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                                <div className='space-y-2'>
-                                    <label className="font-medium text-gray-700">State/Province</label>
-                                    <input
-                                        type="text"
-                                        name="state"
-                                        value={formData.state}
-                                        onChange={handleChange}
-                                        placeholder={userData?.state || "e.g, Punjab"}
-                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
-                                    />
-                                </div>
-
-                                <div className='space-y-2'>
-                                    <label className="font-medium text-gray-700">Postal Code</label>
-                                    <input
-                                        type="text"
-                                        name="postal"
-                                        value={formData.postal}
-                                        onChange={handleChange}
-                                        placeholder={userData?.postal || "e.g, 12345"}
-                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr className="mt-2" />
                         <h2 className="flex items-center gap-2 text-lg font-semibold text-blue-600">
                             Company Information
                         </h2>
@@ -295,6 +208,60 @@ const RecruiterProfile = () => {
 
                         <hr className="mt-2" />
                         <h2 className="flex items-center gap-2 text-lg font-semibold text-blue-600">
+                            <MapPin className='w-5 h-5' />
+                            Location
+                        </h2>
+
+                        <div className='flex flex-col gap-4'>
+                            <div className='space-y-2'>
+                                <label className="font-medium text-gray-700">Address</label>
+                                <input
+                                    type="text"
+                                    name="address"
+                                    value={formData.address}
+                                    onChange={handleChange}
+                                    placeholder={userData?.address || "e.g, Block A New London"}
+                                    className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                />
+                            </div>
+
+                            <LocationSelector
+                                selectedCountry={formData.country}
+                                selectedCity={formData.city}
+                                onCountryChange={(country) => setFormData(prev => ({ ...prev, country }))}
+                                onCityChange={(city) => setFormData(prev => ({ ...prev, city }))}
+                            />
+
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                                <div className='space-y-2'>
+                                    <label className="font-medium text-gray-700">State/Province</label>
+                                    <input
+                                        type="text"
+                                        name="state"
+                                        value={formData.state}
+                                        onChange={handleChange}
+                                        placeholder={userData?.state || "e.g, Punjab"}
+                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                    />
+                                </div>
+
+                                <div className='space-y-2'>
+                                    <label className="font-medium text-gray-700">Postal Code</label>
+                                    <input
+                                        type="text"
+                                        name="postal"
+                                        value={formData.postal}
+                                        onChange={handleChange}
+                                        placeholder={userData?.postal || "e.g, 12345"}
+                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr className="mt-2" />
+
+                        <h2 className="flex items-center gap-2 text-lg font-semibold text-blue-600">
                             <FileText className="w-5 h-5" />
                             About
                         </h2>
@@ -345,6 +312,21 @@ const RecruiterProfile = () => {
                                     <Camera size={20} className="text-white text-base" />
                                 </label>
                             </div>
+                        </div>
+
+                        <div>
+                            <iframe
+                                width="100%"
+                                height="350"
+                                style={{ border: 0 }}
+                                loading="lazy"
+                                className='rounded-2xl shadow-lg'
+                                allowFullScreen
+                                referrerPolicy="no-referrer-when-downgrade"
+                                src={`https://www.google.com/maps?q=${encodeURIComponent(
+                                    `${formData?.address} ${formData?.postal} ${formData?.city} ${formData?.country}`
+                                )}&output=embed`}
+                            />
                         </div>
                     </div>
                 </div>
