@@ -10,6 +10,7 @@ import LocationSelector from './LocationSelector';
 
 const MyProfile = () => {
     const { userData, backendUrl, setUserData, profileScore } = useContext(AppContext);
+    const [currentSkill, setCurrentSkill] = useState("");
 
     const [formData, setFormData] = useState({
         name: userData.name || "",
@@ -34,7 +35,7 @@ const MyProfile = () => {
     // ---------- Update Profile ----------
     const updateProfile = async (e) => {
         if (!formData?.portfolio?.includes("http") && formData?.portfolio) {
-         return toast.error("Please add a vlaid portfolio link")   
+            return toast.error("Please add a vlaid portfolio link")
         }
         if (!formData?.name) {
             return toast.error("Name is Required")
@@ -249,15 +250,16 @@ const MyProfile = () => {
                             <input
                                 type="text"
                                 name="skills"
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Tab' || e.key === 'Enter') {
+                                value={currentSkill}
+                                onChange={(e) => setCurrentSkill(e.target.value)}
+                                onKeyUp={(e) => {
+                                    if (e.key === "Enter" && currentSkill.trim() !== "") {
                                         e.preventDefault();
-                                        if (formData?.skills?.includes(e.target.value)) return toast.error('Skill already exists')
-                                        
                                         setFormData((prev) => ({
                                             ...prev,
-                                            skills: [...prev.skills, e.target.value.trim()],
+                                            skills: [...(prev.skills || []), currentSkill.trim()],
                                         }));
+                                        setCurrentSkill(""); // ✅ clears input after adding
                                     }
                                 }}
                                 placeholder="e.g., Web Development, Graphic Design"
