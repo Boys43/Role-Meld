@@ -39,6 +39,12 @@ const RecruiterProfile = () => {
 
     // ---------- Update Profile ----------
     const updateProfile = async (e) => {
+        if (!formData.name) {
+            return toast.error("Name is required")
+        }
+        if (!formData.website.includes("http")) {
+            return toast.error("Enter a Valid Website Url")
+        }
         e.preventDefault();
         try {
             const { data } = await axios.post(`${backendUrl}/api/user/updateprofile`, {
