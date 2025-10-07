@@ -14,7 +14,7 @@ const RecruiterJobs = () => {
     const [jobs, setJobs] = useState([]);
     const getJobs = async () => {
         try {
-            const { data } = await axios.post(`${backendUrl}/api/jobs/getcompanyjobs`, { company: userData.company });
+            const { data } = await axios.post(`${backendUrl}/api/jobs/getcompanyjobsbyid`, { id: userData.authId });
             if (data.success) {
                 setJobs(data.companyJobs);
             }

@@ -294,6 +294,8 @@ export const getCompanyJobsById = async (req, res) => {
     try {
         const companyJobs = await jobsModel.find({ postedBy: id, isActive: true });
 
+        console.log(companyJobs);
+
         if (!companyJobs || companyJobs.length <= 0) {
             return res.json({ success: false, message: "No Jobs Found" });
         }

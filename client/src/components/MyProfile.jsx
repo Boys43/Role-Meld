@@ -1,18 +1,12 @@
 import axios from 'axios';
-import React from 'react'
 import { useContext } from 'react';
-import { FaLocationDot } from "react-icons/fa6";
-import { HiOutlinePencilSquare } from "react-icons/hi2";
-import { IoMdMail } from "react-icons/io";
 import { AppContext } from '../context/AppContext';
-import { MdCancel } from 'react-icons/md';
 import { useState } from 'react';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { FaCamera } from 'react-icons/fa';
 import { User, Phone, Link, MapPin, Briefcase, Save } from 'lucide-react'
+import LocationSelector from './LocationSelector';
 
 const MyProfile = () => {
     const { userData, backendUrl, setUserData, profileScore } = useContext(AppContext);
@@ -46,7 +40,6 @@ const MyProfile = () => {
             if (data.success) {
                 setUserData(data.profile);
                 toast.success(data.message);
-                setUpdatePopUpState("hidden");
             } else {
                 toast.error(data.message);
             }
@@ -178,8 +171,8 @@ const MyProfile = () => {
                                 />
                             </div>
 
-                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                                <div className='space-y-2'>
+                            <div className='flex items-center'>
+                                {/* <div className='space-y-2'>
                                     <label className="font-medium text-gray-700">City</label>
                                     <input
                                         type="text"
@@ -189,19 +182,26 @@ const MyProfile = () => {
                                         onChange={handleChange}
                                         className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
                                     />
-                                </div>
+                                </div> */}
 
-                                <div className='space-y-2'>
-                                    <label className="font-medium text-gray-700">Postal Code</label>
-                                    <input
-                                        type="text"
-                                        name="postal"
-                                        value={formData.postal}
-                                        onChange={handleChange}
-                                        placeholder={userData?.postal || "e.g, 12345"}
-                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
-                                    />
-                                </div>
+                                <LocationSelector
+                                    selectedCountry={formData.country}
+                                    selectedCity={formData.city}
+                                    onCountryChange={(country) => setFormData(prev => ({ ...prev, country }))}
+                                    onCityChange={(city) => setFormData(prev => ({ ...prev, city }))}
+                                />
+
+                            </div>
+                            <div className='space-y-2'>
+                                <label className="font-medium text-gray-700">Postal Code</label>
+                                <input
+                                    type="text"
+                                    name="postal"
+                                    value={formData.postal}
+                                    onChange={handleChange}
+                                    placeholder={userData?.postal || "e.g, 12345"}
+                                    className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                />
                             </div>
                         </div>
 
@@ -288,9 +288,9 @@ const MyProfile = () => {
                             </div>
 
                             <div className={`p-4 shadow-md bg-gradient-to-br ${profileScore <= 25 ? 'from-red-50 to-red-100 border-red-300' :
-                                    profileScore <= 50 ? 'from-orange-50 to-orange-100 border-orange-300' :
-                                        profileScore <= 75 ? 'from-yellow-50 to-yellow-100 border-yellow-300' :
-                                            'from-green-50 to-green-100 border-green-300'
+                                profileScore <= 50 ? 'from-orange-50 to-orange-100 border-orange-300' :
+                                    profileScore <= 75 ? 'from-yellow-50 to-yellow-100 border-yellow-300' :
+                                        'from-green-50 to-green-100 border-green-300'
                                 } rounded-lg border-2 w-full text-center text-gray-700`}>
                                 {profileScore === 100 && (
                                     <span className='font-semibold mr-1 block mb-1'>
@@ -298,9 +298,9 @@ const MyProfile = () => {
                                     </span>
                                 )}
                                 <p>Profile Completion: <span className={`font-bold text-xl ${profileScore <= 25 ? 'text-red-500' :
-                                        profileScore <= 50 ? 'text-orange-500' :
-                                            profileScore <= 75 ? 'text-yellow-600' :
-                                                'text-green-500'
+                                    profileScore <= 50 ? 'text-orange-500' :
+                                        profileScore <= 75 ? 'text-yellow-600' :
+                                            'text-green-500'
                                     }`}>{profileScore}%</span></p>
                             </div>
                         </div>
