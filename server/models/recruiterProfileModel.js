@@ -2,13 +2,15 @@ import mongoose from "mongoose";
 
 const recruiterProfileSchema = new mongoose.Schema({
   authId: { type: mongoose.Schema.Types.ObjectId, ref: "Auth", required: true },
+  isActive: { type: Boolean, default: true },
   name: { type: String, default: '' },
   tagline: { type: String, default: '' },
   email: { type: String, default: '' },
-  company: { type: String, default: 'Individual' },
-  members: { type: Number, default: 1 },
+  company: { type: String, default: '' },
+  isCompany: { type: Boolean, default: false },
+  // members: { type: String, default: '0-50', enum: ['0-50', '50-100', '100-500', '500-1000', '1000+'] },
   website: { type: String, default: "" },
-  role: { type: String, default: "user" }, // applicant, recruiter
+  role: { type: String, default: "user" },
   profilePicture: { type: String, default: "" },
   banner: { type: String, default: "" },
   city: { type: String, default: "" },

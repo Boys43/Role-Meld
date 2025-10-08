@@ -12,7 +12,9 @@ const jobsSchema = new mongoose.Schema({
   },
   location: {
     type: String,
-    required: function () { return this.locationType === "on-site" || this.locationType === "hybrid"; }
+    required: function () { 
+      return this.locationType === "on-site" || this.locationType === "hybrid"; 
+    }
   },
 
   // Job Type
@@ -22,20 +24,22 @@ const jobsSchema = new mongoose.Schema({
     required: true
   },
   hoursPerWeek: { type: Number, required: function () { return this.jobType === "full-time"; } },
-  shift: { type: String, required: function () { return this.jobType === "part-time"; } }, // e.g., morning, evening, night
-  contractDuration: { type: String, required: function () { return this.jobType === "contract"; } }, // e.g., "6 months"
-  internshipDuration: { type: String }, // Optional for internships
-  temporaryDuration: { type: String }, // Optional for temporary jobs
+  shift: { type: String, required: function () { return this.jobType === "part-time"; } },
+  contractDuration: { type: String, required: function () { return this.jobType === "contract"; } },
+  internshipDuration: { type: String },
+  temporaryDuration: { type: String },
 
   // Salary
-  minSalary: { type: Number, required: true },
-  maxSalary: { type: Number, required: true },
+  salaryType: { type: String, enum: ["fixed", "range"], default: "fixed"},
+  fixedSalary: { type: Number, required: function () { return this.salaryType === "fixed"; }},
+  minSalary: { type: Number, default: 0 },
+  maxSalary: { type: Number, default: 0},
 
   // Job Description & Requirements
-  responsibilities: { type: String }, // Optional but recommended
-  qualifications: { type: [String], required: true }, // Required skills/qualifications
+  responsibilities: { type: [String] },
+  qualifications: { type: [String], required: true },
   skills: { type: [String], required: true },
-  experience: { type: String, required: true }, // e.g., "2+ years"
+  experience: { type: String, enum: ["6 Months - 1 Year", "1 Year - 2 Years", "2 Years - 3 Years", "3 Years - 4 Years", "4 Years - 5 Years", "5 Years+"], required: true },
 
   // Company & recruiter
   company: { type: String, required: true },
@@ -50,16 +54,11 @@ const jobsSchema = new mongoose.Schema({
   applicationDeadline: { type: Date, required: true },
   applicationMethod: {
     type: String,
-    enum: ["platform", "external"],
+    enum: ["easy", "external"],
     required: true,
-    default: "platform"
+    default: "easy"
   },
-  resumeRequirement: { type: Boolean, default: false }, // Yes/No for resume requirement
-  screeningQuestions: [{
-    question: { type: String },
-    type: { type: String, enum: ["text", "multiple-choice"] },
-    options: [String] // For multiple-choice questions
-  }],
+  resumeRequirement: { type: Boolean, default: false },
   applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: "userProfile" }],
 
   // Payment for featured jobs
@@ -70,17 +69,36 @@ const jobsSchema = new mongoose.Schema({
   cvv: { type: Number, default: null },
 
   // Extra optional fields
-  perks: { type: [String], default: [] }, // e.g., ["Health Insurance", "Gym"]
-  benefits: { type: [String], default: [] }, // e.g., ["Paid Vacation", "401k"]
-  education: { type: String }, // e.g., "Bachelor's Degree"
-  remoteOption: { type: Boolean, default: function () { return this.locationType === "remote"; } },
-  applyLink: { type: String, required: function () { return this.applicationMethod === "external"; } }, // Required if external application method
+  perks: { type: [String], default: [] },
+  benefits: { type: [String], default: [] },
+  education: { type: String },
+  remoteOption: { 
+    type: Boolean, 
+    default: function () { return this.locationType === "remote"; } 
+  },
+  applyLink: { 
+    type: String, 
+    required: function () { return this.applicationMethod === "external"; } 
+  },
 
   // Status
-  approved: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
-  isActive: { type: Boolean, default: true },
+  approved: {
+    type: String,
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
 
 }, { timestamps: true });
+
+// ✅ Auto-set isActive based on approved status
+jobsSchema.pre("save", function (next) {
+  this.isActive = this.approved === "approved";
+  next();
+});
 
 const jobsModel = mongoose.models?.Jobs || mongoose.model("Jobs", jobsSchema);
 export default jobsModel;

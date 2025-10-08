@@ -176,7 +176,7 @@ export const getApprovedJobs = async (req, res) => {
 
 export const getPendingJobs = async (req, res) => {
     try {
-        const jobs = await jobsModel.find({ approved: "pending", isActive: true });
+        const jobs = await jobsModel.find({ approved: "pending" });
         return res.json({ success: true, jobs });
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -292,7 +292,7 @@ export const getCompanyJobsById = async (req, res) => {
     }
 
     try {
-        const companyJobs = await jobsModel.find({ postedBy: id, isActive: true });
+        const companyJobs = await jobsModel.find({ postedBy: id});
 
         console.log(companyJobs);
 

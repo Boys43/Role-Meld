@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 import { useContext, useEffect, useState, Suspense, lazy } from "react";
 import axios from "axios";
 import AOS from "aos";
@@ -90,7 +90,19 @@ const App = () => {
   return (
 
     <>
-      <ToastContainer />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
       <Suspense fallback={<Loading />}>
         <Navbar />
         <Routes>

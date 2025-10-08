@@ -8,37 +8,9 @@ import { ProgressBar } from "react-step-progress-bar";
 import { AnimatePresence, motion } from "framer-motion";
 
 // React Icons
-import { MdSubtitles } from "react-icons/md";
 import { IoChevronBack } from "react-icons/io5";
 import JobCard from "./JobCard";
-
-// Categories & subcategories
-// const categories = {
-//   "IT & Software": [
-//     "Frontend Developer", "Backend Developer", "Full Stack Developer", "Mobile App Developer",
-//     "UI/UX Designer", "Data Scientist", "AI / ML Engineer", "DevOps Engineer", "QA / Tester",
-//   ],
-//   "Digital Marketing": [
-//     "SEO Specialist", "Content Marketing", "Social Media Marketing", "Email Marketing",
-//     "PPC / Ads", "Affiliate Marketing",
-//   ],
-//   "Design & Creative": [
-//     "Graphic Designer", "Illustrator", "Animator", "Product Designer", "Presentation Designer",
-//   ],
-//   "Finance & Accounting": [
-//     "Accountant", "Bookkeeper", "Financial Analyst", "Tax Consultant", "Audit & Compliance",
-//   ],
-//   "Human Resources": [
-//     "HR Manager", "Recruiter", "Training & Development", "Virtual Assistant",
-//   ],
-//   "Sales & Business Development": [
-//     "Sales Executive", "Business Development Manager", "Account Manager", "Lead Generation",
-//   ],
-//   "Engineering & Architecture": [
-//     "Civil Engineer", "Mechanical Engineer", "Electrical Engineer", "Architect", "Project Manager",
-//   ],
-// };
-
+import { debounce } from "lodash";
 // Motion variants for sliding animation
 const variants = {
   enter: (direction) => ({ x: direction > 0 ? 300 : -300, opacity: 0 }),
@@ -48,7 +20,17 @@ const variants = {
 
 const JobForm = ({ setActiveTab }) => {
   const { backendUrl, userData } = useContext(AppContext);
+  const [currentRes, setCurrentRes] = useState('')
+  const [currentSkill, setCurrentSkill] = useState('')
   const editor = useRef(null);
+
+
+  const handleEditorChange = useRef(
+    debounce((content) => {
+      setJobData((prev) => ({ ...prev, description: content }));
+    }, 500)
+  ).current;
+
 
   // Remove the static categories object
 
@@ -81,7 +63,7 @@ const JobForm = ({ setActiveTab }) => {
   const [jobSteps, setJobSteps] = useState(0);
   const [direction, setDirection] = useState(0);
 
-  const totalSteps = 10;
+  const totalSteps = 9;
 
   const handleJobChange = (e) => {
     const { name, value } = e.target;
@@ -109,22 +91,7 @@ const JobForm = ({ setActiveTab }) => {
 
   const postJob = async () => {
     try {
-      // Process form data before sending
-      const processedJobData = {
-        ...jobData,
-        skills: typeof jobData.skills === 'string' ? jobData.skills.split(',').map(s => s.trim()) : jobData.skills,
-        qualifications: typeof jobData.qualifications === 'string' ? jobData.qualifications.split(',').map(s => s.trim()) : jobData.qualifications,
-        benefits: typeof jobData.benefits === 'string' ? jobData.benefits.split(',').map(s => s.trim()) : jobData.benefits,
-        perks: typeof jobData.perks === 'string' ? jobData.perks.split(',').map(s => s.trim()) : jobData.perks,
-        applicationDeadline: new Date(Date.now() + (jobData.applicationDeadline * 24 * 60 * 60 * 1000)),
-        minSalary: Number(jobData.minSalary),
-        maxSalary: Number(jobData.maxSalary),
-        hoursPerWeek: jobData.hoursPerWeek ? Number(jobData.hoursPerWeek) : undefined,
-        resumeRequirement: jobData.resumeRequirement === 'true',
-        sponsored: jobData.sponsored === 'true'
-      };
-
-      const { data } = await axios.post(`${backendUrl}/api/jobs/addjob`, { jobData: processedJobData, userId: userData._id });
+      const { data } = await axios.post(`${backendUrl}/api/jobs/addjob`, { jobData, userId: userData._id });
       if (data.success) {
         toast.success(data.message);
         setJobData({});
@@ -182,7 +149,7 @@ const JobForm = ({ setActiveTab }) => {
             {jobSteps === 0 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
                 <h2 className="font-semibold text-lg mb-4">Step 1: Job Title & Company</h2>
-                
+
                 {/* Job Title */}
                 <div className="flex flex-col mt-2">
                   <label htmlFor="title" className="font-medium">Job Title *</label>
@@ -197,19 +164,51 @@ const JobForm = ({ setActiveTab }) => {
                   />
                 </div>
 
-                {/* Company Name */}
+                {/* Location Type */}
                 <div className="flex flex-col mt-4">
-                  <label htmlFor="company" className="font-medium">Company Name *</label>
-                  <input
-                    type="text"
-                    name="company"
-                    required
-                    value={jobData.company || userData.company || ""}
-                    onChange={handleJobChange}
-                    className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
-                    placeholder="Company Name"
-                  />
+                  <label className="font-medium mb-1">Location Type *</label>
+                  <div className="relative">
+                    <select
+                      name="locationType"
+                      required
+                      value={jobData.locationType || ""}
+                      onChange={handleJobChange}
+                      className="py-2.5 px-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 appearance-none bg-white cursor-pointer transition duration-200"
+                    >
+                      <option value="">Select Location Type</option>
+                      <option value="remote">🌍 Remote</option>
+                      <option value="on-site">🏢 On-site</option>
+                      <option value="hybrid">⚙️ Hybrid</option>
+                    </select>
+
+                    {/* Custom dropdown arrow */}
+                    <svg
+                      className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
                 </div>
+
+
+                {/* Location (conditional) */}
+                {(jobData.locationType === "on-site" || jobData.locationType === "hybrid") && (
+                  <div data-aos="fade-up" className="flex flex-col mt-4">
+                    <label htmlFor="location" className="font-medium">Location *</label>
+                    <input
+                      type="text"
+                      name="location"
+                      required
+                      value={jobData.location || ""}
+                      onChange={handleJobChange}
+                      className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
+                      placeholder="City, State/Country"
+                    />
+                  </div>
+                )}
 
                 <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
                   onClick={() => {
@@ -229,41 +228,8 @@ const JobForm = ({ setActiveTab }) => {
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
                 <h2 className="font-semibold text-lg mb-4">Step 2: Location & Job Type</h2>
 
-                {/* Location Type */}
-                <div className="flex flex-col mt-4">
-                  <label className="font-medium">Location Type *</label>
-                  <select
-                    name="locationType"
-                    required
-                    value={jobData.locationType || ""}
-                    onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                  >
-                    <option value="">Select Location Type</option>
-                    <option value="remote">Remote</option>
-                    <option value="on-site">On-site</option>
-                    <option value="hybrid">Hybrid</option>
-                  </select>
-                </div>
-
-                {/* Location (conditional) */}
-                {(jobData.locationType === "on-site" || jobData.locationType === "hybrid") && (
-                  <div className="flex flex-col mt-4">
-                    <label htmlFor="location" className="font-medium">Location *</label>
-                    <input
-                      type="text"
-                      name="location"
-                      required
-                      value={jobData.location || ""}
-                      onChange={handleJobChange}
-                      className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
-                      placeholder="City, State/Country"
-                    />
-                  </div>
-                )}
-
                 {/* Job Type */}
-                <div className="flex flex-col mt-4">
+                <div className="flex flex-col my-6">
                   <label className="font-medium">Job Type *</label>
                   <select
                     name="jobType"
@@ -280,63 +246,6 @@ const JobForm = ({ setActiveTab }) => {
                     <option value="temporary">Temporary</option>
                   </select>
                 </div>
-
-                <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
-                  onClick={() => {
-                    const requiredFields = ['locationType', 'jobType'];
-                    const locationRequired = jobData.locationType === 'on-site' || jobData.locationType === 'hybrid';
-                    if (locationRequired) requiredFields.push('location');
-                    
-                    const missingFields = requiredFields.filter(field => !jobData[field]);
-                    if (missingFields.length > 0) {
-                      toast.error("Please fill all required fields");
-                    } else {
-                      nextStep();
-                    }
-                  }}>
-                  Next
-                </button>
-              </motion.div>
-            )}
-
-            {/* Step 2: Job Type Specifics & Categories */}
-            {jobSteps === 2 && (
-              <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
-                <h2 className="font-semibold text-lg mb-4">Step 3: Job Type Specifics & Categories</h2>
-
-                {/* Job Category */}
-                <div className="flex flex-col mb-4">
-                  <label className="font-medium">Job Category</label>
-                  <select
-                    name="category"
-                    value={jobData.category || ""}
-                    onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                  >
-                    <option value="">--- Select Category ---</option>
-                    {categories.map((cat) => (
-                      <option key={cat.name} value={cat.name}>{cat.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Sub Category */}
-                {jobData.category && (
-                  <div className="flex flex-col mb-4">
-                    <label className="font-medium">Sub Category</label>
-                    <select
-                      name="subCategory"
-                      value={jobData.subCategory || ""}
-                      onChange={handleJobChange}
-                      className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                    >
-                      <option value="">Select Sub Category</option>
-                      {subCategories.map((sub) => (
-                        <option key={sub} value={sub}>{sub}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
 
                 {/* Conditional fields based on Job Type */}
                 {jobData.jobType === "full-time" && (
@@ -419,6 +328,62 @@ const JobForm = ({ setActiveTab }) => {
 
                 <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
                   onClick={() => {
+                    const requiredFields = ['locationType', 'jobType'];
+                    const locationRequired = jobData.locationType === 'on-site' || jobData.locationType === 'hybrid';
+                    if (locationRequired) requiredFields.push('location');
+
+                    const missingFields = requiredFields.filter(field => !jobData[field]);
+                    if (missingFields.length > 0) {
+                      toast.error("Please fill all required fields");
+                    } else {
+                      nextStep();
+                    }
+                  }}>
+                  Next
+                </button>
+              </motion.div>
+            )}
+
+            {/* Step 2: Job Type Specifics & Categories */}
+            {jobSteps === 2 && (
+              <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
+                <h2 className="font-semibold text-lg mb-4">Step 3: Job Type Specifics & Categories</h2>
+
+                {/* Job Category */}
+                <div className="flex flex-col mb-4">
+                  <label className="font-medium">Job Category</label>
+                  <select
+                    name="category"
+                    value={jobData.category || ""}
+                    onChange={handleJobChange}
+                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                  >
+                    <option value="">--- Select Category ---</option>
+                    {categories.map((cat) => (
+                      <option key={cat.name} value={cat.name}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Sub Category */}
+                {jobData.category && (
+                  <div className="flex flex-col mb-4">
+                    <label className="font-medium">Sub Category</label>
+                    <select
+                      name="subCategory"
+                      value={jobData.subCategory || ""}
+                      onChange={handleJobChange}
+                      className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                    >
+                      <option value="">Select Sub Category</option>
+                      {subCategories.map((sub) => (
+                        <option key={sub} value={sub}>{sub}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
+                  onClick={() => {
                     let isValid = true;
                     let errorMessage = "";
 
@@ -446,68 +411,147 @@ const JobForm = ({ setActiveTab }) => {
 
             {/* Step 3: Salary Range */}
             {jobSteps === 3 && (
-              <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
-                <h2 className="font-semibold text-lg mb-4">Step 4: Salary Range</h2>
-                
-                {/* Salary Range */}
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  <div className="flex flex-col">
-                    <label htmlFor="minSalary" className="font-medium">Min Salary (USD)</label>
-                    <input
-                      type="number"
-                      name="minSalary"
-                      value={jobData.minSalary || ""}
-                      onChange={handleJobChange}
-                      className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
-                      placeholder="50000"
-                    />
+              <motion.div
+                key={jobSteps}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.4 }}
+              >
+                <h2 className="font-semibold text-lg mb-4">Step 4: Salary</h2>
+
+                {/* Salary Type */}
+                <div className="flex flex-col mb-4">
+                  <label htmlFor="salaryType" className="font-medium">Salary Type *</label>
+                  <select
+                    name="salaryType"
+                    value={jobData.salaryType || ""}
+                    onChange={handleJobChange}
+                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-[var(--primary-color)]"
+                  >
+                    <option value="">--- Choose Salary Type ---</option>
+                    <option value="fixed">Fixed</option>
+                    <option value="range">Range</option>
+                  </select>
+                </div>
+
+                {/* Salary Inputs */}
+                {jobData?.salaryType === "range" && (
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div className="flex flex-col">
+                      <label htmlFor="minSalary" className="font-medium">Min Salary (USD)</label>
+                      <input
+                        type="number"
+                        name="minSalary"
+                        value={jobData.minSalary || ""}
+                        onChange={handleJobChange}
+                        className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all"
+                        placeholder="50000"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label htmlFor="maxSalary" className="font-medium">Max Salary (USD)</label>
+                      <input
+                        type="number"
+                        name="maxSalary"
+                        value={jobData.maxSalary || ""}
+                        onChange={handleJobChange}
+                        className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all"
+                        placeholder="80000"
+                      />
+                    </div>
                   </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="maxSalary" className="font-medium">Max Salary (USD)</label>
+                )}
+
+                {jobData?.salaryType === "fixed" && (
+                  <div className="flex flex-col mt-4">
+                    <label htmlFor="fixedSalary" className="font-medium">Salary (USD)</label>
                     <input
                       type="number"
-                      name="maxSalary"
-                      value={jobData.maxSalary || ""}
+                      name="fixedSalary"
+                      value={jobData.fixedSalary || ""}
                       onChange={handleJobChange}
-                      className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
+                      className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all"
                       placeholder="80000"
                     />
                   </div>
-                </div>
+                )}
 
-                <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
+                {/* Next Button with validation */}
+                <button
+                  type="button"
+                  className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded transition-all hover:opacity-90"
                   onClick={() => {
-                    if (jobData.maxSalary && jobData.minSalary && Number(jobData.maxSalary) <= Number(jobData.minSalary)) {
-                      toast.error("Max salary must be greater than min salary");
-                    } else {
-                      nextStep();
+                    const { salaryType, minSalary, maxSalary, fixedSalary } = jobData;
+
+                    // Check if salary type selected
+                    if (!salaryType) {
+                      toast.error("Please select a salary type");
+                      return;
                     }
-                  }}>
+
+                    // If range type
+                    if (salaryType === "range") {
+                      if (!minSalary || !maxSalary) {
+                        toast.error("Please fill both minimum and maximum salary");
+                        return;
+                      }
+                      if (Number(maxSalary) <= Number(minSalary)) {
+                        toast.error("Max salary must be greater than min salary");
+                        return;
+                      }
+                    }
+
+                    // If fixed type
+                    if (salaryType === "fixed" && !fixedSalary) {
+                      toast.error("Please enter a salary amount");
+                      return;
+                    }
+
+                    nextStep();
+                  }}
+                >
                   Next
                 </button>
               </motion.div>
             )}
 
+
             {/* Step 4: Job Description */}
             {jobSteps === 4 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
                 <h2 className="font-semibold text-lg mb-4">Step 5: Job Description</h2>
-                
+
                 {/* Job Description */}
                 <div className="mb-4">
                   <label className="font-medium mb-2 block">Job Description *</label>
                   <JoditEditor
                     ref={editor}
-                    defaultValue={jobData.description || ""}
+                    value={jobData.description || ""}
                     config={{
                       readonly: false,
                       height: 300,
                       uploader: { insertImageAsBase64URI: true },
-                      buttons: ["bold", "italic", "|", "paragraph", "h1", "h2", "h3", "|", "link", "image", "blockquote"],
+                      buttons: [
+                        "bold",
+                        "italic",
+                        "|",
+                        "paragraph",
+                        "h1",
+                        "h2",
+                        "h3",
+                        "|",
+                        "link",
+                        "image",
+                        "blockquote",
+                      ],
                       toolbarAdaptive: false,
                     }}
-                    onBlur={(newContent) => setJobData((prev) => ({ ...prev, description: newContent }))}
+                    onChange={handleEditorChange}
                   />
+
                 </div>
 
                 <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
@@ -544,16 +588,44 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Experience */}
                 <div className="flex flex-col mb-4">
-                  <label htmlFor="experience" className="font-medium">Experience Required *</label>
-                  <input
-                    type="text"
+                  <label htmlFor="experience" className="font-medium">Experience</label>
+                  <select
                     name="experience"
-                    required
                     value={jobData.experience || ""}
                     onChange={handleJobChange}
-                    className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
-                    placeholder="e.g., 2+ years, Entry level, Senior level"
-                  />
+                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                  >
+                    <option value="">Select Experience</option>
+                    <option value="6 Months - 1 Year">6 Months - 1 Year</option>
+                    <option value="1 Year - 2 Years">1 Year - 2 Years</option>
+                    <option value="2 Years - 3 Years">2 Years - 3 Years</option>
+                    <option value="3 Years - 4 Years">3 Years - 4 Years</option>
+                    <option value="4 Years - 5 Years">4 Years - 5 Years</option>
+                    <option value="5 Years+">5 Years+</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {jobData?.skills?.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="flex items-center gap-2 px-3 py-1 text-sm font-medium text-[var(--primary-color)] bg-[var(--primary-color)]/10 border border-[var(--primary-color)] rounded-full hover:bg-[var(--primary-color)] hover:text-white transition-all cursor-pointer group"
+                    >
+                      {skill}
+                      <span
+                        type="button"
+                        onClick={() =>
+                          setJobData((prev) => ({
+                            ...prev,
+                            skills: prev.skills.filter((_, i) => i !== index),
+                          }))
+                        }
+                        className="text-[var(--primary-color)] group-hover:text-white focus:outline-none"
+                      >
+                        ✕
+                      </span>
+                    </span>
+                  ))}
                 </div>
 
                 {/* Skills */}
@@ -563,21 +635,40 @@ const JobForm = ({ setActiveTab }) => {
                     type="text"
                     name="skills"
                     required
-                    value={jobData.skills || ""}
-                    onChange={handleJobChange}
-                    className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
+                    value={currentSkill}
+                    onChange={(e) => setCurrentSkill(e.target.value)}
+                    onKeyUp={(e) => {
+                      if (e.key === "Enter" && currentSkill.trim() !== "") {
+                        e.preventDefault();
+                        setFormData((prev) => ({
+                          ...prev,
+                          skills: [...(prev.skills || []), currentSkill.trim()],
+                        }));
+                        setCurrentSkill(""); // ✅ clears input after adding
+                      }
+                    }}
+                    className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all outline-none"
                     placeholder="Enter skills (comma separated), e.g., JavaScript, React, Node.js"
                   />
                 </div>
 
                 <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
                   onClick={() => {
-                    if (!jobData.qualifications || !jobData.experience || !jobData.skills) {
+                    const { qualifications, experience, skills } = jobData;
+
+                    if (
+                      !qualifications?.trim() ||
+                      !experience?.trim() ||
+                      !skills ||
+                      skills.length === 0
+                    ) {
                       toast.error("Please fill all required fields");
-                    } else {
-                      nextStep();
+                      return;
                     }
-                  }}>
+
+                    nextStep();
+                  }}
+                >
                   Next
                 </button>
               </motion.div>
@@ -590,11 +681,30 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Responsibilities */}
                 <div className="flex flex-col mb-4">
+                  <div className="p-4 border border-gray-300 rounded-md mb-2">
+                    <ul className="list-disc list-inside">
+                      {jobData?.responsibilities?.map((res, index) => (
+                        <li key={index}>
+                          {res}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                   <label htmlFor="responsibilities" className="font-medium">Responsibilities (Optional but recommended)</label>
                   <textarea
                     name="responsibilities"
-                    value={jobData.responsibilities || ""}
-                    onChange={handleJobChange}
+                    value={currentRes}
+                    onChange={(e) => currentRes(e.target.value)}
+                    onKeyUp={(e) => {
+                      if (e.key === "Enter" && currentRes.trim() !== "") {
+                        e.preventDefault();
+                        setFormData((prev) => ({
+                          ...prev,
+                          responsibilities: [...(prev.responsibilities || []), currentRes.trim()],
+                        }));
+                        currentRes(""); // ✅ clears input after adding
+                      }
+                    }}    
                     rows="4"
                     className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
                     placeholder="List key responsibilities and duties..."
@@ -665,7 +775,7 @@ const JobForm = ({ setActiveTab }) => {
                     onChange={handleJobChange}
                     className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
-                    <option value="platform">Apply via platform</option>
+                    <option value="easy">Easy Apply</option>
                     <option value="external">External link</option>
                   </select>
                 </div>
@@ -704,7 +814,7 @@ const JobForm = ({ setActiveTab }) => {
                   onClick={() => {
                     const requiredFields = ['applicationDeadline'];
                     if (jobData.applicationMethod === 'external') requiredFields.push('applyLink');
-                    
+
                     const missingFields = requiredFields.filter(field => !jobData[field]);
                     if (missingFields.length > 0) {
                       toast.error("Please fill all required fields");
@@ -717,54 +827,11 @@ const JobForm = ({ setActiveTab }) => {
               </motion.div>
             )}
 
-            {/* Step 8: Job Status & Moderation */}
+            {/* Step 9: Payment / Featured Job Fields */}
             {jobSteps === 8 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
-                <h2 className="font-semibold text-lg mb-4">Step 9: Job Status & Moderation</h2>
-
-                {/* Approved Status */}
-                <div className="flex flex-col mb-4">
-                  <label className="font-medium">Approval Status</label>
-                  <select
-                    name="approved"
-                    value={jobData.approved || "pending"}
-                    onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                    disabled
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
-                  </select>
-                  <small className="text-gray-500 mt-1">Jobs are automatically set to pending for admin review</small>
-                </div>
-
-                {/* Is Active */}
-                <div className="flex flex-col mb-4">
-                  <label className="font-medium">Job Status</label>
-                  <select
-                    name="isActive"
-                    value={jobData.isActive !== undefined ? jobData.isActive.toString() : "true"}
-                    onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                  >
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                  </select>
-                </div>
-
-                <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
-                  onClick={nextStep}>
-                  Next
-                </button>
-              </motion.div>
-            )}
-
-            {/* Step 9: Payment / Featured Job Fields */}
-            {jobSteps === 9 && (
-              <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
                 <h2 className="font-semibold text-lg mb-4">Step 10: Optional Payment / Featured Job Fields</h2>
-                
+
                 {/* Sponsored */}
                 <div className="flex flex-col mb-4">
                   <label htmlFor="sponsored" className="font-medium">Sponsored</label>
@@ -786,7 +853,6 @@ const JobForm = ({ setActiveTab }) => {
                 {jobData.sponsored === "true" && (
                   <div className="flex flex-col gap-4 p-4 border rounded-lg bg-gray-50">
                     <h3 className="font-medium">Payment Details</h3>
-                    
                     {/* Cardholder Name */}
                     <div>
                       <label htmlFor="cardName" className="block font-medium mb-1">
@@ -864,8 +930,8 @@ const JobForm = ({ setActiveTab }) => {
                   </div>
                 )}
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="w-full mt-6 bg-[var(--primary-color)] hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold transition"
                 >
                   {jobData.sponsored === "true" ? "Pay & Publish Job" : "Publish Job"}

@@ -19,6 +19,7 @@
     "dotenv": "^17.2.2",
     "framer-motion": "^12.23.21",
     "jodit-react": "^5.2.25",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
     "react-awesome-slider": "^4.1.0",
