@@ -7,7 +7,8 @@ const Search = ({ Param }) => {
   const location = useLocation()
 
   const [searchJob, setSearchJob] = useState('')
-  
+  const [searchLocation, setSearchLocation] = useState('')
+
   useEffect(() => {
     setSearchJob(Param ?? "");
   }, [Param]);
@@ -15,7 +16,11 @@ const Search = ({ Param }) => {
   const handleSubmit = (e) => {
     if (!searchJob.trim()) return;
     e.preventDefault();
-    navigate("/find-jobs?job=" + encodeURIComponent(searchJob));
+    let url = `/find-jobs?job=${encodeURIComponent(searchJob)}`;
+    if (searchLocation) {
+      url += `&location=${encodeURIComponent(searchLocation)}`;
+    }
+    navigate(url);
   };
 
   return (
@@ -38,6 +43,19 @@ const Search = ({ Param }) => {
             type="text"
             placeholder="Job title, keywords, or company"
           />
+          {
+            location.pathname === "/"
+            &&
+            <input
+              value={searchLocation}
+              required
+              onChange={(e) => setSearchLocation(e.target.value)}
+              className="border-3 border-transparent focus:border-[var(--primary-color)] 
+              focus:outline-none py-3 pl-14 rounded-2xl w-full transition-all"
+              type="text"
+              placeholder="City"
+            />
+          }
         </div>
         <div className="p-1">
           <button type="submit">

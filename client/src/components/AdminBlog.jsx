@@ -10,6 +10,7 @@ import axios from 'axios';
 import { AppContext } from '../context/AppContext';
 import BlogCard from './BlogCard';
 import { MdOutlinePreview } from "react-icons/md";
+import Img from './Image';
 
 const AdminBlog = ({ setActiveTab }) => {
   const { backendUrl } = useContext(AppContext);
@@ -49,7 +50,10 @@ const AdminBlog = ({ setActiveTab }) => {
     setFormData({ ...formData, tags: newTags });
   };
 
-  const createBlog = async () => {
+  const [blogPostLoading, setBlogPostLoading] = useState(false)
+  const createBlog = async (e) => {
+    e.preventDefault();
+    setBlogPostLoading(true)
     try {
       const fd = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
@@ -67,10 +71,11 @@ const AdminBlog = ({ setActiveTab }) => {
         setTags([]);
         setActiveTab("listed-blogs")
         setBlogSteps(0);
-
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong");
+    }finally{
+      setBlogPostLoading(false)
     }
   };
 
@@ -81,13 +86,13 @@ const AdminBlog = ({ setActiveTab }) => {
   };
 
   return (
-    <main className="w-full grid grid-cols-3 gap-4 p-6 overflow-x-hidden bg-gray-50">
-      <div className='col-span-2 p-4 border border-gray-300 shadow-md bg-white'>
+    <main className="w-full grid grid-cols-3 gap-4 p-6 overflow-x-hidden overflow-y-auto min-h-screen">
+      <div className='col-span-2 p-4'>
         <h1 className="font-bold flex items-center gap-4">
           <FaBloggerB className='text-[var(--primary-color)]' /> Add New Blog
         </h1>
         <section className="mt-10 rounded-md">
-          <form className="flex flex-col gap-4 py-8 px-12 min-h-[50vh]">
+          <form onSubmit={createBlog} className="flex flex-col gap-4 py-8 px-12 min-h-[50vh]">
             <button
               disabled={blogSteps === 0}
               className="w-9 h-9 bg-[var(--primary-color)] text-white p-2 rounded-md"
@@ -255,11 +260,11 @@ const AdminBlog = ({ setActiveTab }) => {
                       placeholder="Type a tag and press Enter"
                       className="w-full p-2 border-2 border-[var(--primary-color)] rounded-md"
                     />
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2  border border-gray-300 rounded-md p-2 min-h-[20vh]">
                       {Tags.map((t, i) => (
                         <span
                           key={i}
-                          className="bg-gray-300 px-2 py-1 rounded cursor-pointer"
+                          className="bg-gray-300 h-8 px-2 py-1 rounded cursor-pointer"
                           onClick={() => removeTag(i)}
                         >
                           {t} &times;
@@ -297,11 +302,9 @@ const AdminBlog = ({ setActiveTab }) => {
                   <h2 className="font-semibold">Add Cover / Featured Image</h2>
                   <div className="relative w-full h-[300px] border-2 border-[var(--primary-color)] rounded-2xl overflow-hidden bg-gray-50 flex justify-center items-center">
                     {formData?.coverImage ? (
-                      <img
-                      loading='lazy'
+                      <Img
                         src={URL.createObjectURL(formData.coverImage)}
-                        alt="preview"
-                        className="w-full h-full object-cover"
+                        style="w-full h-full object-cover"
                       />
                     ) : (
                       <p className="text-gray-400">No image selected</p>
@@ -317,16 +320,10 @@ const AdminBlog = ({ setActiveTab }) => {
                   </div>
                   <div className="flex justify-end mt-5">
                     <button
-                      type="button"
-                      onClick={() => {
-                        if (!formData?.coverImage) {
-                          toast.error("Please upload the image");
-                          return;
-                        }
-                        createBlog();
-                      }}
+                      type="submit"
+                      disabled={blogPostLoading}
                     >
-                      Post
+                      {blogPostLoading? "Posting...": "Post"}
                     </button>
                   </div>
                 </motion.div>
@@ -335,11 +332,11 @@ const AdminBlog = ({ setActiveTab }) => {
           </form>
         </section>
       </div>
-      <div className='p-2 bg-white border border-gray-300 shadow-md rounded-md'>
+      <div className='p-2 hidden md:block'>
         <h2 className='font-semibold my-2 flex gap-3 items-center'>
           <MdOutlinePreview className='text-[var(--primary-color)]' /> Preview
         </h2>
-        <div className='sticky top-0'>
+        <div className='sticky top-0 pointer-events-none'>
           <BlogCard blog={formData} />
         </div>
       </div>

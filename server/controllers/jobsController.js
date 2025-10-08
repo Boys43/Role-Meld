@@ -148,13 +148,10 @@ export const updateJobStatus = async (req, res) => {
     }
 
     try {
-        const job = await jobsModel.findById(jobId);
+        const job = await jobsModel.findByIdAndUpdate(jobId, { approved: status }, { new: true });
         if (!job) {
             return res.status(404).json({ success: false, message: "Job Not Found" });
         }
-
-        job.approved = status;
-        await job.save();
 
         return res.status(200).json({ success: true, message: "Job Status Updated" });
     } catch (error) {
@@ -196,15 +193,29 @@ export const getActiveJobs = async (req, res) => {
 
 export const searchJob = async (req, res) => {
     try {
-        const { search } = req.body;
+        const { search, location } = req.body;
+
+        console.log(search, location);
 
         // Search for approved jobs matching title (case-insensitive)
-        const approvedJobs = await jobsModel.find({
-            title: { $regex: search, $options: "i" },
-            approved: "approved",
-            isActive: true,
-            sponsored: false
-        });
+        let approvedJobs;
+
+        if (!location) {
+            approvedJobs = await jobsModel.find({
+                title: { $regex: search, $options: "i" },
+                approved: "approved",
+                isActive: true,
+                sponsored: false
+            });
+        } else {
+            approvedJobs = await jobsModel.find({
+                title: { $regex: search, $options: "i" },
+                location: { $regex: location, $options: "i" },
+                approved: "approved",
+                isActive: true,
+                sponsored: false
+            });
+        }
 
         // Get unique categories of matched jobs
         const categorySet = new Set(approvedJobs.map(job => job.category));
@@ -292,7 +303,7 @@ export const getCompanyJobsById = async (req, res) => {
     }
 
     try {
-        const companyJobs = await jobsModel.find({ postedBy: id});
+        const companyJobs = await jobsModel.find({ postedBy: id });
 
         console.log(companyJobs);
 

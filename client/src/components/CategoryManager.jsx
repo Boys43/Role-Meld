@@ -223,9 +223,8 @@ const CategoryManager = () => {
         toast.success('Template downloaded successfully!');
     };
 
-
     return (
-        <div className="w-full min-h-screen p-6">
+        <div className="w-full overflow-y-auto min-h-screen p-6">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
@@ -257,12 +256,12 @@ const CategoryManager = () => {
                 {/* Excel Import Section */}
                 <div className="mb-8">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Import from Excel</h3>
-                    <p className="text-gray-600 text-sm mb-4">
+                    <span className="text-gray-600 text-sm mb-4">
                         Upload an Excel file to bulk import categories and subcategories. 
                         The file should have two columns: "Category Name" and "Subcategory Name".
-                    </p>
+                    </span>
                     
-                    <div className="flex flex-wrap gap-3 mb-4">
+                    <div className="flex flex-wrap gap-3 my-4">
                         <button
                             onClick={downloadTemplate}
                             className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"

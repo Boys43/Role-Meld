@@ -1,5 +1,5 @@
 import express from 'express';
-import { changePassword, checkAdmin, deleteAccount, deleteUser, isAuthenticated, login, logout, register, verifyEmail } from '../controllers/authController.js';
+import { banUser, changePassword, checkAdmin, deleteAccount, deleteUser, isAuthenticated, login, logout, register, unBanUser, verifyEmail } from '../controllers/authController.js';
 import userAuth from '../middlewares/userAuth.js';
 
 const authRouter = express.Router()
@@ -13,5 +13,7 @@ authRouter.post('/verify-account', verifyEmail);
 authRouter.post('/delete-user', deleteUser);
 authRouter.post('/change-password', changePassword);
 authRouter.post('/delete-account', deleteAccount);
+authRouter.post('/ban-user', banUser);
+authRouter.post('/unban-user', unBanUser);
 
 export default authRouter;

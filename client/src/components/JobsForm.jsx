@@ -10,7 +10,6 @@ import { AnimatePresence, motion } from "framer-motion";
 // React Icons
 import { IoChevronBack } from "react-icons/io5";
 import JobCard from "./JobCard";
-import { debounce } from "lodash";
 // Motion variants for sliding animation
 const variants = {
   enter: (direction) => ({ x: direction > 0 ? 300 : -300, opacity: 0 }),
@@ -106,8 +105,9 @@ const JobForm = ({ setActiveTab }) => {
     setJobSteps((prev) => Math.max(prev - 1, 0));
   };
 
+
   return (
-    <main className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 overflow-x-hidden p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto relative">
+    <main className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 overflow-x-hidden p-6 min-h-screen rounded-lg overflow-y-auto relative">
       <section className="lg:col-span-2">
         <h1 className="text-[var(--primary-color)] mb-8 font-semibold">Publish New Jobs</h1>
 
@@ -533,17 +533,20 @@ const JobForm = ({ setActiveTab }) => {
                   <textarea
                     name="description"
                     className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all w-full"
-                    rows="5"
+                    rows="8"
                     value={jobData?.description || ""}
                     onChange={handleJobChange}
                     placeholder="About the Job..."
                   />
+                  <div className={`w-full text-right ${jobData?.description?.split(" ").length > 80 ? "text-red-500" : "text-green-500"}`}>
+                    {jobData?.description?.split(" ").length} / 80
+                  </div>
                 </div>
 
                 <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
                   onClick={() => {
-                    if (!jobData.description) {
-                      toast.error("Job description is required");
+                    if (!jobData.description || jobData.description.split(" ").length >= 81) {
+                      toast.error("About Must be under 80 words");
                     } else {
                       nextStep();
                     }

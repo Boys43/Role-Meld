@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { HiOutlinePencil } from 'react-icons/hi2';
 import { toast } from 'react-toastify';
+import { Ban, Unlock } from 'lucide-react';
 
 const AdminUsers = () => {
   const { backendUrl } = useContext(AppContext);
@@ -29,11 +30,11 @@ const AdminUsers = () => {
   // Delete User
   const deleteUser = async (id) => {
     try {
-      const { data } = await axios.post(`${backendUrl}/api/auth/delete-user`, {id});
+      const { data } = await axios.post(`${backendUrl}/api/auth/delete-user`, { id });
       if (data.success) {
         getUsers();
         toast.success(data.message)
-      }else{
+      } else {
         toast.error(data.message)
       }
     } catch (error) {
@@ -41,8 +42,27 @@ const AdminUsers = () => {
     }
   }
 
+  // ✅ Unified Ban/Unban Function
+  const toggleBan = async (email, isBanned) => {
+    const url = isBanned
+      ? `${backendUrl}/api/auth/unban-user`
+      : `${backendUrl}/api/auth/ban-user`;
+
+    try {
+      const { data } = await axios.post(url, { email });
+      if (data.success) {
+        await getUsers();
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
-    <div className='p-6 bg-white rounded-lg w-full overflow-y-scroll h-[calc(100vh-4.6rem)]'>
+    <div className='p-6 bg-white rounded-lg w-full overflow-y-auto min-h-screen'>
       <h1 className='text-2xl font-bold mb-4 flex items-center gap-2'>
         <FaUsers /> Users
       </h1>
@@ -67,11 +87,11 @@ const AdminUsers = () => {
               </thead>
               <tbody>
                 {users.map((user, index) => (
-                  
+
                   <tr
-                  key={index}
-                  className={`transition duration-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                  } hover:bg-blue-50`}
+                    key={index}
+                    className={`transition duration-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                      } hover:bg-blue-50`}
                   >
                     <td className="px-6 py-4 font-medium">{index + 1}</td>
                     <td className="px-6 py-4">{user.name}</td>
@@ -112,6 +132,21 @@ const AdminUsers = () => {
                     <td className="px-6 py-4 text-center">
                       <div className="flex justify-center items-center gap-4">
                         <FaTrash onClick={() => deleteUser(user.authId)} className=' cursor-pointer text-red-300' />
+                        {user.isBanned ? (
+                          <Unlock
+                            size={20}
+                            onClick={() => toggleBan(user.email, true)}
+                            className="cursor-pointer text-green-400 hover:text-green-600"
+                            title="Unban User"
+                          />
+                        ) : (
+                          <Ban
+                            size={20}
+                            onClick={() => toggleBan(user.email, false)}
+                            className="cursor-pointer text-red-400 hover:text-red-600"
+                            title="Ban User"
+                          />
+                        )}
                       </div>
                     </td>
                   </tr>

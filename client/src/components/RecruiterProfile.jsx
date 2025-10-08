@@ -85,7 +85,7 @@ const RecruiterProfile = () => {
     };
 
     return (
-        <div className='w-full h-[calc(100vh-4.6rem)] overflow-y-auto p-6 bg-gradient-to-br from-gray-50 to-gray-100'>
+        <div className='w-full min-h-screen overflow-y-auto p-6 bg-gradient-to-br from-gray-50 to-gray-100'>
             <div className='max-w-7xl mx-auto'>
                 <div className='mb-6'>
                     <h1 className="text-3xl font-bold text-gray-800">Update Your Profile</h1>

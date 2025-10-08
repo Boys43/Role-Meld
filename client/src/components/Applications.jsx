@@ -62,7 +62,7 @@ const Applications = () => {
     })
 
     return (
-        <div className='flex w-full h-[calc(100vh-4.6rem)] overflow-y-auto flex-col gap-4 p-8'>
+        <div className='flex w-full min-h-screen overflow-y-auto flex-col gap-4 p-8'>
             <h2 className='flex items-center gap-4 font-bold'><IoSettings className='text-[var(--text-color)]' />Job Applications</h2>
 
             <div className='flex gap-6'>

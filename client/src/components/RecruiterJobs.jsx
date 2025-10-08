@@ -51,7 +51,7 @@ const RecruiterJobs = () => {
     });
 
     return (
-        <div className='w-full p-6 h-[calc(100vh-4.6rem)] rounded-lg overflow-y-auto '>
+        <div className='w-full p-6 min-h-screen rounded-lg overflow-y-auto '>
             <div className='p-4 bg-white border rounded-lg shadow-lg'>
                 <h1 className='flex my-4 font-semibold gap-3 items-center'>
                     <FaRegListAlt className='text-[var(--primary-color)]' /> Listed Jobs

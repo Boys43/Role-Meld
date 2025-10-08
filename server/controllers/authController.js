@@ -15,7 +15,7 @@ const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
 export const register = async (req, res) => {
     try {
-        console.log("BREVO_API_KEY:", process.env.BREVO_API_KEY?.slice(0, 6)); 
+        console.log("BREVO_API_KEY:", process.env.BREVO_API_KEY?.slice(0, 6));
         const { name, email, password, role } = req.body;
 
         if (!name || !email || !password || !role) {
@@ -307,3 +307,90 @@ export const deleteAccount = async (req, res) => {
         return res.status(500).json({ success: false, message: error.message });
     }
 };
+
+export const banUser = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    try {
+        const user = await authModel.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        if (user.role === "recruiter") {
+            const recruiter = await recruiterProfileModel.findOne({ email });
+
+            if (!recruiter) {
+                return res.status(404).json({ success: false, message: "Recruiter not found" });
+            }
+
+            recruiter.isBanned = true;
+            recruiter.save();
+        } else if (user.role === "user") {
+            const user = await userProfileModel.findOne({ email });
+            if (!user) {
+                return res.status(404).json({ success: false, message: "User not found" });
+            }
+
+            user.isBanned = true;
+            user.save();
+        }
+
+        return res.json({ success: true, message: "User banned successfully" });
+    } catch {
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+export const unBanUser = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    try {
+        const user = await authModel.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        if (user.role === "recruiter") {
+            const recruiter = await recruiterProfileModel.findOne({ email });
+
+            if (!recruiter) {
+                return res.status(404).json({ success: false, message: "Recruiter not found" });
+            }
+
+            if (recruiter.isBanned === false) {
+                return res.status(400).json({ success: false, message: "User is not banned" });
+            }
+
+            recruiter.isBanned = false;
+            recruiter.save();
+        } else if (user.role === "ruiter") {
+            const user = await userProfileModel.findOne({ email });
+            if (!user) {
+                return res.status(404).json({ success: false, message: "User not found" });
+            }
+
+
+            if (user.isBanned === false) {
+                return res.status(400).json({ success: false, message: "User is not banned" });
+            }
+
+            user.isBanned = false;
+            user.save();
+        }
+
+        return res.json({ success: true, message: "User Un-Banned successfully" });
+    } catch {
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}

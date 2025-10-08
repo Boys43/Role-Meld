@@ -25,7 +25,8 @@ const recruiterProfileSchema = new mongoose.Schema({
   followedAccounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecruiterProfile" }],
   savedApplicants: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" }],
   followers: { type: Number, default: 0 },
-  followersId: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" }]
+  followersId: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" }],
+  isBanned: {type: Boolean, default: false},
 }, { timestamps: true });
 
 export default mongoose.model("RecruiterProfile", recruiterProfileSchema);

@@ -11,6 +11,7 @@ import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { FaTrash } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import { Cross, X } from 'lucide-react';
+import Img from './Image';
 const AdminListedBlogs = ({ setActiveTab }) => {
     const { backendUrl, userData } = useContext(AppContext);
     const [allBlogs, setAllBlogs] = useState([]);
@@ -64,7 +65,7 @@ const AdminListedBlogs = ({ setActiveTab }) => {
         </div>
     }
     return (
-        <div className='relative w-full p-6'>
+        <div className='relative w-full p-6 overflow-y-auto min-h-screen'>
             <h1 className='font-bold flex items-center gap-4'>
                 <CiViewList className='text-[var(--primary-color)]' /> Listed Blogs
             </h1>
@@ -124,9 +125,9 @@ const AdminListedBlogs = ({ setActiveTab }) => {
             {/* Image Model */}
             {imageModel &&
                 <div className='fixed top-0 left-0 w-full h-screen bg-black/50 flex items-center justify-center '>
-                    <div className='p-6 rounded-md bg-white relative '>
-                        <X onClick={() => setImageModel(false)} className=' cursor-pointer absolute top-3 right-3' />
-                        <img src={`${backendUrl}/${selectedImg}`} alt="Image Model" />
+                    <div className='p-2 rounded-md bg-white relative '>
+                        <X onClick={() => setImageModel(false)} className=' cursor-pointer border border-gray-300 bg-white rounded-md absolute top-3 right-3' />
+                        <Img src={`${backendUrl}/${selectedImg}`} style="max-w-100 rounded-md" />
                     </div>
                 </div>
             }

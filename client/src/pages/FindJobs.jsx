@@ -25,6 +25,7 @@ const FindJobs = () => {
   const search = new URLSearchParams(location.search);
   const Param = search.get('job');
   const categoryParam = search.get('category');
+  const locationParam = search.get('location');
 
   const [searchedCategories, setSearchedCategories] = useState([]);
   const [approvedCategoryJobs, setApprovedCategoryJobs] = useState([]);
@@ -33,7 +34,7 @@ const FindJobs = () => {
       setLoading(true);
       try {
         if (Param !== null) {
-          const { data } = await axios.post(`${backendUrl}/api/jobs/searchjobs`, { search: Param });
+          const { data } = await axios.post(`${backendUrl}/api/jobs/searchjobs`, { search: Param, location: locationParam || "" });
           if (data.success) {
             setSearchedCategories(data.categorySet);
             setApprovedCategoryJobs(data.approvedCategoryJobs);

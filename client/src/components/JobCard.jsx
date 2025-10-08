@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 // Lucide React Icons for consistency (replacing mixed imports)
 import { Heart, Clock, MapPin } from 'lucide-react';
 import { FaPaperPlane } from 'react-icons/fa';
+import Img from './Image';
 
 const JobCard = ({ e }) => {
     const { backendUrl, isLoggedIn, toggleSaveJob, savedJobs } = useContext(AppContext);
@@ -40,11 +41,9 @@ const JobCard = ({ e }) => {
                     <div className='flex items-center gap-4'>
                         {/* Company Logo/Initial */}
                         {e?.companyProfile ? (
-                            <img
-                                loading='lazy'
-                                className="w-14 h-14 rounded-lg object-cover border border-gray-100 flex-shrink-0"
+                            <Img
+                                style="w-14 h-14 rounded-lg object-cover border border-gray-100 flex-shrink-0"
                                 src={backendUrl + "/uploads/" + e?.companyProfile}
-                                alt={e?.company}
                             />
                         ) : (
                             <div className="w-14 h-14 rounded-lg border border-gray-300 flex items-center justify-center bg-gray-100 text-[var(--primary-color)] font-bold text-xl flex-shrink-0">
@@ -53,11 +52,8 @@ const JobCard = ({ e }) => {
                         )}
 
                         {/* Company Name & Followers */}
-                        <div
-                            onClick={() => navigate(`/company-profile/` + e?.postedBy)}
-                            className='cursor-pointer'
-                        >
-                            <h4 className='font-semibold text-lg text-gray-800 hover:text-[var(--primary-color)] transition-colors'>
+                        <div>
+                            <h4 className='font-semibold text-lg text-gray-800'>
                                 {e?.company}
                             </h4>
                             <span className='text-xs text-gray-500'>
@@ -65,7 +61,6 @@ const JobCard = ({ e }) => {
                             </span>
                         </div>
                     </div>
-
 
                     {/* Save Button (Absolute positioning removed for cleaner flow) */}
                     <span

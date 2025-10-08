@@ -47,7 +47,7 @@ const AnalyticDashboard = () => {
   }
 
   return (
-    <div className='p-10 w-full h-[calc(100vh-4.6rem)] overflow-y-auto'>
+    <div className='p-10 w-full min-h-screen overflow-y-auto'>
       <h1 className='font-bold mb-4 flex items-center gap-4'>
         <TbBrandGoogleAnalytics className='text-[var(--primary-color)]' /> Analytic Dashboard
       </h1>

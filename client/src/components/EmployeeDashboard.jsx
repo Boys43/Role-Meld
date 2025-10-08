@@ -133,8 +133,8 @@ const EmployeeDashboard = () => {
   }, [])
 
   return (
-    <div className='flex flex-col w-full p-6 bg-white rounded-lg h-[calc(100vh-4.6rem)] overflow-y-auto'>
-      <div className="relative w-full h-100">
+    <div className='flex flex-col w-full p-6 bg-white rounded-lg min-h-screen overflow-y-auto'>
+      <div className="relative w-full">
         {/* Profile Circle */}
         <div className="w-full h-[30vh] border-2 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
           {userData?.banner ? (

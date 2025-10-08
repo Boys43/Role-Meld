@@ -58,7 +58,7 @@ const Home = () => {
   return (
     <>
       <main className="py-6 w-[95vw] mx-auto">
-        <section className="shadow-2xl py-14 bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] p-6 w-full rounded-2xl flex flex-col gap-4 items-center">
+        <section className="shadow-2xl py-18 bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] p-6 w-full rounded-2xl flex flex-col gap-4 items-center">
           <h1 className="text-white">
             Welcome to <span className="text-[var(--accent-color)] font-bold italic">Alfa Career</span>
           </h1>
@@ -125,13 +125,13 @@ const Home = () => {
 
               return (
                 <>
-                  <Marquee className="z-0" pauseOnHover gradient={false} speed={40}>
-                    <div className="flex gap-8">
+                  <Marquee className="z-0" pauseOnHover pauseOnClick gradient={false} speed={40}>
+                    <div className="flex gap-8 mr-8">
                       {firstHalf.map(renderCategory)}
                     </div>
                   </Marquee>
-                  <Marquee className="z-0" pauseOnHover pauseOnClick speed={60} gradient={false}>
-                    <div className="flex gap-8">
+                  <Marquee className="z-0" pauseOnHover pauseOnClick direction="" speed={60} gradient={false}>
+                    <div className="flex gap-8 mr-8">
                       {secondHalf.map(renderCategory)}
                     </div>
                   </Marquee>
