@@ -22,15 +22,7 @@ const JobForm = ({ setActiveTab }) => {
   const { backendUrl, userData } = useContext(AppContext);
   const [currentRes, setCurrentRes] = useState('')
   const [currentSkill, setCurrentSkill] = useState('')
-  const editor = useRef(null);
-
-
-  const handleEditorChange = useRef(
-    debounce((content) => {
-      setJobData((prev) => ({ ...prev, description: content }));
-    }, 500)
-  ).current;
-
+  const [currentBenefit, setCurrentBenefit] = useState('')
 
   // Remove the static categories object
 
@@ -152,7 +144,7 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Job Title */}
                 <div className="flex flex-col mt-2">
-                  <label htmlFor="title" className="font-medium">Job Title *</label>
+                  <label htmlFor="title" className="font-medium mb-2">Job Title *</label>
                   <input
                     type="text"
                     name="title"
@@ -164,9 +156,11 @@ const JobForm = ({ setActiveTab }) => {
                   />
                 </div>
 
+                <hr className="my-8" />
+
                 {/* Location Type */}
                 <div className="flex flex-col mt-4">
-                  <label className="font-medium mb-1">Location Type *</label>
+                  <label className="font-medium mb-2">Location Type *</label>
                   <div className="relative">
                     <select
                       name="locationType"
@@ -196,8 +190,8 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Location (conditional) */}
                 {(jobData.locationType === "on-site" || jobData.locationType === "hybrid") && (
-                  <div data-aos="fade-up" className="flex flex-col mt-4">
-                    <label htmlFor="location" className="font-medium">Location *</label>
+                  <div className="flex flex-col mt-4">
+                    <label htmlFor="location" className="font-medium mb-2">Location *</label>
                     <input
                       type="text"
                       name="location"
@@ -230,7 +224,7 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Job Type */}
                 <div className="flex flex-col my-6">
-                  <label className="font-medium">Job Type *</label>
+                  <label className="font-medium mb-2">Job Type *</label>
                   <select
                     name="jobType"
                     required
@@ -247,10 +241,12 @@ const JobForm = ({ setActiveTab }) => {
                   </select>
                 </div>
 
+
                 {/* Conditional fields based on Job Type */}
                 {jobData.jobType === "full-time" && (
                   <div className="flex flex-col mb-4">
-                    <label htmlFor="hoursPerWeek" className="font-medium">Hours per Week *</label>
+                    <hr className="my-8" />
+                    <label htmlFor="hoursPerWeek" className="font-medium mb-2">Hours per Week *</label>
                     <input
                       type="number"
                       name="hoursPerWeek"
@@ -267,7 +263,7 @@ const JobForm = ({ setActiveTab }) => {
 
                 {jobData.jobType === "part-time" && (
                   <div className="flex flex-col mb-4">
-                    <label htmlFor="shift" className="font-medium">Shift *</label>
+                    <label htmlFor="shift" className="font-medium mb-2">Shift *</label>
                     <select
                       name="shift"
                       required
@@ -285,7 +281,7 @@ const JobForm = ({ setActiveTab }) => {
 
                 {jobData.jobType === "contract" && (
                   <div className="flex flex-col mb-4">
-                    <label htmlFor="contractDuration" className="font-medium">Contract Duration *</label>
+                    <label htmlFor="contractDuration" className="font-medium mb-2">Contract Duration *</label>
                     <input
                       type="text"
                       name="contractDuration"
@@ -300,7 +296,7 @@ const JobForm = ({ setActiveTab }) => {
 
                 {jobData.jobType === "internship" && (
                   <div className="flex flex-col mb-4">
-                    <label htmlFor="internshipDuration" className="font-medium">Internship Duration</label>
+                    <label htmlFor="internshipDuration" className="font-medium mb-2">Internship Duration</label>
                     <input
                       type="text"
                       name="internshipDuration"
@@ -314,7 +310,7 @@ const JobForm = ({ setActiveTab }) => {
 
                 {jobData.jobType === "temporary" && (
                   <div className="flex flex-col mb-4">
-                    <label htmlFor="temporaryDuration" className="font-medium">Temporary Duration</label>
+                    <label htmlFor="temporaryDuration" className="font-medium mb-2">Temporary Duration</label>
                     <input
                       type="text"
                       name="temporaryDuration"
@@ -351,7 +347,7 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Job Category */}
                 <div className="flex flex-col mb-4">
-                  <label className="font-medium">Job Category</label>
+                  <label className="font-medium mb-2">Job Category</label>
                   <select
                     name="category"
                     value={jobData.category || ""}
@@ -365,10 +361,12 @@ const JobForm = ({ setActiveTab }) => {
                   </select>
                 </div>
 
+
                 {/* Sub Category */}
                 {jobData.category && (
                   <div className="flex flex-col mb-4">
-                    <label className="font-medium">Sub Category</label>
+                    <hr className="my-8" />
+                    <label className="font-medium mb-2">Sub Category</label>
                     <select
                       name="subCategory"
                       value={jobData.subCategory || ""}
@@ -424,7 +422,7 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Salary Type */}
                 <div className="flex flex-col mb-4">
-                  <label htmlFor="salaryType" className="font-medium">Salary Type *</label>
+                  <label htmlFor="salaryType mb-1" className="font-medium mb-2">Salary Type *</label>
                   <select
                     name="salaryType"
                     value={jobData.salaryType || ""}
@@ -438,36 +436,41 @@ const JobForm = ({ setActiveTab }) => {
                 </div>
 
                 {/* Salary Inputs */}
-                {jobData?.salaryType === "range" && (
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div className="flex flex-col">
-                      <label htmlFor="minSalary" className="font-medium">Min Salary (USD)</label>
-                      <input
-                        type="number"
-                        name="minSalary"
-                        value={jobData.minSalary || ""}
-                        onChange={handleJobChange}
-                        className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all"
-                        placeholder="50000"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <label htmlFor="maxSalary" className="font-medium">Max Salary (USD)</label>
-                      <input
-                        type="number"
-                        name="maxSalary"
-                        value={jobData.maxSalary || ""}
-                        onChange={handleJobChange}
-                        className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all"
-                        placeholder="80000"
-                      />
-                    </div>
-                  </div>
-                )}
+                {jobData?.salaryType === "range" &&
+                  <>
 
-                {jobData?.salaryType === "fixed" && (
+                    <hr className="my-8" />
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      <div className="flex flex-col">
+                        <label htmlFor="minSalary" className="font-medium mb-2">Min Salary (USD)</label>
+                        <input
+                          type="number"
+                          name="minSalary"
+                          value={jobData.minSalary || ""}
+                          onChange={handleJobChange}
+                          className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all"
+                          placeholder="50000"
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <label htmlFor="maxSalary" className="font-medium mb-2">Max Salary (USD)</label>
+                        <input
+                          type="number"
+                          name="maxSalary"
+                          value={jobData.maxSalary || ""}
+                          onChange={handleJobChange}
+                          className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all"
+                          placeholder="80000"
+                        />
+                      </div>
+                    </div>
+                  </>
+                }
+
+                {jobData?.salaryType === "fixed" &&
                   <div className="flex flex-col mt-4">
-                    <label htmlFor="fixedSalary" className="font-medium">Salary (USD)</label>
+                    <hr className="my-8" />
+                    <label htmlFor="fixedSalary" className="font-medium mb-2">Salary (USD)</label>
                     <input
                       type="number"
                       name="fixedSalary"
@@ -477,7 +480,7 @@ const JobForm = ({ setActiveTab }) => {
                       placeholder="80000"
                     />
                   </div>
-                )}
+                }
 
                 {/* Next Button with validation */}
                 <button
@@ -526,32 +529,15 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Job Description */}
                 <div className="mb-4">
-                  <label className="font-medium mb-2 block">Job Description *</label>
-                  <JoditEditor
-                    ref={editor}
-                    value={jobData.description || ""}
-                    config={{
-                      readonly: false,
-                      height: 300,
-                      uploader: { insertImageAsBase64URI: true },
-                      buttons: [
-                        "bold",
-                        "italic",
-                        "|",
-                        "paragraph",
-                        "h1",
-                        "h2",
-                        "h3",
-                        "|",
-                        "link",
-                        "image",
-                        "blockquote",
-                      ],
-                      toolbarAdaptive: false,
-                    }}
-                    onChange={handleEditorChange}
+                  <label className="font-medium mb-2 block">About the Job *</label>
+                  <textarea
+                    name="description"
+                    className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all w-full"
+                    rows="5"
+                    value={jobData?.description || ""}
+                    onChange={handleJobChange}
+                    placeholder="About the Job..."
                   />
-
                 </div>
 
                 <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
@@ -574,26 +560,30 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Qualifications */}
                 <div className="flex flex-col mb-4">
-                  <label htmlFor="qualifications" className="font-medium">Qualifications / Required Skills *</label>
-                  <textarea
+                  <label htmlFor="qualifications" className="font-medium mb-2">Qualifications / Required Skills *</label>
+                  <select
                     name="qualifications"
-                    required
                     value={jobData.qualifications || ""}
                     onChange={handleJobChange}
-                    rows="3"
-                    className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
-                    placeholder="Enter qualifications (comma separated), e.g., Bachelor's degree, 3+ years experience, JavaScript, React"
-                  />
+                    className="py-2 px-3 mb-8 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                  >
+                    <option value="">--- Select Qualification ---</option>
+                    <option value="Entry">Entry</option>
+                    <option value="Mid">Mid</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Senior">Senior</option>
+                  </select>
                 </div>
 
                 {/* Experience */}
+                <hr className="my-8" />
                 <div className="flex flex-col mb-4">
-                  <label htmlFor="experience" className="font-medium">Experience</label>
+                  <label htmlFor="experience" className="font-medium mb-2">Experience</label>
                   <select
                     name="experience"
                     value={jobData.experience || ""}
                     onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                    className="py-2 px-3 mb-8 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="">Select Experience</option>
                     <option value="6 Months - 1 Year">6 Months - 1 Year</option>
@@ -605,11 +595,34 @@ const JobForm = ({ setActiveTab }) => {
                   </select>
                 </div>
 
-                <div className="flex flex-wrap gap-2 mt-3">
+                <hr className="my-8" />
+                <div className="flex flex-col mb-4">
+                  <label htmlFor="skills" className="font-medium mb-2">Skills *</label>
+                  <input
+                    type="text"
+                    name="skills"
+                    required
+                    value={currentSkill}
+                    onChange={(e) => setCurrentSkill(e.target.value)}
+                    onKeyUp={(e) => {
+                      if (e.key === "Enter" && currentSkill.trim() !== "") {
+                        e.preventDefault();
+                        setJobData((prev) => ({
+                          ...prev,
+                          skills: [...(prev.skills || []), currentSkill.trim()],
+                        }));
+                        setCurrentSkill(""); // ✅ clears input after adding
+                      }
+                    }}
+                    className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all outline-none"
+                    placeholder="Press Tab skills (comma separated), e.g., JavaScript, React, Node.js"
+                  />
+                </div>
+                <div className="flex min-h-[20vh] rounded-2xl mb-4 flex-wrap border border-gray-300 gap-2 mt-3 p-3">
                   {jobData?.skills?.map((skill, index) => (
                     <span
                       key={index}
-                      className="flex items-center gap-2 px-3 py-1 text-sm font-medium text-[var(--primary-color)] bg-[var(--primary-color)]/10 border border-[var(--primary-color)] rounded-full hover:bg-[var(--primary-color)] hover:text-white transition-all cursor-pointer group"
+                      className="flex items-center gap-2 px-3 py-1 text-sm font-medium text-[var(--primary-color)] bg-[var(--primary-color)]/10 border border-[var(--primary-color)] rounded-lg hover:bg-[var(--primary-color)] hover:text-white transition-all cursor-pointer group h-6"
                     >
                       {skill}
                       <span
@@ -629,29 +642,6 @@ const JobForm = ({ setActiveTab }) => {
                 </div>
 
                 {/* Skills */}
-                <div className="flex flex-col mb-4">
-                  <label htmlFor="skills" className="font-medium">Skills *</label>
-                  <input
-                    type="text"
-                    name="skills"
-                    required
-                    value={currentSkill}
-                    onChange={(e) => setCurrentSkill(e.target.value)}
-                    onKeyUp={(e) => {
-                      if (e.key === "Enter" && currentSkill.trim() !== "") {
-                        e.preventDefault();
-                        setFormData((prev) => ({
-                          ...prev,
-                          skills: [...(prev.skills || []), currentSkill.trim()],
-                        }));
-                        setCurrentSkill(""); // ✅ clears input after adding
-                      }
-                    }}
-                    className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all outline-none"
-                    placeholder="Enter skills (comma separated), e.g., JavaScript, React, Node.js"
-                  />
-                </div>
-
                 <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
                   onClick={() => {
                     const { qualifications, experience, skills } = jobData;
@@ -681,39 +671,55 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Responsibilities */}
                 <div className="flex flex-col mb-4">
-                  <div className="p-4 border border-gray-300 rounded-md mb-2">
+                  <label htmlFor="responsibilities" className="font-medium mb-2">Responsibilities (Optional but recommended)</label>
+                  <input
+                    type="text"
+                    name="responsibilities"
+                    required
+                    value={currentRes}
+                    onChange={(e) => setCurrentRes(e.target.value)}
+                    onKeyUp={(e) => {
+                      if (e.key === "Enter" && currentRes.trim() !== "") {
+                        e.preventDefault();
+                        setJobData((prev) => ({
+                          ...prev,
+                          responsibilities: [...(prev.responsibilities || []), currentRes.trim()],
+                        }));
+                        setCurrentRes("");
+                      }
+                    }}
+                    className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all outline-none"
+                    placeholder="Press Enter skills (comma separated), e.g., JavaScript, React, Node.js"
+                  />
+
+                  <div className="p-4 border border-gray-300 rounded-md mt-4">
                     <ul className="list-disc list-inside">
                       {jobData?.responsibilities?.map((res, index) => (
                         <li key={index}>
                           {res}
+                          <span
+                            type="button"
+                            onClick={() =>
+                              setJobData((prev) => ({
+                                ...prev,
+                                responsibilities: prev.responsibilities.filter((_, i) => i !== index),
+                              }))
+                            }
+                            className="ml-3 border border-gray-300 px-2 rounded-lg text-[var(--primary-color)] group-hover:text-white focus:outline-none"
+                          >
+                            ✕
+                          </span>
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <label htmlFor="responsibilities" className="font-medium">Responsibilities (Optional but recommended)</label>
-                  <textarea
-                    name="responsibilities"
-                    value={currentRes}
-                    onChange={(e) => currentRes(e.target.value)}
-                    onKeyUp={(e) => {
-                      if (e.key === "Enter" && currentRes.trim() !== "") {
-                        e.preventDefault();
-                        setFormData((prev) => ({
-                          ...prev,
-                          responsibilities: [...(prev.responsibilities || []), currentRes.trim()],
-                        }));
-                        currentRes(""); // ✅ clears input after adding
-                      }
-                    }}    
-                    rows="4"
-                    className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
-                    placeholder="List key responsibilities and duties..."
-                  />
                 </div>
+
+                <hr className="my-8" />
 
                 {/* Education */}
                 <div className="flex flex-col mb-4">
-                  <label htmlFor="education" className="font-medium">Education (Optional)</label>
+                  <label htmlFor="education" className="font-medium mb-2">Education (Optional)</label>
                   <input
                     type="text"
                     name="education"
@@ -724,17 +730,51 @@ const JobForm = ({ setActiveTab }) => {
                   />
                 </div>
 
+                <hr className="my-8" />
+
                 {/* Perks & Benefits */}
                 <div className="flex flex-col mb-4">
-                  <label htmlFor="perks" className="font-medium">Perks & Benefits (Optional)</label>
+                  <label htmlFor="benefits" className="font-medium mb-2">Benefits (Optional)</label>
                   <input
                     type="text"
-                    name="perks"
-                    value={jobData.perks || ""}
-                    onChange={handleJobChange}
-                    className="px-4 py-2 focus:outline-3 outline-[var(--primary-color)] hover:shadow-md transition-all outline-offset-2 border-2 focus:border-[var(--primary-color)] rounded-xl"
-                    placeholder="Enter perks (comma separated), e.g., Health Insurance, Paid Vacation, Remote Work"
+                    name="benefits"
+                    required
+                    value={currentBenefit}
+                    onChange={(e) => setCurrentBenefit(e.target.value)}
+                    onKeyUp={(e) => {
+                      if (e.key === "Enter" && currentBenefit.trim() !== "") {
+                        e.preventDefault();
+                        setJobData((prev) => ({
+                          ...prev,
+                          benefits: [...(prev.benefits || []), currentBenefit.trim()],
+                        }));
+                        setCurrentBenefit("");
+                      }
+                    }}
+                    className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all outline-none"
+                    placeholder="e.g, Paid Vacaotions, Health Insurance"
                   />
+                  <div className="p-4 border border-gray-300 rounded-md mt-4">
+                    <ul className="list-disc list-inside">
+                      {jobData?.benefits?.map((ben, index) => (
+                        <li key={index}>
+                          {ben}
+                          <span
+                            type="button"
+                            onClick={() =>
+                              setJobData((prev) => ({
+                                ...prev,
+                                benefits: prev.benefits.filter((_, i) => i !== index),
+                              }))
+                            }
+                            className="ml-3 border border-gray-300 px-2 rounded-lg text-[var(--primary-color)] group-hover:text-white focus:outline-none"
+                          >
+                            ✕
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
                 <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
@@ -751,7 +791,7 @@ const JobForm = ({ setActiveTab }) => {
 
                 {/* Application Deadline */}
                 <div className="flex flex-col mb-4">
-                  <label htmlFor="applicationDeadline" className="font-medium">Application Deadline (in days) *</label>
+                  <label htmlFor="applicationDeadline" className="font-medium mb-2">Application Deadline (in days) *</label>
                   <input
                     type="number"
                     name="applicationDeadline"
@@ -765,13 +805,15 @@ const JobForm = ({ setActiveTab }) => {
                   />
                 </div>
 
+                <hr className="my-8" />
+
                 {/* Application Method */}
                 <div className="flex flex-col mb-4">
-                  <label className="font-medium">Application Method *</label>
+                  <label className="font-medium mb-2">Application Method *</label>
                   <select
                     name="applicationMethod"
                     required
-                    value={jobData.applicationMethod || "platform"}
+                    value={jobData.applicationMethod || "easy"}
                     onChange={handleJobChange}
                     className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
@@ -780,9 +822,11 @@ const JobForm = ({ setActiveTab }) => {
                   </select>
                 </div>
 
+
                 {/* Apply Link (conditional) */}
                 {jobData.applicationMethod === "external" && (
                   <div className="flex flex-col mb-4">
+                    <hr className="my-8" />
                     <label htmlFor="applyLink" className="font-medium">Apply Link *</label>
                     <input
                       type="url"
@@ -796,9 +840,11 @@ const JobForm = ({ setActiveTab }) => {
                   </div>
                 )}
 
+                <hr className="my-8" />
+
                 {/* Resume Requirement */}
                 <div className="flex flex-col mb-4">
-                  <label className="font-medium">Resume Requirement</label>
+                  <label className="font-medium mb-2">Resume Requirement</label>
                   <select
                     name="resumeRequirement"
                     value={jobData.resumeRequirement || "false"}
@@ -830,11 +876,11 @@ const JobForm = ({ setActiveTab }) => {
             {/* Step 9: Payment / Featured Job Fields */}
             {jobSteps === 8 && (
               <motion.div key={jobSteps} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4 }}>
-                <h2 className="font-semibold text-lg mb-4">Step 10: Optional Payment / Featured Job Fields</h2>
+                <h2 className="font-semibold text-lg mb-4"> Optional Payment / Featured Job Fields</h2>
 
                 {/* Sponsored */}
                 <div className="flex flex-col mb-4">
-                  <label htmlFor="sponsored" className="font-medium">Sponsored</label>
+                  <label htmlFor="sponsored" className="font-medium mb-2">Sponsored</label>
                   <select
                     name="sponsored"
                     value={jobData.sponsored || "false"}

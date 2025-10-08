@@ -13,8 +13,17 @@ import { IoIosMail } from "react-icons/io";
 import JobCard from '../components/JobCard';
 import Loading from '../components/Loading';
 import Img from '../components/Image';
-import { Clipboard, ExternalLink, File, MapPin } from 'lucide-react';
+import { Clipboard, ExternalLink, File, MapPin, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Pencil, FileText, User, Briefcase } from "lucide-react";
+import {
+    Phone,
+    Globe,
+    GraduationCap,
+    Link as LinkIcon,
+    FileBadge,
+} from "lucide-react";
+
 
 const JobDetails = () => {
     const { backendUrl, isLoggedIn, userData } = useContext(AppContext);
@@ -37,7 +46,7 @@ const JobDetails = () => {
             setLoading(false)
         }
     }
-    const [applyJobModel, setapplyJobModel] = useState(true)
+    const [applyJobModel, setApplyJobModel] = useState(false);
     const applyJob = async (id) => {
         try {
             const { data } = await axios.post(backendUrl + '/api/user/applyjob', { jobId: id, resume: userData?.resume, coverLetter: coverLetter });
@@ -66,6 +75,7 @@ const JobDetails = () => {
             setLoading(false)
         }
     }
+
 
     useEffect(() => {
         getJob();
@@ -190,9 +200,8 @@ const JobDetails = () => {
                         </div>
                         <button
                             disabled={userData?.appliedJobs?.includes(jobData?._id)}
-                            // onClick={''}
+                            onClick={() => setApplyJobModel(true)}
                             className='mt-4'
-
                         >
                             Apply Now
                         </button>
@@ -234,13 +243,189 @@ const JobDetails = () => {
                 </div>
             </div>
 
-            {/* Apply Job Model */}
-            {applyJobModel && <div className='fixed w-full h-screen bg-black/40 top-0 left-0 flex items-center justify-center'>
-                <div className='p-4 rounded-lg bg-white shadow-2xl'>
 
+            {/* Apply Job Modal */}
+            {applyJobModel && (
+                <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4">
+                    <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden animate-in fade-in zoom-in duration-300">
+                        {/* Header Section with Gradient */}
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-3 relative">
+                            <X
+                                onClick={() => setApplyJobModel(false)}
+                                className="absolute top-6 right-6 cursor-pointer text-white/80 hover:text-white hover:rotate-90 transition-all duration-300"
+                                size={24}
+                            />
+                            <h3 className="text-3xl font-bold text-white">
+                                Choose Your Application Method
+                            </h3>
+                        </div>
+
+                        {/* Content Section */}
+                        <div className="p-4">
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {/* Alfa Careers Profile Card */}
+                                <div className="group relative border-2 border-gray-200 rounded-2xl bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col justify-between">
+                                    {/* Edit Button */}
+                                    <span
+                                        onClick={() => window.location.href = "/my-profile"}
+                                        className="absolute top-5 right-5 bg-white hover:bg-blue-50 p-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/edit"
+                                    >
+                                        <Pencil size={16} className="text-blue-600 group-hover/edit:scale-110 transition-transform" />
+                                    </span>
+
+                                    {/* Header */}
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl shadow-md">
+                                            <User size={24} className="text-white" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xl font-bold text-gray-800">
+                                                Alfa Careers Profile
+                                            </h4>
+                                            <span className="text-xs text-gray-500">Your professional profile</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid sm:grid-cols-2 gap-2 text-sm text-gray-700 mb-6">
+
+                                        {/* Personal Info */}
+                                        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 shadow-sm space-y-2">
+                                            <h4 className="text-blue-600 font-semibold mb-2 flex items-center gap-2">
+                                                <User size={16} /> Personal Info
+                                            </h4>
+
+                                            <div className="flex items-center gap-2">
+                                                <User size={14} className="text-blue-500" />
+                                                <span>{userData?.name || "—"}</span>
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                <Phone size={14} className="text-blue-500" />
+                                                <span>{userData?.phone || "—"}</span>
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                <LinkIcon size={14} className="text-blue-500" />
+                                                {userData?.portfolio ? (
+                                                    <a
+                                                        href={userData.portfolio}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 underline truncate max-w-[180px]"
+                                                    >
+                                                        {userData.portfolio}
+                                                    </a>
+                                                ) : (
+                                                    <span>—</span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Location Info */}
+                                        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 shadow-sm space-y-2">
+                                            <h4 className="text-green-600 font-semibold mb-2 flex items-center gap-2">
+                                                <MapPin size={16} /> Location
+                                            </h4>
+
+                                            <div className="flex items-center gap-2">
+                                                <MapPin size={14} className="text-green-500" />
+                                                <span>{userData?.address || "—"}</span>
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                <Globe size={14} className="text-green-500" />
+                                                <span>{userData?.city || "—"}, {userData?.country || "—"}</span>
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                <FileBadge size={14} className="text-green-500" />
+                                                <span>Postal: {userData?.postal || "—"}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Work & Skills */}
+                                        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 shadow-sm sm:col-span-2 space-y-2">
+                                            <h4 className="text-purple-600 font-semibold mb-2 flex items-center gap-2">
+                                                <Briefcase size={16} /> Work & Skills
+                                            </h4>
+
+                                            <div className="flex items-center gap-2">
+                                                <Briefcase size={14} className="text-purple-500" />
+                                                <span>Experience: {userData?.experience || "—"}</span>
+                                            </div>
+
+                                            <div className="flex items-start gap-2">
+                                                <FileBadge size={14} className="text-purple-500 mt-[2px]" />
+                                                <span className="truncate">
+                                                    {userData?.skills?.length ? userData.skills.join(", ") : "—"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Apply Button */}
+                                    <span
+                                        onClick={() => console.log("Apply via Alfa Careers")}
+                                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold px-4 py-2 rounded-xl hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm"
+                                    >
+                                        <Briefcase size={18} />
+                                        Apply via Profile
+                                    </span>
+                                </div>
+
+                                {/* CV Upload Card */}
+                                <div className="group relative border-2 border-gray-200 rounded-2xl bg-gradient-to-br from-green-50 to-white p-6 shadow-sm hover:shadow-xl hover:border-green-300 transition-all duration-300 flex flex-col justify-between">
+                                    {/* Edit Button */}
+                                    <span
+                                        onClick={() => console.log("Upload new CV")}
+                                        className="absolute top-5 right-5 bg-white hover:bg-green-50 p-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/edit"
+                                    >
+                                        <Pencil size={16} className="text-green-600 group-hover/edit:scale-110 transition-transform" />
+                                    </span>
+
+                                    {/* Header */}
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="bg-gradient-to-br from-green-500 to-green-600 p-3 rounded-xl shadow-md">
+                                            <FileText size={24} className="text-white" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xl font-bold text-gray-800">
+                                                Upload CV/Resume
+                                            </h4>
+                                            <span className="text-xs text-gray-500">Your latest document</span>
+                                        </div>
+                                    </div>
+
+                                    {/* CV Preview */}
+                                    <div className="flex flex-col items-center justify-center border-2 border-dashed border-green-300 rounded-xl p-4 bg-white/50 mb-6 hover:bg-white transition-all duration-300">
+                                        <span className="text-sm font-semibold text-gray-800">resume_nouman.pdf</span>
+                                        <span className="text-xs text-gray-500 mt-1">Last updated 3 days ago</span>
+                                        <div className="mt-3 px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                                            Ready to apply
+                                        </div>
+                                    </div>
+
+                                    {/* Apply Button */}
+                                    <span
+                                        onClick={() => console.log("Apply via CV")}
+                                        className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold px-4 py-2 rounded-xl hover:from-green-700 hover:to-green-800 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm"
+                                    >
+                                        <FileText size={18} />
+                                        Apply with CV
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Footer Note */}
+                            <div className="mt-3 text-center">
+                                <span className="text-xs text-gray-500">
+                                    Your information is secure and will only be shared with the employer
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>}
-            
+            )}
         </main>
     )
 }

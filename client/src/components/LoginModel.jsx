@@ -13,8 +13,10 @@ const LoginModel = () => {
     axios.defaults.withCredentials = true;
     const { backendUrl, setIsLoggedIn, getUserData } = useContext(AppContext);
 
+    const [loginLoading, setLoginLoading] = useState(false)
     const login = async (e) => {
         e.preventDefault();
+        setLoginLoading(true)
         try {
             const { data } = await axios.post(`${backendUrl}/api/auth/login`, { email, password },
                 { withCredentials: true }
@@ -30,6 +32,8 @@ const LoginModel = () => {
             }
         } catch (error) {
             toast.error(error.message || "Login failed");
+        }finally{
+            setLoginLoading(false)
         }
     };
 
@@ -52,7 +56,11 @@ const LoginModel = () => {
                         <input className="pl-2 w-full outline-none border-none" type="password" name="password" id="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
                     </div>
-                    <button type="submit" className="block w-full bg-indigo-600 mt-5 py-2 rounded-2xl hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold mb-2">Login</button>
+                    <button type="submit" className="block w-full bg-indigo-600 mt-5 py-2 rounded-2xl hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold mb-2"
+                    disabled={loginLoading}
+                    >
+                        {loginLoading ? "loading...": "Login"}
+                        Login</button>
                     <div className="flex justify-between mt-4">
                         <span className="text-sm ml-2 hover:text-blue-500 cursor-pointer hover:-translate-y-1 duration-500 transition-all">Forgot Password ?</span>
 

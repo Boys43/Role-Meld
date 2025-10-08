@@ -37,7 +37,7 @@ const jobsSchema = new mongoose.Schema({
 
   // Job Description & Requirements
   responsibilities: { type: [String] },
-  qualifications: { type: [String], required: true },
+  qualifications: { type: String, required: true },
   skills: { type: [String], required: true },
   experience: { type: String, enum: ["6 Months - 1 Year", "1 Year - 2 Years", "2 Years - 3 Years", "3 Years - 4 Years", "4 Years - 5 Years", "5 Years+"], required: true },
 
@@ -69,7 +69,6 @@ const jobsSchema = new mongoose.Schema({
   cvv: { type: Number, default: null },
 
   // Extra optional fields
-  perks: { type: [String], default: [] },
   benefits: { type: [String], default: [] },
   education: { type: String },
   remoteOption: { 

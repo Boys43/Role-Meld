@@ -1,20 +1,18 @@
 import { useContext } from 'react'
 import { AppContext } from '../context/AppContext'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Lucide React Icons for consistency (replacing mixed imports)
-import { Heart, HeartOff, Clock, DollarSign, MapPin, Briefcase, ChevronRight, CheckCircle, PlaneIcon, Plane, MapIcon } from 'lucide-react';
+import { Heart, Clock, MapPin } from 'lucide-react';
 import { FaPaperPlane } from 'react-icons/fa';
 
-const JobCard = ({ e, setLoginReminder, setToggleApplyJob, setapplJobId }) => {
-    const { backendUrl, isLoggedIn, userData, toggleSaveJob, savedJobs } = useContext(AppContext);
+const JobCard = ({ e }) => {
+    const { backendUrl, isLoggedIn, toggleSaveJob, savedJobs } = useContext(AppContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     // Check if job is saved or applied
     const isSaved = [...savedJobs].includes(e?._id);
-    const isApplied = userData?.appliedJobs?.includes(e?._id);
-
-    // --- Utility Functions ---
 
     // Function to calculate relative time (kept from original)
     const timeSince = (createdAt) => {
@@ -119,12 +117,12 @@ const JobCard = ({ e, setLoginReminder, setToggleApplyJob, setapplJobId }) => {
             <div className='flex items-center justify-between pt-3 border-t border-gray-100'>
 
                 {/* Action Buttons */}
-                <div className='flex gap-3 items-center'>
+                {location.pathname !== "/dashboard" && <div className='flex gap-3 items-center'>
                     <span className='text-sm flex items-center gap-3'>
                         <FaPaperPlane className='text-[var(--primary-color)]' />
-                        {e?.applicationMethod[0].toUpperCase() + e?.applicationMethod.substring(1)}
+                        {e?.applicationMethod[0]?.toUpperCase() + e?.applicationMethod?.substring(1) || "Apply"}
                     </span>
-                </div>
+                </div>}
 
                 {/* Time Since Posted */}
                 <span className='flex text-xs items-center gap-1 text-gray-500'>
