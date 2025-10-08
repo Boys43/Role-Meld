@@ -9,10 +9,12 @@ import { MdCancel, MdTitle } from "react-icons/md";
 import { IoIosWarning } from "react-icons/io";
 import { FaDollarSign } from "react-icons/fa";
 import { FaAudioDescription } from "react-icons/fa6";
-import { TbListDetails } from "react-icons/tb";
 import { IoIosMail } from "react-icons/io";
 import JobCard from '../components/JobCard';
 import Loading from '../components/Loading';
+import Img from '../components/Image';
+import { Clipboard, ExternalLink, File, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const JobDetails = () => {
     const { backendUrl, isLoggedIn, userData } = useContext(AppContext);
@@ -35,10 +37,7 @@ const JobDetails = () => {
             setLoading(false)
         }
     }
-
-    const [toggleApplyJob, setToggleApplyJob] = useState(false)
-    const [applJobId, setapplJobId] = useState('')
-    const [coverLetter, setCoverLetter] = useState('')
+    const [applyJobModel, setapplyJobModel] = useState(true)
     const applyJob = async (id) => {
         try {
             const { data } = await axios.post(backendUrl + '/api/user/applyjob', { jobId: id, resume: userData?.resume, coverLetter: coverLetter });
@@ -68,7 +67,6 @@ const JobDetails = () => {
         }
     }
 
-
     useEffect(() => {
         getJob();
         getCompanyJobs();
@@ -79,46 +77,98 @@ const JobDetails = () => {
     }
 
     return (
-        <main className='p-2 md:p-4 h-screen lg:p-6'>
+        <main className='p-2 md:p-4 min-h-screen lg:p-6'>
             <section className='p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                 <div className='col-span-2 order-2 md:order-1'>
                     <h4 className='p-4 flex items-center text-lg gap-4 font-semibold'>
-                        <IoHomeOutline size={25} className='' /> <span className='text-[var(--primary-color)]'>/</span> {jobData?.category} <span className='text-[var(--primary-color)]'>/</span> {jobData?.subCategory}
+                        <IoHomeOutline size={25} onClick={() => navigate('/')} className='cursor-pointer' /> <span className='text-[var(--primary-color)]'>/</span> {jobData?.category} <span className='text-[var(--primary-color)]'>/</span> {jobData?.subCategory}
                     </h4>
                     <div className='my-4 w-full border rounded-2xl p-4 shadow-lg bg-[var(--primary-color)]/10 flex items-center justify-between'>
                         <div className=''>
                             <div className='flex items-center gap-4'>
-                                <img loading='lazy' src={`${backendUrl}/uploads/${jobData?.companyProfile}`} alt={jobData?.companyProfile} className='w-8 object-cover h-8 rounded-full border-2 border-[var(--primary-color)]' />
+                                <Img src={`${backendUrl}/uploads/${jobData?.companyProfile}`} style='w-8 object-cover h-8 rounded-lg' />
                                 <h4 className='font-bold'>
                                     {jobData?.company}
                                 </h4>
                             </div>
-                            <h3 className='font-bold my-4 flex items-center gap-4'>
+                            <h3 className='font-bold my-4 flex items-center gap-4 text-[var(--secondary-color)]'>
                                 <MdTitle size={30} className='text-[var(--primary-color)]' /> {jobData?.title}
                             </h3>
                         </div>
                     </div>
-                    <div className='p-4 flex flex-col gap-4'>
-                        <h2 className='font-bold flex items-center gap-4'>
-                            <TbListDetails className='text-[var(--primary-color)]' /> Job Details:
+                    <div className='w-full p-5 bg-white border border-gray-300 rounded-lg'>
+                        {/* Header */}
+                        <h2 className='text-lg font-bold text-slate-800 flex items-center gap-2 mb-4'>
+                            {/* Using a hypothetical icon for consistency: 'TbListDetails' */}
+                            <Clipboard className='text-green-500' />
+                            Job Details
                         </h2>
-                        <div className='flex items-center gap-4 ml-6'>
-                            <span className='bg-red-300 rounded-lg text-white border border-red-500 px-2 py-1 '>{jobData?.jobType}</span>
-                            <span className='bg-green-300 rounded-lg text-white border border-green-500 px-2 py-1 '>{jobData?.locationType}</span>
+
+                        {/* Details Grid */}
+                        <div className='grid grid-cols-2 gap-4 text-center'>
+
+                            {/* Job Type Card */}
+                            <div className='flex flex-col p-3 bg-gray-50 rounded-md'>
+                                <span className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1'>
+                                    Job Type
+                                </span>
+                                <span className='text-base font-semibold text-slate-800'>
+                                    {/* Use 'jobData?.jobType' for the actual data */}
+                                    {jobData?.jobType || 'Contract'}
+                                </span>
+                            </div>
+
+                            {/* Location Type Card */}
+                            <div className='flex flex-col p-3 bg-gray-50 rounded-md'>
+                                <span className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1'>
+                                    Location Type
+                                </span>
+                                <span className='text-base font-semibold text-slate-800'>
+                                    {/* Use 'jobData?.locationType' for the actual data */}
+                                    {jobData?.locationType || 'On-site'}
+                                </span>
+                            </div>
+
                         </div>
                     </div>
                     <div className='p-4 flex flex-col gap-4 h-screen'>
                         <h2 className='font-bold flex items-center gap-4'>
-                            <FaAudioDescription className='text-[var(--primary-color)]' /> Job Description:
+                            <FaAudioDescription className='text-[var(--primary-color)]' /> Job Description
                         </h2>
-                        <div className='ml-8' dangerouslySetInnerHTML={{ __html: jobData?.description }} />
+                        <div className='px-10'>
+                            <h4 className='text-lg font-semibold mb-4'>
+                                Key Responsibities
+                            </h4>
+                            <ul className='list-disc list-inside'>
+                                {jobData?.responsibilities?.map((res, index) => (
+                                    <li>
+                                        {res}
+                                    </li>
+                                ))}
+                            </ul>
+                            <h4 className='text-lg mt-8 font-semibold mb-4'>
+                                About the Job
+                            </h4>
+                            <div className='min-h-[20vh] overflow-y-auto' dangerouslySetInnerHTML={{ __html: jobData?.description }} />
+                        </div>
                     </div>
                 </div>
                 <div className='w-full order-1 md:order-2'>
-                    <div className='border rounded-lg p-2 md:p-4 sticky top-4 shadow-lg flex flex-col '>
-                        <h2 className='font-bold flex items-center gap-4 bg-gray-300 border-2 border-[var(--secondary-color)] px-4 py-2 rounded-lg'>
-                            <FaDollarSign />{jobData?.salary}
-                        </h2>
+                    <div className='border border-gray-300 rounded-lg p-2 md:p-4 sticky top-4 shadow-lg flex flex-col'>
+                        <h3 className='font-semibold flex items-center gap-4 bg-gray-300 border-2 border-[var(--secondary-color)] px-4 py-2 rounded-lg'>
+                            <FaDollarSign className='text-[var(--secondary-color)]' />{jobData?.salaryType === 'fixed' ? jobData?.fixedSalary : jobData?.minSalary + ' $' + ' - ' + jobData?.maxSalary + ' $'} monthly
+                        </h3>
+                        <Link className='mt-3 underline underline-offset-2 flex items-center text-blue-500 gap-3' to={'/company-profile/' + jobData?.postedBy}>
+                            {jobData?.company} <ExternalLink size={20} />
+                        </Link>
+                        <span className='text-sm flex items-center gap-2 mt-3'>
+                            <MapPin />
+                            {jobData?.locationType !== 'remote' ?
+                                <span>
+                                    {jobData?.location}
+                                </span>
+                                : "Remote"}
+                        </span>
                         <div className='flex gap-6 w-full py-4'>
                             <span className='flex items-center gap-2 text-red-500 bgrounded-md'>
                                 <IoIosWarning />
@@ -133,19 +183,14 @@ const JobDetails = () => {
                                 <IoIosMail /> {jobData?.applicants.length} <span className='font-bold'>Applicants</span>
                             </span>
                         </div>
-                        <div className='p-2 border-2 border-[var(--primary-color)] bg-[var(--primary-color)]/10 rounded-lg'>
-                            {userData?.resume ? <h4><span className='text-[var(--primary-color)] font-bold'>Resume:</span>{userData?.resume}</h4> : <h4 className='text-red-500 flex gap-4 items-center'>No resume uploaded <span onClick={() => isLoggedIn ? navigate('/dashboard') : setLoginReminder(true)} className='text-sm underline text-black'>Upload</span></h4>}
+                        <div className='p-2 border-2 border-[var(--primary-color)] bg-[var(--primary-color)]/10 flex items-center gap-3 rounded-lg font-medium'>
+                            <File className='text-yellow-800' /> Resume: <span className='font-bold'>
+                                {jobData?.resumeRequirement === "false" ? "Not Required" : "Required"}
+                            </span>
                         </div>
                         <button
                             disabled={userData?.appliedJobs?.includes(jobData?._id)}
-                            onClick={() => {
-                                if (isLoggedIn) {
-                                    setapplJobId(jobData?._id)
-                                    setToggleApplyJob(true)
-                                } else {
-                                    setLoginReminder(true)
-                                }
-                            }}
+                            // onClick={''}
                             className='mt-4'
 
                         >
@@ -154,6 +199,8 @@ const JobDetails = () => {
                     </div>
                 </div>
             </section>
+
+            <hr className='my-8' />
 
             <section className='my-4 min-h-[40vh] w-full'>
                 <h2 className='font-semibold'>More Jobs <span className='font-bold'>
@@ -168,24 +215,6 @@ const JobDetails = () => {
                     }
                 </ul>
             </section>
-
-
-            {/* Apply Job Pop Up */}
-            <div className={`fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center justify-center ${toggleApplyJob ? 'flex' : 'hidden'}`}>
-                <div className='w-[500px] relative bg-white shadow-2xl rounded-lg p-8'>
-                    <span className='absolute top-4 right-4 cursor-pointer'>
-                        <MdCancel onClick={() => setToggleApplyJob(false)} />
-                    </span>
-                    <h1>
-                        Briefly Explain Your Self
-                    </h1>
-                    <textarea value={coverLetter} onChange={(e) => setCoverLetter(e.target.value)} name="coverLetter" className='w-full h-[50%] rounded-2xl resize-none p-4 border shadow-lg my-10' placeholder='Enter Your Brief Interest In the Job...' id="coverLetter">
-                    </textarea>
-                    <button onClick={() => applyJob(applJobId)}>
-                        Apply
-                    </button>
-                </div>
-            </div>
 
             {/* Login */}
             <div className={`fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center justify-center ${loginReminder ? 'flex' : 'hidden'}`}>
@@ -204,6 +233,14 @@ const JobDetails = () => {
                     </p>
                 </div>
             </div>
+
+            {/* Apply Job Model */}
+            {applyJobModel && <div className='fixed w-full h-screen bg-black/40 top-0 left-0 flex items-center justify-center'>
+                <div className='p-4 rounded-lg bg-white shadow-2xl'>
+
+                </div>
+            </div>}
+            
         </main>
     )
 }
