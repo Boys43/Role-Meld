@@ -18,6 +18,7 @@ const userProfileSchema = new mongoose.Schema({
   followedAccounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecruiterProfile" }],
   skills: { type: Array, default: [] },
   isBanned: {type: Boolean, default: false},
+  currency: {type: String, default: "USD"},
 
   // 🆕 Resume & extra fields
   resume: { type: String, default: "" },   // file URL (PDF/Doc)

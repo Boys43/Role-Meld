@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 // React Icons
 import { IoHomeOutline, IoWarning } from "react-icons/io5";
 import { toast } from 'react-toastify';
@@ -26,10 +26,11 @@ import {
 
 
 const JobDetails = () => {
-    const { backendUrl, isLoggedIn, userData } = useContext(AppContext);
+    const { backendUrl, userData } = useContext(AppContext);
     const [loginReminder, setLoginReminder] = useState(false)
     const [jobData, setJobData] = useState(null);
     const [loading, setLoading] = useState(false)
+    const location = useLocation
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -252,7 +253,7 @@ const JobDetails = () => {
                         <button
                             disabled={userData?.appliedJobs?.includes(jobData?._id)}
                             onClick={() => setApplyJobModel(true)}
-                            className='mt-4'
+                            className={`mt-4 ${userData?.role === "recruiter" && "hidden"} `}
                         >
                             Apply Now
                         </button>

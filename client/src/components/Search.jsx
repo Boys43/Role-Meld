@@ -58,7 +58,7 @@ const Search = ({ Param }) => {
           }
         </div>
         <div className="p-1">
-          <button type="submit">
+          <button type="submit" className="flex items-center gap-3">
             Find <FaSearch />
           </button>
         </div>

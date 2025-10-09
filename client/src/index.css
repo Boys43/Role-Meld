@@ -54,8 +54,8 @@ body {
 button {
   padding: 0.4rem 0.7rem;
   /* More balanced padding */
-  display: inline-flex;
   justify-content: center;
+  
   align-items: center;
   gap: 0.5rem;
   /* Space for icons + text */
