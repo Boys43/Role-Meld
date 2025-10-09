@@ -73,6 +73,27 @@ function calculateProfileScore(user) {
     return Math.min(score, 100);
 }
 
+function calculateRecruiterProfileScore(user) {
+    let score = 0;
+    const totalPossible = 70; // total points if all conditions are met
+
+    if (user.name?.trim()) score += 10;
+    if (user.profilePicture?.trim()) score += 10;
+    if (user.banner?.trim()) score += 5;
+    if (user.companyType?.trim()) score += 5;
+    if (user.industry?.trim()) score += 5;
+    if (user.about?.trim()) score += 5;
+    if (user.tagline?.trim()) score += 5;
+    if (user.contactNumber?.trim()) score += 5;
+    if (user.country?.trim()) score += 5;
+    if (user.city?.trim()) score += 5;
+    if (user.company?.trim() !== "Individual") score += 10;
+
+    // convert to percentage
+    const percentage = (score / totalPossible) * 100;
+
+    return Math.round(percentage);
+}
 
 export const getUserData = async (req, res) => {
     const userId = req.user._id;
@@ -138,6 +159,7 @@ export const updateProfile = async (req, res) => {
                 return res.json({ success: false, message: "User Not Found!" });
             }
 
+            updatedProfile.profileScore = calculateRecruiterProfileScore(updatedProfile);
             await updatedProfile.save();
         }
 

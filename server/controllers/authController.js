@@ -16,76 +16,135 @@ const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 export const register = async (req, res) => {
     try {
         console.log("BREVO_API_KEY:", process.env.BREVO_API_KEY?.slice(0, 6));
+
         const { name, email, password, role } = req.body;
 
+        // === Validate inputs ===
         if (!name || !email || !password || !role) {
             return res.json({ success: false, message: "Missing Details" });
         }
 
+        // === Check for existing user ===
         const existingUser = await authModel.findOne({ email });
         if (existingUser) {
             return res.json({ success: false, message: "User Already Exists!" });
         }
 
-        const verificationOTP = String(Math.floor(900000 * Math.random()) + 100000);
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // === Brevo email send ===
-        const sendSmtpEmail = {
-            sender: { name: "Alfa Career", email: "movietrendmaker2244@gmail.com" },
-            to: [{ email }],
-            subject: "🔑 Verify Your Alfa Career Account",
-            htmlContent: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-          <div style="background: linear-gradient(90deg, #0076b5, #00bfa6); padding: 20px; text-align: center; color: white;">
-            <h2 style="margin: 0;">Alfa Career</h2>
-          </div>
-          <div style="padding: 25px; color: #333; font-size: 16px; line-height: 1.6;">
-            <p>Hey <b>${name}</b>,</p>
-            <p>Thank you for signing up with <b>Alfa Career</b>. To complete your account verification, please use the following OTP:</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <span style="display: inline-block; font-size: 28px; font-weight: bold; letter-spacing: 6px; background: #f3f9ff; padding: 15px 25px; border: 2px dashed #0076b5; border-radius: 8px; color: #0076b5;">
-                ${verificationOTP}
-              </span>
-            </div>
-            <p>This OTP is valid for <b>10 minutes</b>. Please do not share it with anyone for security reasons.</p>
-            <p>If you didn’t request this verification, you can safely ignore this email.</p>
-          </div>
-          <div style="background: #f9f9f9; padding: 15px; text-align: center; font-size: 13px; color: #777;">
-            <p>© ${new Date().getFullYear()} Alfa Career. All rights reserved.</p>
-          </div>
-        </div>
-      `,
-        };
-
-        await tranEmailApi.sendTransacEmail(sendSmtpEmail);
-
-        // === Save user after email sent ===
-        const auth = new authModel({
-            name,
-            email,
-            password: hashedPassword,
-            role,
-            verificationOTP,
-        });
-
-        if (email === process.env.ADMIN_EMAIL) {
-            auth.isAdmin = true;
-        }
-        await auth.save();
-
+        // === USER FLOW ===
         if (role === "user") {
+            const verificationOTP = String(Math.floor(100000 + Math.random() * 900000));
+
+            // --- Brevo email content ---
+            const sendSmtpEmail = {
+                sender: { name: "Alfa Career", email: "movietrendmaker2244@gmail.com" },
+                to: [{ email }],
+                subject: "🔑 Verify Your Alfa Career Account",
+                htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+            <div style="background: linear-gradient(90deg, #0076b5, #00bfa6); padding: 20px; text-align: center; color: white;">
+              <h2 style="margin: 0;">Alfa Career</h2>
+            </div>
+            <div style="padding: 25px; color: #333; font-size: 16px; line-height: 1.6;">
+              <p>Hey <b>${name}</b>,</p>
+              <p>Thank you for signing up with <b>Alfa Career</b>. To complete your account verification, please use the following OTP:</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <span style="display: inline-block; font-size: 28px; font-weight: bold; letter-spacing: 6px; background: #f3f9ff; padding: 15px 25px; border: 2px dashed #0076b5; border-radius: 8px; color: #0076b5;">
+                  ${verificationOTP}
+                </span>
+              </div>
+              <p>This OTP is valid for <b>10 minutes</b>. Please do not share it with anyone for security reasons.</p>
+              <p>If you didn’t request this verification, you can safely ignore this email.</p>
+            </div>
+            <div style="background: #f9f9f9; padding: 15px; text-align: center; font-size: 13px; color: #777;">
+              <p>© ${new Date().getFullYear()} Alfa Career. All rights reserved.</p>
+            </div>
+          </div>
+        `,
+            };
+
+            // --- Send verification email ---
+            await tranEmailApi.sendTransacEmail(sendSmtpEmail);
+
+            // --- Save user ---
+            const auth = new authModel({
+                name,
+                email,
+                password: hashedPassword,
+                role: "user",
+                verificationOTP,
+            });
+
+            if (email === process.env.ADMIN_EMAIL) {
+                auth.isAdmin = true;
+            }
+
+            await auth.save();
             await userProfileModel.create({ authId: auth._id, role: "user", name, email });
-        } else {
-            await recruiterProfileModel.create({ authId: auth._id, role: "recruiter", name, email });
+
+            return res.json({ success: true, message: "Please Verify Your Account" });
         }
 
-        return res.json({ success: true, message: "Please Verify Your Account" });
+        // === RECRUITER FLOW ===
+        if (role === "recruiter") {
+
+            const sendSmtpEmail = {
+                sender: { name: "Alfa Career", email: "movietrendmaker2244@gmail.com" },
+                to: [{ email }],
+                subject: "🕓 Your Recruiter Account is Under Review",
+                htmlContent: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <div style="background: linear-gradient(90deg, #0076b5, #00bfa6); padding: 20px; text-align: center; color: white;">
+        <h2 style="margin: 0;">Alfa Career</h2>
+      </div>
+      <div style="padding: 25px; color: #333; font-size: 16px; line-height: 1.6;">
+        <p>Hey <b>${name}</b>,</p>
+        <p>Thank you for registering as a <b>Recruiter</b> on <b>Alfa Career</b>.</p>
+        <p>Your account is currently <b>under review</b> by our verification team to ensure the authenticity and safety of our platform.</p>
+        <p>⏳ The review process usually takes <b>24–48 hours</b>. Once approved, you’ll receive a confirmation email, and you’ll be able to start posting jobs and managing applications.</p>
+        <p>If any additional information is required, our team will reach out to you via this email address.</p>
+        <p>We appreciate your patience and look forward to working together!</p>
+        <p>— The Alfa Career Team</p>
+      </div>
+      <div style="background: #f9f9f9; padding: 15px; text-align: center; font-size: 13px; color: #777;">
+        <p>© ${new Date().getFullYear()} Alfa Career. All rights reserved.</p>
+      </div>
+    </div>
+  `,
+            };
+
+
+            // --- Send verification email ---
+            await tranEmailApi.sendTransacEmail(sendSmtpEmail);
+
+            const auth = new authModel({
+                name,
+                email,
+                password: hashedPassword,
+                role: "recruiter",
+                isVerified: false,
+            });
+
+            await auth.save();
+            await recruiterProfileModel.create({
+                authId: auth._id,
+                role: "recruiter",
+                name,
+                email,
+            });
+
+            return res.json({ success: true, message: "Your Account is Under Review" });
+        }
+
+        // === If role invalid ===
+        return res.json({ success: false, message: "Invalid Role" });
     } catch (error) {
         console.error("Email sending error:", error.response?.body || error.message);
-        return res.json({ success: false, message: error.message });
+        return res.json({ success: false, message: "Server Error: " + error.message });
     }
 };
+
 
 export const login = async (req, res) => {
     const { email, password } = req.body;
@@ -99,6 +158,10 @@ export const login = async (req, res) => {
 
         if (!user) {
             return res.json({ success: false, message: "Invalid Email" });
+        }
+
+        if (user.role === "recruiter" && user.isVerified === false) {
+            return res.json({ success: false, message: "Your Account is Under Review" });
         }
 
         if (user.isVerified === false) {
@@ -196,6 +259,70 @@ export const verifyEmail = async (req, res) => {
         await authUser.save();
 
         return res.json({ success: true, message: "Email verified successfully" });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+}
+
+export const getPendingRecruiters = async (req, res) => {
+    try {
+        const pendingRecruiters = await authModel.find({ role: "recruiter", isVerified: false });
+        return res.json({ success: true, pendingRecruiters });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export const updateRecruiterStatus = async (req, res) => {
+    const { email, status } = req.body;
+
+    if (!email || !status) {
+        return res.json({ success: false, message: "Email and status are required" });
+    }
+
+    try {
+        const authUser = await authModel.findOne({ email });
+
+        if (!authUser) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        authUser.isVerified = status;
+        await authUser.save();
+
+        const email = {
+            sender: { name: "Alfa Career", email: "movietrendmaker2244@gmail.com" },
+            to: [{ email }],
+            subject: "🎉 Your Recruiter Account Has Been Approved!",
+            htmlContent: `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+    <div style="background: linear-gradient(90deg, #0076b5, #00bfa6); padding: 20px; text-align: center; color: white;">
+      <h2 style="margin: 0;">Alfa Career</h2>
+    </div>
+    <div style="padding: 25px; color: #333; font-size: 16px; line-height: 1.6;">
+      <p>Hey <b>${authUser?.name}</b>,</p>
+      <p>🎉 Great news! Your <b>Recruiter Account</b> has been <b>successfully approved</b> on <b>Alfa Career</b>.</p>
+      <p>You can now log in to your dashboard, post job listings, and manage applications from talented candidates.</p>
+      <p style="margin-top: 20px;">
+        <a href="https://alfacareer.com/login" 
+           style="background: linear-gradient(90deg, #0076b5, #00bfa6); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+          Log in to Your Account
+        </a>
+      </p>
+      <p>If you face any issues accessing your account, feel free to reply to this email — our support team will assist you promptly.</p>
+      <p>Welcome aboard, and best of luck with your recruitment journey 🚀</p>
+      <p>— The Alfa Career Team</p>
+    </div>
+    <div style="background: #f9f9f9; padding: 15px; text-align: center; font-size: 13px; color: #777;">
+      <p>© ${new Date().getFullYear()} Alfa Career. All rights reserved.</p>
+    </div>
+  </div>
+  `,
+        };
+
+        await tranEmailApi.sendTransacEmail(sendSmtpEmail);
+
+        return res.json({ success: true, message: "User status updated successfully" });
     } catch (error) {
         return res.json({ success: false, message: error.message });
     }

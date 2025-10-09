@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { FiMenu, FiX } from "react-icons/fi";
 import Loading from "./Loading";
 import Img from "./Image"; // Assuming this is a local component for image rendering
+import { AnimatePresence, motion } from "framer-motion";
 
 // React iCONS
 import { IoMdPerson, IoMdExit } from "react-icons/io";
@@ -214,11 +215,96 @@ const Navbar = () => {
     </div>
   );
 
+  const score = userData?.profileScore ?? 0;
+  const [showReminder, setShowReminder] = useState(false);
+
+  // Dynamic level logic
+  const getStatus = (score) => {
+    if (score === 100) return { label: "Excellent", color: "green", msg: "🔥 You're fully active and ready to shine!" };
+    if (score >= 75) return { label: "Good", color: "blue", msg: "💪 Great progress! Just polish a few details." };
+    if (score >= 50) return { label: "Average", color: "yellow", msg: "⚡ You’re getting there — add more details to boost visibility!" };
+    if (score >= 25) return { label: "Poor", color: "orange", msg: "🚀 Start completing your profile to unlock more opportunities!" };
+    return { label: "Inactive", color: "red", msg: "⚠️ Your account is inactive. Complete your profile to activate it." };
+  };
+
+  const { label, color, msg } = getStatus(score);
+  const isActive = score >= 80;
+
+  useEffect(() => {
+    if (!isActive) {
+      const interval = setInterval(() => {
+        setShowReminder(true);
+      }, 600000); // every 10 minutes
+      return () => clearInterval(interval);
+    }
+  }, [isActive]);
+
   const UserProfileDropdown = () => (
     <div
       ref={userDropdownRef}
       className="relative flex items-center gap-4"
     >
+      <div className="relative flex items-center gap-4">
+        {/* Pill UI */}
+        <div
+          className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
+        >
+          {userData?.profileScore === 100 && userData?.reviewStatus === "underReview" || userData?.reviewStatus === "pending" ?
+            <>
+              <span className={`w-2.5 h-2.5 rounded-full bg-yellow-500 animate-pulse`}></span>
+              <span className={`text-sm font-medium text-yellow-500`}>
+                Under Review
+              </span>
+            </> :
+            null
+          }
+        </div>
+
+        <div
+          className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
+        >
+          <span className={`w-2.5 h-2.5 rounded-full bg-${color}-500 animate-pulse`}></span>
+          <span className={`text-sm font-medium text-${color}-500`}>
+            {label}
+          </span>
+          <div
+            className={`ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-${color}-100 text-${color}-700`}
+          >
+            Score: {score}
+          </div>
+        </div>
+
+        {/* Dropdown Reminder */}
+        <AnimatePresence>
+          {!isActive && showReminder && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className={`absolute right-0 top-10 w-72 bg-white/90 backdrop-blur-md border border-${color}-100 shadow-lg rounded-2xl p-4 z-50`}
+            >
+              <div className="flex flex-col items-center gap-3">
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-full bg-${color}-100 text-${color}-500 animate-pulse`}
+                >
+                  ⚠️
+                </div>
+                <div className="flex-1 text-center">
+                  <h4 className="font-semibold text-gray-800">Profile Status</h4>
+                  <span className="text-gray-600 text-sm mt-1 block">{msg}</span>
+                  <button
+                    onClick={() => setShowReminder(false)}
+                    className={`mt-3 w-full bg-${color}-500 hover:bg-${color}-600 text-white text-sm font-semibold py-2 rounded-lg transition-all`}
+                  >
+                    Got it
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       <h4 className="hidden lg:block text-sm text-[var(--primary-color)]">
         Hi, {userData?.name || "Buddy"}
       </h4>

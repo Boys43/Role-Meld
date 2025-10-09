@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useState, useMemo } from "react";
 import { AppContext } from "../context/AppContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 // Lucide React Icons
@@ -9,6 +9,7 @@ import { User, Mail, Lock, Briefcase, Eye, EyeOff, XCircle, CheckCircle, Search,
 
 const RegisterModel = ({ setRegStep }) => {
     const { backendUrl } = useContext(AppContext);
+    const navigate = useNavigate()
 
     // Form Data States
     const [name, setName] = useState('');
@@ -56,7 +57,11 @@ const RegisterModel = ({ setRegStep }) => {
             
             if (data.success) {
                 toast.success(data.message);
-                setRegStep(1); 
+                if (role === "user") {
+                    setRegStep(1); 
+                }else{
+                    navigate('/')
+                }
             } else {
                 toast.error(data.message);
             }

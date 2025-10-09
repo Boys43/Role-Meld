@@ -23,7 +23,7 @@ import {
     Link as LinkIcon,
     FileBadge,
 } from "lucide-react";
-
+import Currency from '../components/CurrencyCovertor';
 
 const JobDetails = () => {
     const { backendUrl, userData } = useContext(AppContext);
@@ -76,7 +76,6 @@ const JobDetails = () => {
             setLoading(false)
         }
     }
-
 
     useEffect(() => {
         getJob();
@@ -218,7 +217,11 @@ const JobDetails = () => {
                 <div className='w-full order-1 md:order-2'>
                     <div className='border border-gray-300 rounded-lg p-2 md:p-4 sticky top-4 shadow-lg flex flex-col'>
                         <h3 className='font-semibold flex items-center gap-4 bg-gray-300 border-2 border-[var(--secondary-color)] px-4 py-2 rounded-lg'>
-                            <FaDollarSign className='text-[var(--secondary-color)]' />{jobData?.salaryType === 'fixed' ? jobData?.fixedSalary : jobData?.minSalary + ' $' + ' - ' + jobData?.maxSalary + ' $'} monthly
+                            {jobData?.salaryType === "fixed" ? <span>
+                                <Currency amount={jobData?.fixedSalary} from={jobData?.jobsCurrency} />
+                            </span> : <span>
+
+                                <Currency amount={jobData?.minSalary} from={jobData?.jobsCurrency} /> - <Currency amount={jobData?.maxSalary} from={jobData?.jobsCurrency} /></span>}
                         </h3>
                         <Link className='mt-3 underline underline-offset-2 flex items-center text-blue-500 gap-3' to={'/company-profile/' + jobData?.postedBy}>
                             {jobData?.company} <ExternalLink size={20} />

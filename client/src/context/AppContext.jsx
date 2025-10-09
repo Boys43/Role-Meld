@@ -62,7 +62,9 @@ export const AppContextProvider = (props) => {
     } catch {
       setUserData(null);
     }
-  };
+  }
+
+  
 
   const getUserState = async () => {
     setLoading(true);

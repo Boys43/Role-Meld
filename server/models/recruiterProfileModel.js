@@ -8,6 +8,7 @@ const recruiterProfileSchema = new mongoose.Schema({
   email: { type: String, default: '' },
   company: { type: String, default: '' },
   isCompany: { type: Boolean, default: false },
+  companyType: {type: String, default: '' },
   // members: { type: String, default: '0-50', enum: ['0-50', '50-100', '100-500', '500-1000', '1000+'] },
   website: { type: String, default: "" },
   role: { type: String, default: "user" },
@@ -27,6 +28,10 @@ const recruiterProfileSchema = new mongoose.Schema({
   followers: { type: Number, default: 0 },
   followersId: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" }],
   isBanned: {type: Boolean, default: false},
+  profileScore: {type: Number, default: 0},
+  profileStatus: {type: String, default: "inActive"},
+
+  reviewStatus: {type: String, default: "pending", enum: ["pending", "underReview", "approved", "rejected"]},
 }, { timestamps: true });
 
 export default mongoose.model("RecruiterProfile", recruiterProfileSchema);

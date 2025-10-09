@@ -122,7 +122,13 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 <li key={i} className="relative group">
                   {/* Parent tab */}
                   <span
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.preventDefault();
+                      if (e.key === "applications" && userData?.reviewStatus !== "approved") {
+                        toast.warn("Your account is not approved yet.");
+                        return;
+                      }
+
                       if (isMobile && e.subTabs) {
                         setActiveTab(e.key);
                       } else if (!e.subTabs) {
@@ -149,7 +155,17 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                       {e.subTabs.map((sub, idx) => (
                         <span
                           key={idx}
-                          onClick={() => setActiveTab(sub.key)}
+                          onClick={(event) => {
+                            event.preventDefault();
+                            if (
+                              (sub.key === "list-job" || sub.key === "listed-jobs") &&
+                              userData?.reviewStatus !== "approved"
+                            ) {
+                              toast.warn("Your account is not approved yet.");
+                              return;
+                            }
+                            setActiveTab(sub.key);
+                          }}
                           className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition flex items-center gap-2
                             ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
                           `}

@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Heart, Clock, MapPin } from 'lucide-react';
 import { FaPaperPlane } from 'react-icons/fa';
 import Img from './Image';
+import Currency from './CurrencyCovertor';
 
 const JobCard = ({ e }) => {
     const { backendUrl, isLoggedIn, toggleSaveJob, savedJobs } = useContext(AppContext);
@@ -97,7 +98,12 @@ const JobCard = ({ e }) => {
                         <div className='flex items-center gap-2  font-semibold text-xs'>
                             {/* <DollarSign size={14} /> */}
                             <span className='w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
-                                {e?.salaryType === "fixed" ? <span>{e?.fixedSalary}$</span> : <span>{e?.minSalary} $ - {e?.maxSalary} $</span>}
+
+                                {e?.salaryType === "fixed" ? <span>
+                                    <Currency amount={e?.fixedSalary} from={e?.jobsCurrency} />
+                                </span> : <span>
+                                    
+                                    <Currency amount={e?.minSalary} from={e?.jobsCurrency} /> - <Currency amount={e?.maxSalary} from={e?.jobsCurrency} /></span>}
                             </span>
                             <span className='flex w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
                                 {e?.jobType}

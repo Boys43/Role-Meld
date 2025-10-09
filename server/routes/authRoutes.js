@@ -1,5 +1,5 @@
 import express from 'express';
-import { banUser, changePassword, checkAdmin, deleteAccount, deleteUser, isAuthenticated, login, logout, register, unBanUser, verifyEmail } from '../controllers/authController.js';
+import { banUser, changePassword, checkAdmin, deleteAccount, deleteUser, getPendingRecruiters, isAuthenticated, login, logout, register, unBanUser, updateRecruiterStatus, verifyEmail } from '../controllers/authController.js';
 import userAuth from '../middlewares/userAuth.js';
 
 const authRouter = express.Router()
@@ -15,5 +15,8 @@ authRouter.post('/change-password', changePassword);
 authRouter.post('/delete-account', deleteAccount);
 authRouter.post('/ban-user', banUser);
 authRouter.post('/unban-user', unBanUser);
+authRouter.get('/pending-recruiters', getPendingRecruiters);
+authRouter.post('/update-recruiter-status', updateRecruiterStatus);
+
 
 export default authRouter;

@@ -8,6 +8,7 @@ import AdminSidebar from '../components/AdminSidebar'
 import AdminBlog from '../components/AdminBlog'
 import AdminListedBlogs from '../components/AdminListedBlogs'
 import CategoryManager from '../components/CategoryManager'
+import RecruiterApprovalRequests from '../components/RecruiterApprovalRequests'
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('analytic-dashboard')
@@ -30,8 +31,10 @@ const AdminDashboard = () => {
         return <AdminBlog setActiveTab={setActiveTab} />
       case 'listed-blogs':
         return <AdminListedBlogs />
-        case "category-manager": 
+      case "category-manager":
         return <CategoryManager />
+      case "employee-requests":
+        return <RecruiterApprovalRequests />
       default:
         return <AnalyticDashboard />
     }

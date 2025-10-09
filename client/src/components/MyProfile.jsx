@@ -5,8 +5,11 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { FaCamera } from 'react-icons/fa';
-import { User, Phone, Link, MapPin, Briefcase, Save } from 'lucide-react'
+import { User, Phone, Link, MapPin, Briefcase, Save, Currency, CurrencyIcon } from 'lucide-react'
 import LocationSelector from './LocationSelector';
+import { FaSearch, FaMoneyBillWave } from "react-icons/fa";
+import SearchSelect from './SelectSearch';
+
 
 const MyProfile = () => {
     const { userData, backendUrl, setUserData, profileScore } = useContext(AppContext);
@@ -22,6 +25,7 @@ const MyProfile = () => {
         postal: userData.postal || "",
         country: userData.country || "",
         skills: userData.skills || [],
+        currency: userData.currency || "USD",
     });
 
     const handleChange = (e) => {
@@ -78,6 +82,27 @@ const MyProfile = () => {
             toast.error(error.response?.data?.message || error.message);
         }
     };
+
+
+    const currencyOptions = [
+        { code: "USD", name: "United States Dollar" },
+        { code: "AED", name: "United Arab Emirates Dirham" },
+        { code: "PKR", name: "Pakistani Rupee" },
+        { code: "OMR", name: "Omani Rial" },
+        { code: "QAR", name: "Qatari Riyal" },
+        { code: "SAR", name: "Saudi Riyal" },
+        { code: "EUR", name: "Euro" },
+        { code: "GBP", name: "British Pound" },
+        { code: "AUD", name: "Australian Dollar" },
+        { code: "CAD", name: "Canadian Dollar" },
+        { code: "INR", name: "Indian Rupee" },
+        { code: "BDT", name: "Bangladeshi Taka" },
+        { code: "MYR", name: "Malaysian Ringgit" },
+        { code: "THB", name: "Thai Baht" },
+        { code: "CNY", name: "Chinese Yuan" },
+        { code: "JPY", name: "Japanese Yen" },
+        { code: "ZAR", name: "South African Rand" },
+    ];
 
     return (
         <div className='w-full min-h-[calc(100vh-4.6rem)] overflow-y-auto p-6 bg-gradient-to-br from-gray-50 to-gray-100'>
@@ -157,6 +182,17 @@ const MyProfile = () => {
                                 onChange={handleChange}
                                 placeholder={userData?.portfolio || "e.g, https://github.com/username"}
                                 className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                            />
+                        </div>
+
+                        <div className='space-y-2'>
+                            <SearchSelect
+                                label="Currency"
+                                icon={FaMoneyBillWave}
+                                options={currencyOptions}
+                                value={formData.currency}
+                                onChange={handleChange}
+                                placeholder="e.g. USD"
                             />
                         </div>
 
@@ -269,7 +305,6 @@ const MyProfile = () => {
                             {/* Hint */}
                             <p className="text-xs text-gray-500">Press <b>Enter</b> to add each skill</p>
                         </div>
-
                     </div>
 
                     <div className='flex flex-col gap-6'>

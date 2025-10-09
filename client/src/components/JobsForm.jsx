@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 // React Icons
 import { IoChevronBack } from "react-icons/io5";
 import JobCard from "./JobCard";
+import SearchSelect from "./SelectSearch";
 // Motion variants for sliding animation
 const variants = {
   enter: (direction) => ({ x: direction > 0 ? 300 : -300, opacity: 0 }),
@@ -104,6 +105,26 @@ const JobForm = ({ setActiveTab }) => {
     setDirection(-1);
     setJobSteps((prev) => Math.max(prev - 1, 0));
   };
+
+  const currencyOptions = [
+    { code: "USD", name: "United States Dollar" },
+    { code: "AED", name: "United Arab Emirates Dirham" },
+    { code: "PKR", name: "Pakistani Rupee" },
+    { code: "OMR", name: "Omani Rial" },
+    { code: "QAR", name: "Qatari Riyal" },
+    { code: "SAR", name: "Saudi Riyal" },
+    { code: "EUR", name: "Euro" },
+    { code: "GBP", name: "British Pound" },
+    { code: "AUD", name: "Australian Dollar" },
+    { code: "CAD", name: "Canadian Dollar" },
+    { code: "INR", name: "Indian Rupee" },
+    { code: "BDT", name: "Bangladeshi Taka" },
+    { code: "MYR", name: "Malaysian Ringgit" },
+    { code: "THB", name: "Thai Baht" },
+    { code: "CNY", name: "Chinese Yuan" },
+    { code: "JPY", name: "Japanese Yen" },
+    { code: "ZAR", name: "South African Rand" },
+  ];
 
 
   return (
@@ -440,9 +461,9 @@ const JobForm = ({ setActiveTab }) => {
                   <>
 
                     <hr className="my-8" />
-                    <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div className="flex items-center justify-between gap-4 mt-4">
                       <div className="flex flex-col">
-                        <label htmlFor="minSalary" className="font-medium mb-2">Min Salary (USD)</label>
+                        <label htmlFor="minSalary" className="font-medium mb-2">Min Salary</label>
                         <input
                           type="number"
                           name="minSalary"
@@ -453,7 +474,7 @@ const JobForm = ({ setActiveTab }) => {
                         />
                       </div>
                       <div className="flex flex-col">
-                        <label htmlFor="maxSalary" className="font-medium mb-2">Max Salary (USD)</label>
+                        <label htmlFor="maxSalary" className="font-medium mb-2">Max Salary</label>
                         <input
                           type="number"
                           name="maxSalary"
@@ -463,6 +484,16 @@ const JobForm = ({ setActiveTab }) => {
                           placeholder="80000"
                         />
                       </div>
+                      <div className="flex flex-col">
+                        <SearchSelect
+                          label={"Currency"}
+                          options={currencyOptions}
+                          value={jobData.currency || ""}
+                          onChange={handleJobChange}
+                          placeholder="e.g. USD"
+                        />
+                      </div>
+
                     </div>
                   </>
                 }
@@ -470,14 +501,21 @@ const JobForm = ({ setActiveTab }) => {
                 {jobData?.salaryType === "fixed" &&
                   <div className="flex flex-col mt-4">
                     <hr className="my-8" />
-                    <label htmlFor="fixedSalary" className="font-medium mb-2">Salary (USD)</label>
+                    <label htmlFor="fixedSalary" className="font-medium mb-2">Salary</label>
                     <input
                       type="number"
                       name="fixedSalary"
                       value={jobData.fixedSalary || ""}
                       onChange={handleJobChange}
-                      className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all"
+                      className="px-4 py-2 mb-4 border-2 border-gray-300 rounded-xl focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)] hover:shadow-md transition-all"
                       placeholder="80000"
+                    />
+                    <SearchSelect
+                      label={"Currency"}
+                      options={currencyOptions}
+                      value={jobData.jobsCurrency || ""}
+                      onChange={handleJobChange}
+                      placeholder="e.g. USD"
                     />
                   </div>
                 }

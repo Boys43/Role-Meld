@@ -91,13 +91,9 @@ const jobsSchema = new mongoose.Schema({
     default: true,
   },
 
-}, { timestamps: true });
+  jobsCurrency: {type: String, default: "USD"},
 
-// ✅ Auto-set isActive based on approved status
-jobsSchema.pre("save", function (next) {
-  this.isActive = this.approved === "approved";
-  next();
-});
+}, { timestamps: true });
 
 const jobsModel = mongoose.models?.Jobs || mongoose.model("Jobs", jobsSchema);
 export default jobsModel;

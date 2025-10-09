@@ -17,6 +17,7 @@ import cron from 'node-cron';
 import chatRouter from "./routes/chatBotRoutes.js";
 import reviewRouter from "./routes/reviewRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
+import { startStatusCron } from "./cron/recruiterCron.js";
 
 const app = express();
 app.use(cookieParser());
@@ -59,6 +60,7 @@ app.get('/', (req, res) => {
 
 connectDB();
 startJobsCron();
+startStatusCron();
 
 // Ping backend every 5 minutes to prevent cold start
 const SELF_URL = process.env.SELF_URL || 'http://localhost:4000/ping';

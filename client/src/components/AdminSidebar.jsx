@@ -1,12 +1,6 @@
 // components/Sidebar.jsx
 import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
-import { MdOutlineDashboard, MdFindInPage, MdPublish } from "react-icons/md";
-import { CiViewList } from "react-icons/ci";
-import { VscGitStashApply } from "react-icons/vsc";
-import { HiOfficeBuilding, HiOutlineHeart } from "react-icons/hi";
-import { IoDocumentOutline, IoLockClosedOutline } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
 import { FaChevronLeft, FaChevronRight, FaTrash } from "react-icons/fa";
 import { IoMdExit } from "react-icons/io";
 import { FiMenu } from "react-icons/fi";
@@ -14,7 +8,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Img from "./Image";
-import { Blocks, Briefcase, Building, ChevronLeft, ChevronRight, LayoutDashboard, List, User, Users2 } from "lucide-react";
+import { Blocks, Briefcase, Building, ChevronRight, Clock, LayoutDashboard, User, Users2 } from "lucide-react";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const { userData, backendUrl, setIsLoggedIn, setUserData } = useContext(AppContext);
@@ -37,6 +31,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     { name: 'Job Requests', key: "job-requests", icon: <Building size={25} /> },
     { name: 'Users', key: "users", icon: <User size={25} /> },
     { name: 'Recruiters', key: "recruiters", icon: <Users2 size={25} /> },
+    { name: 'Employee Requests', key: "employee-requests", icon: <Clock size={25} /> },
     {
       name: 'Jobs', key: "jobs", icon: <Briefcase size={25} />,
       subTabs: [
