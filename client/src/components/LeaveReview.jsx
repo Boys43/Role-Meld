@@ -41,7 +41,7 @@ const LeaveReview = () => {
       <Suspense fallback={<div>Loaing Analytics...</div>}>
         <ReviewAnalytics />
       </Suspense>
-      <div className="bg-gray-50 rounded-xl p-6 my-6 shadow-sm">
+      <div className="rounded-xl p-6 my-6 border border-gray-300 bg-gray-50">
         <h2 className="text-xl font-semibold mb-4 text-gray-800 flex items-center gap-2">
           Rate Us <span className="text-yellow-400"><Star /></span>
         </h2>

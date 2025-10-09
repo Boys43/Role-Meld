@@ -33,7 +33,7 @@ const JobCard = ({ e }) => {
 
     return (
         <li className='p-6 cursor-pointer border border-gray-200 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between gap-4'
-        onClick={() => navigate('/jobDetails/' + e._id)}
+
         >
             <div className='flex flex-col gap-4'>
                 {/* 1. Header: Company Info and Save Button */}
@@ -58,7 +58,7 @@ const JobCard = ({ e }) => {
                             </h4>
                             <span className='text-xs text-gray-500'>
                                 {e?.followers ? `${e.followers} Followers` : `View Company`}
-                            </span>
+                            </span >
                         </div>
                     </div>
 
@@ -76,54 +76,54 @@ const JobCard = ({ e }) => {
                         {isSaved ? <Heart size={20} fill='white' /> : <Heart size={20} />}
                     </span>
                 </div>
-
-                <div className='w-full flex justify-between items-center gap-4'>
-                    <span className='text-xs'>
-                        {e?.category} / {e?.subCategory}
-                    </span>
-                    {e?.locationType !== "remote" && <span className='text-xs flex items-center gap-1'>
-                        <MapPin size={15} /> {e?.location}
-                    </span>}
-                </div>
-
-
-                {/* 2. Job Title & Salary */}
-                <div className='flex flex-col gap-2'>
-                    {/* Job Title - Bold and Prominent */}
-                    <h4 className='line-clamp-1 font-bold text-[var(--secondary-color)] leading-snug'>
-                        {e?.title}
-                    </h4>
-
-                    {/* Salary Badge - Themed */}
-                    <div className='flex items-center gap-2  font-semibold text-xs'>
-                        {/* <DollarSign size={14} /> */}
-                        <span className='w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
-                            {e?.salaryType === "fixed" ? <span>{e?.fixedSalary}$</span> : <span>{e?.minSalary} $ - {e?.maxSalary} $</span>}
+                <div onClick={() => navigate('/jobDetails/' + e._id)}>
+                    <div className='w-full flex justify-between items-center gap-4'>
+                        <span className='text-xs'>
+                            {e?.category} / {e?.subCategory}
                         </span>
-                        <span className='flex w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
-                            {e?.jobType}
+                        {e?.locationType !== "remote" && <span className='text-xs flex items-center gap-1'>
+                            <MapPin size={15} /> {e?.location}
+                        </span>}
+                    </div>
+
+                    {/* 2. Job Title & Salary */}
+                    <div className='flex flex-col gap-2'>
+                        {/* Job Title - Bold and Prominent */}
+                        <h4 className='mt-2 line-clamp-1 font-bold text-[var(--secondary-color)] leading-snug'>
+                            {e?.title}
+                        </h4>
+
+                        {/* Salary Badge - Themed */}
+                        <div className='flex items-center gap-2  font-semibold text-xs'>
+                            {/* <DollarSign size={14} /> */}
+                            <span className='w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
+                                {e?.salaryType === "fixed" ? <span>{e?.fixedSalary}$</span> : <span>{e?.minSalary} $ - {e?.maxSalary} $</span>}
+                            </span>
+                            <span className='flex w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
+                                {e?.jobType}
+                            </span>
+                        </div>
+                    </div>
+
+
+                    {/* 4. Footer: Actions and Timestamp */}
+                    <div className='flex items-center justify-between pt-3 border-t border-gray-100'>
+
+                        {/* Action Buttons */}
+                        {location.pathname !== "/dashboard" && <div className='flex gap-3 items-center'>
+                            <span className='text-sm flex items-center gap-3'>
+                                <FaPaperPlane className='text-[var(--primary-color)]' />
+                                {e?.applicationMethod[0]?.toUpperCase() + e?.applicationMethod?.substring(1) || "Apply"}
+                            </span>
+                        </div>}
+
+                        {/* Time Since Posted */}
+                        <span className='flex text-xs items-center gap-1 text-gray-500'>
+                            <Clock size={14} />
+                            {timeSince(e?.createdAt)}
                         </span>
                     </div>
                 </div>
-
-            </div>
-
-            {/* 4. Footer: Actions and Timestamp */}
-            <div className='flex items-center justify-between pt-3 border-t border-gray-100'>
-
-                {/* Action Buttons */}
-                {location.pathname !== "/dashboard" && <div className='flex gap-3 items-center'>
-                    <span className='text-sm flex items-center gap-3'>
-                        <FaPaperPlane className='text-[var(--primary-color)]' />
-                        {e?.applicationMethod[0]?.toUpperCase() + e?.applicationMethod?.substring(1) || "Apply"}
-                    </span>
-                </div>}
-
-                {/* Time Since Posted */}
-                <span className='flex text-xs items-center gap-1 text-gray-500'>
-                    <Clock size={14} />
-                    {timeSince(e?.createdAt)}
-                </span>
             </div>
         </li>
     );

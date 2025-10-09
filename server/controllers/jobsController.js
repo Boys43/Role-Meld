@@ -209,11 +209,16 @@ export const searchJob = async (req, res) => {
             });
         } else {
             approvedJobs = await jobsModel.find({
-                title: { $regex: search, $options: "i" },
-                location: { $regex: location, $options: "i" },
                 approved: "approved",
                 isActive: true,
-                sponsored: false
+                sponsored: false,
+                $or: [
+                    { title: { $regex: search, $options: "i" } },
+                    { location: { $regex: search, $options: "i" } },
+                    { company: { $regex: search, $options: "i" } },
+                    { category: { $regex: search, $options: "i" } },
+                    { subCategory: { $regex: search, $options: "i" } }
+                ]
             });
         }
 

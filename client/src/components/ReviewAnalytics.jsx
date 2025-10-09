@@ -61,7 +61,7 @@ const ReviewAnalytics = () => {
     <div className="py-6 px-4">
       <h2 className="text-xl font-semibold text-gray-800 mb-1">Our Reviews</h2>
       <h1 className="text-3xl flex items-center gap-3 font-bold text-gray-900 mb-6">
-        {ratingAnalytics.averageRating.toFixed(1)} <FaStar className="text-yellow-500" /> ({ratingAnalytics.totalReviews})
+        {ratingAnalytics.averageRating.toFixed(1)} <FaStar className="text-yellow-500" />
       </h1>
 
       <div ref={ref} className="flex flex-col gap-4 w-full">
@@ -74,16 +74,13 @@ const ReviewAnalytics = () => {
             transition={{ duration: 0.8, delay: i * 0.15 }}
           >
             <span className="w-10 text-gray-700 font-medium">{stars[i]}</span>
-            <div className="relative flex-1 h-5">
+            <div className="flex-1 h-5">
               <ProgressBar
                 percent={p}
                 filledBackground={colors[i]}
-                height={20}
+                height={10}
                 transition="all 1.2s ease-in-out"
               />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold text-gray-900">
-                {p.toFixed(1)}%
-              </span>
             </div>
           </motion.div>
         ))}

@@ -1,12 +1,15 @@
 import { Facebook, Twitter, Linkedin, Instagram, Mail, MapPin, Phone, Briefcase } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import Img from "./Image";
+import assets from "../assets/assets.js"
+
 
 const Footer = () => {
 
   const location = useLocation();
   const restrctedPaths = ["/dashboard", 'editblog', "/admin", '/company-profile/:id', '/followed-accounts', '/category-jobs', '/jobdetails/:id']
   return (
-    <footer className="bg-slate-900 text-gray-300">
+    <footer className="bg-[var(--primary-color)] text-gray-300">
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-4">
 
@@ -16,10 +19,10 @@ const Footer = () => {
               {/* Logo and Description */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                    <Briefcase className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+                    <Img src='/fav_logo.webp' />
                   </div>
-                  <h2 className="text-xl font-bold text-white">Indeed</h2>
+                  <h2 className="text-xl font-bold text-white">Alfa Careers</h2>
                 </div>
                 <p className="text-sm text-gray-400 mb-6">
                   Helping people get jobs, build careers, and achieve success across the world.
@@ -27,16 +30,16 @@ const Footer = () => {
 
                 {/* Social Icons */}
                 <div className="flex gap-3">
-                  <a href="#" className="w-9 h-9 bg-slate-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors">
+                  <a href="#" className="w-9 h-9 bg-[var(--secondary-color)] hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors">
                     <Facebook size={16} />
                   </a>
-                  <a href="#" className="w-9 h-9 bg-slate-800 hover:bg-sky-500 rounded-lg flex items-center justify-center transition-colors">
+                  <a href="#" className="w-9 h-9 bg-[var(--secondary-color)] hover:bg-sky-500 rounded-lg flex items-center justify-center transition-colors">
                     <Twitter size={16} />
                   </a>
-                  <a href="#" className="w-9 h-9 bg-slate-800 hover:bg-blue-700 rounded-lg flex items-center justify-center transition-colors">
+                  <a href="#" className="w-9 h-9 bg-[var(--secondary-color)] hover:bg-blue-700 rounded-lg flex items-center justify-center transition-colors">
                     <Linkedin size={16} />
                   </a>
-                  <a href="#" className="w-9 h-9 bg-slate-800 hover:bg-pink-600 rounded-lg flex items-center justify-center transition-colors">
+                  <a href="#" className="w-9 h-9 bg-[var(--secondary-color)] hover:bg-pink-600 rounded-lg flex items-center justify-center transition-colors">
                     <Instagram size={16} />
                   </a>
                 </div>

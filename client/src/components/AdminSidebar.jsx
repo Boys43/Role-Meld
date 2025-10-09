@@ -138,7 +138,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
                   {/* Floating submenu (desktop only) */}
                   {e.subTabs && !isMobile && (
-                    <div className="absolute top-0 left-full ml-1 hidden group-hover:flex flex-col bg-[var(--secondary-color)] border border-[var(--primary-color)] rounded-xl shadow-lg p-2 z-50 min-w-[230px] animate-fadeIn">
+                    <div className="absolute top-0 left-full ml-0.5 hidden group-hover:flex flex-col bg-[var(--secondary-color)] border border-[var(--primary-color)] rounded-xl shadow-lg p-2 z-50 min-w-[230px] animate-fadeIn">
                       {e.subTabs.map((sub, idx) => (
                         <span
                           key={idx}

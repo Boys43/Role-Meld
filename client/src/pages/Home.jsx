@@ -71,7 +71,7 @@ const Home = () => {
         </section>
         <section className="border z-0 rounded-2xl p-4 mt-4 shadow-xl">
           <Marquee className="z-0" pauseOnHover>
-            <div className="flex flex-wrap items-center justify-evenly gap-10 md:gap-20 lg:gap-30 w-full">
+            <div className="flex flex-wrap items-center gap-10 md:gap-20 lg:gap-30 w-full mr-10 md:mr-20 lg:mr-30">
               <img loading="lazy" src={assets.nt} alt="Netflix" className="w-20" />
               <img loading="lazy" src={assets.am} alt="Amazon" className="w-20" />
               <img loading="lazy" src={assets.sm} alt="samsung" className="w-20" />

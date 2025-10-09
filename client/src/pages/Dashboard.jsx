@@ -22,7 +22,7 @@ const Dashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "userdashboard":
-        return <ApplicantDashboard />;
+        return <ApplicantDashboard setActiveTab={setActiveTab} />;
       case "savedjobs":
         return <SavedJobs />;
       case "applied-jobs":

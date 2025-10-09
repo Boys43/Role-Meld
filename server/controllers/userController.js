@@ -51,7 +51,11 @@ function calculateProfileScore(user) {
     }
 
     if (user.city && user.city.trim() !== "") {
-        score += 10;
+        score += 5;
+    }
+
+    if (user.country && user.country.trim() !== "") {
+        score += 5;
     }
 
     if (user.address && user.address.trim() !== "") {
@@ -59,7 +63,11 @@ function calculateProfileScore(user) {
     }
 
     if (user.postal && user.postal.trim() !== "") {
-        score += 10;
+        score += 5;
+    }
+
+    if (user?.skills?.length >= 3) {
+        score += 5;
     }
 
     return Math.min(score, 100);

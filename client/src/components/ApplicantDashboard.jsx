@@ -12,7 +12,105 @@ import { IoMdMail } from "react-icons/io";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-const ApplicantDashboard = () => {
+import { User, FileText, Image, Briefcase, Phone, Globe, MapPin, CreditCard, Star, Pencil } from "lucide-react";
+
+const getProfileRecommendations = (user) => {
+  const recommendations = [];
+
+  if (!user.resume || user.resume.trim() === "") {
+    recommendations.push({
+      icon: <FileText className="w-5 h-5 text-red-500" />,
+      title: "Upload your resume",
+      description: "Showcase your work and education history to attract recruiters.",
+      color: "bg-red-50"
+    });
+  }
+
+  if (!user.profilePicture || user.profilePicture.trim() === "") {
+    recommendations.push({
+      icon: <Image className="w-5 h-5 text-orange-500" />,
+      title: "Add a profile picture",
+      description: "Profiles with pictures are more trusted and attractive.",
+      color: "bg-orange-50"
+    });
+  }
+
+  if (!user.headline || user.headline.trim() === "") {
+    recommendations.push({
+      icon: <Briefcase className="w-5 h-5 text-yellow-500" />,
+      title: "Add a headline",
+      description: "Summarize your professional identity in one line.",
+      color: "bg-yellow-50"
+    });
+  }
+
+  if (!user.phone || user.phone.trim() === "") {
+    recommendations.push({
+      icon: <Phone className="w-5 h-5 text-green-500" />,
+      title: "Add your phone number",
+      description: "Makes it easier for recruiters to contact you.",
+      color: "bg-green-50"
+    });
+  }
+
+  if (!user.portfolio || user.portfolio.trim() === "") {
+    recommendations.push({
+      icon: <Star className="w-5 h-5 text-blue-500" />,
+      title: "Add your portfolio",
+      description: "Show your work and projects to stand out.",
+      color: "bg-blue-50"
+    });
+  }
+
+  if (!user.city || user.city.trim() === "") {
+    recommendations.push({
+      icon: <MapPin className="w-5 h-5 text-purple-500" />,
+      title: "Add your city",
+      description: "Helps recruiters know your location.",
+      color: "bg-purple-50"
+    });
+  }
+
+  if (!user.country || user.country.trim() === "") {
+    recommendations.push({
+      icon: <Globe className="w-5 h-5 text-teal-500" />,
+      title: "Add your country",
+      description: "Completes your profile location details.",
+      color: "bg-teal-50"
+    });
+  }
+
+  if (!user.address || user.address.trim() === "") {
+    recommendations.push({
+      icon: <MapPin className="w-5 h-5 text-pink-500" />,
+      title: "Add your address",
+      description: "Provides recruiters full context of your location.",
+      color: "bg-pink-50"
+    });
+  }
+
+  if (!user.postal || user.postal.trim() === "") {
+    recommendations.push({
+      icon: <CreditCard className="w-5 h-5 text-indigo-500" />,
+      title: "Add your postal code",
+      description: "Completes your location details for precision.",
+      color: "bg-indigo-50"
+    });
+  }
+
+  if (!user.skills || user.skills.length < 3) {
+    recommendations.push({
+      icon: <Star className="w-5 h-5 text-fuchsia-500" />,
+      title: "Add at least 3 skills",
+      description: "Highlight your expertise and make your profile stand out.",
+      color: "bg-fuchsia-50"
+    });
+  }
+
+  return recommendations;
+};
+
+const ApplicantDashboard = ({setActiveTab}) => {
   const { userData, setUserData, backendUrl, profileScore } = useContext(AppContext);
   const [updatePopUpState, setUpdatePopUpState] = useState("hidden");
 
@@ -94,10 +192,11 @@ const ApplicantDashboard = () => {
     }
   };
 
+  const recommendations = getProfileRecommendations(userData);
 
   return (
     <>
-      <div className="p-5 w-full h-[calc(100vh-4.6rem)] overflow-y-scroll">
+      <div className="p-5 w-full min-h-[calc(100vh-4.6rem)] overflow-y-auto">
         {/* Profile Header */}
         <div className="p-4 flex gap-4 items-center">
           <div className="relative">
@@ -190,7 +289,7 @@ const ApplicantDashboard = () => {
           </div>
         </div > */}
 
-        <div className="shadow-md mt-4 border-2 border-gray-300 rounded-md p-4">
+        <div className="shadow-sm mt-4 border-2 border-gray-300 rounded-md p-4">
           <h2 className="font-semibold">
             Latest Notifications
           </h2>
@@ -198,14 +297,9 @@ const ApplicantDashboard = () => {
             No Notifications Yet
           </p>
         </div>
-        <hr className="mt-5" />
-
-        
-
-        <hr className="mt-5" />
 
         {/* Profile Score */}
-        <div className="p-4 bg-white rounded-lg shadow-md border">
+        <div className="p-4 mt-5 bg-white rounded-lg shadow-md border border-gray-300">
           <h2 className="text-lg font-semibold text-gray-800">Your Profile Score</h2>
           <h3 className="text-2xl font-bold text-[var(--primary-color)] mt-1">{profileScore}%</h3>
           <div className="w-full mt-3 bg-gray-200 h-3 rounded-full overflow-hidden">
@@ -223,8 +317,25 @@ const ApplicantDashboard = () => {
           </div>
           <div className="mt-4">
             <h3 className="text-sm font-medium text-gray-700">Improve Your Profile Score</h3>
-            <div className="mt-2 p-3 border rounded-md text-sm text-gray-600">
-              Add missing details like skills, experience, or profile picture to boost your score.
+            <div className="mt-2 space-y-3">
+              {recommendations.length === 0 ? (
+                <div className="p-4 bg-green-100 text-green-800 rounded-md font-medium">
+                  🎉 Great! Your profile is fully optimized.
+                </div>
+              ) : (
+                recommendations.map((rec, idx) => (
+                  <div key={idx} className={`flex justify-between items-center p-3 rounded-md ${rec.color} shadow-sm`}>
+                    <div className="flex items-center gap-3">
+                      <div className="mr-3">{rec.icon}</div>
+                      <div>
+                        <div className="font-medium text-gray-800">{rec.title}</div>
+                        <div className="text-sm text-gray-600">{rec.description}</div>
+                      </div>
+                    </div>
+                    <div className="bg-white px-2 py-1 rounded-md shadow-sm"><Pencil onClick={()=> setActiveTab('my-profile')} /></div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
