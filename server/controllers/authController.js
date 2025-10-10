@@ -187,6 +187,12 @@ export const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 
+
+        if (user.role === "recruiter") {
+            const userProfile = await recruiterProfileModel.findOne({ authId: user._id });
+            return res.json({ success: true, message: "Successfully Logged In", role: user?.role, company: userProfile?.company })
+        }
+
         return res.json({ success: true, message: "Successfully Logged In" })
 
     } catch (error) {
@@ -325,6 +331,39 @@ export const updateRecruiterStatus = async (req, res) => {
         return res.json({ success: true, message: "User status updated successfully" });
     } catch (error) {
         return res.json({ success: false, message: error.message });
+    }
+}
+
+export const employeeProfileRequests = async (req, res) => {
+    const { reviewStatus, email } = req.body
+
+    try {
+        const recruiter = await recruiterProfileModel.findOneAndUpdate(
+            { email },
+            { reviewStatus: reviewStatus },
+            { new: true }
+        );
+
+        if (!recruiter) {
+            return res.status(404).json({ success: false, message: "Recruiter not found" });
+        }
+
+        if (hellow) {
+            return res.status
+        }
+
+        return res.json({ success: true, message: "Recruiter status updated successfully" });
+    } catch (error) {
+        return res.json({ success: false, })
+    }
+}
+
+export const getPendingProfileRequests = async (req, res) => {
+    try {
+        const pendingRequests = await recruiterProfileModel.find({ reviewStatus: "underReview" });
+        return res.json({ success: true, pendingRequests });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
 
@@ -518,6 +557,46 @@ export const unBanUser = async (req, res) => {
 
         return res.json({ success: true, message: "User Un-Banned successfully" });
     } catch {
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+export const changeVisibility = async (req, res) => {
+    const { status, email } = req.body
+
+    console.log(status);
+    if (status === undefined || status === null) {
+        return res.status(400).json({ success: false, message: "Status is required" });
+    }
+
+    try {
+        const user = await authModel.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        if (user.role === "recruiter") {
+            const recruiter = await recruiterProfileModel.findOne({ email });
+
+            if (!recruiter) {
+                return res.status(404).json({ success: false, message: "Recruiter not found" });
+            }
+
+            recruiter.isActive = status;
+            recruiter.save();
+        } else if (user.role === "user") {
+            const user = await userProfileModel.findOne({ email });
+            if (!user) {
+                return res.status(404).json({ success: false, message: "User not found" });
+            }
+
+            user.isActive = status;
+            user.save();
+        }
+
+        return res.json({ success: true, message: "User visibility changed successfully" });
+    } catch (error) {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 }

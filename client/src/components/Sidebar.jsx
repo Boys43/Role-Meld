@@ -14,7 +14,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Img from "./Image";
-import { ChevronLeft, ChevronRight, List } from "lucide-react";
+import { ChevronLeft, ChevronRight, List, Settings } from "lucide-react";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const { userData, backendUrl, setIsLoggedIn, setUserData } = useContext(AppContext);
@@ -146,7 +146,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                     {!toggleNav && <span>
                       {e.subTabs && <ChevronRight />}
                     </span>}
-
                   </span>
 
                   {/* Floating submenu (desktop only) */}
@@ -200,10 +199,10 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             {/* Delete Account */}
             <li>
               <span
-                onClick={() => setActiveTab("delete-account")}
-                className="px-3 py-2 rounded-xl cursor-pointer bg-red-500 hover:bg-red-600 flex items-center gap-3 text-white transition border border-red-500"
+                onClick={() => setActiveTab('settings')}
+                className="px-3 py-2 rounded-xl cursor-pointer bg-gray-500 hover:bg-gray-600 flex items-center gap-3 text-white transition border border-gray-500"
               >
-                <FaTrash /> {!toggleNav && <h4 className="whitespace-nowrap">Delete Account</h4>}
+                <Settings /> {!toggleNav && <h4 className="whitespace-nowrap">Settings</h4>}
               </span>
             </li>
           </ul>

@@ -15,9 +15,8 @@ const RecruiterProfile = () => {
 
     const [formData, setFormData] = useState({
         name: userData?.name || "",
-        headline: userData?.headline || "",
-        company: userData?.company || "Individual",
-        members: userData?.members || 1,
+        tagline: userData?.tagline || "",
+        company: userData?.company || "",
         website: userData?.website || "",
         city: userData?.city || "",
         country: userData?.country || "",
@@ -26,9 +25,7 @@ const RecruiterProfile = () => {
         contactNumber: userData?.contactNumber || "",
         about: userData?.about || "",
         industry: userData?.industry || "",
-        postal: userData?.postal || "",
         address: userData?.address || "",
-        isPhysical: userData?.isPhysical || false,
         companyType: userData?.companyType || "",
     });
 
@@ -390,11 +387,12 @@ const RecruiterProfile = () => {
                                     <div className='w-full p-3 bg-gradient-to-br from-green-200 to-green-300 rounded-lg shadow-md text-lg flex flex-col items-center text-center gap-2 border border-green-300 font-medium xt-lg '>
                                         🎉 Congratulations!
                                     </div>
+                                    {userData?.reviewStatus !== "approved"  &&
                                     <div className="w-full p-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-lg flex flex-col items-center text-center gap-2 border border-yellow-300 font-medium text-yellow-700 text-sm mt-4 shadow-sm">
                                         <Clock className="text-yellow-600 animate-pulse" size={26} />
                                         <span>Your account is <b>under review</b>.</span>
                                         <span>You will shortly receive an email regarding your approval status.</span>
-                                    </div>
+                                    </div>}
 
                                 </>
                             }

@@ -14,6 +14,7 @@ import MyProfile from "../components/MyProfile";
 import ChangePassword from "../components/ChangePassword";
 import DeleteProfile from "../components/DeleteProfile";
 import RecruiterProfile from "../components/RecruiterProfile";
+import Settings from "../components/Settings";
 
 const Dashboard = () => {
   const { userData } = useContext(AppContext);
@@ -45,6 +46,8 @@ const Dashboard = () => {
         return <ChangePassword />
       case "delete-account":
         return <DeleteProfile setActiveTab={setActiveTab} />
+      case "settings":
+        return <Settings />
       default:
         if (userData?.role === "user") return <ApplicantDashboard />;
         if (userData?.role === "recruiter") return <EmployeeDashboard />;

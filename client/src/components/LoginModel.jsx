@@ -5,7 +5,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 
-const LoginModel = () => {
+const LoginModel = ({ setStep }) => {
+    const { userData } = useContext(AppContext);
+    
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const navigate = useNavigate()
@@ -24,8 +26,13 @@ const LoginModel = () => {
             if (data.success) {
                 setIsLoggedIn(true);
                 await getUserData();
-                await navigate("/dashboard");
-                toast.success(data.message);
+                if (data?.company === "" && data?.role === "recruiter") {
+                    setStep(2);
+                    toast.info("Please add your company details");
+                } else {
+                    toast.success(data.message);
+                    await navigate("/dashboard");
+                }
             } else {
                 toast.error(data.message);
                 setIsLoggedIn(false);

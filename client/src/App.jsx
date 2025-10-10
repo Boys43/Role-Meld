@@ -10,6 +10,7 @@ import Loading from "./components/Loading";
 import CompanyProfile from "./pages/CompanyProfile";
 import FollowedAccounts from "./pages/FollowedAccounts";
 import Test from "./components/Test";
+import EmployeeDashboard from "./components/EmployeeDashboard";
 
 // Lazy-loaded components
 const Navbar = lazy(() => import("./components/Navbar"));

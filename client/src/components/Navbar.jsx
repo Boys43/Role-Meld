@@ -246,19 +246,16 @@ const Navbar = () => {
     >
       <div className="relative flex items-center gap-4">
         {/* Pill UI */}
-        <div
-          className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
-        >
-          {userData?.profileScore === 100 && userData?.reviewStatus === "underReview" || userData?.reviewStatus === "pending" ?
-            <>
-              <span className={`w-2.5 h-2.5 rounded-full bg-yellow-500 animate-pulse`}></span>
-              <span className={`text-sm font-medium text-yellow-500`}>
-                Under Review
-              </span>
-            </> :
-            null
-          }
-        </div>
+        {userData?.profileScore === 100 && userData?.reviewStatus === "underReview" || userData?.reviewStatus === "pending" ?
+          <div
+            className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
+          >
+            <span className={`w-2.5 h-2.5 rounded-full bg-yellow-500 animate-pulse`}></span>
+            <span className={`text-sm font-medium text-yellow-500`}>
+              Under Review
+            </span>
+          </div> :
+          null}
 
         <div
           className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}

@@ -58,7 +58,7 @@ const AdminJobRequests = () => {
     navigate(`/jobDetails/${id}`);
   };
 
-  if (loadingA) return <Loading />;
+  if (loadingA) return <div className='w-full'> <Loading /></div>;
 
   return (
     <div className="p-6 bg-white w-full rounded-lg min-h-screen">
