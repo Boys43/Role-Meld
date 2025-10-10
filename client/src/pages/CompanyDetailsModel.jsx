@@ -50,7 +50,7 @@ const CompanyDetailsModel = () => {
                     Complete Your Profile
                 </h3>
                 <span className="text-gray-600 text-sm leading-relaxed">
-                    We need your company information to set up your recruiter profile and get you started.
+                    We need your company information to set up your employee profile and get you started.
                 </span>
             </div>
 

@@ -133,7 +133,7 @@ const AnalyticDashboard = () => {
                 datasets: [
                   {
                     fill: true,
-                    label: "Recruiters",
+                    label: "Employees",
                     data: recruiterData.map((recruiters) => recruiters.users),
                     borderColor: "rgb(240, 177, 0)",
                     backgroundColor: "rgb(255, 240, 133)",

@@ -16,7 +16,7 @@ const getProfileRecommendations = (user) => {
     recommendations.push({
       icon: <FileText className="w-5 h-5 text-red-500" />,
       title: "Upload your resume",
-      description: "Showcase your work and education history to attract recruiters.",
+      description: "Showcase your work and education history to attract employee.",
       color: "bg-red-50"
     });
   }
@@ -43,7 +43,7 @@ const getProfileRecommendations = (user) => {
     recommendations.push({
       icon: <Phone className="w-5 h-5 text-green-500" />,
       title: "Add your phone number",
-      description: "Makes it easier for recruiters to contact you.",
+      description: "Makes it easier for employee to contact you.",
       color: "bg-green-50"
     });
   }
@@ -61,7 +61,7 @@ const getProfileRecommendations = (user) => {
     recommendations.push({
       icon: <MapPin className="w-5 h-5 text-purple-500" />,
       title: "Add your city",
-      description: "Helps recruiters know your location.",
+      description: "Helps Employees know your location.",
       color: "bg-purple-50"
     });
   }
@@ -79,7 +79,7 @@ const getProfileRecommendations = (user) => {
     recommendations.push({
       icon: <MapPin className="w-5 h-5 text-pink-500" />,
       title: "Add your address",
-      description: "Provides recruiters full context of your location.",
+      description: "Provides employee full context of your location.",
       color: "bg-pink-50"
     });
   }

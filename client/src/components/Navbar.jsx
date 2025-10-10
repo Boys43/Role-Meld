@@ -246,6 +246,17 @@ const Navbar = () => {
     >
       <div className="relative flex items-center gap-4">
         {/* Pill UI */}
+        <div
+          className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
+        >
+          <span className={`w-2.5 h-2.5 rounded-full ${userData?.isActive? "bg-green-500": "bg-red-500"} animate-pulse`}></span>
+          <span className={`text-sm font-medium ${userData?.isActive? "text-green-500": "text-red-500"}`}>
+            {userData?.isActive ?
+              "Active" :
+              "InActive"}
+          </span>
+        </div>
+
         {userData?.profileScore === 100 && userData?.reviewStatus === "underReview" || userData?.reviewStatus === "pending" ?
           <div
             className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
@@ -333,7 +344,7 @@ const Navbar = () => {
             <p className="text-sm font-semibold text-gray-800">
               {userData?.name}
             </p>
-            <p className="text-xs text-gray-500">{userData?.role[0].toUpperCase() + userData?.role.substring(1)}</p>
+            <span className="text-sm text-gray-500">{userData?.role === "recruiter" ? "Employer": "Job Seeker"}</span>
           </div>
           <ul className="py-2 flex flex-col">
             <li

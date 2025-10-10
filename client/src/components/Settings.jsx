@@ -7,7 +7,7 @@ import SearchSelect from './SelectSearch';
 
 function Settings() {
     const { backendUrl, userData, setUserData } = useContext(AppContext);
-    const [checked, setChecked] = React.useState(false);
+    const [checked, setChecked] = React.useState(userData?.isActive);
     const [loading, setLoading] = useState(false);
     const handleVisibilityChange = async (status) => {
         setLoading(true)
