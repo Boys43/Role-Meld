@@ -7,7 +7,7 @@ import axios from "axios";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-import { FileText, Image, Briefcase, Phone, Globe, MapPin, CreditCard, Star, Pencil } from "lucide-react";
+import { FileText, Image, Briefcase, Phone, Globe, MapPin, CreditCard, Star, Pencil, Camera, X } from "lucide-react";
 
 const getProfileRecommendations = (user) => {
   const recommendations = [];
@@ -248,7 +248,7 @@ const ApplicantDashboard = ({setActiveTab}) => {
               htmlFor="profilePicture"
               className="absolute bottom-0 right-0 bg-white rounded-full p-1 cursor-pointer shadow"
             >
-              <FaCamera className="text-gray-600 text-sm" />
+              <Camera className="text-gray-600 text-sm" />
             </label>
           </div>
           <div className="p-4">
@@ -256,33 +256,6 @@ const ApplicantDashboard = ({setActiveTab}) => {
             <p>{userData?.email}</p>
           </div>
         </div >
-
-        {/* User Info */}
-        {/* <div div className="p-2 mt-5" >
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-4">
-                <FaLocationDot className="text-[var(--primary-color)]" />
-                {userData?.city || "-"}, {userData?.address || "-"},{" "}
-                {userData?.postal || "-"}
-              </div>
-              <div className="flex items-center gap-4">
-                <FaPhone className="text-[var(--primary-color)]" />
-                {userData?.phone || "-"}
-              </div>
-              <div className="flex items-center gap-4">
-                <IoMdMail className="text-[var(--primary-color)]" />
-                {userData?.email || "-"}
-              </div>
-            </div>
-            <div className="h-full flex items-center w-full justify-center">
-              <HiOutlinePencilSquare
-                className="cursor-pointer text-[var(--primary-color)]"
-                onClick={() => setUpdatePopUpState("block")}
-              />
-            </div>
-          </div>
-        </div > */}
 
         <div className="shadow-sm mt-4 border-2 border-gray-300 rounded-md p-4">
           <h2 className="font-semibold">
@@ -340,7 +313,7 @@ const ApplicantDashboard = ({setActiveTab}) => {
           className={`w-full backdrop-blur-sm flex items-center justify-center rounded h-screen border fixed z-51 top-0 left-0 ${updatePopUpState}`}
         >
           <div className=" w-[70%] h-[70%] border relative bg-white shadow-2xl rounded-2xl overflow-y-auto p-4 ">
-            <MdCancel
+            <X
               onClick={() => setUpdatePopUpState("hidden")}
               size={20}
               className="absolute right-5 top-5 cursor-pointer"

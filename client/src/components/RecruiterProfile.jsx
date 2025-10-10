@@ -56,6 +56,29 @@ const RecruiterProfile = () => {
             return toast.error("About is required and should be between 50 and 150 words")
         }
 
+        if (!formData.contactNumber && userData?.reviewStatus === "approved") {
+            return toast.error("Contact Number is required")
+        }
+
+        if (!formData.tagline && userData?.reviewStatus === "approved") {
+            return toast.error("Tagline is required")
+        }
+
+        if (!formData.city && userData?.reviewStatus === "approved") {
+            return toast.error("City is required")
+        }
+
+        if (!formData.country && userData?.reviewStatus === "approved") {
+            return toast.error("Country is required")
+        }
+
+        if (!formData.companyType && userData?.reviewStatus === "approved") {
+            return toast.error("Company Type is required")
+        }
+
+        if (!formData.industry && userData?.reviewStatus === "approved") {
+            return toast.error("Industry is required")
+        }
         e.preventDefault();
         try {
             const { data } = await axios.post(`${backendUrl}/api/user/updateprofile`, {
