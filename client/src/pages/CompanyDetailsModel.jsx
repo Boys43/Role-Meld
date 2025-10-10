@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { Building2, ArrowRight, CheckCircle, Loader2, Building } from 'lucide-react';
+import { ArrowRight, Loader2, Building } from 'lucide-react';
 
 const CompanyDetailsModel = () => {
     const { backendUrl, userData, setUserData } = useContext(AppContext)
@@ -84,7 +84,7 @@ const CompanyDetailsModel = () => {
                             disabled={loading}
                             className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-xl focus:border-[var(--primary-color)] focus:ring-4 focus:ring-blue-50 transition-all duration-200 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                         />
-                        <Building2 className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                        <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                     </div>
                     <span className="text-xs text-gray-500 mt-1">
                         This will be displayed on your company profile and job postings

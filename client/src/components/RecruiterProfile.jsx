@@ -43,6 +43,11 @@ const RecruiterProfile = () => {
         if (!formData.name) {
             return toast.error("Name is required")
         }
+
+        if (!formData.company) {
+            return toast.error("Company Name is required")
+        }
+
         if (!formData.website.includes("http")) {
             return toast.error("Enter a Valid Website Url")
         }
@@ -150,9 +155,6 @@ const RecruiterProfile = () => {
                                 className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
                             />
                         </div>
-                        <hr />
-
-                        <h3>Add Your Tagline</h3>
                         <div className='space-y-2'>
                             <label className="flex items-center gap-2 font-medium text-gray-700">
                                 <Briefcase className='w-4 h-4 text-gray-500' />
@@ -167,6 +169,7 @@ const RecruiterProfile = () => {
                                 className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
                             />
                         </div>
+                        <hr />
 
                         <h2 className="flex items-center gap-2 text-lg font-semibold text-blue-600">
                             Company Information
@@ -256,7 +259,7 @@ const RecruiterProfile = () => {
                                     value={formData.address}
                                     onChange={handleChange}
                                     placeholder={userData?.address || "e.g, Block A New London"}
-                                    className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                    className="mt-2 w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
                                 />
                             </div>
 
@@ -276,19 +279,7 @@ const RecruiterProfile = () => {
                                         value={formData.state}
                                         onChange={handleChange}
                                         placeholder={userData?.state || "e.g, Punjab"}
-                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
-                                    />
-                                </div>
-
-                                <div className='space-y-2'>
-                                    <label className="font-medium text-gray-700">Postal Code</label>
-                                    <input
-                                        type="text"
-                                        name="postal"
-                                        value={formData.postal}
-                                        onChange={handleChange}
-                                        placeholder={userData?.postal || "e.g, 12345"}
-                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                        className="mt-2 w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
                                     />
                                 </div>
                             </div>
@@ -308,7 +299,7 @@ const RecruiterProfile = () => {
                                 value={formData?.about}
                                 onChange={handleChange}
                                 placeholder={userData?.about || "Write a short description about yourself or your company..."}
-                                className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors min-h-[120px] resize-none"
+                                className="mt-2 w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors min-h-[120px] resize-none"
                             />
                             <div className={`text-right ${(formData?.about.split(' ').length <= 50 || formData?.about.split(' ').length > 150) ? "text-red-500" : "text-green-500"} `}>
                                 {formData?.about.split(' ').length} / 150
@@ -387,12 +378,12 @@ const RecruiterProfile = () => {
                                     <div className='w-full p-3 bg-gradient-to-br from-green-200 to-green-300 rounded-lg shadow-md text-lg flex flex-col items-center text-center gap-2 border border-green-300 font-medium xt-lg '>
                                         🎉 Congratulations!
                                     </div>
-                                    {userData?.reviewStatus !== "approved"  &&
-                                    <div className="w-full p-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-lg flex flex-col items-center text-center gap-2 border border-yellow-300 font-medium text-yellow-700 text-sm mt-4 shadow-sm">
-                                        <Clock className="text-yellow-600 animate-pulse" size={26} />
-                                        <span>Your account is <b>under review</b>.</span>
-                                        <span>You will shortly receive an email regarding your approval status.</span>
-                                    </div>}
+                                    {userData?.reviewStatus !== "approved" &&
+                                        <div className="w-full p-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-lg flex flex-col items-center text-center gap-2 border border-yellow-300 font-medium text-yellow-700 text-sm mt-4 shadow-sm">
+                                            <Clock className="text-yellow-600 animate-pulse" size={26} />
+                                            <span>Your account is <b>under review</b>.</span>
+                                            <span>You will shortly receive an email regarding your approval status.</span>
+                                        </div>}
 
                                 </>
                             }

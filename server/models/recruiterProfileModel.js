@@ -29,6 +29,7 @@ const recruiterProfileSchema = new mongoose.Schema({
   followersId: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" }],
   isBanned: {type: Boolean, default: false},
   profileScore: {type: Number, default: 0},
+  currency: {type: String, default: 'USD'},
 
   reviewStatus: {type: String, default: "pending", enum: ["pending", "underReview", "approved", "rejected"]},
 }, { timestamps: true });

@@ -5,27 +5,18 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { LuGitPullRequest } from "react-icons/lu";
 import { IoPersonAddSharp } from "react-icons/io5";
-import { HiOutlinePencilSquare } from "react-icons/hi2";
-import { MdCancel } from "react-icons/md";
+import { useNavigate } from 'react-router-dom';
 
 // ChatJs 2
-import { Line, Doughnut } from 'react-chartjs-2'
-import { Chart as ChartJS, ArcElement, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement, Filler } from 'chart.js/auto'
+import { Doughnut } from 'react-chartjs-2'
+import { Chart as ChartJS, ArcElement, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement } from 'chart.js/auto'
 import Img from './Image';
 ChartJS.register(LineElement, ArcElement, Legend, PointElement, CategoryScale, LinearScale, BarElement);
 
 const EmployeeDashboard = () => {
   const { userData, backendUrl, setUserData } = useContext(AppContext);
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [showSubmit, setShowSubmit] = useState(false);
-  const [updatePopUpState, setUpdatePopUpState] = useState('hidden');
-  const [formData, setFormData] = useState({});
-  const [jobData, setJobData] = useState({});
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const navigate = useNavigate()
 
   const changePicture = async (profilePicture) => {
     const formData = new FormData();
@@ -76,23 +67,6 @@ const EmployeeDashboard = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
-    }
-  };
-
-  const updateProfile = async (e) => {
-    e.preventDefault();
-    try {
-      const { data } = await axios.post(`${backendUrl}/api/user/updateprofile`, { updateUser: formData });
-      if (data.success) {
-        setUserData(data.profile);
-        setUpdatePopUpState("hidden")
-        setFormData({}); // reset formData so updated userData reflects in UI
-        toast.success(data.message);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
     }
   };
 
@@ -215,11 +189,10 @@ const EmployeeDashboard = () => {
             {userData?.company === "Individual" ? userData?.name : userData?.company}
           </h1>
         </div>
-        <span>
-          <HiOutlinePencilSquare
-            onClick={() => setUpdatePopUpState('block')}
-            className='text-[var(--primary-color)] cursor-pointer'
-          />
+        <span className='py-1 px-3 rounded-2xl border border-gray-300 text-sm cursor-pointer hover:bg-gray-100 shadow-sm'
+          onClick={() => navigate(`/company-profile/${userData?.authId}`)}
+        >
+          View Profile Page
         </span>
       </div>
 
@@ -288,49 +261,6 @@ const EmployeeDashboard = () => {
           />
         </div>
       </section>
-
-
-      {/* Update Profile Modal */}
-      <div className={`fixed z-51 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-screen flex items-center justify-center backdrop-blur-sm ${updatePopUpState}`}>
-        <div className="w-[70%] h-[70%] border relative bg-white shadow-2xl rounded-2xl overflow-y-auto p-4">
-          <MdCancel onClick={() => setUpdatePopUpState('hidden')} size={20} className="absolute right-5 top-5 cursor-pointer" />
-          <h1 className="text-[var(--primary-color)] font-semibold">Update Your Profile</h1>
-
-          <form onSubmit={updateProfile} className="flex flex-col gap-2 mt-3">
-            <label htmlFor="name" className="font-medium">Name</label>
-            <input
-              type="text"
-              name="name"
-              value={userData?.name ?? ""}
-              onChange={handleChange}
-              className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-              placeholder="Enter Name"
-            />
-
-            <label htmlFor="company" className="font-medium mt-2">Company Name</label>
-            <input
-              type="text"
-              name="company"
-              value={formData?.company ?? userData?.company ?? ""}
-              onChange={handleChange}
-              className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-              placeholder="Enter Company Name"
-            />
-
-            <label htmlFor="members" className="font-medium mt-2">Members</label>
-            <input
-              type="text"
-              name="members"
-              value={formData?.members ?? userData?.members ?? ""}
-              onChange={handleChange}
-              className="p-2 border-2 focus:border-[var(--primary-color)] rounded"
-              placeholder="Enter Members"
-            />
-
-            <button type="submit" className="bg-[var(--primary-color)] text-white px-4 py-2 rounded mt-2">Save</button>
-          </form>
-        </div>
-      </div>
     </div>
 
   )

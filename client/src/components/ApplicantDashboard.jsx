@@ -2,17 +2,12 @@ import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { FaCamera, FaPhone } from "react-icons/fa";
-import { FaLocationDot } from "react-icons/fa6";
-import { MdCancel } from "react-icons/md";
-import { HiOutlinePencilSquare } from "react-icons/hi2";
-import { IoMdMail } from "react-icons/io";
 
 // Cirsluar Profile score
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-import { User, FileText, Image, Briefcase, Phone, Globe, MapPin, CreditCard, Star, Pencil } from "lucide-react";
+import { FileText, Image, Briefcase, Phone, Globe, MapPin, CreditCard, Star, Pencil } from "lucide-react";
 
 const getProfileRecommendations = (user) => {
   const recommendations = [];

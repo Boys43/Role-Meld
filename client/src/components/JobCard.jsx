@@ -33,7 +33,7 @@ const JobCard = ({ e }) => {
     // --- Main Render ---
 
     return (
-        <li className='p-6 cursor-pointer border border-gray-200 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between gap-4'
+        <li className='p-6 min-w-[300px] cursor-pointer border border-gray-200 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between gap-4'
 
         >
             <div className='flex flex-col gap-4'>
@@ -113,7 +113,7 @@ const JobCard = ({ e }) => {
 
 
                     {/* 4. Footer: Actions and Timestamp */}
-                    <div className='flex items-center justify-between pt-3 border-t border-gray-100'>
+                    <div className='flex mt-4 items-center justify-between pt-3 border-t border-gray-100'>
 
                         {/* Action Buttons */}
                         {location.pathname !== "/dashboard" && <div className='flex gap-3 items-center'>

@@ -6,15 +6,15 @@ import copy from 'copy-to-clipboard';
 import { toast } from 'react-toastify';
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Loading from '../components/Loading';
 import JobCard from '../components/JobCard';
 import NotFound404 from '../components/NotFound404';
+import SimplePagination from '../components/SimplePagination';
 
 export const CompanyJobs = () => {
   const { backendUrl } = useContext(AppContext);
   const { id } = useParams()
-  const locaiton = useLocation();
 
   const [companyJobs, setCompanyJobs] = useState([]);
   const [companyLoading, setCompanyLoading] = useState(false);
@@ -63,7 +63,7 @@ export const CompanyJobs = () => {
       <div className="flex items-center gap-4 p-4">
         <h3 className='font-semibold flex items-center gap-3'>
           <Filter className='text-[var(--primary-color)]' />
-          Filter:
+          Filter
         </h3>
         {["recent", "featured"].map((f) => (
           <span
@@ -77,14 +77,15 @@ export const CompanyJobs = () => {
         ))}
       </div>
 
-      {/* Jobs list */}
-      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredJobs.length > 0 ? (
-          filteredJobs.map((job) => <JobCard key={job._id} e={job} />)
-        ) : (
-          <NotFound404 value={"No Job Found"} margin={"mt-5"} />
-        )}
-      </ul>
+      <SimplePagination pageSize={6}>
+        <ul className="w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
+          {filteredJobs.length > 0 ? (
+            filteredJobs.map((job) => <JobCard key={job._id} e={job} />)
+          ) : (
+            <NotFound404 value={"No Job Found"} margin={"mt-5"} />
+          )}
+        </ul>
+      </SimplePagination>
     </div>
   );
 };
@@ -170,11 +171,7 @@ const CompanyProfile = () => {
     <main className='p-4 min-h-[calc(100vh-4.6rem)]'>
       <section className='pb-8 border-b border-gray-300'>
         <div className='rounded-2xl overflow-hidden border-2 border-gray-500'>
-          <Img src={`${backendUrl}/uploads/${companyDetails.banner}`} style={"w-full h-[25vh] object-cover"} />
-        </div>
-
-        <div className='mt-3 w-full py-1 text-center'>
-          Headline Here
+          <Img src={`${backendUrl}/uploads/${companyDetails.banner}`} style={"w-full h-[30vh] object-cover"} />
         </div>
 
         <div className='flex items-center justify-between mt-4 px-8'>
@@ -219,7 +216,7 @@ const CompanyProfile = () => {
             <button
               onClick={followUnfollow}
               disabled={followLoading}
-              className='follow-btn mr-20'
+              className={`follow-btn mr-20 ${id === userData?.authId ? "hidden" : ""} `}
             >
               {followLoading ? 'Loading...' : isFollowing ? 'Unfollow' : 'Follow'}
             </button>
@@ -228,7 +225,7 @@ const CompanyProfile = () => {
       </section>
       <section>
         {/* Navigation Bar */}
-        <nav className='p-3 border'>
+        <nav className='p-3 border-b border-gray-300'>
           <ul className='flex items-center gap-10'>
             <li className={` cursor-pointer ${activeTab === 'jobs' && "underline"} underline-offset-8  font-semibold text-lg`}
               onClick={() => setActiveTab('jobs')}
@@ -243,7 +240,7 @@ const CompanyProfile = () => {
           </ul>
         </nav>
       </section>
-      <section className='min-h-[100vh] w-full flex'>
+      <section className='min-h-[100vh] w-full flex gap-8'>
         <div className='w-full'>
           {activeTab === 'jobs' ? <CompanyJobs /> : <CompanyReviews />}
         </div>
@@ -270,7 +267,7 @@ const CompanyProfile = () => {
               <p className='text-xl font-bold text-slate-900 mb-3'>
                 {companyDetails?.company}
               </p>
-              <p className='text-slate-600 leading-relaxed text-sm'>
+              <span className='text-slate-600 leading-relaxed text-sm'>
                 {companyDetails?.about || (
                   <span>
                     {companyDetails?.company} was established on{' '}
@@ -280,7 +277,7 @@ const CompanyProfile = () => {
                     }
                   </span>
                 )}
-              </p>
+              </span>
               {companyDetails?.establishedAt && (
                 <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-200">
                   <Calendar className="w-4 h-4 text-blue-600" />
@@ -354,14 +351,20 @@ const CompanyProfile = () => {
                   Location
                 </h3>
               </div>
-              <div className='flex items-start'>
+              <div className='flex items-center'>
                 <div className="bg-red-50 p-2 rounded-lg mr-3 flex-shrink-0">
                   <MapPin className="w-4 h-4 text-red-600" />
                 </div>
-                <div className='text-slate-700'>
-                  {companyDetails?.city && <p className="font-medium text-sm">{companyDetails.city}</p>}
-                  {companyDetails?.state && <p className="text-sm text-slate-600">{companyDetails.state}</p>}
-                  {companyDetails?.country && <p className="text-sm text-slate-600">{companyDetails.country}</p>}
+                <div className='text-slate-700 flex items-center gap-2'>
+                  <span>
+                  {companyDetails?.city &&companyDetails.city},
+                  </span>
+                  <span>
+                  {companyDetails?.state && companyDetails.state},
+                  </span>
+                  <span>
+                  {companyDetails?.country && companyDetails.country}
+                  </span>
                   {!companyDetails?.city && !companyDetails?.state && !companyDetails?.country && (
                     <p className='text-slate-400 italic text-sm'>No location available</p>
                   )}

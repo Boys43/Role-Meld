@@ -216,15 +216,15 @@ export const updateProfilePicture = async (req, res) => {
 
         if (authUser.role === "user") {
             user = await userProfileModel.findOne({ authId: userId })
+            user.profileScore ? user.profileScore = calculateProfileScore(user) : ''
         } else {
             user = await recruiterProfileModel.findOne({ authId: userId })
+            user.profileScore ? user.profileScore = calculateRecruiterProfileScore(user) : ''
         }
 
         if (!user) {
             return res.status(404).json({ success: false, message: "User Not Found!" });
         }
-
-        user.profileScore ? user.profileScore = calculateProfileScore(user) : ''
 
         user.profilePicture = req.file.filename;
 
