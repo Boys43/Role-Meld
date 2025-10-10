@@ -6,6 +6,7 @@ const authSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: { type: String, enum: ['user', 'recruiter'], default: 'user' },
     isAdmin: { type: Boolean, default: false },
+    isSuperAdmin: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
     verificationOTP: { type: String, default: "" },
     passwordResetOTP: { type: String, default: "" },

@@ -27,10 +27,12 @@ const RecruiterApprovalRequests = () => {
   const updateRecruiterStatus = async (email, status) => {
     try {
       setProcessingId(email)
-      const { data } = await axios.post(`${backendUrl}/api/auth/update-recruiter-status`, { email, status });
+      const { data } = await axios.post(`${backendUrl}/api/auth/update-employee-status`, { email, status });
       if (data.success) {
         await getPendingRecruiters()
         toast.success(data.message)
+      }else{
+        toast.error(data.message)
       }
     } catch (error) {
       toast.error(error.message)

@@ -296,7 +296,7 @@ export const updateRecruiterStatus = async (req, res) => {
         authUser.isVerified = status;
         await authUser.save();
 
-        const email = {
+        const sentEmail = {
             sender: { name: "Alfa Career", email: "movietrendmaker2244@gmail.com" },
             to: [{ email }],
             subject: "🎉 Your Recruiter Account Has Been Approved!",
@@ -326,7 +326,7 @@ export const updateRecruiterStatus = async (req, res) => {
   `,
         };
 
-        await tranEmailApi.sendTransacEmail(sendSmtpEmail);
+        await tranEmailApi.sendTransacEmail(sentEmail);
 
         return res.json({ success: true, message: "User status updated successfully" });
     } catch (error) {
