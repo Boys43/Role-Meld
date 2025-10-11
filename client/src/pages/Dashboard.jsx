@@ -15,6 +15,13 @@ import ChangePassword from "../components/ChangePassword";
 import DeleteProfile from "../components/DeleteProfile";
 import RecruiterProfile from "../components/RecruiterProfile";
 import Settings from "../components/Settings";
+import AdminListedBlogs from "../components/AdminListedBlogs";
+import RecruiterApprovalRequests from "../components/RecruiterApprovalRequests";
+import EmployeeProfileRequests from "../components/EmployeeProfileRequests";
+import AdminUsers from "../components/AdminUsers";
+import AdminRecruiters from "../components/AdminRecruiters";
+import CategoryManager from "../components/CategoryManager";
+import AdminJobRequests from "../components/AdminJobRequests";
 
 const Dashboard = () => {
   const { userData } = useContext(AppContext);
@@ -48,6 +55,22 @@ const Dashboard = () => {
         return <DeleteProfile setActiveTab={setActiveTab} />
       case "settings":
         return <Settings />
+      case 'blog-management':
+        return <AdminListedBlogs setActiveTab={setActiveTab} />
+      case 'add-blog':
+        return <AdminBlog setActiveTab={setActiveTab} />
+      case "employee-requests":
+        return <RecruiterApprovalRequests />
+      case "employee-profile-requests":
+        return <EmployeeProfileRequests />
+      case 'users':
+        return <AdminUsers />
+      case 'recruiters':
+        return <AdminRecruiters />
+      case "cat-manager":
+        return <CategoryManager />
+      case "job-requests":
+        return <AdminJobRequests />
       default:
         if (userData?.role === "user") return <ApplicantDashboard />;
         if (userData?.role === "recruiter") return <EmployeeDashboard />;

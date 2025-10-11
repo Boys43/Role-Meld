@@ -1,5 +1,5 @@
 import express from 'express';
-import { banUser, changePassword, changeVisibility, checkAdmin, deleteAccount, deleteUser, employeeProfileRequests, getPendingProfileRequests, getPendingRecruiters, isAuthenticated, login, logout, register, unBanUser, updateRecruiterStatus, verifyEmail } from '../controllers/authController.js';
+import { addAssistant, banUser, changePassword, changeVisibility, checkAdmin, deleteAccount, deleteUser, employeeProfileRequests, getAssistants, getPendingProfileRequests, getPendingRecruiters, isAuthenticated, login, logout, register, unBanUser, updateRecruiterStatus, verifyEmail } from '../controllers/authController.js';
 import userAuth from '../middlewares/userAuth.js';
 
 const authRouter = express.Router()
@@ -20,5 +20,7 @@ authRouter.post('/update-employee-status', updateRecruiterStatus);
 authRouter.post('/employee-profile-request', employeeProfileRequests);
 authRouter.get('/get-profile-request', getPendingProfileRequests);
 authRouter.post('/change-visibility', changeVisibility);
+authRouter.post('/add-assistant', userAuth, addAssistant);
+authRouter.get('/get-assistants', userAuth, getAssistants);
 
 export default authRouter;

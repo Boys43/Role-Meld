@@ -61,9 +61,9 @@ const RecruiterApprovalRequests = () => {
       <div className='mb-8'>
         <h1 className='flex items-center gap-3 text-3xl font-bold text-gray-800 mb-2'>
           <Clock size={30} className='text-[var(--primary-color)]' />
-          Pending Recruiter Approval Requests
+          Pending Employee Approval Requests
         </h1>
-        <p className='text-gray-600'>Review and approve recruiter registration requests</p>
+        <span className='text-gray-600'>Review and approve Employee registration requests</span>
       </div>
 
       {/* Loading State */}
@@ -86,10 +86,10 @@ const RecruiterApprovalRequests = () => {
 
           {/* Table */}
           {pendingRecruiters.length === 0 ? (
-            <div className='bg-white rounded-lg shadow-sm border p-12 text-center'>
-              <Clock className='mx-auto text-gray-400 mb-4' size={48} />
+            <div className='bg-white rounded-lg shadow-sm border border-blue-300 p-12 text-center'>
+              <Clock className='animate-pulse mx-auto text-gray-400 mb-4' size={48} />
               <h3 className='text-xl font-medium text-gray-600 mb-2'>No Pending Requests</h3>
-              <p className='text-gray-500'>All recruiter requests have been processed.</p>
+              <span className='text-gray-500'>All Employee requests have been processed.</span>
             </div>
           ) : (
             <div className='bg-white rounded-lg shadow-sm border overflow-hidden'>

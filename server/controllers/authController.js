@@ -376,11 +376,10 @@ export const deleteUser = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        let deletedProfile;
         if (user.role === "user") {
-            deletedProfile = await userProfileModel.findOneAndDelete({ authId: user._id });
+            await userProfileModel.findOneAndDelete({ authId: user._id });
         } else if (user.role === "recruiter") {
-            deletedProfile = await recruiterProfileModel.findOneAndDelete({ authId: user._id });
+            await recruiterProfileModel.findOneAndDelete({ authId: user._id });
         }
 
         await authModel.findByIdAndDelete(id);
@@ -598,5 +597,110 @@ export const changeVisibility = async (req, res) => {
         return res.json({ success: true, message: "User visibility changed successfully" });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+export const addAssistant = async (req, res) => {
+    const { email, roles } = req.body;
+    console.log('email, roles', email, roles)
+    const userId = req.user._id;
+
+    if (!email || !roles || roles.length === 0) {
+        return res.json({ success: false, message: "Missing Details" });
+    }
+
+    try {
+        const admin = await recruiterProfileModel.findOne({ authId: userId });
+        console.log('admin', admin)
+
+        if (!admin) {
+            return res.status(404).json({ success: false, message: "Admin not found" });
+        }
+
+        const recruiter = await recruiterProfileModel.findOne({ email });
+
+        if (!recruiter) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        if (recruiter.role === "user") {
+            return res.json({ success: false, message: "Job seekers can't be an assistant" });
+        }
+
+        // ✅ Prevent duplicates
+        if (admin?.assistants?.includes(recruiter.authId)) {
+            return res.json({ success: false, message: "Assistant already added" });
+        }
+
+        console.log(admin?.assistants);
+
+        recruiter.isAssistant = true;
+        if (Array.isArray(roles)) {
+            recruiter?.assistantRoles?.push(...roles);
+        } else {
+            recruiter?.assistantRoles?.push(roles);
+        }
+
+        const sentEmail = {
+            sender: { name: "Alfa Career", email: "movietrendmaker2244@gmail.com" },
+            to: [{ email }],
+            subject: `🎉 You’ve Been Appointed as a ${roles} Manager!`,
+            htmlContent: `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+    <div style="background: linear-gradient(90deg, #0076b5, #00bfa6); padding: 20px; text-align: center; color: white;">
+      <h2 style="margin: 0;">Alfa Career</h2>
+    </div>
+    <div style="padding: 25px; color: #333; font-size: 16px; line-height: 1.6;">
+      <p>Hey <b>${recruiter?.name}</b>,</p>
+      <p>We’re thrilled to inform you that you’ve been officially appointed as a <b>${roles} Manager</b> at <b>Alfa Career</b> 🎉.</p>
+      <p>As a ${roles} Manager, you now have access to all the necessary tools and permissions to effectively manage your assigned tasks and contribute to our growing platform.</p>
+      <p>To get started, please log in to your manager dashboard using the button below:</p>
+      <p style="margin-top: 20px;">
+        <a href="https://alfacareer.com/login"
+           style="background: linear-gradient(90deg, #0076b5, #00bfa6); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+          Access Your Dashboard
+        </a>
+      </p>
+      <p>If you encounter any issues or need guidance, feel free to reply to this email — our support team will be happy to help.</p>
+      <p>Welcome to the management team, and best of luck in your new role 🚀</p>
+      <p>— The Alfa Career Admin Team</p>
+    </div>
+    <div style="background: #f9f9f9; padding: 15px; text-align: center; font-size: 13px; color: #777;">
+      <p>© ${new Date().getFullYear()} Alfa Career. All rights reserved.</p>
+    </div>
+  </div>
+  `,
+        };
+
+        await tranEmailApi.sendTransacEmail(sentEmail);
+
+        admin?.assistants?.push(recruiter.authId);
+
+        await Promise.all([admin.save(), recruiter.save()]); // ✅ Better practice
+
+        return res.json({ success: true, message: "Assistant added successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const getAssistants = async (req, res) => {
+    const userId = req.user._id;
+    try {
+        const admin = await recruiterProfileModel.findOne({authId: userId, isAdmin: true});
+
+        if (!admin) {
+            return res.json({success: false, message: "Only Admins are allowed to access this route"});
+        }
+
+        const assistants = await recruiterProfileModel.find({authId: {$in: admin.assistants}});
+
+        console.log('assistants', assistants)
+
+        return res.json({success: true, assistants});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
     }
 }

@@ -77,16 +77,20 @@ function Settings() {
             <div className='mt-8  w-full'>
                 <div className='flex justify-between'>
                     <span className='text-lg font-semibold'>
-                        Change Your Account Visibility
+                        Change Your Account Visibility <span  className='text-sm text-gray-500'>
+                             {userData?.reviewStatus === "approved" ? null: userData?.reviewStatus === "underReview" || userData?.profileScore === 100 ? "(Disabled Under Review)": "(Disabled Complete your Profile First)"}
+                            </span>
                     </span>
                     <label className="inline-flex items-center cursor-pointer gap-4">
                         {loading ? <Loader2 className="animate-spin" /> : <span className="ms-3 text-sm font-medium">{checked ? 'Active' : 'Inactive'}</span>}
+
                         <input
                             type="checkbox"
                             name="toggleMe"
                             checked={checked}
                             onChange={(e) => handleVisibilityChange(e.target.checked)}
                             className="sr-only peer"
+                            disabled={userData?.reviewStatus !== "approved"}
                         />
                         <div className="relative w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
                     </label>

@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Img from "./Image";
 import { Blocks, Briefcase, Building, ChevronRight, Clock, LayoutDashboard, User, Users2 } from "lucide-react";
-import { MdRequestPage } from "react-icons/md";
+import { MdAssistant, MdRequestPage } from "react-icons/md";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const { userData, backendUrl, setIsLoggedIn, setUserData } = useContext(AppContext);
@@ -33,11 +33,18 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     { name: 'Users', key: "users", icon: <User size={25} /> },
     { name: 'Recruiters', key: "recruiters", icon: <Users2 size={25} /> },
     { name: 'Employee Requests', key: "employee-requests", icon: <Clock size={25} /> },
-    { name: 'Emplyee Profile Requests', key: "employee-profile-requests", icon: <MdRequestPage  size={25} /> },
+    { name: 'Emplyee Profile Requests', key: "employee-profile-requests", icon: <MdRequestPage size={25} /> },
     {
       name: 'Jobs', key: "jobs", icon: <Briefcase size={25} />,
       subTabs: [
         { name: 'Category', key: "category-manager" },
+      ]
+    },
+    {
+      name: 'Assistant', key: "add-assistant", icon: <MdAssistant size={25} />,
+      subTabs: [
+        { name: 'Add Assitant', key: "add-assistant" },
+        { name: 'All Assitants', key: "all-assistant" },
       ]
     },
     {
@@ -170,16 +177,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 </li>
               );
             })}
-
-            {/* Delete Account */}
-            <li>
-              <span
-                onClick={() => setActiveTab("delete-account")}
-                className="px-3 py-2 rounded-xl cursor-pointer bg-red-500 hover:bg-red-600 flex items-center gap-3 text-white transition border border-red-500"
-              >
-                <FaTrash /> {!toggleNav && <h4 className="whitespace-nowrap">Delete Account</h4>}
-              </span>
-            </li>
           </ul>
 
           {/* Toggle Button (Desktop only) */}

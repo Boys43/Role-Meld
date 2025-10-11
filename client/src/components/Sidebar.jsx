@@ -1,20 +1,20 @@
 // components/Sidebar.jsx
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
-import { MdOutlineDashboard, MdFindInPage, MdPublish } from "react-icons/md";
+import { MdOutlineDashboard, MdFindInPage, MdPublish, MdRequestPage } from "react-icons/md";
 import { CiViewList } from "react-icons/ci";
 import { VscGitStashApply } from "react-icons/vsc";
 import { HiOutlineHeart } from "react-icons/hi";
 import { IoDocumentOutline, IoLockClosedOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
-import { FaChevronLeft, FaChevronRight, FaTrash } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoMdExit } from "react-icons/io";
 import { FiMenu } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Img from "./Image";
-import { ChevronLeft, ChevronRight, List, Settings } from "lucide-react";
+import { Blocks, Building, ChevronRight, Clock, List, Server, Settings, User, User2 } from "lucide-react";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const { userData, backendUrl, setIsLoggedIn, setUserData } = useContext(AppContext);
@@ -59,6 +59,57 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     ];
   }
 
+  let assitantNavLinks = []
+
+  if (userData?.isAssistant) {
+    if (userData?.assistantRoles?.includes("blog")) {
+      assitantNavLinks.push({
+        name: 'Admin Blogs', key: "blog-management", icon: <Blocks size={23} />,
+        subTabs: [
+          { name: "Blog Management", key: "blog-management" },
+          { name: "Add Blog", key: "add-blog" },
+        ]
+      },);
+    }
+
+    if (userData?.assistantRoles?.includes("emp-profile-req")) {
+      assitantNavLinks.push(
+        { name: 'Admin Emplyee Profile Requests', key: "employee-profile-requests", icon: <MdRequestPage size={23} /> },
+      );
+    }
+
+    if (userData?.assistantRoles?.includes("emp-approval-req")) {
+      assitantNavLinks.push(
+        { name: 'Admin Employee Requests', key: "employee-requests", icon: <Clock size={23} /> },
+      );
+    }
+
+    if (userData?.assistantRoles?.includes("user")) {
+      assitantNavLinks.push(
+        { name: 'Admin Users', key: "users", icon: <User size={23} /> },
+      );
+    }
+
+    if (userData?.assistantRoles?.includes("employee")) {
+      assitantNavLinks.push(
+        { name: 'Admin Employees', key: "recruiters", icon: <User2 size={23} /> },
+      );
+    }
+
+    if (userData?.assistantRoles?.includes("job-requests")) {
+      assitantNavLinks.push(
+        { name: 'Job Requests', key: "job-requests", icon: <Building size={23} /> },
+      );
+    }
+    
+    if (userData?.assistantRoles?.includes("cat-manager")) {
+      assitantNavLinks.push(
+        { name: 'Category Manager', key: "cat-manager", icon: <Server size={23} /> },
+      );
+    }
+  }
+
+
   axios.defaults.withCredentials = true;
 
   const logout = async () => {
@@ -95,7 +146,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           ${toggleNav ? (isMobile ? "w-64" : "w-20") : "w-72"} 
           fixed text-sm lg:sticky top-0 left-0 bg-[var(--secondary-color)] 
           transition-all duration-300 border-r border-[var(--primary-color)] 
-          text-white flex flex-col justify-between h-screen z-40`}
+          text-white flex flex-col justify-between h-screen z-40 min-h-screen `}
       >
         {/* User Info */}
         <div className="flex flex-col gap-4 py-4 pl-4 relative">
@@ -196,7 +247,96 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
               );
             })}
 
-            {/* Delete Account */}
+
+            {/* Assistant Panel */}
+            {userData?.isAssistant &&
+              <>
+                <span className="pl-3 mt-4 text-gray-300">Assistant Panel</span>
+                {assitantNavLinks.map((e, i) => {
+                  const isParentActive =
+                    activeTab === e.key || (e.subTabs && e.subTabs.some((sub) => sub.key === activeTab));
+                  return (
+                    <li key={i} className="relative group">
+                      {/* Parent tab */}
+                      <span
+                        onClick={(event) => {
+                          event.preventDefault();
+                          if (e.key === "applications" && userData?.reviewStatus !== "approved") {
+                            toast.warn("Your account is not approved yet.");
+                            return;
+                          }
+
+                          if (isMobile && e.subTabs) {
+                            setActiveTab(e.key);
+                          } else if (!e.subTabs) {
+                            setActiveTab(e.key);
+                          }
+                        }}
+                        className={`px-3 py-2 rounded-xl cursor-pointer flex items-center justify-between gap-3 hover:bg-[var(--primary-color)]/10 transition 
+                      ${isParentActive ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)] shadow  px-1" : ""}
+                    `}
+                      >
+                        <span className="flex items-center gap-3">
+                          {e.icon}
+                          {!toggleNav && <h4 className="whitespace-nowrap">{e.name}</h4>}
+                        </span>
+                        {!toggleNav && <span>
+                          {e.subTabs && <ChevronRight />}
+                        </span>}
+                      </span>
+
+                      {/* Floating submenu (desktop only) */}
+                      {e.subTabs && !isMobile && (
+                        <div className="absolute top-0 left-full ml-1 hidden group-hover:flex flex-col bg-[var(--secondary-color)] border border-[var(--primary-color)] rounded-xl shadow-lg p-2 z-50 min-w-[230px] animate-fadeIn">
+                          {e.subTabs.map((sub, idx) => (
+                            <span
+                              key={idx}
+                              onClick={(event) => {
+                                event.preventDefault();
+                                if (
+                                  (sub.key === "list-job" || sub.key === "listed-jobs") &&
+                                  userData?.reviewStatus !== "approved"
+                                ) {
+                                  toast.warn("Your account is not approved yet.");
+                                  return;
+                                }
+                                setActiveTab(sub.key);
+                              }}
+                              className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition flex items-center gap-2
+                            ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
+                          `}
+                            >
+                              {sub.icon}
+                              {sub.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Inline submenu (mobile only) */}
+                      {e.subTabs && isMobile && activeTab === e.key && (
+                        <div className="flex flex-col gap-1 pl-6 mt-1">
+                          {e.subTabs.map((sub, idx) => (
+                            <span
+                              key={idx}
+                              onClick={() => setActiveTab(sub.key)}
+                              className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition 
+                            ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
+                            `}
+                            >
+                              {sub.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </>
+            }
+
+            <span className="pl-3 mt-4 text-gray-300">Settings</span>
+
             <li>
               <span
                 onClick={() => setActiveTab('settings')}

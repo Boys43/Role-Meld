@@ -74,9 +74,9 @@ const EmployeeProfileRequests = () => {
             <div className='mb-8'>
                 <h1 className='flex items-center gap-3 text-3xl font-bold text-gray-800 mb-2'>
                     <Clock size={30} className='text-[var(--primary-color)]' />
-                    Pending Recruiter Profile Requests
+                    Pending Employee Profile Requests
                 </h1>
-                <p className='text-gray-600'>Review and approve recruiter profile completion requests</p>
+                <span className='text-gray-600'>Review and approve Employee profile completion requests</span>
             </div>
 
             {/* Loading State */}
@@ -92,17 +92,17 @@ const EmployeeProfileRequests = () => {
                         <div className='flex items-center gap-2'>
                             <Clock className='text-blue-600' size={20} />
                             <span className='text-blue-800 font-medium'>
-                                {pendingRequests.length} recruiter approval{pendingRequests.length !== 1 ? 's' : ''} pending
+                                {pendingRequests.length} Employee approval{pendingRequests.length !== 1 ? 's' : ''} pending
                             </span>
                         </div>
                     </div>
 
                     {/* Employee Cards */}
                     {pendingRequests.length === 0 ? (
-                        <div className='bg-white rounded-lg shadow-sm border p-12 text-center'>
-                            <Clock className='mx-auto text-gray-400 mb-4' size={48} />
+                        <div className='bg-white rounded-lg shadow-sm border border-blue-200 p-12 text-center'>
+                            <Clock className='animate-pulse mx-auto text-gray-400 mb-4' size={48} />
                             <h3 className='text-xl font-medium text-gray-600 mb-2'>No Pending Requests</h3>
-                            <p className='text-gray-500'>All recruiter profile requests have been processed.</p>
+                            <span className='text-gray-500'>All Employee profile requests have been processed.</span>
                         </div>
                     ) : (
                         <div className='grid gap-6'>
