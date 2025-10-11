@@ -63,11 +63,11 @@ const AdminAssistants = ({ setActiveTab }) => {
                 </button>
             </div>
 
-            <div className="w-full gap-6 mt-4">
+            <div className="w-full mt-4">
                 {assistants.map((a) => (
                     <div
                         key={a._id}
-                        className="bg-white border w-full border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 p-5 flex flex-col justify-between"
+                        className="bg-white mt-3 border w-full border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 p-5 flex flex-col justify-between"
                     >
                         {/* Header */}
                         <div className="flex items-center gap-4 mb-4">
@@ -77,7 +77,7 @@ const AdminAssistants = ({ setActiveTab }) => {
                             />
                             <div>
                                 <h2 className="text-lg font-semibold text-gray-800">{a.name}</h2>
-                                <p className="text-sm text-gray-500">{a.headline || "No headline"}</p>
+                                <span className="text-sm text-gray-500">{a.headline || "No headline"}</span>
                             </div>
                         </div>
 
@@ -145,7 +145,7 @@ const AdminAssistants = ({ setActiveTab }) => {
 
                             <span
                                 onClick={() => navigate("/company-profile/" + a.authId)}
-                                className="text-blue-600 text-sm font-medium hover:underline flex items-center gap-1"
+                                className="text-blue-600 text-sm font-medium hover:underline flex items-center gap-1 cursor-pointer"
                             >
                                 <UserRound size={14} /> View Profile
                             </span>

@@ -62,9 +62,9 @@ adminRouter.delete("/categories/:id", async (req, res) => {
     }
 
     await Category.findByIdAndDelete(id);
-    res.json({ 
-      success: true, 
-      message: `Category "${category.name}" deleted successfully` 
+    res.json({
+      success: true,
+      message: `Category "${category.name}" deleted successfully`
     });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -85,7 +85,7 @@ adminRouter.post("/categories/bulk-import", async (req, res) => {
     for (const categoryData of categories) {
       try {
         const { name, subcategories = [] } = categoryData;
-        
+
         if (!name || !name.trim()) {
           results.errors.push(`Category name is required for entry: ${JSON.stringify(categoryData)}`);
           continue;
@@ -93,13 +93,13 @@ adminRouter.post("/categories/bulk-import", async (req, res) => {
 
         // Check if category already exists
         let existingCategory = await Category.findOne({ name: name.trim() });
-        
+
         if (existingCategory) {
           // Update existing category by adding new subcategories
-          const newSubcategories = subcategories.filter(sub => 
+          const newSubcategories = subcategories.filter(sub =>
             sub && sub.trim() && !existingCategory.subcategories.includes(sub.trim())
           );
-          
+
           if (newSubcategories.length > 0) {
             existingCategory.subcategories.push(...newSubcategories.map(sub => sub.trim()));
             await existingCategory.save();
@@ -125,10 +125,10 @@ adminRouter.post("/categories/bulk-import", async (req, res) => {
       results
     });
   } catch (err) {
-    res.status(400).json({ 
-      success: false, 
-      error: "Bulk import failed", 
-      details: err.message 
+    res.status(400).json({
+      success: false,
+      error: "Bulk import failed",
+      details: err.message
     });
   }
 });

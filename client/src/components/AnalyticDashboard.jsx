@@ -1,155 +1,500 @@
-import { useEffect } from 'react'
-import { Line, Bar } from 'react-chartjs-2'
-import { Chart as ChartJS, LineElement, PointElement, CategoryScale, LinearScale, BarElement, Filler } from 'chart.js/auto'
+import { useEffect, useState, useContext } from 'react'
+import { Line, Bar, Doughnut, Pie } from 'react-chartjs-2'
+import { Chart as ChartJS, LineElement, PointElement, CategoryScale, LinearScale, BarElement, Filler, ArcElement, Title, Tooltip, Legend } from 'chart.js/auto'
 import axios from 'axios'
-import { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
-import { useState } from 'react';
 import { toast } from 'react-toastify';
-ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, BarElement);
+ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, BarElement, Filler, ArcElement, Title, Tooltip, Legend);
 // React Icons
-import { FaUsers, FaBriefcase, FaUser } from "react-icons/fa";
+import { FaUsers, FaBriefcase, FaUser, FaFileAlt, FaChartLine, FaEye, FaCog, FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
+import { MdDashboard, MdWork, MdPeople, MdAssignment } from "react-icons/md";
 import Loading from './Loading';
 const AnalyticDashboard = () => {
 
-  const { backendUrl, } = useContext(AppContext);
+  const { backendUrl } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  
+  // Data states
+  const [dashboardStats, setDashboardStats] = useState(null);
   const [jobData, setJobData] = useState([]);
-  const [userData, setuserData] = useState([])
-  const [recruiterData, setRecruiterData] = useState([])
+  const [userData, setuserData] = useState([]);
+  const [recruiterData, setRecruiterData] = useState([]);
+  const [jobAnalytics, setJobAnalytics] = useState(null);
+  const [applicationAnalytics, setApplicationAnalytics] = useState(null);
+  const [userAnalytics, setUserAnalytics] = useState(null);
+  const [systemAnalytics, setSystemAnalytics] = useState(null);
 
-  const weeklyData = async () => {
+  const fetchAllAnalytics = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`${backendUrl}/api/analytics/weekly-analytics`);
-      if (data.success) {
-        setJobData(data.jobs);
-        setuserData(data.users);
-        setRecruiterData(data.recruiters);
+      const [
+        dashboardRes,
+        weeklyRes,
+        jobRes,
+        applicationRes,
+        userRes,
+        systemRes
+      ] = await Promise.all([
+        axios.get(`${backendUrl}/api/analytics/dashboard-stats`),
+        axios.get(`${backendUrl}/api/analytics/weekly-analytics`),
+        axios.get(`${backendUrl}/api/analytics/job-analytics`),
+        axios.get(`${backendUrl}/api/analytics/application-analytics`),
+        axios.get(`${backendUrl}/api/analytics/user-analytics`),
+        axios.get(`${backendUrl}/api/analytics/system-analytics`)
+      ]);
+
+      if (dashboardRes.data.success) setDashboardStats(dashboardRes.data.stats);
+      if (weeklyRes.data.success) {
+        setJobData(weeklyRes.data.jobs);
+        setuserData(weeklyRes.data.users);
+        setRecruiterData(weeklyRes.data.recruiters);
       }
+      if (jobRes.data.success) setJobAnalytics(jobRes.data);
+      if (applicationRes.data.success) setApplicationAnalytics(applicationRes.data);
+      if (userRes.data.success) setUserAnalytics(userRes.data);
+      if (systemRes.data.success) setSystemAnalytics(systemRes.data);
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    weeklyData();
-  }, [])
+    fetchAllAnalytics();
+  }, []);
+
+  const formatNumber = (num) => {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num?.toString();
+  };
+
+  const getGrowthColor = (growth) => {
+    const growthNum = parseFloat(growth);
+    if (growthNum > 0) return 'text-green-500';
+    if (growthNum < 0) return 'text-red-500';
+    return 'text-gray-500';
+  };
+
+  const getGrowthIcon = (growth) => {
+    const growthNum = parseFloat(growth);
+    if (growthNum > 0) return <FaChevronUp className="w-4 h-4" />;
+    if (growthNum < 0) return <FaChevronDown className="w-4 h-4" />;
+    return <FaChartLine className="w-4 h-4" />;
+  };
 
 
   if (loading) {
-    return <div className='w-full'>
-      <Loading />
-    </div>
+    return (
+      <div className='w-full flex justify-center items-center min-h-screen'>
+        <Loading />
+      </div>
+    );
   }
 
-  return (
-    <div className='p-10 w-full min-h-screen overflow-y-auto'>
-      <h1 className='font-bold mb-4 flex items-center gap-4'>
-        <TbBrandGoogleAnalytics className='text-[var(--primary-color)]' /> Analytic Dashboard
-      </h1>
-      <div className='w-full'>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-between'>
-          <div className='flex w-full flex-col items-center gap-2 justify-center p-4 rounded-2xl shadow-lg bg-green-200 border-2 border-green-500'>
-            <div className='flex items-center gap-4'>
-              <FaBriefcase size={25} className='text-green-500' />
-              <h3 className='font-bold'>Jobs this Week</h3>
+  const renderOverviewTab = () => (
+    <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-blue-100 border border-blue-500 rounded-xl p-6 text-white shadow-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-black text-sm">Total Users</p>
+              <p className="text-3xl text-blue-500 font-bold">{formatNumber(dashboardStats?.totalUsers)}</p>
+              <div className={`flex items-center gap-1 mt-2 ${getGrowthColor(dashboardStats?.growth?.users)}`}>
+                {getGrowthIcon(dashboardStats?.growth?.users)}
+                <span className="text-sm">{dashboardStats?.growth?.users}% this month</span>
+              </div>
             </div>
-            <span className='bg-white rounded-full p-2 font-semibold text-green-500'>
-              {jobData.reduce((total, job) => total + job.jobs, 0)}
-            </span>
-          </div>
-
-          <div className='flex w-full flex-col items-center gap-2 justify-center p-4 rounded-2xl shadow-lg bg-red-200 border-2 border-red-500'>
-            <div className='flex items-center gap-4'>
-              <FaUsers size={25} className='text-red-500' />
-              <h3 className='font-bold'>Users this Week</h3>
-            </div>
-            <span className='bg-white rounded-full p-2 font-semibold text-red-500'>
-              {userData.reduce((total, job) => total + job.users, 0)}
-            </span>
-          </div>
-
-          <div className='flex w-full flex-col items-center gap-2 justify-center p-4 rounded-2xl shadow-lg bg-yellow-200 border-2 border-yellow-500'>
-            <div className='flex items-center gap-4'>
-              <FaUser size={25} className='text-yellow-500' />
-              <h3 className='font-bold'>Recruiters this Week</h3>
-            </div>
-            <span className='bg-white rounded-full p-2 font-semibold text-yellow-500'>
-              {recruiterData.reduce((total, job) => total + job.recruiters, 0)}
-            </span>
+            <FaUsers className="text-4xl text-blue-200" />
           </div>
         </div>
 
-        {/* Analytics */}
-        <div className='grid mt-4 w-full grid-cols-1 lg:grid-cols-2 gap-4'>
-          <div className='shadow-lg border p-4 rounded-2xl'>
+        <div className="bg-green-100 border border-green-500 rounded-xl p-6 text-white shadow-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-black text-sm">Total Jobs</p>
+              <p className="text-3xl text-green-500 font-bold">{formatNumber(dashboardStats?.totalJobs)}</p>
+              <div className={`flex items-center gap-1 mt-2 ${getGrowthColor(dashboardStats?.growth?.jobs)}`}>
+                {getGrowthIcon(dashboardStats?.growth?.jobs)}
+                <span className="text-sm">{dashboardStats?.growth?.jobs}% this month</span>
+              </div>
+            </div>
+            <FaBriefcase className="text-4xl text-green-200" />
+          </div>
+        </div>
+
+        <div className="bg-purple-100 border border-purple-500 rounded-xl p-6 text-white shadow-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-black text-sm">Applications</p>
+              <p className="text-3xl text-purple-500 font-bold">{formatNumber(dashboardStats?.totalApplications)}</p>
+              <div className={`flex items-center gap-1 mt-2 ${getGrowthColor(dashboardStats?.growth?.applications)}`}>
+                {getGrowthIcon(dashboardStats?.growth?.applications)}
+                <span className="text-sm">{dashboardStats?.growth?.applications}% this month</span>
+              </div>
+            </div>
+            <MdAssignment className="text-4xl text-purple-200" />
+          </div>
+        </div>
+
+        <div className="bg-orange-100 border border-orange-500 rounded-xl p-6 text-white shadow-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-black text-sm">Employees</p>
+              <p className="text-3xl text-orange-500 font-bold">{formatNumber(dashboardStats?.totalRecruiters)}</p>
+              <div className={`flex items-center gap-1 mt-2 ${getGrowthColor(dashboardStats?.growth?.recruiters)}`}>
+                {getGrowthIcon(dashboardStats?.growth?.recruiters)}
+                <span className="text-sm">{dashboardStats?.growth?.recruiters}% this month</span>
+              </div>
+            </div>
+            <FaUser className="text-4xl text-orange-200" />
+          </div>
+        </div>
+      </div>
+
+      {/* Weekly Trends */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <FaBriefcase className="text-green-500" />
+            Jobs This Week
+          </h3>
+          <div className="h-64">
             <Line
               data={{
-                labels: jobData.map((job) => job.day.split("-")[1] + '-' + job.day.split("-")[2]),
-                datasets: [
-                  {
-                    label: "Jobs",
-                    data: jobData.map((job) => job.jobs),
-                    borderColor: "rgb(0, 201, 81)",
-                    backgroundColor: "rgb(185, 248, 207)",
-                  },
-                ],
+                labels: jobData.map((job) => job.day.split("-")[2]),
+                datasets: [{
+                  label: "Jobs",
+                  data: jobData.map((job) => job.jobs),
+                  borderColor: "rgb(34, 197, 94)",
+                  backgroundColor: "rgba(34, 197, 94, 0.1)",
+                  fill: true,
+                  tension: 0.4
+                }]
               }}
               options={{
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
               }}
             />
           </div>
+        </div>
 
-          <div className='shadow-lg border p-4 rounded-2xl'>
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <FaUsers className="text-blue-500" />
+            Users This Week
+          </h3>
+          <div className="h-64">
             <Bar
               data={{
-                labels: userData.map((user) => user.day.split("-")[1] + '-' + user.day.split("-")[2]),
-                datasets: [
-                  {
-                    label: "Users",
-                    data: userData.map((user) => user.users),
-                    borderColor: "rgb(251, 44, 54)",
-                    backgroundColor: "rgb(255, 201, 201)",
-                  },
-                ],
+                labels: userData.map((user) => user.day.split("-")[2]),
+                datasets: [{
+                  label: "Users",
+                  data: userData.map((user) => user.users),
+                  backgroundColor: "rgba(59, 130, 246, 0.8)",
+                  borderColor: "rgb(59, 130, 246)",
+                  borderWidth: 1
+                }]
               }}
               options={{
                 responsive: true,
                 maintainAspectRatio: false,
-              }}
-            />
-          </div>
-
-          <div className='shadow-lg border p-4 rounded-2xl'>
-            <Line
-              data={{
-                labels: recruiterData.map((recruiters) => recruiters.day.split("-")[1] + '-' + recruiters.day.split("-")[2]),
-                datasets: [
-                  {
-                    fill: true,
-                    label: "Employees",
-                    data: recruiterData.map((recruiters) => recruiters.users),
-                    borderColor: "rgb(240, 177, 0)",
-                    backgroundColor: "rgb(255, 240, 133)",
-                  },
-                ],
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
               }}
             />
           </div>
         </div>
       </div>
+
+      {/* Recent Activity */}
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <h3 className="text-lg font-semibold mb-4">Recent Activity (Last 24 Hours)</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="text-2xl font-bold text-blue-600">{systemAnalytics?.recentActivity?.newUsers || 0}</div>
+            <div className="text-sm text-gray-600">New Users</div>
+          </div>
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-2xl font-bold text-green-600">{systemAnalytics?.recentActivity?.newJobs || 0}</div>
+            <div className="text-sm text-gray-600">New Jobs</div>
+          </div>
+          <div className="text-center p-4 bg-purple-50 rounded-lg">
+            <div className="text-2xl font-bold text-purple-600">{systemAnalytics?.recentActivity?.newApplications || 0}</div>
+            <div className="text-sm text-gray-600">Applications</div>
+          </div>
+          <div className="text-center p-4 bg-orange-50 rounded-lg">
+            <div className="text-2xl font-bold text-orange-600">{systemAnalytics?.recentActivity?.newBlogs || 0}</div>
+            <div className="text-sm text-gray-600">New Blogs</div>
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
+
+  const renderJobsTab = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">Jobs by Category</h3>
+          <div className="h-64">
+            {jobAnalytics?.jobsByCategory?.length > 0 && (
+              <Bar
+                data={{
+                  labels: jobAnalytics.jobsByCategory.slice(0, 8).map(item => item._id || 'Unknown'),
+                  datasets: [{
+                    data: jobAnalytics.jobsByCategory.slice(0, 8).map(item => item.count),
+                    backgroundColor: [
+                      'rgba(59, 130, 246, 0.8)',
+                      'rgba(34, 197, 94, 0.8)',
+                      'rgba(168, 85, 247, 0.8)',
+                      'rgba(245, 101, 101, 0.8)',
+                      'rgba(251, 191, 36, 0.8)',
+                      'rgba(20, 184, 166, 0.8)',
+                      'rgba(244, 63, 94, 0.8)',
+                      'rgba(156, 163, 175, 0.8)'
+                    ]
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } }
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">Job Types</h3>
+          <div className="h-64">
+            {jobAnalytics?.jobsByType?.length > 0 && (
+              <Doughnut
+                data={{
+                  labels: jobAnalytics.jobsByType.map(item => item._id || 'Unknown'),
+                  datasets: [{
+                    data: jobAnalytics.jobsByType.map(item => item.count),
+                    backgroundColor: [
+                      '#3B82F6',
+                      '#22C55E',
+                      '#A855F7',
+                      '#F59E0B',
+                      '#EF4444'
+                    ]
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false
+                }}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <h3 className="text-lg font-semibold mb-4">Recent Jobs</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left py-2">Title</th>
+                <th className="text-left py-2">Company</th>
+                <th className="text-left py-2">Category</th>
+                <th className="text-left py-2">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {jobAnalytics?.recentJobs?.slice(0, 5).map((job, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="py-2 font-medium">{job.title}</td>
+                  <td className="py-2">{job.company}</td>
+                  <td className="py-2">{job.category}</td>
+                  <td className="py-2">{new Date(job.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderApplicationsTab = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">Application Status</h3>
+          <div className="h-64">
+            {applicationAnalytics?.applicationsByStatus?.length > 0 && (
+              <Pie
+                data={{
+                  labels: applicationAnalytics.applicationsByStatus.map(item => item._id),
+                  datasets: [{
+                    data: applicationAnalytics.applicationsByStatus.map(item => item.count),
+                    backgroundColor: ['#3B82F6', '#F59E0B', '#EF4444', '#22C55E']
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">Success Rate</h3>
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="text-6xl font-bold text-green-500 mb-2">
+                {applicationAnalytics?.successRate || 0}%
+              </div>
+              <div className="text-gray-600">Applications Hired</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <h3 className="text-lg font-semibold mb-4">Recent Applications</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left py-2">Job</th>
+                <th className="text-left py-2">Applicant</th>
+                <th className="text-left py-2">Status</th>
+                <th className="text-left py-2">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {applicationAnalytics?.recentApplications?.slice(0, 5).map((app, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="py-2 font-medium">{app.job?.title}</td>
+                  <td className="py-2">{app.applicant?.name}</td>
+                  <td className="py-2">
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      app.status === 'hired' ? 'bg-green-100 text-green-800' :
+                      app.status === 'shortlisted' ? 'bg-blue-100 text-blue-800' :
+                      app.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {app.status}
+                    </span>
+                  </td>
+                  <td className="py-2">{new Date(app.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderUsersTab = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+          <div className="text-3xl font-bold text-blue-600 mb-2">{userAnalytics?.totalUsers}</div>
+          <div className="text-gray-600">Total Users</div>
+        </div>
+        <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+          <div className="text-3xl font-bold text-green-600 mb-2">{userAnalytics?.activeUsers}</div>
+          <div className="text-gray-600">Active Users</div>
+        </div>
+        <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+          <div className="text-3xl font-bold text-purple-600 mb-2">{userAnalytics?.activeUserPercentage}%</div>
+          <div className="text-gray-600">Engagement Rate</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <h3 className="text-lg font-semibold mb-4">Users by Role</h3>
+        <div className="space-y-4">
+          {userAnalytics?.usersByRole?.map((role, index) => (
+            <div key={index} className="flex items-center justify-between">
+              <span className="font-medium">{role._id === "recruiter"? "Employees": "Users"}</span>
+              <div className="flex items-center gap-3">
+                <div className="w-32 bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-500 h-2 rounded-full" 
+                    style={{ 
+                      width: `${(role.count / Math.max(...userAnalytics.usersByRole.map(r => r.count))) * 100}%` 
+                    }}
+                  ></div>
+                </div>
+                <span className="text-sm font-semibold">{role.count}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className='p-4 md:p-8 w-full min-h-screen bg-gray-50'>
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <h1 className='text-3xl font-bold text-gray-800 flex items-center gap-3'>
+            <TbBrandGoogleAnalytics className='text-blue-500' />
+            Analytics Dashboard
+          </h1>
+          <span 
+            onClick={fetchAllAnalytics}
+            className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <FaEye className="w-4 h-4" />
+            Refresh Data
+          </span>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="mb-8">
+        <div className="flex flex-wrap gap-2 bg-white rounded-lg p-2 shadow-sm">
+          {[
+            { id: 'overview', label: 'Overview', icon: MdDashboard },
+            { id: 'jobs', label: 'Jobs', icon: MdWork },
+            { id: 'applications', label: 'Applications', icon: MdAssignment },
+            { id: 'users', label: 'Users', icon: MdPeople }
+          ].map(tab => (
+            <span
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                activeTab === tab.id
+                  ? 'bg-blue-500 text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="min-h-96">
+        {activeTab === 'overview' && renderOverviewTab()}
+        {activeTab === 'jobs' && renderJobsTab()}
+        {activeTab === 'applications' && renderApplicationsTab()}
+        {activeTab === 'users' && renderUsersTab()}
+      </div>
+    </div>
+  );
 }
 
 export default AnalyticDashboard
