@@ -6,6 +6,8 @@ const Currency = ({ amount, from }) => {
   const { userData } = useContext(AppContext);
   const [converted, setConverted] = useState(null);
 
+  const userCurrency = userData?.currency || "USD";
+
   useEffect(() => {
     const convert = async () => {
       try {
@@ -15,7 +17,6 @@ const Currency = ({ amount, from }) => {
         const data = await res.json();
 
         // ✅ Ensure correct access of rate based on user's currency
-        const userCurrency = userData?.currency || "USD"; // fallback
         const rate = data?.conversion_rates?.[userCurrency];
 
         if (rate) {
@@ -29,14 +30,14 @@ const Currency = ({ amount, from }) => {
       }
     };
 
-    if (amount && from && userData?.currency) convert();
-  }, [amount, from, userData?.currency]);
+    if (amount && from && userCurrency) convert();
+  }, [amount, from, userCurrency]);
 
   if (converted === null) return <span>...</span>; // Loading or unavailable
 
   return (
     <span>
-      {converted.toFixed(0)} {userData?.currency}
+      {converted.toLocaleString()} {userCurrency}
     </span>
   );
 };

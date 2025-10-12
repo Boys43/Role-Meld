@@ -19,15 +19,15 @@ const HelpCenter = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!question.trim()) return;
-    
+
     const userMessage = { type: 'user', content: question };
     setMessages(prev => [...prev, userMessage]);
-    
+
     // Cache check
     if (localStorage.getItem(question.trim())) {
       setQuestion('');
       setTimeout(() => {
-        setMessages(prev => [...prev, { type: 'bot', content: localStorage.getItem(question.trim()) }]);  
+        setMessages(prev => [...prev, { type: 'bot', content: localStorage.getItem(question.trim()) }]);
       }, 1000);
       return;
     }
@@ -51,23 +51,19 @@ const HelpCenter = () => {
   };
 
   return (
-    <main className='p-4 min-h-screen bg-gray-50 flex flex-col'>
-      {/* Page header */}
-      <h1 className='font-semibold text-xl flex items-center gap-2 mb-4'>
-        <FaHandsHelping className='text-[var(--primary-color)]' />
-        How can I help you, <span className='font-bold'>{userData?.name || "Guest"}</span>
-      </h1>
-
-      {/* Chatbot aside panel */}
-      <aside className="fixed right-0 top-0 w-full max-w-md h-[100vh] bg-white shadow-lg flex flex-col overflow-hidden border">
-        
-        {/* Header */}
-        <div className="flex items-center justify-center gap-3 p-4 border-b bg-gradient-to-r from-[var(--primary-color)] to-teal-400 text-white">
+    <div className='w-full min-h-screen flex items-center gap-6 justify-between'>
+      <main className='w-[70%] p-4 min-h-screen flex flex-col'>
+        <h1 className='font-semibold text-xl flex items-center gap-2 mb-4'>
+          <FaHandsHelping className='text-[var(--primary-color)]' />
+          How can I help you, <span className='font-bold'>{userData?.name || "Guest"}</span>
+        </h1>
+      </main>
+      <aside className="sticky top-0 right-0 w-[30%] max-w-md h-[100vh] bg-white shadow-lg flex flex-col border">
+        <div className="flex items-center justify-center gap-3 p-4 border-b bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] text-white">
           <img loading="lazy" width="40" height="40" src="/fav_logo.webp" alt="Logo" className="rounded-full" />
           <h3 className="font-semibold text-lg text-center">Alfa Career Assistant</h3>
         </div>
 
-        {/* Chat messages */}
         <div ref={chatRef} className="flex-1 p-4 overflow-y-auto flex flex-col gap-3 bg-gray-50">
           {messages.length > 0 ? messages.map((msg, idx) => (
             <div
@@ -89,7 +85,6 @@ const HelpCenter = () => {
           )}
         </div>
 
-        {/* Input */}
         <form onSubmit={handleSubmit} className="flex items-center gap-2 p-3 border-t bg-white sticky bottom-0">
           <img loading='lazy' src="/favicon.ico" alt="favicon" className='w-6 h-6' />
           <input
@@ -100,12 +95,12 @@ const HelpCenter = () => {
             placeholder="Ask me anything..."
             className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:border-[var(--primary-color)] focus:outline-none text-sm"
           />
-          <button type="submit" className='bg-[var(--primary-color)] text-white px-4 py-2 rounded-full text-sm font-medium hover:brightness-110 transition'>
+          <span type="submit" className='cursor-pointer bg-[var(--primary-color)] text-white px-4 py-2 rounded-full text-sm font-medium hover:brightness-110 transition'>
             Send
-          </button>
+          </span>
         </form>
       </aside>
-    </main>
+    </div>
   );
 };
 

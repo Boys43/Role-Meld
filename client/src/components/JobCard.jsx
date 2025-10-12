@@ -34,20 +34,26 @@ const JobCard = ({ e }) => {
 
     return (
         <li className='p-6 min-w-[300px] cursor-pointer border border-gray-200 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between gap-4'
-
+            onClick={() =>
+                navigate('/jobDetails/' + e._id)
+            }
         >
             <div className='flex flex-col gap-4'>
                 {/* 1. Header: Company Info and Save Button */}
                 <div className='flex items-start justify-between'>
                     <div className='flex items-center gap-4'>
-                        {/* Company Logo/Initial */}
                         {e?.companyProfile ? (
                             <Img
                                 style="w-14 h-14 rounded-lg object-cover border border-gray-100 flex-shrink-0"
                                 src={backendUrl + "/uploads/" + e?.companyProfile}
                             />
                         ) : (
-                            <div className="w-14 h-14 rounded-lg border border-gray-300 flex items-center justify-center bg-gray-100 text-[var(--primary-color)] font-bold text-xl flex-shrink-0">
+                            <div className="w-14 h-14 rounded-lg border border-gray-300 flex items-center justify-center bg-gray-100 text-[var(--primary-color)] font-bold text-xl flex-shrink-0"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    navigate('/company-profile/' + e?.postedBy)
+                                }}
+                            >
                                 {e?.company?.slice(0, 1)?.toUpperCase()}
                             </div>
                         )}
@@ -65,7 +71,11 @@ const JobCard = ({ e }) => {
 
                     {/* Save Button (Absolute positioning removed for cleaner flow) */}
                     <span
-                        onClick={() => toggleSaveJob(e?._id)}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            toggleSaveJob(e?._id)
+                        }
+                        }
                         className={`p-2 rounded-full transition-all duration-200 flex-shrink-0
                         ${isSaved
                                 ? 'bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90 shadow-md'
@@ -77,7 +87,7 @@ const JobCard = ({ e }) => {
                         {isSaved ? <Heart size={20} fill='white' /> : <Heart size={20} />}
                     </span>
                 </div>
-                <div onClick={() => navigate('/jobDetails/' + e._id)}>
+                <div>
                     <div className='w-full flex justify-between items-center gap-4'>
                         <span className='text-xs'>
                             {e?.category} / {e?.subCategory}
@@ -102,7 +112,7 @@ const JobCard = ({ e }) => {
                                 {e?.salaryType === "fixed" ? <span>
                                     <Currency amount={e?.fixedSalary} from={e?.jobsCurrency} />
                                 </span> : <span>
-                                    
+
                                     <Currency amount={e?.minSalary} from={e?.jobsCurrency} /> - <Currency amount={e?.maxSalary} from={e?.jobsCurrency} /></span>}
                             </span>
                             <span className='flex w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>

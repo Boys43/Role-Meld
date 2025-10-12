@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const recruiterProfileSchema = new mongoose.Schema({
   authId: { type: mongoose.Schema.Types.ObjectId, ref: "Auth", required: true },
-  isActive: { type: Boolean, default: true },
+  isActive: { type: Boolean, default: false },
   name: { type: String, default: '' },
   tagline: { type: String, default: '' },
   email: { type: String, default: '' },

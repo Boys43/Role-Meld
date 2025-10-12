@@ -52,7 +52,7 @@ const RecruiterProfile = () => {
             return toast.error("Enter a Valid Website Url")
         }
 
-        if (formData?.about?.split(" ").length < 50 || formData?.about?.split(" ").length > 150) {
+        if (formData?.about?.split(" ").length > 150) {
             return toast.error("About is required and should be between 50 and 150 words")
         }
 
@@ -133,7 +133,7 @@ const RecruiterProfile = () => {
             <div className='max-w-7xl mx-auto'>
                 <div className='mb-6'>
                     <h1 className="text-3xl font-bold text-gray-800">Update Your Profile</h1>
-                    <p className='text-sm text-gray-600 mt-1'>Keep your information up to date</p>
+                    <span className='text-sm text-gray-600 mt-1'>Keep your information up to date</span>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -322,9 +322,9 @@ const RecruiterProfile = () => {
                                 value={formData?.about}
                                 onChange={handleChange}
                                 placeholder={userData?.about || "Write a short description about yourself or your company..."}
-                                className="mt-2 w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors min-h-[120px] resize-none"
+                                className="mt-2 text-sm w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors min-h-[120px] resize-none"
                             />
-                            <div className={`text-right ${(formData?.about.split(' ').length <= 50 || formData?.about.split(' ').length > 150) ? "text-red-500" : "text-green-500"} `}>
+                            <div className={`text-right ${(formData?.about.split(' ').length > 150) ? "text-red-500" : "text-green-500"} `}>
                                 {formData?.about.split(' ').length} / 150
                             </div>
                         </div>
@@ -407,7 +407,6 @@ const RecruiterProfile = () => {
                                             <span>Your account is <b>under review</b>.</span>
                                             <span>You will shortly receive an email regarding your approval status.</span>
                                         </div>}
-
                                 </>
                             }
 

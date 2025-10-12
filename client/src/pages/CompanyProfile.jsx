@@ -20,6 +20,11 @@ export const CompanyJobs = () => {
   const [companyLoading, setCompanyLoading] = useState(false);
   const [filter, setFilter] = useState("recent"); // default filter
 
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, []);
+
   // Fetch company jobs
   const getCompanyJobs = async () => {
     setCompanyLoading(true);
@@ -27,11 +32,9 @@ export const CompanyJobs = () => {
       const { data } = await axios.post(`${backendUrl}/api/jobs/getcompanyjobsbyid`, { id });
       if (data.success) {
         setCompanyJobs(data.companyJobs);
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      console.log(error.message);
     } finally {
       setCompanyLoading(false);
     }
@@ -357,13 +360,13 @@ const CompanyProfile = () => {
                 </div>
                 <div className='text-slate-700 flex items-center gap-2'>
                   <span>
-                  {companyDetails?.city &&companyDetails.city},
+                    {companyDetails?.city && companyDetails.city},
                   </span>
                   <span>
-                  {companyDetails?.state && companyDetails.state},
+                    {companyDetails?.state && companyDetails.state},
                   </span>
                   <span>
-                  {companyDetails?.country && companyDetails.country}
+                    {companyDetails?.country && companyDetails.country}
                   </span>
                   {!companyDetails?.city && !companyDetails?.state && !companyDetails?.country && (
                     <p className='text-slate-400 italic text-sm'>No location available</p>

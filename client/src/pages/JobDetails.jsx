@@ -3,7 +3,7 @@ import { AppContext } from '../context/AppContext'
 import axios from 'axios';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 // React Icons
-import { IoHomeOutline, IoWarning } from "react-icons/io5";
+import { IoHome, IoHomeOutline, IoWarning } from "react-icons/io5";
 import { toast } from 'react-toastify';
 import { MdCancel, MdTitle } from "react-icons/md";
 import { IoIosWarning } from "react-icons/io";
@@ -30,9 +30,12 @@ const JobDetails = () => {
     const [loginReminder, setLoginReminder] = useState(false)
     const [jobData, setJobData] = useState(null);
     const [loading, setLoading] = useState(false)
-    const location = useLocation
     const navigate = useNavigate();
     const { id } = useParams();
+
+    useEffect(() => {
+        window.scrollTo({ top: 0 });
+    }, []);
 
     const getJob = async () => {
         setLoading(true)
@@ -91,7 +94,7 @@ const JobDetails = () => {
             <section className='p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                 <div className='col-span-2 order-2 md:order-1'>
                     <h4 className='p-4 flex items-center text-lg gap-4 font-semibold'>
-                        <IoHomeOutline size={25} onClick={() => navigate('/')} className='cursor-pointer' /> <span className='text-[var(--primary-color)]'>/</span> {jobData?.category} <span className='text-[var(--primary-color)]'>/</span> {jobData?.subCategory}
+                        <IoHomeOutline size={20} onClick={() => navigate('/')} className='cursor-pointer' /> <span className='text-[var(--primary-color)]'>/</span> {jobData?.category} {jobData?.subCategory ? <span className='text-[var(--primary-color)]'>/</span> + jobData?.subCategory : null}
                     </h4>
                     <div className='my-4 w-full border rounded-2xl p-4 shadow-lg bg-[var(--primary-color)]/10 flex items-center justify-between'>
                         <div className=''>
@@ -205,7 +208,7 @@ const JobDetails = () => {
                             </h4>
                             <ul className='list-disc flex flex-col gap-2 list-inside'>
                                 {jobData?.skills?.map((skill, index) => (
-                                    <li className='bg-gray-300 max-w-50 py-1 px-2 rounded-md shadow-md' key={index}>
+                                    <li className='whitespace-nowrap' key={index}>
                                         {skill[0].toUpperCase() + skill.slice(1)}
                                     </li>
                                 ))}
@@ -462,7 +465,7 @@ const JobDetails = () => {
 
                                     {/* Apply Button */}
                                     <span
-                                        onClick={() => console.log("Apply via CV")}
+                                        onClick={() => applyJob(job._id)}
                                         className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold px-4 py-2 rounded-xl hover:from-green-700 hover:to-green-800 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm"
                                     >
                                         <FileText size={18} />
