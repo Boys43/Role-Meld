@@ -72,7 +72,7 @@ const AdminAssistants = ({ setActiveTab }) => {
                         {/* Header */}
                         <div className="flex items-center gap-4 mb-4">
                             <Img
-                                src={a.profilePicture ? `${backendUrl}/uploads/${a.profilePicture}` : "/default-avatar.png"}
+                                src={a.profilePicture ? a.profilePicture: "/default-avatar.png"}
                                 style="w-14 h-14 rounded-full object-cover border"
                             />
                             <div>

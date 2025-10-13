@@ -257,7 +257,7 @@ const Navbar = () => {
           </span>
         </div>
 
-        {userData?.profileScore === 100 && userData?.reviewStatus === "underReview" || userData?.reviewStatus === "pending" ?
+        {userData?.profileScore === 100 && userData?.reviewStatus === "underReview"  ?
           <div
             className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
           >
@@ -324,11 +324,9 @@ const Navbar = () => {
         aria-label="User menu"
       >
         {userData?.profilePicture ? (
-          <img
-            loading="lazy"
-            src={`${backendUrl}/uploads/${userData.profilePicture}`}
-            alt="Profile"
-            className="w-full h-full object-cover"
+          <Img
+            src={userData.profilePicture}
+            style="w-full h-full object-cover"
           />
         ) : (
           <span className="text-lg font-semibold flex items-center justify-center h-full w-full">

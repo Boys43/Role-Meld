@@ -1,9 +1,10 @@
-const Img = ({ src, alt = "image", w, h, style }) => (
+const Img = ({ src, w, h, style, onClick }) => (
     <img
         src={src}
-        alt={alt}
+        alt={src}
         width={w}
         height={h}
+        onClick={onClick}
         loading="lazy"
         decoding="async"
         className={style}

@@ -107,7 +107,7 @@ const AppliedJobs = () => {
                                                 <div className="flex font-semibold items-center gap-3">
                                                     <span className="border p-2 rounded-xl border-gray-300">
                                                         <img
-                                                            src={`${backendUrl}/uploads/${app?.job?.companyProfile}`}
+                                                            src={app?.job?.companyProfile}
                                                             alt="Company"
                                                             decoding="async"
                                                             loading="lazy"

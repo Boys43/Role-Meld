@@ -6,6 +6,7 @@ import { AppContext } from "../context/AppContext";
 import "react-step-progress-bar/styles.css";
 import { ProgressBar } from "react-step-progress-bar";
 import { AnimatePresence, motion } from "framer-motion";
+import CustomSelect from "./CustomSelect";
 
 // React Icons
 import { IoChevronBack } from "react-icons/io5";
@@ -183,18 +184,18 @@ const JobForm = ({ setActiveTab }) => {
                 <div className="flex flex-col mt-4">
                   <label className="font-medium mb-2">Location Type *</label>
                   <div className="relative">
-                    <select
+                    <CustomSelect
                       name="locationType"
                       required
                       value={jobData.locationType || ""}
                       onChange={handleJobChange}
-                      className="py-2.5 px-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 appearance-none bg-white cursor-pointer transition duration-200"
                     >
                       <option value="">Select Location Type</option>
                       <option value="remote">🌍 Remote</option>
                       <option value="on-site">🏢 On-site</option>
                       <option value="hybrid">⚙️ Hybrid</option>
-                    </select>
+                    </CustomSelect>
+
 
                     {/* Custom dropdown arrow */}
                     <svg
@@ -246,12 +247,11 @@ const JobForm = ({ setActiveTab }) => {
                 {/* Job Type */}
                 <div className="flex flex-col my-6">
                   <label className="font-medium mb-2">Job Type *</label>
-                  <select
+                  <CustomSelect
                     name="jobType"
                     required
                     value={jobData.jobType || ""}
                     onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="">Select Job Type</option>
                     <option value="full-time">Full-time</option>
@@ -259,7 +259,7 @@ const JobForm = ({ setActiveTab }) => {
                     <option value="contract">Contract</option>
                     <option value="internship">Internship</option>
                     <option value="temporary">Temporary</option>
-                  </select>
+                  </CustomSelect>
                 </div>
 
 
@@ -285,18 +285,17 @@ const JobForm = ({ setActiveTab }) => {
                 {jobData.jobType === "part-time" && (
                   <div className="flex flex-col mb-4">
                     <label htmlFor="shift" className="font-medium mb-2">Shift *</label>
-                    <select
+                    <CustomSelect
                       name="shift"
                       required
                       value={jobData.shift || ""}
                       onChange={handleJobChange}
-                      className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                     >
                       <option value="">Select Shift</option>
                       <option value="morning">Morning</option>
                       <option value="evening">Evening</option>
                       <option value="night">Night</option>
-                    </select>
+                    </CustomSelect>
                   </div>
                 )}
 
@@ -369,17 +368,16 @@ const JobForm = ({ setActiveTab }) => {
                 {/* Job Category */}
                 <div className="flex flex-col mb-4">
                   <label className="font-medium mb-2">Job Category</label>
-                  <select
+                  <CustomSelect
                     name="category"
                     value={jobData.category || ""}
                     onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="">--- Select Category ---</option>
                     {categories.map((cat) => (
                       <option key={cat.name} value={cat.name}>{cat.name}</option>
                     ))}
-                  </select>
+                  </CustomSelect>
                 </div>
 
 
@@ -388,17 +386,16 @@ const JobForm = ({ setActiveTab }) => {
                   <div className="flex flex-col mb-4">
                     <hr className="my-8" />
                     <label className="font-medium mb-2">Sub Category</label>
-                    <select
+                    <CustomSelect
                       name="subCategory"
                       value={jobData.subCategory || ""}
                       onChange={handleJobChange}
-                      className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                     >
                       <option value="">Select Sub Category</option>
                       {subCategories.map((sub) => (
                         <option key={sub} value={sub}>{sub}</option>
                       ))}
-                    </select>
+                    </CustomSelect>
                   </div>
                 )}
                 <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
@@ -444,16 +441,15 @@ const JobForm = ({ setActiveTab }) => {
                 {/* Salary Type */}
                 <div className="flex flex-col mb-4">
                   <label htmlFor="salaryType mb-1" className="font-medium mb-2">Salary Type *</label>
-                  <select
+                  <CustomSelect
                     name="salaryType"
                     value={jobData.salaryType || ""}
                     onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-[var(--primary-color)]"
                   >
                     <option value="">--- Choose Salary Type ---</option>
                     <option value="fixed">Fixed</option>
                     <option value="range">Range</option>
-                  </select>
+                  </CustomSelect>
                 </div>
 
                 {/* Salary Inputs */}
@@ -602,29 +598,27 @@ const JobForm = ({ setActiveTab }) => {
                 {/* Qualifications */}
                 <div className="flex flex-col mb-4">
                   <label htmlFor="qualifications" className="font-medium mb-2">Qualifications / Required Skills *</label>
-                  <select
+                  <CustomSelect
                     name="qualifications"
                     value={jobData.qualifications || ""}
                     onChange={handleJobChange}
-                    className="py-2 px-3 mb-8 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="">--- Select Qualification ---</option>
                     <option value="Entry">Entry</option>
                     <option value="Mid">Mid</option>
                     <option value="Intermediate">Intermediate</option>
                     <option value="Senior">Senior</option>
-                  </select>
+                  </CustomSelect>
                 </div>
 
                 {/* Experience */}
                 <hr className="my-8" />
                 <div className="flex flex-col mb-4">
                   <label htmlFor="experience" className="font-medium mb-2">Experience</label>
-                  <select
+                  <CustomSelect
                     name="experience"
                     value={jobData.experience || ""}
                     onChange={handleJobChange}
-                    className="py-2 px-3 mb-8 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="">Select Experience</option>
                     <option value="6 Months - 1 Year">6 Months - 1 Year</option>
@@ -633,7 +627,7 @@ const JobForm = ({ setActiveTab }) => {
                     <option value="3 Years - 4 Years">3 Years - 4 Years</option>
                     <option value="4 Years - 5 Years">4 Years - 5 Years</option>
                     <option value="5 Years+">5 Years+</option>
-                  </select>
+                  </CustomSelect>
                 </div>
 
                 <hr className="my-8" />
@@ -851,16 +845,15 @@ const JobForm = ({ setActiveTab }) => {
                 {/* Application Method */}
                 <div className="flex flex-col mb-4">
                   <label className="font-medium mb-2">Application Method *</label>
-                  <select
+                  <CustomSelect
                     name="applicationMethod"
                     required
                     value={jobData.applicationMethod || "easy"}
                     onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="easy">Easy Apply</option>
                     <option value="external">External link</option>
-                  </select>
+                  </CustomSelect>
                 </div>
 
 
@@ -886,15 +879,14 @@ const JobForm = ({ setActiveTab }) => {
                 {/* Resume Requirement */}
                 <div className="flex flex-col mb-4">
                   <label className="font-medium mb-2">Resume Requirement</label>
-                  <select
+                  <CustomSelect
                     name="resumeRequirement"
                     value={jobData.resumeRequirement || "false"}
                     onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="false">No</option>
                     <option value="true">Yes</option>
-                  </select>
+                  </CustomSelect>
                 </div>
 
                 <button type="button" className="mt-6 px-4 py-2 bg-[var(--primary-color)] text-white rounded"
@@ -922,15 +914,14 @@ const JobForm = ({ setActiveTab }) => {
                 {/* Sponsored */}
                 <div className="flex flex-col mb-4">
                   <label htmlFor="sponsored" className="font-medium mb-2">Sponsored</label>
-                  <select
+                  <CustomSelect
                     name="sponsored"
                     value={jobData.sponsored || "false"}
                     onChange={handleJobChange}
-                    className="py-2 px-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="false">Not Sponsored</option>
                     <option value="true">Sponsored</option>
-                  </select>
+                  </CustomSelect>
                 </div>
 
                 <div className="text-sm text-gray-600 text-center mb-4">

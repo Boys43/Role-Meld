@@ -9,6 +9,7 @@ import { User, Phone, Link, MapPin, Briefcase, Save, Currency, CurrencyIcon } fr
 import LocationSelector from './LocationSelector';
 import { FaSearch, FaMoneyBillWave } from "react-icons/fa";
 import SearchSelect from './SelectSearch';
+import Img from './Image';
 
 
 const MyProfile = () => {
@@ -216,17 +217,6 @@ const MyProfile = () => {
                             </div>
 
                             <div className='flex items-center'>
-                                {/* <div className='space-y-2'>
-                                    <label className="font-medium text-gray-700">City</label>
-                                    <input
-                                        type="text"
-                                        name="city"
-                                        value={formData.city}
-                                        placeholder={userData?.city || "e.g, Lahore"}
-                                        onChange={handleChange}
-                                        className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
-                                    />
-                                </div> */}
 
                                 <LocationSelector
                                     selectedCountry={formData.country}
@@ -334,11 +324,9 @@ const MyProfile = () => {
                                     />
 
                                     {userData?.profilePicture ? (
-                                        <img
-                                            loading="lazy"
-                                            src={`${backendUrl}/uploads/${userData.profilePicture}`}
-                                            alt="Profile"
-                                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full object-cover z-10 shadow-xl"
+                                        <Img
+                                            src={userData.profilePicture}
+                                            style="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full object-cover z-10 shadow-xl"
                                         />
                                     ) : (
                                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-xl z-10">

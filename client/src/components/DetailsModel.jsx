@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Loader2, Building } from 'lucide-react';
 
-const CompanyDetailsModel = () => {
+const DetailsModel = () => {
     const { backendUrl, userData, setUserData } = useContext(AppContext)
     const [company, setCompany] = useState(userData?.company || "");
     const [loading, setLoading] = useState(false);
@@ -54,17 +54,6 @@ const CompanyDetailsModel = () => {
                 </span>
             </div>
 
-            {/* Progress Indicator */}
-            <div className="mb-8">
-                <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-                    <span>Step 2 of 2</span>
-                    <span>Almost done!</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-[var(--primary-color)] to-blue-600 h-2 rounded-full transition-all duration-500" style={{width: '100%'}}></div>
-                </div>
-            </div>
-
             {/* Form */}
             <form onSubmit={updateProfile} className="space-y-6">
                 <div className="space-y-2">
@@ -82,13 +71,10 @@ const CompanyDetailsModel = () => {
                             placeholder="Enter your company name"
                             required
                             disabled={loading}
-                            className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-xl focus:border-[var(--primary-color)] focus:ring-4 focus:ring-blue-50 transition-all duration-200 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                            className="w-full text-sm px-4 py-3 pl-12 border-2 border-gray-200 rounded-xl focus:border-[var(--primary-color)] focus:ring-4 focus:ring-blue-50 transition-all duration-200 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                         />
                         <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                     </div>
-                    <span className="text-xs text-gray-500 mt-1">
-                        This will be displayed on your company profile and job postings
-                    </span>
                 </div>
 
                 {/* Action Buttons */}
@@ -122,4 +108,4 @@ const CompanyDetailsModel = () => {
     )
 }
 
-export default CompanyDetailsModel
+export default DetailsModel;

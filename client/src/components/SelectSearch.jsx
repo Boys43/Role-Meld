@@ -26,7 +26,7 @@ const SearchSelect = ({ label, icon: Icon, options, value, onChange, placeholder
     return (
         <div className={` w-full ${className}`} ref={dropdownRef}>
             {label && (
-                <label className={` ${labelStyle} flex items-center gap-2 font-medium text-gray-700 mb-2`}>
+                <label className={` ${labelStyle} flex items-center gap-2 font-medium text-gray-700`}>
                     {Icon && <Icon className="w-4 h-4 text-gray-500" />}
                     {label}
                 </label>

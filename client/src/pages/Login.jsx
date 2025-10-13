@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import assets from '../assets/assets'
 import LoginModel from '../components/LoginModel'
-import CompanyDetailsModel from './CompanyDetailsModel'
+import DetailsModel from '../components/DetailsModel'
 
 const Login = () => {
   const [step, setStep] = useState(1);
@@ -9,7 +9,7 @@ const Login = () => {
   return (
     <main className="h-screen overflow-hidden w-full flex justify-center items-center">
       <div className="md:w-1/2 py-10 overflow-y-auto">
-        {step === 1 ? <LoginModel setStep={setStep} /> : <CompanyDetailsModel />}
+        {step === 1 ? <LoginModel setStep={setStep} /> : <DetailsModel />}
       </div>
       <div className="border hidden md:block md:w-1/2 border-l-3 border-[var(--primary-color)]">
         <img loading='lazy' src={assets.register_side} alt="Register Side" />

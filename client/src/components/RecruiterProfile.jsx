@@ -9,6 +9,7 @@ import LocationSelector from './LocationSelector';
 import SearchSelect from './SelectSearch';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { MdWarning } from 'react-icons/md';
+import CustomSelect from './CustomSelect';
 
 const RecruiterProfile = () => {
     const { userData, backendUrl, setUserData } = useContext(AppContext);
@@ -48,7 +49,7 @@ const RecruiterProfile = () => {
             return toast.error("Company Name is required")
         }
 
-        if (!formData.website.includes("http")) {
+        if (formData?.website && !formData.website.includes("http")) {
             return toast.error("Enter a Valid Website Url")
         }
 
@@ -118,15 +119,28 @@ const RecruiterProfile = () => {
         }
     };
 
-    const companyTypes = [
-        { code: 'private', name: "Private Limited Company" },
-        { code: 'partnership', name: "Partnership" },
-        { code: 'government', name: "Government Organization" },
-        { code: 'non-profit', name: "Non-Profit Organization" },
-        { code: 'startup', name: "Startup" },
-        { code: 'education', name: "Educational Institute" },
-        { code: 'agency', name: "Consultancy / Agency" }
+    const industryOptions = [
+        { name: "1", code: "Electronics / Electrical" },
+        { name: "2", code: "Engineering (Civil / Mechanical / Electrical)" },
+        { name: "3", code: "Food & Beverages / Hospitality" },
+        { name: "4", code: "Government / Public Sector" },
+        { name: "5", code: "Healthcare / Medical" },
+        { name: "6", code: "Human Resources (HR)" },
+        { name: "7", code: "Information Technology / Software" },
+        { name: "8", code: "Legal / Law" },
+        { name: "9", code: "Logistics / Supply Chain" },
+        { name: "10", code: "Manufacturing" },
+        { name: "11", code: "Media / Journalism" },
+        { name: "12", code: "NGO / Social Services" },
+        { name: "13", code: "Operations / Management" },
+        { name: "14", code: "Real Estate" },
+        { name: "15", code: "Retail / Sales" },
+        { name: "16", code: "Security / Safety" },
+        { name: "17", code: "Telecommunications" },
+        { name: "18", code: "Tourism / Travel" },
+        { name: "19", code: "Transportation / Drivers" }
     ];
+
 
     return (
         <div className='w-full min-h-screen overflow-y-auto p-6 bg-gradient-to-br from-gray-50 to-gray-100'>
@@ -212,15 +226,21 @@ const RecruiterProfile = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="font-medium text-gray-700">Industry</label>
-                                <input
-                                    type="text"
-                                    name="industry"
-                                    value={formData.industry}
-                                    onChange={handleChange}
-                                    placeholder={userData?.industry || "e.g., Software Development"}
-                                    className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
+                                <SearchSelect
+                                    label="Industry"
+                                    labelStyle=""
+                                    className=""
+                                    options={industryOptions}
+                                    value={formData?.industry}
+                                    onChange={(e) => {
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            industry: e.target.value,
+                                        }));
+                                    }}
+                                    placeholder="e.g. Software Development"
                                 />
+
                             </div>
 
                             <div className="space-y-2">
@@ -250,11 +270,10 @@ const RecruiterProfile = () => {
 
                         <div className="space-y-2 flex  flex-col">
                             <label className="font-medium text-gray-700">Company Type</label>
-                            <select
+                            <CustomSelect
                                 name="companyType"
                                 value={formData.companyType || ""}
                                 onChange={handleChange}
-                                className="py-2 px-3 mb-8 border rounded-lg focus:ring-2 focus:ring-blue-400"
                             >
                                 <option value="">---Choose your Company Type ---</option>
                                 <option value="Private Limited Company">Private Limited Company</option>
@@ -264,7 +283,7 @@ const RecruiterProfile = () => {
                                 <option value="Startup">Startup</option>
                                 <option value="Educational Institute">Educational Institute</option>
                                 <option value="Consultancy / Agency">Consultancy / Agency</option>
-                            </select>
+                            </CustomSelect>
                         </div>
 
                         <hr className="mt-2" />
@@ -358,11 +377,9 @@ const RecruiterProfile = () => {
                                     />
 
                                     {userData?.profilePicture ? (
-                                        <img
-                                            loading="lazy"
-                                            src={`${backendUrl}/uploads/${userData.profilePicture}`}
-                                            alt="Profile"
-                                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full object-cover z-10 shadow-xl"
+                                        <Img
+                                            src={userData.profilePicture}
+                                            style="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full object-cover z-10 shadow-xl"
                                         />
                                     ) : (
                                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-xl z-10">
@@ -387,11 +404,11 @@ const RecruiterProfile = () => {
                                     <Camera size={23} className="text-white text-base" />
                                 </label>
                             </div>
-                            <span className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1.5 text-sm text-gray-500 font-medium">
+                            <span className="flex items-center gap-3 my-2 text-sm text-gray-500 font-medium">
                                 You are at <b>{userData?.profileScore}%</b>
                             </span>
 
-                            {userData?.profileScore < 100 && userData?.isProfileVerified ? <span className="p-3 rounded-lg shadow-md text-sm flex flex-col items-center text-center gap-2 border border-yellow-300 bg-yellow-50/80 text-yellow-700 font-medium">
+                            {userData?.profileScore < 100 && userData?.reviewStatus !== "approved" ? <span className="p-3 rounded-lg shadow-md text-sm flex flex-col items-center text-center gap-2 border border-yellow-300 bg-yellow-50/80 text-yellow-700 font-medium">
                                 <MdWarning className="text-yellow-500 animate-pulse" size={25} />
                                 <span>Your account is <b>not yet active</b>.</span>
                                 <span className="text-gray-600 text-xs">Please complete your profile to activate it.</span>

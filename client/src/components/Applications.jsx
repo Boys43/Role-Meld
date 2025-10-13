@@ -279,7 +279,7 @@ const Applications = () => {
                                     <div className='bg-white p-3 rounded-xl shadow-md border border-[var(--primary-color)]/10'>
                                         {selectedApplication.resume ? (
                                             <a
-                                                href={`${backendUrl}/uploads/${selectedApplication.resume}`}
+                                                href={selectedApplication.resume}
                                                 download={selectedApplication.resume}
                                                 className='flex items-center gap-3 text-[var(--primary-color)] hover:text-[var(--secondary-color)] font-semibold transition-colors duration-300 bg-[var(--primary-color)]/5 p-4 rounded-lg hover:bg-[var(--primary-color)]/10'
                                             >

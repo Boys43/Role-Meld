@@ -1,88 +1,83 @@
-import React, { useContext, useState } from "react";
-import Sidebar from "../components/Sidebar";
-import ApplicantDashboard from "../components/ApplicantDashboard";
-import SavedJobs from "../components/SavedJobs";
-import AppliedJobs from "../components/AppliedJobs";
-import EmployeeDashboard from "../components/EmployeeDashboard";
-import Applications from "../components/Applications";
-import JobForm from "../components/JobsForm";
+import React, { lazy, Suspense, useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
-import RecruiterJobs from "../components/RecruiterJobs";
-import AdminBlog from "../components/AdminBlog";
-import MyResume from "../components/MyResume";
-import MyProfile from "../components/MyProfile";
-import ChangePassword from "../components/ChangePassword";
-import DeleteProfile from "../components/DeleteProfile";
-import RecruiterProfile from "../components/RecruiterProfile";
-import Settings from "../components/Settings";
-import AdminListedBlogs from "../components/AdminListedBlogs";
-import RecruiterApprovalRequests from "../components/RecruiterApprovalRequests";
-import EmployeeProfileRequests from "../components/EmployeeProfileRequests";
-import AdminUsers from "../components/AdminUsers";
-import AdminRecruiters from "../components/AdminRecruiters";
-import CategoryManager from "../components/CategoryManager";
-import AdminJobRequests from "../components/AdminJobRequests";
+
+// Layout
+const Sidebar = lazy(() => import("../components/Sidebar"));
+
+// Applicant Components
+const ApplicantDashboard = lazy(() => import("../components/ApplicantDashboard"));
+const SavedJobs = lazy(() => import("../components/SavedJobs"));
+const AppliedJobs = lazy(() => import("../components/AppliedJobs"));
+const MyResume = lazy(() => import("../components/MyResume"));
+const MyProfile = lazy(() => import("../components/MyProfile"));
+const ChangePassword = lazy(() => import("../components/ChangePassword"));
+
+// Employee Components
+const EmployeeDashboard = lazy(() => import("../components/EmployeeDashboard"));
+const EmployeeProfileRequests = lazy(() => import("../components/EmployeeProfileRequests"));
+
+// Recruiter Components
+const RecruiterJobs = lazy(() => import("../components/RecruiterJobs"));
+const RecruiterProfile = lazy(() => import("../components/RecruiterProfile"));
+const RecruiterApprovalRequests = lazy(() => import("../components/RecruiterApprovalRequests"));
+
+// Admin Components
+const AdminBlog = lazy(() => import("../components/AdminBlog"));
+const AdminListedBlogs = lazy(() => import("../components/AdminListedBlogs"));
+const AdminUsers = lazy(() => import("../components/AdminUsers"));
+const AdminRecruiters = lazy(() => import("../components/AdminRecruiters"));
+const CategoryManager = lazy(() => import("../components/CategoryManager"));
+const AdminJobRequests = lazy(() => import("../components/AdminJobRequests"));
+const JobForm = lazy(() => import("../components/JobsForm"));
+const Applications = lazy(() => import("../components/Applications"));
+const Settings = lazy(() => import("../components/Settings"));
 
 const Dashboard = () => {
   const { userData } = useContext(AppContext);
-  const [activeTab, setActiveTab] = useState(userData?.role === "user" ? "userdashboard" : "recruiterdashboard");
+  const [activeTab, setActiveTab] = useState(
+    userData?.role === "user" ? "userdashboard" : "recruiterdashboard"
+  );
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "userdashboard":
-        return <ApplicantDashboard setActiveTab={setActiveTab} />;
-      case "savedjobs":
-        return <SavedJobs />;
-      case "applied-jobs":
-        return <AppliedJobs />
-      case "recruiterdashboard":
-        return <EmployeeDashboard />;
-      case "applications":
-        return <Applications />;
-      case "list-job":
-        return <JobForm setActiveTab={setActiveTab} />
-      case "listed-jobs":
-        return <RecruiterJobs />
-      case "my-resume":
-        return <MyResume />
-      case "my-profile":
-        return <MyProfile />
-      case "recruiter-profile":
-        return <RecruiterProfile />
-      case "change-password":
-        return <ChangePassword />
-      case "delete-account":
-        return <DeleteProfile setActiveTab={setActiveTab} />
-      case "settings":
-        return <Settings />
-      case 'blog-management':
-        return <AdminListedBlogs setActiveTab={setActiveTab} />
-      case 'add-blog':
-        return <AdminBlog setActiveTab={setActiveTab} />
-      case "employee-requests":
-        return <RecruiterApprovalRequests />
-      case "employee-profile-requests":
-        return <EmployeeProfileRequests />
-      case 'users':
-        return <AdminUsers />
-      case 'recruiters':
-        return <AdminRecruiters />
-      case "cat-manager":
-        return <CategoryManager />
-      case "job-requests":
-        return <AdminJobRequests />
-      default:
-        if (userData?.role === "user") return <ApplicantDashboard />;
-        if (userData?.role === "recruiter") return <EmployeeDashboard />;
-        return null;
-
-    }
+  // Map activeTab to lazy-loaded components
+  const componentMap = {
+    userdashboard: ApplicantDashboard,
+    savedjobs: SavedJobs,
+    "applied-jobs": AppliedJobs,
+    recruiterdashboard: EmployeeDashboard,
+    applications: Applications,
+    "list-job": JobForm,
+    "listed-jobs": RecruiterJobs,
+    "my-resume": MyResume,
+    "my-profile": MyProfile,
+    "recruiter-profile": RecruiterProfile,
+    "change-password": ChangePassword,
+    settings: Settings,
+    "blog-management": AdminListedBlogs,
+    "add-blog": AdminBlog,
+    "employee-requests": RecruiterApprovalRequests,
+    "employee-profile-requests": EmployeeProfileRequests,
+    users: AdminUsers,
+    recruiters: AdminRecruiters,
+    "cat-manager": CategoryManager,
+    "job-requests": AdminJobRequests,
   };
+
+  const ActiveComponent =
+    componentMap[activeTab] ||
+    (userData?.role === "user" ? ApplicantDashboard : EmployeeDashboard);
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      {renderContent()}
+      <Suspense
+        fallback={
+          <div className="w-full h-screen flex items-center justify-center">
+            Loading...
+          </div>
+        }
+      >
+        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <ActiveComponent setActiveTab={setActiveTab} />
+      </Suspense>
     </div>
   );
 };

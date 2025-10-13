@@ -221,7 +221,7 @@ const ApplicantDashboard = ({setActiveTab}) => {
               {userData?.profilePicture ? (
                 <img
                   loading="lazy"
-                  src={`${backendUrl}/uploads/${userData.profilePicture}`}
+                  src={userData?.profilePicture}
                   alt="Profile"
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-25 h-25 rounded-full object-cover z-10 shadow-xl"
                 />

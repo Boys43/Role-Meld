@@ -113,7 +113,7 @@ const EmployeeDashboard = () => {
         <div className="w-full h-[30vh] border-2 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
           {userData?.banner ? (
             <Img
-              src={`${backendUrl}/uploads/${userData?.banner}`}
+              src={userData?.banner}
               style={"w-full h-full object-cover"}
             />
           ) : (
@@ -151,7 +151,7 @@ const EmployeeDashboard = () => {
           <div className="w-20 h-20 border-2 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
             {userData?.profilePicture ? (
               <Img
-                src={`${backendUrl}/uploads/${userData?.profilePicture}`}
+                src={userData?.profilePicture}
                 style={"w-full h-full object-cover"}
               />
             ) : (

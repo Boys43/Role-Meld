@@ -174,13 +174,13 @@ const CompanyProfile = () => {
     <main className='p-4 min-h-[calc(100vh-4.6rem)]'>
       <section className='pb-8 border-b border-gray-300'>
         <div className='rounded-2xl overflow-hidden border-2 border-gray-500'>
-          <Img src={`${backendUrl}/uploads/${companyDetails.banner}`} style={"w-full h-[30vh] object-cover"} />
+          <Img src={companyDetails.banner} style={"w-full h-[30vh] object-cover"} />
         </div>
 
         <div className='flex items-center justify-between mt-4 px-8'>
           <div className='flex items-center gap-8'>
             {
-              companyDetails.profilePicture ? <Img src={`${backendUrl}/uploads/${companyDetails.profilePicture}`} style={"w-32 h-32 rounded-full border-4 border-gray-500"} /> :
+              companyDetails.profilePicture ? <Img src={companyDetails.profilePicture} style={"w-32 h-32 rounded-full border-4 border-gray-500"} /> :
                 <span className='w-32 h-32 rounded-full border-4 border-gray-500 flex items-center justify-center text-4xl font-bold text-gray-500'>
                   {companyDetails?.company?.slice(0, 1).toUpperCase()}
                 </span>

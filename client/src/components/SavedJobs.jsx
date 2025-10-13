@@ -69,7 +69,7 @@ const SavedJobs = () => {
                         <div className="flex font-semibold items-center gap-3">
                           <span className="border p-2 rounded-xl border-gray-300">
                             <img
-                              src={job?.companyProfile ? `${backendUrl}/uploads/${job.companyProfile}` : "/default-company.png"}
+                              src={job?.companyProfile ?job.companyProfile : "/default-company.png"}
                               alt="Company"
                               decoding="async"
                               loading="lazy"

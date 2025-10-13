@@ -1,23 +1,18 @@
-// npm i express geoip-lite
-import express from 'express';
-import geoip  from 'geoip-lite';
+function getPublicIdFromUrl(url) {
+  // Remove the base URL up to /upload/
+  const parts = url.split("/upload/");
+  if (parts.length < 2) return null;
 
-const app = express();
+  // Remove version and get path
+  let path = parts[1]; // e.g. v1699999999/users/abc123.jpg
+  // Remove version number if present
+  path = path.replace(/^v\d+\//, ""); // users/abc123.jpg
+  // Remove file extension
+  path = path.replace(/\.[^/.]+$/, ""); // users/abc123
 
-function countryToCurrency(countryCode) {
-  return countryCode === 'PK' ? 'PKR' : 'USD'; // extend as needed
+  return path; // this is the public_id
 }
 
-app.use((req, res, next) => {
-  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
-  const geo = geoip.lookup(ip) || {};
-  const country = (geo.country || '').toUpperCase();
-  req.currency = countryToCurrency(country);
-  next();
-});
-
-app.get('/', (req, res) => {
-  res.send(`Currency for you: ${req.currency}`);
-});
-
-app.listen(3000);
+// Example:
+const url = "https://res.cloudinary.com/demo/image/upload/v1699999999/users/abc123.jpg";
+console.log(getPublicIdFromUrl(url)); // outputs: "users/abc123"

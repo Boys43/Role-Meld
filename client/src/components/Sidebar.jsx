@@ -154,7 +154,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden">
               {userData?.profilePicture ? (
                 <Img
-                  src={`${backendUrl}/uploads/${userData?.profilePicture}`}
+                  src={userData?.profilePicture}
                   style={"w-full h-full object-cover"}
                 />
               ) : (

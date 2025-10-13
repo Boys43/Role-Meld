@@ -92,10 +92,8 @@ const AdminListedBlogs = ({ setActiveTab }) => {
                                     } hover:bg-blue-50`}
                             >
                                 <td className="px-6 py-4 font-medium">{index + 1}</td>
-                                <td className="px-6 py-4 "><img
-                                    loading="lazy"
-                                    src={`${backendUrl}/${blog.coverImage}`}
-                                    alt="Blog Cover"
+                                <td className="px-6 py-4 "><Img
+                                    src={blog.coverImage}
                                     onClick={() => {
                                         setSelectedImg(blog.coverImage);
                                         setImageModel(true);

@@ -9,7 +9,7 @@ import Img from './Image';
 import Currency from './CurrencyCovertor';
 
 const JobCard = ({ e }) => {
-    const { backendUrl, isLoggedIn, toggleSaveJob, savedJobs } = useContext(AppContext);
+    const { userData, isLoggedIn, toggleSaveJob, savedJobs } = useContext(AppContext);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -45,7 +45,7 @@ const JobCard = ({ e }) => {
                         {e?.companyProfile ? (
                             <Img
                                 style="w-14 h-14 rounded-lg object-cover border border-gray-100 flex-shrink-0"
-                                src={backendUrl + "/uploads/" + e?.companyProfile}
+                                src={e?.companyProfile}
                             />
                         ) : (
                             <div className="w-14 h-14 rounded-lg border border-gray-300 flex items-center justify-center bg-gray-100 text-[var(--primary-color)] font-bold text-xl flex-shrink-0"

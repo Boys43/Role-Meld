@@ -44,7 +44,7 @@ const MyResume = () => {
             {userData?.resume?.endsWith('.pdf') && (
                 <div className="mb-6 border rounded-2xl shadow-lg overflow-hidden h-[400px]">
                     <embed
-                        src={`${backendUrl}/uploads/${userData.resume}#page=1`}
+                        src={userData.resume + "#page=1"}
                         type="application/pdf"
                         className="w-full h-full"
                     />
@@ -60,7 +60,7 @@ const MyResume = () => {
                             <p className="text-[var(--primary-color)] font-medium mt-1">{userData.resume}</p>
                         </div>
                         <a
-                            href={`${backendUrl}/uploads/${userData.resume}`}
+                            href={userData.resume}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-white bg-[var(--primary-color)] hover:bg-[var(--primary-color)]/90 px-4 py-2 rounded-lg font-semibold transition-colors"

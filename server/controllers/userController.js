@@ -208,10 +208,6 @@ export const updateProfilePicture = async (req, res) => {
     try {
         const authUser = await authModel.findOne(userId);
 
-        if (!req.file) {
-            return res.status(400).json({ success: false, message: "No file uploaded" });
-        }
-
         let user;
 
         if (authUser.role === "user") {
@@ -226,7 +222,8 @@ export const updateProfilePicture = async (req, res) => {
             return res.status(404).json({ success: false, message: "User Not Found!" });
         }
 
-        user.profilePicture = req.file.filename;
+        // Save full Cloudinary URL
+        user.profilePicture = req.file.path;
 
         await user.save();
 
@@ -235,6 +232,7 @@ export const updateProfilePicture = async (req, res) => {
             message: "Profile picture updated successfully",
             user,
         });
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({
@@ -259,7 +257,7 @@ export const updateBanner = async (req, res) => {
             return res.status(404).json({ success: false, message: "User Not Found!" });
         }
 
-        user.banner = req.file.filename;
+        user.banner = req.file?.path;
 
         await user.save();
 
@@ -289,7 +287,7 @@ export const updateResume = async (req, res) => {
 
         const updatedProfile = await userProfileModel.findOneAndUpdate(
             { authId: userId },
-            { $set: { resume: req.file.filename } }, // only save filename or path
+            { $set: { resume: req.file?.path } }, // only save filename or path
             { new: true }
         );
 
