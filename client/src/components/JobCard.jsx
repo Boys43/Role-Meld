@@ -61,7 +61,7 @@ const JobCard = ({ e }) => {
                         {/* Company Name & Followers */}
                         <div>
                             <h4 className='font-semibold text-lg text-gray-800'>
-                                {e?.company}
+                                {e?.company || "..."}
                             </h4>
                             <span className='text-xs text-gray-500'>
                                 {e?.followers ? `${e.followers} Followers` : `View Company`}
@@ -90,10 +90,10 @@ const JobCard = ({ e }) => {
                 <div>
                     <div className='w-full flex justify-between items-center gap-4'>
                         <span className='text-xs'>
-                            {e?.category} / {e?.subCategory}
+                            {e?.category || "..."} {e?.subCategory && `/ ${e?.subCategory}`}
                         </span>
                         {e?.locationType !== "remote" && <span className='text-xs flex items-center gap-1'>
-                            <MapPin size={15} /> {e?.location}
+                            <MapPin size={15} /> {e?.location || "..."}
                         </span>}
                     </div>
 
@@ -101,14 +101,13 @@ const JobCard = ({ e }) => {
                     <div className='flex flex-col gap-2'>
                         {/* Job Title - Bold and Prominent */}
                         <h4 className='mt-2 line-clamp-1 font-bold text-[var(--secondary-color)] leading-snug'>
-                            {e?.title}
+                            {e?.title || "..."}
                         </h4>
 
                         {/* Salary Badge - Themed */}
                         <div className='flex items-center gap-2  font-semibold text-xs'>
                             {/* <DollarSign size={14} /> */}
                             <span className='w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
-
                                 {e?.salaryType === "fixed" ? <span>
                                     <Currency amount={e?.fixedSalary} from={e?.jobsCurrency} />
                                 </span> : <span>
@@ -116,7 +115,7 @@ const JobCard = ({ e }) => {
                                     <Currency amount={e?.minSalary} from={e?.jobsCurrency} /> - <Currency amount={e?.maxSalary} from={e?.jobsCurrency} /></span>}
                             </span>
                             <span className='flex w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
-                                {e?.jobType}
+                                {e?.jobType === 'full-time'? "Full Time": e?.jobType === 'part-time'? "Part Time": e?.jobType === 'contract'? "Contract": e?.jobType === 'internship'? "Internship": e?.jobType === "temporary"? "Temporary": null}
                             </span>
                         </div>
                     </div>

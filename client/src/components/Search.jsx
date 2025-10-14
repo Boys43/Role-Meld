@@ -1,3 +1,4 @@
+import { Building, SearchIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -29,8 +30,8 @@ const Search = ({ Param }) => {
       className="shadow-2xl backdrop-blur-xs w-[70vw] mx-auto border-[1px] border-[var(--primary-color)] rounded-2xl"
     >
       <form onSubmit={handleSubmit} className="flex gap-2 w-full items-center">
-        <div className={`flex w-full ${location.pathname === '/' ? "text-[var(--accent-color)]" : "text-[var(--primary-color)]"} relative`}>
-          <FaSearch
+        <div className={`flex w-full items-center ${location.pathname === '/' ? "text-[var(--accent-color)]" : "text-[var(--primary-color)]"} relative`}>
+          <SearchIcon
             size={15}
             className="absolute left-6 top-1/2 -translate-y-1/2"
           />
@@ -43,18 +44,28 @@ const Search = ({ Param }) => {
             type="text"
             placeholder="Job title, keywords, or company"
           />
+          <span className="w-1 h-10 bg-white/35">
+
+          </span>
+
           {
             location.pathname === "/"
             &&
-            <input
-              value={searchLocation}
-              required
-              onChange={(e) => setSearchLocation(e.target.value)}
-              className="border-3 border-transparent focus:border-[var(--primary-color)] 
+            <div className="relative w-full">
+              <Building
+                size={15}
+                className="absolute left-6 top-1/2 -translate-y-1/2"
+              />
+              <input
+                value={searchLocation}
+                required
+                onChange={(e) => setSearchLocation(e.target.value)}
+                className="border-3 border-transparent focus:border-[var(--primary-color)] 
               focus:outline-none py-3 pl-14 rounded-2xl w-full transition-all"
-              type="text"
-              placeholder="City"
-            />
+                type="text"
+                placeholder="City"
+              />
+            </div>
           }
         </div>
         <div className="p-1">

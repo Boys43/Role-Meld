@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useContext, useEffect, useState } from "react";
 import assets from "../assets/assets";
 import Marquee from 'react-fast-marquee'
+import Img from "../components/Image";
 const Search = lazy(() => import("../components/Search"));
 const Testimonials = lazy(() => import("../components/Testimonials"));
 const FeaturedJobs = lazy(() => import("../components/FeaturedJobs"));
@@ -72,20 +73,20 @@ const Home = () => {
         <section className="border z-0 rounded-2xl p-4 mt-4 shadow-xl">
           <Marquee className="z-0" pauseOnHover>
             <div className="flex flex-wrap items-center gap-10 md:gap-20 lg:gap-30 w-full mr-10 md:mr-20 lg:mr-30">
-              <img loading="lazy" src={assets.nt} alt="Netflix" className="w-20" />
-              <img loading="lazy" src={assets.am} alt="Amazon" className="w-20" />
-              <img loading="lazy" src={assets.sm} alt="samsung" className="w-20" />
-              <img loading="lazy" src={assets.apple} alt="Apple" className="w-20" />
-              <img loading="lazy" src={assets.tcs} alt="Tcs" className="w-15" />
-              <img loading="lazy" src={assets.mt} alt="Microsoft" className="w-20" />
-              <img loading="lazy" src={assets.fb} alt="Facebook" className="w-20" />
-              <img loading="lazy" src={assets.nt} alt="Netflix" className="w-20" />
-              <img loading="lazy" src={assets.am} alt="Amazon" className="w-20" />
-              <img loading="lazy" src={assets.sm} alt="samsung" className="w-20" />
-              <img loading="lazy" src={assets.apple} alt="Apple" className="w-20" />
-              <img loading="lazy" src={assets.tcs} alt="Tcs" className="w-15" />
-              <img loading="lazy" src={assets.mt} alt="Microsoft" className="w-20" />
-              <img loading="lazy" src={assets.fb} alt="Facebook" className="w-20 mr-10 lg:mr-15" />
+              <Img src={assets.nt} style="w-20" />
+              <Img src={assets.am} style="w-20" />
+              <Img src={assets.sm} style="w-20" />
+              <Img src={assets.apple} style="w-20" />
+              <Img src={assets.tcs} style="w-15" />
+              <Img src={assets.mt} style="w-20" />
+              <Img src={assets.fb} style="w-20" />
+              <Img src={assets.nt} style="w-20" />
+              <Img src={assets.am} style="w-20" />
+              <Img src={assets.sm} style="w-20" />
+              <Img src={assets.apple} style="w-20" />
+              <Img src={assets.tcs} style="w-15" />
+              <Img src={assets.mt} style="w-20" />
+              <Img src={assets.fb} style="w-20 mr-10 lg:mr-15" />
             </div>
           </Marquee>
         </section>
@@ -93,7 +94,7 @@ const Home = () => {
           <h1 className="font-bold my-8 flex items-center gap-4">
             <FaBriefcase className="text-[var(--primary-color)]" /> Choose Your <span className="text-[var(--primary-color)]">Career Path</span>
           </h1>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-8 py-10 overflow-hidden">
             {categories.length > 0 && (() => {
               const mid = Math.ceil(categories.length / 2);
               const firstHalf = categories.slice(0, mid);
@@ -111,34 +112,39 @@ const Home = () => {
                   case "Engineering & Architecture": Icon = MdEngineering; break;
                   default: Icon = MdComputer;
                 }
+
                 return (
                   <h3
                     key={index}
-                    className="flex-shrink-0 w-[400px] py-8 font-bold rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] border-2 border-[var(--primary-color)] hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                     onClick={() => navigate('/category-jobs?category=' + encodeURIComponent(cat.name))}
+                    className="flex-shrink-0 w-[280px] md:w-[340px] lg:w-[400px] h-[160px] 
+                     flex flex-col items-center justify-center gap-3 
+                     font-semibold rounded-2xl border-2 border-[var(--primary-color)] 
+                     text-gray-800 bg-white shadow-md 
+                     hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] 
+                     hover:text-white hover:shadow-2xl hover:-translate-y-2 
+                     transition-all duration-300 cursor-pointer"
                   >
-                    <Icon size={30} />
-                    {cat.name}
+                    <Icon size={34} className="transition-transform duration-300 group-hover:scale-110" />
+                    <span>{cat.name}</span>
                   </h3>
                 );
               };
 
               return (
                 <>
-                  <Marquee className="z-0" pauseOnHover pauseOnClick gradient={false} speed={40}>
-                    <div className="flex gap-8 mr-8">
-                      {firstHalf.map(renderCategory)}
-                    </div>
+                  <Marquee pauseOnHover pauseOnClick gradient={false} speed={45}>
+                    <div className="flex gap-8 px-8">{firstHalf.map(renderCategory)}</div>
                   </Marquee>
-                  <Marquee className="z-0" pauseOnHover pauseOnClick direction="" speed={60} gradient={false}>
-                    <div className="flex gap-8 mr-8">
-                      {secondHalf.map(renderCategory)}
-                    </div>
+
+                  <Marquee pauseOnHover pauseOnClick gradient={false} speed={60} direction="right">
+                    <div className="flex gap-8 px-8">{secondHalf.map(renderCategory)}</div>
                   </Marquee>
                 </>
               );
             })()}
           </div>
+
         </section>
 
         <section className="p-4 w-full mt-20">
