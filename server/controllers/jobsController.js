@@ -48,8 +48,8 @@ export const addJob = async (req, res) => {
 
 
 export const saveJob = async (req, res) => {
-    const { savedJobs } = req.body;
-    const { _id: userId } = req.user
+    const { savedJobs } = req.body;            
+    const userId = req.user._id
 
     try {
         const user = await userProfileModel.findOne({ authId: userId })
@@ -60,7 +60,7 @@ export const saveJob = async (req, res) => {
 
         user.savedJobs = savedJobs;
         await user.save()
-        return res.json({ success: true })
+        return res.json({ success: true, savedJobs: user.savedJobs })
     } catch (error) {
         return res.json({ success: false, message: error.message });
     }
@@ -121,20 +121,17 @@ export const getCompanyJobs = async (req, res) => {
 }
 
 export const getSavedJobs = async (req, res) => {
-    const { savedJobsIds } = req.body;
-
-    if (!savedJobsIds) {
-        return res.json({ success: false, message: "Missing Details" });
-    }
+    const userId = req.user._id
 
     try {
-        const getSavedJobs = await jobsModel.find({ _id: { $in: savedJobsIds }, isActive: true });
+        const user = await userProfileModel.findOne({authId: userId})
+        const savedJobs = await jobsModel.find({ _id: { $in: user.savedJobs }, isActive: true });
 
-        if (!getSavedJobs || getSavedJobs.length <= 0) {
+        if (!savedJobs) {
             return res.json({ success: false, message: "No Saved Jobs" })
         }
 
-        return res.json({ success: true, getSavedJobs })
+        return res.json({ success: true, savedJobs })
     } catch (error) {
         return res.json({ success: false, message: error.message })
     }

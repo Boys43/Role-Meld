@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
+import { Loader, Loader2 } from "lucide-react";
 
 // Layout
 const Sidebar = lazy(() => import("../components/Sidebar"));
@@ -68,14 +69,16 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen">
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       <Suspense
         fallback={
           <div className="w-full h-screen flex items-center justify-center">
-            Loading...
+            <span className="animate-spin">
+              <Loader2 size={30} />
+            </span>
           </div>
         }
       >
-        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         <ActiveComponent setActiveTab={setActiveTab} />
       </Suspense>
     </div>

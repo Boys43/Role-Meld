@@ -43,7 +43,6 @@ export const updateApplcationStatus = async (req, res) => {
             return res.status(404).json({ success: false, message: "Application not found" });
         }
 
-
         application.status = status;
         await application.save();
 

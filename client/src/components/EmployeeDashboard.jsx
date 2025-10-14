@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement } from 'chart.js/auto'
 import Img from './Image';
+import { Loader, Loader2 } from 'lucide-react';
 ChartJS.register(LineElement, ArcElement, Legend, PointElement, CategoryScale, LinearScale, BarElement);
 
 const EmployeeDashboard = () => {
@@ -18,7 +19,9 @@ const EmployeeDashboard = () => {
 
   const navigate = useNavigate()
 
+  const [pictureLoading, setPictureLoading] = useState(false)
   const changePicture = async (profilePicture) => {
+    setPictureLoading(true)
     const formData = new FormData();
     formData.append("profilePicture", profilePicture);
 
@@ -41,10 +44,14 @@ const EmployeeDashboard = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setPictureLoading(false)
     }
   };
 
+  const [bannerLoading, setBannerLoading] = useState(false)
   const updateBanner = async (banner) => {
+    setBannerLoading(true)
     const formData = new FormData();
     formData.append("banner", banner);
 
@@ -67,6 +74,8 @@ const EmployeeDashboard = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setBannerLoading(false)
     }
   };
 
@@ -110,15 +119,18 @@ const EmployeeDashboard = () => {
     <div className='flex flex-col w-full p-6 bg-white rounded-lg min-h-screen overflow-y-auto'>
       <div className="relative w-full">
         {/* Profile Circle */}
-        <div className="w-full h-[30vh] border-2 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
-          {userData?.banner ? (
-            <Img
-              src={userData?.banner}
-              style={"w-full h-full object-cover"}
-            />
-          ) : (
-            userData?.name?.[0] || "?"
-          )}
+        <div className="w-full h-[30vh] border-2 border-gray-300 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
+          {bannerLoading ?
+            <span className='animate-spin'><Loader /></span> :
+            userData?.banner ? (
+              <Img
+                src={userData?.banner}
+                style={"w-full h-full object-cover"}
+              />
+            ) : (
+              userData?.name?.[0] || "?"
+            )
+          }
         </div>
 
         {/* Upload Form */}
@@ -149,14 +161,17 @@ const EmployeeDashboard = () => {
         <div className="relative w-20 h-20">
           {/* Profile Circle */}
           <div className="w-20 h-20 border-2 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
-            {userData?.profilePicture ? (
-              <Img
-                src={userData?.profilePicture}
-                style={"w-full h-full object-cover"}
-              />
-            ) : (
-              userData?.name?.[0] || "?"
-            )}
+            {pictureLoading ?
+              <span className='animate-spin'><Loader /></span> :
+              userData?.profilePicture ? (
+                <Img
+                  src={userData?.profilePicture}
+                  style={"w-full h-full object-cover"}
+                />
+              ) : (
+                userData?.name?.[0] || "?"
+              )
+            }
           </div>
 
           {/* Upload Form */}

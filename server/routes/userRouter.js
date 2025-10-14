@@ -29,10 +29,6 @@ const storage = new CloudinaryStorage({
     const isResume = file.fieldname === "resume";
     return {
       folder: "users",
-      resource_type: isResume ? "raw" : "image",
-      allowed_formats: isResume
-        ? ["pdf", "doc", "docx"]
-        : ["jpg", "png", "jpeg", "webp"],
       transformation: !isResume
         ? [{ width: 800, height: 600, crop: "limit" }]
         : undefined,

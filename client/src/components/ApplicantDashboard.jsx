@@ -7,7 +7,9 @@ import axios from "axios";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-import { FileText, Image, Briefcase, Phone, Globe, MapPin, CreditCard, Star, Pencil, Camera, X } from "lucide-react";
+import { FileText, Image, Briefcase, Phone, Globe, MapPin, CreditCard, Star, Pencil, Camera, X, Loader, Bell } from "lucide-react";
+import Img from "./Image";
+import { Link } from "react-router-dom";
 
 const getProfileRecommendations = (user) => {
   const recommendations = [];
@@ -105,12 +107,14 @@ const getProfileRecommendations = (user) => {
   return recommendations;
 };
 
-const ApplicantDashboard = ({setActiveTab}) => {
+const ApplicantDashboard = ({ setActiveTab }) => {
   const { userData, setUserData, backendUrl, profileScore } = useContext(AppContext);
   const [updatePopUpState, setUpdatePopUpState] = useState("hidden");
 
   // ---------- Picture Update ----------
+  const [pictureLoading, setPictureLoading] = useState(false)
   const changePicture = async (profilePicture) => {
+    setPictureLoading(true)
     const formData = new FormData();
     formData.append("profilePicture", profilePicture);
 
@@ -129,6 +133,8 @@ const ApplicantDashboard = ({setActiveTab}) => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setPictureLoading(false)
     }
   };
 
@@ -189,6 +195,30 @@ const ApplicantDashboard = ({setActiveTab}) => {
 
   const recommendations = getProfileRecommendations(userData);
 
+  const [notificationsLoading, setNotificationsLoading] = useState(false)
+  const [notifications, setNotifications] = useState([]);
+  const getNotifications = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/notifications/get`);
+      if (data.success) {
+        setNotifications(data.notifications);
+      } else {
+        setNotifications(null)
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setNotificationsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getNotifications();
+  }, [])
+
+  console.log(notifications);
+
+
   return (
     <>
       <div className="p-5 w-full min-h-[calc(100vh-4.6rem)] overflow-y-auto">
@@ -218,24 +248,22 @@ const ApplicantDashboard = ({setActiveTab}) => {
               />
 
               {/* Profile Image or Initial */}
-              {userData?.profilePicture ? (
-                <img
-                  loading="lazy"
-                  src={userData?.profilePicture}
-                  alt="Profile"
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-25 h-25 rounded-full object-cover z-10 shadow-xl"
-                />
-              ) : (
-                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-gray-700 z-10">
-                  {userData?.name?.[0] || "?"}
-                </span>
-              )}
-
-              {/* <h3 className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-white z-10 border border-gray-300 rounded-full text-sm font-semibold text-gray-600 shadow-sm">
-                {profileScore} %
-              </h3> */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-25 h-25 rounded-full overflow-hidden flex items-center justify-center">
+                {pictureLoading ?
+                  <span className="animate-spin"><Loader /></span> :
+                  userData?.profilePicture ? (
+                    <Img
+                      src={userData?.profilePicture}
+                      style=" w-full h-full object-cover z-10 shadow-xl"
+                    />
+                  ) : (
+                    <span className="text-3xl font-bold text-gray-700 z-10">
+                      {userData?.name?.[0] || "?"}
+                    </span>
+                  )
+                }
+              </div>
             </div>
-
 
             <input
               type="file"
@@ -248,23 +276,55 @@ const ApplicantDashboard = ({setActiveTab}) => {
               htmlFor="profilePicture"
               className="absolute bottom-0 right-0 bg-white rounded-full p-1 cursor-pointer shadow"
             >
-              <Camera className="text-gray-600 text-sm" />
+              <Camera size={20} className="text-gray-400 text-sm" />
             </label>
           </div>
           <div className="p-4">
             <h1 className="font-bold">Hi, {userData?.name}</h1>
-            <p>{userData?.email}</p>
+            <span className="text-sm">{userData?.email}</span>
           </div>
         </div >
 
-        <div className="shadow-sm mt-4 border-2 border-gray-300 rounded-md p-4">
-          <h2 className="font-semibold">
-            Latest Notifications
+        <div className="shadow-md mt-6 border border-gray-200 rounded-lg p-5 bg-white">
+          <h2 className="text-lg font-semibold text-gray-800 flex items-baseline gap-2">
+            <Bell size={20} /> Latest Notifications <Link to={''} className="text-blue-500 text-sm">/ View All</Link>
           </h2>
-          <p className="mt-4">
-            No Notifications Yet
-          </p>
+
+          <div className="mt-4 shadow-md rounded-md space-y-3 text-sm text-gray-700">
+            {notificationsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader className="animate-spin w-6 h-6 text-gray-500" />
+              </div>
+            ) : notifications.length === 0 ? (
+              <p className="text-gray-500 italic text-center py-6">
+                No new notifications.
+              </p>
+            ) : (
+              notifications.map((not, i) => (
+                <div
+                  key={not._id || i}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between border border-gray-100 hover:border-blue-300 transition-all duration-200 rounded-md px-4 py-3 bg-gray-50 hover:bg-blue-50"
+                >
+                  <div>
+                    <span className="font-medium text-gray-800">{not.subject}</span>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {new Date(not.createdAt).toLocaleString()}
+                    </div>
+                  </div>
+                  <span
+                    className={`text-xs font-semibold px-3 py-1 rounded-full mt-2 sm:mt-0 ${not.type === "Application"
+                        ? "bg-red-100 text-red-600"
+                        : "bg-blue-100 text-blue-600"
+                      }`}
+                  >
+                    {not.type}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
+
 
         {/* Profile Score */}
         <div className="p-4 mt-5 bg-white rounded-lg shadow-md border border-gray-300">
@@ -300,7 +360,7 @@ const ApplicantDashboard = ({setActiveTab}) => {
                         <div className="text-sm text-gray-600">{rec.description}</div>
                       </div>
                     </div>
-                    <div className="bg-white px-2 py-1 rounded-md shadow-sm"><Pencil onClick={()=> setActiveTab('my-profile')} /></div>
+                    <div className="bg-white px-2 py-1 rounded-md shadow-sm"><Pencil onClick={() => setActiveTab('my-profile')} /></div>
                   </div>
                 ))
               )}

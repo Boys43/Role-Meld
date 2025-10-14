@@ -33,3 +33,5 @@ export const uploadFileToCloudinary = async (filePath, options = {}) => {
     throw err;
   }
 };
+
+export default cloudinary;

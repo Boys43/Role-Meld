@@ -37,7 +37,7 @@ const Currency = ({ amount, from }) => {
 
   return (
     <span>
-      {converted.toLocaleString()} {userCurrency}
+      {converted.toLocaleString().split(".")[0]} {userCurrency}
     </span>
   );
 };

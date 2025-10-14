@@ -1,5 +1,4 @@
 import React, { useRef, useState, useContext, useEffect } from "react";
-import JoditEditor from "jodit-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";

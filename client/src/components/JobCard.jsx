@@ -9,7 +9,7 @@ import Img from './Image';
 import Currency from './CurrencyCovertor';
 
 const JobCard = ({ e }) => {
-    const { userData, isLoggedIn, toggleSaveJob, savedJobs } = useContext(AppContext);
+    const { isLoggedIn, toggleSaveJob, savedJobs } = useContext(AppContext);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -71,8 +71,8 @@ const JobCard = ({ e }) => {
 
                     {/* Save Button (Absolute positioning removed for cleaner flow) */}
                     <span
-                        onClick={(e) => {
-                            e.stopPropagation()
+                        onClick={(event) => {
+                            event.stopPropagation()
                             toggleSaveJob(e?._id)
                         }
                         }

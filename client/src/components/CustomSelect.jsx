@@ -24,7 +24,7 @@ const CustomSelect = ({ name, value, onChange, children, className }) => {
   };
 
   return (
-    <div ref={menuRef} className={`relative w-full text-sm ${className || ""}`}>
+    <div ref={menuRef} className={`relative text-sm ${className || ""}`}>
       {/* Display Button */}
       <div
         onClick={() => setOpen(!open)}
@@ -33,7 +33,7 @@ const CustomSelect = ({ name, value, onChange, children, className }) => {
         }`}
       >
         <span className={`truncate ${value ? "text-gray-800" : "text-gray-400"}`}>
-          {selectedOption?.props.children || "Select..."}
+          {selectedOption?.props.children || `--- Choose ${name[0].toUpperCase() + name.slice(1)} ---`}
         </span>
         <ChevronDown
           className={`text-gray-500 transition-transform duration-200 ${open ? "rotate-180" : "rotate-0"}`}

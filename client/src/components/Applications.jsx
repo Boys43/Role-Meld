@@ -1,17 +1,15 @@
-import React from 'react'
 import { useContext } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { IoLocationSharp, IoMail, IoSettings, IoPerson, IoSearch, IoFilter, IoCheckmarkCircle, IoCloseCircle, IoEye, IoDocument, IoCall, IoTime, IoCalendar, IoStar, IoSchool, IoBriefcase } from "react-icons/io5";
-import { IoIosDownload, IoIosCheckmarkCircle } from "react-icons/io";
-import { ImCancelCircle } from "react-icons/im";
+import { IoLocationSharp, IoMail, IoSettings, IoSearch, IoCheckmarkCircle, IoCloseCircle, IoEye, IoDocument, IoCall, IoTime, IoCalendar, IoStar, IoBriefcase } from "react-icons/io5";
+import { IoIosDownload } from "react-icons/io";
 import { toast } from 'react-toastify';
 import Loading from './Loading';
-import NotFound404 from './NotFound404';
+import { List } from 'lucide-react';
 
 const Applications = () => {
-    const { backendUrl } = useContext(AppContext);
+    const { backendUrl, sendNotification, userData } = useContext(AppContext);
     const [loading, setLoading] = useState(false)
     const [Applications, setApplications] = useState([]);
     const fetchJobs = async () => {
@@ -30,7 +28,7 @@ const Applications = () => {
         }
     }
 
-    const updateStatus = async (applicationId, status) => {
+    const updateStatus = async (user, applicationId, status) => {
         try {
             const { data } = await axios.post(`${backendUrl}/api/applications/update-status`, { applicationId, status })
             if (data.success) {
@@ -39,7 +37,7 @@ const Applications = () => {
                         a._id === applicationId ? { ...a, status } : a
                     )
                 );
-
+                sendNotification(user, `Your Application has been ${status} from ${userData?.company}. View your`, "Application")
                 toast.success(data.message)
             } else {
                 toast.error(data.message)
@@ -78,7 +76,7 @@ const Applications = () => {
 
         try {
             const promises = selectedApplications.map(id => 
-                axios.post(`${backendUrl}/api/applications/update-status`, { applicationId: id, status: action })
+                axios.post(`${backendUrl}/api/applications/update-status`, { applicationId: id, status: action, feedback: feedback })
             );
             await Promise.all(promises);
             
@@ -108,6 +106,8 @@ const Applications = () => {
             setSelectedApplications(filteredApplications.map(app => app._id));
         }
     };
+    
+    console.log('selectedApplication', selectedApplication)
 
     return (
         <div className='flex w-full min-h-screen'>
@@ -284,7 +284,7 @@ const Applications = () => {
                                                 className='flex items-center gap-3 text-[var(--primary-color)] hover:text-[var(--secondary-color)] font-semibold transition-colors duration-300 bg-[var(--primary-color)]/5 p-4 rounded-lg hover:bg-[var(--primary-color)]/10'
                                             >
                                                 <IoIosDownload className='text-xl' />
-                                                Download Resume ({selectedApplication.resume})
+                                                Download Resume ({selectedApplication.resume.length})
                                             </a>
                                         ) : (
                                             <span className='text-[var(--text-color)]/60 italic'>No resume uploaded</span>
@@ -380,45 +380,29 @@ const Applications = () => {
                                 </div>
                             </div>
 
-                            {/* Application Status */}
-                            <div className='p-3 border-b border-[var(--primary-color)]/10'>
-                                <h4 className='font-bold mb-4 text-[var(--secondary-color)]'>Application Status</h4>
-                                <select
-                                    value={selectedApplication.status}
-                                    onChange={(e) => updateStatus(selectedApplication._id, e.target.value)}
-                                    className='w-full p-3 border-2 border-[var(--primary-color)]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all duration-300 bg-white shadow-sm font-medium text-[var(--text-color)]'
-                                >
-                                    <option value="pending">Pending Review</option>
-                                    <option value="shortlisted">Shortlisted</option>
-                                    <option value="interviewing">Interviewing</option>
-                                    <option value="hired">Hired</option>
-                                    <option value="rejected">Rejected</option>
-                                </select>
-                            </div>
-
                             {/* Action Buttons */}
                             <div className='p-3 border-b border-[var(--primary-color)]/10'>
                                 <h4 className='font-bold mb-4 text-[var(--secondary-color)]'>Quick Actions</h4>
                                 <div className='space-y-3'>
                                     <span
-                                        onClick={() => updateStatus(selectedApplication._id, "hired")}
-                                        className='w-full bg-green-500 text-white px-4 py-3 rounded-xl hover:bg-green-600 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 font-semibold'
+                                        onClick={() => updateStatus(selectedApplication.applicant.authId , selectedApplication._id, "hired")}
+                                        className='w-full bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 font-semibold'
                                     >
                                         <IoCheckmarkCircle className='text-lg' />
                                         Approve Candidate
                                     </span>
                                     <span
-                                        onClick={() => updateStatus(selectedApplication._id, "rejected")}
-                                        className='w-full bg-red-500 text-white px-4 py-3 rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 font-semibold'
+                                        onClick={() => updateStatus(selectedApplication.applicant.authId, selectedApplication._id, "rejected")}
+                                        className='w-full bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 font-semibold'
                                     >
                                         <IoCloseCircle className='text-lg' />
                                         Reject Candidate
                                     </span>
                                     <span
-                                        onClick={() => updateStatus(selectedApplication._id, "shortlisted")}
-                                        className='w-full bg-[var(--primary-color)] text-white px-4 py-3 rounded-xl hover:bg-[var(--secondary-color)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 font-semibold'
+                                        onClick={() => updateStatus(selectedApplication.applicant.authId, selectedApplication._id, "shortlisted")}
+                                        className='w-full bg-orange-500 text-white px-4 py-2 rounded-xl hover:bg-orange-600 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 font-semibold'
                                     >
-                                        <IoStar className='text-lg' />
+                                        <List  />
                                         Shortlist Candidate
                                     </span>
                                 </div>
@@ -431,15 +415,13 @@ const Applications = () => {
                                     value={feedback}
                                     onChange={(e) => setFeedback(e.target.value)}
                                     placeholder="Add your notes about this candidate..."
-                                    className='w-full h-32 p-4 border-2 border-[var(--primary-color)]/20 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all duration-300 bg-white shadow-sm'
+                                    className='w-full text-sm h-32 p-4 border-2 border-[var(--primary-color)]/20 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all duration-300 bg-white shadow-sm'
                                 />
                                 <span
                                     onClick={() => {
-                                        // Save feedback logic here
-                                        toast.success('Feedback saved');
                                         setFeedback('');
                                     }}
-                                    className='w-full mt-4 bg-[var(--secondary-color)] text-white px-4 py-3 rounded-xl hover:bg-[var(--primary-color)] transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 font-semibold flex items-center justify-center'
+                                    className='w-full mt-4 bg-[var(--secondary-color)] text-white px-4 py-2 rounded-xl hover:bg-[var(--primary-color)] transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 font-semibold flex items-center justify-center'
                                 >
                                     Save Feedback
                                 </span>

@@ -309,37 +309,40 @@ export const applyJob = async (req, res) => {
     }
 
     try {
-        const { jobId, resume, coverLetter } = req.body;
+        const { jobId } = req.body;
 
-        if (!jobId || !resume || !coverLetter) {
+        if (!jobId) {
             return res.status(400).json({ success: false, message: "Missing job ID or applicant details" });
         }
 
+        const user = await userProfileModel.findOne({ authId: userId });
+
+        console.log(user);
+        
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+        
         const job = await jobsModel.findById(jobId);
+        
+        console.log(job);
 
         if (!job) return res.status(404).json({ success: false, message: "Job not found" });
 
-        job.applicants.push(req.user._id);
+        job.applicants.push(userId);
         await job.save();
 
         const application = new applicationModel({
             job: job._id,
-            applicant: req.user._id,
+            applicant: user._id,
             recruiter: job.postedBy,
-            resume: resume,
-            coverLetter: coverLetter,
+            resume: user.resume,
         });
-        await application.save();
 
-        const user = await userProfileModel.findOne({ authId: userId });
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User profile not found" });
-        }
+        await application.save();
 
         user.appliedJobs.push(job._id);
         await user.save();
 
-        res.json({ success: true, message: "Application submitted", application });
+        res.json({ success: true, message: "Application submitted" });
     } catch (err) {
         res.status(500).json({ success: false, message: "Server error", error: err.message });
     }
@@ -355,8 +358,8 @@ export const fetchApplicants = async (req, res) => {
 
         // Find all applications for jobs posted by this recruiter
         const applications = await applicationModel.find({ recruiter: userId })
-            .populate("applicant", "name email resume") // show applicant details
-            .populate("job", "title description location"); // show job info
+            .populate("applicant", "name authId _id email resume phone")
+            .populate("job", "title description location category jobType salaryType fixedSalary minSalary maxSalary");
 
         return res.json({
             success: true,

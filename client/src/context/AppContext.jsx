@@ -18,30 +18,65 @@ export const AppContextProvider = (props) => {
 
   axios.defaults.withCredentials = true;
 
+  const sendNotification = async (user, subject, type) => {
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/notifications/send`, {
+        subject,
+        user,
+        type
+      });
+
+      if (data.success) {
+        console.log("Notification sent successfully:", data.notification);
+      } else {
+        console.log("Failed to send notification:", data.message);
+      }
+    } catch (error) {
+      console.error("Error sending notification:", error);
+    }
+  };
+
+
+  // Example toggleSaveJob
   const toggleSaveJob = async (id) => {
     if (!isLoggedIn) {
       return toast.error("Please Login to Save Jobs");
     }
-    setSavedJobs((prev) => {
-      const newSet = new Set(prev);
 
-      if (newSet.has(id)) {
-        newSet.delete(id);
-        toast.success("Job Unsaved");
+    try {
+      setSavedJobs((prev) => {
+        const newSavedJobs = new Set(prev);
+
+        if (newSavedJobs.has(id)) {
+          newSavedJobs.delete(id);
+          toast.success("Job Unsaved");
+        } else {
+          newSavedJobs.add(id);
+          toast.success("Job Saved");
+        }
+
+        // return updated state
+        return newSavedJobs;
+      });
+
+      // get latest version after state update
+      const updatedSavedJobs = new Set(savedJobs);
+      if (updatedSavedJobs.has(id)) {
+        updatedSavedJobs.delete(id);
       } else {
-        newSet.add(id);
-        toast.success("Job Saved");
+        updatedSavedJobs.add(id);
       }
 
       // Sync with backend
-      axios.post(`${backendUrl}/api/user/savejob`, { savedJobs: Array.from(newSet) })
-        .catch((error) => {
-          toast.error(error.message || "Something went wrong");
-        });
+      await axios.post(`${backendUrl}/api/user/savejob`, {
+        savedJobs: Array.from(updatedSavedJobs),
+      });
 
-      return newSet;
-    });
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong");
+    }
   };
+
 
   const getUserData = async () => {
     try {
@@ -64,7 +99,7 @@ export const AppContextProvider = (props) => {
     }
   }
 
-  
+
 
   const getUserState = async () => {
     setLoading(true);
@@ -104,7 +139,8 @@ export const AppContextProvider = (props) => {
     setJobId,
     savedJobs,
     setSavedJobs,
-    toggleSaveJob
+    toggleSaveJob,
+    sendNotification
   }), [
     frontendUrl,
     backendUrl,
