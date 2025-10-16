@@ -9,6 +9,10 @@ import Img from '../components/Image'
 import { useNavigate } from 'react-router-dom'
 
 const FollowedAccounts = () => {
+    // Auto Scroll to Top
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [])
   const navigate = useNavigate()
 
   const { backendUrl, userData } = useContext(AppContext)

@@ -13,6 +13,10 @@ import NotFound404 from '../components/NotFound404';
 import SimplePagination from '../components/SimplePagination';
 
 export const CompanyJobs = () => {
+    // Auto Scroll to Top
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [])
   const { backendUrl } = useContext(AppContext);
   const { id } = useParams()
 

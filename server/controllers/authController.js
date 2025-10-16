@@ -15,8 +15,6 @@ const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
 export const register = async (req, res) => {
     try {
-        console.log("BREVO_API_KEY:", process.env.BREVO_API_KEY?.slice(0, 6));
-
         const { name, email, password, role } = req.body;
 
         // === Validate inputs ===
@@ -33,15 +31,14 @@ export const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // === USER FLOW ===
-        if (role === "user") {
-            const verificationOTP = String(Math.floor(100000 + Math.random() * 900000));
+        const verificationOTP = String(Math.floor(100000 + Math.random() * 900000));
 
-            // --- Brevo email content ---
-            const sendSmtpEmail = {
-                sender: { name: "Alfa Career", email: "movietrendmaker2244@gmail.com" },
-                to: [{ email }],
-                subject: "🔑 Verify Your Alfa Career Account",
-                htmlContent: `
+        // --- Brevo email content ---
+        const sendSmtpEmail = {
+            sender: { name: "Alfa Career", email: "movietrendmaker2244@gmail.com" },
+            to: [{ email }],
+            subject: "🔑 Verify Your Alfa Career Account",
+            htmlContent: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
             <div style="background: linear-gradient(90deg, #0076b5, #00bfa6); padding: 20px; text-align: center; color: white;">
               <h2 style="margin: 0;">Alfa Career</h2>
@@ -62,83 +59,33 @@ export const register = async (req, res) => {
             </div>
           </div>
         `,
-            };
+        };
 
-            // --- Send verification email ---
-            await tranEmailApi.sendTransacEmail(sendSmtpEmail);
+        // --- Send verification email ---
+        await tranEmailApi.sendTransacEmail(sendSmtpEmail);
 
-            // --- Save user ---
-            const auth = new authModel({
-                name,
-                email,
-                password: hashedPassword,
-                role: "user",
-                verificationOTP,
-            });
+        // --- Save user ---
+        const auth = new authModel({
+            name,
+            email,
+            password: hashedPassword,
+            role: role,
+            verificationOTP,
+        });
 
-            if (email === process.env.ADMIN_EMAIL) {
-                auth.isAdmin = true;
-            }
+        if (email === process.env.ADMIN_EMAIL) {
+            auth.isAdmin = true;
+        }
 
-            await auth.save();
+        await auth.save();
+        if (role == "user") {
             await userProfileModel.create({ authId: auth._id, role: "user", name, email });
-
-            return res.json({ success: true, message: "Please Verify Your Account" });
+        } else {
+            await recruiterProfileModel.create({ authId: auth._id, role: "recruiter", name, email });
         }
 
-        // === RECRUITER FLOW ===
-        if (role === "recruiter") {
+        return res.json({ success: true, message: "An OTP has sent to your email address"});
 
-            const sendSmtpEmail = {
-                sender: { name: "Alfa Career", email: "movietrendmaker2244@gmail.com" },
-                to: [{ email }],
-                subject: "🕓 Your Recruiter Account is Under Review",
-                htmlContent: `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-      <div style="background: linear-gradient(90deg, #0076b5, #00bfa6); padding: 20px; text-align: center; color: white;">
-        <h2 style="margin: 0;">Alfa Career</h2>
-      </div>
-      <div style="padding: 25px; color: #333; font-size: 16px; line-height: 1.6;">
-        <p>Hey <b>${name}</b>,</p>
-        <p>Thank you for registering as a <b>Recruiter</b> on <b>Alfa Career</b>.</p>
-        <p>Your account is currently <b>under review</b> by our verification team to ensure the authenticity and safety of our platform.</p>
-        <p>⏳ The review process usually takes <b>24–48 hours</b>. Once approved, you’ll receive a confirmation email, and you’ll be able to start posting jobs and managing applications.</p>
-        <p>If any additional information is required, our team will reach out to you via this email address.</p>
-        <p>We appreciate your patience and look forward to working together!</p>
-        <p>— The Alfa Career Team</p>
-      </div>
-      <div style="background: #f9f9f9; padding: 15px; text-align: center; font-size: 13px; color: #777;">
-        <p>© ${new Date().getFullYear()} Alfa Career. All rights reserved.</p>
-      </div>
-    </div>
-  `,
-            };
-
-
-            // --- Send verification email ---
-            await tranEmailApi.sendTransacEmail(sendSmtpEmail);
-
-            const auth = new authModel({
-                name,
-                email,
-                password: hashedPassword,
-                role: "recruiter",
-                isVerified: false,
-            });
-
-            await auth.save();
-            await recruiterProfileModel.create({
-                authId: auth._id,
-                role: "recruiter",
-                name,
-                email,
-            });
-
-            return res.json({ success: true, message: "Your Account is Under Review" });
-        }
-
-        // === If role invalid ===
-        return res.json({ success: false, message: "Invalid Role" });
     } catch (error) {
         console.error("Email sending error:", error.response?.body || error.message);
         return res.json({ success: false, message: "Server Error: " + error.message });
@@ -158,10 +105,6 @@ export const login = async (req, res) => {
 
         if (!user) {
             return res.json({ success: false, message: "Invalid Email" });
-        }
-
-        if (user.role === "recruiter" && user.isVerified === false) {
-            return res.json({ success: false, message: "Your Account is Under Review" });
         }
 
         if (user.isVerified === false) {
@@ -187,13 +130,11 @@ export const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 
-
         if (user.role === "recruiter") {
-            const userProfile = await recruiterProfileModel.findOne({ authId: user._id });
-            return res.json({ success: true, message: "Successfully Logged In", role: user?.role, company: userProfile?.company })
+            var userProfile = await recruiterProfileModel.findOne({authId: user._id})
         }
 
-        return res.json({ success: true, message: "Successfully Logged In" })
+        return res.json({ success: true, message: "Successfully Logged In", company: userProfile?.company, role: userProfile?.role })
 
     } catch (error) {
         return res.json({ success: false, message: error.message })
@@ -688,17 +629,17 @@ export const addAssistant = async (req, res) => {
 export const getAssistants = async (req, res) => {
     const userId = req.user._id;
     try {
-        const admin = await recruiterProfileModel.findOne({authId: userId, isAdmin: true});
+        const admin = await recruiterProfileModel.findOne({ authId: userId, isAdmin: true });
 
         if (!admin) {
-            return res.json({success: false, message: "Only Admins are allowed to access this route"});
+            return res.json({ success: false, message: "Only Admins are allowed to access this route" });
         }
 
-        const assistants = await recruiterProfileModel.find({authId: {$in: admin.assistants}});
+        const assistants = await recruiterProfileModel.find({ authId: { $in: admin.assistants } });
 
         console.log('assistants', assistants)
 
-        return res.json({success: true, assistants});
+        return res.json({ success: true, assistants });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: error.message });

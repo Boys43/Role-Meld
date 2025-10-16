@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useContext, useState } from "react";
+import React, { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import { Loader, Loader2 } from "lucide-react";
 
@@ -20,7 +20,6 @@ const EmployeeProfileRequests = lazy(() => import("../components/EmployeeProfile
 // Recruiter Components
 const RecruiterJobs = lazy(() => import("../components/RecruiterJobs"));
 const RecruiterProfile = lazy(() => import("../components/RecruiterProfile"));
-const RecruiterApprovalRequests = lazy(() => import("../components/RecruiterApprovalRequests"));
 
 // Admin Components
 const AdminBlog = lazy(() => import("../components/AdminBlog"));
@@ -34,6 +33,10 @@ const Applications = lazy(() => import("../components/Applications"));
 const Settings = lazy(() => import("../components/Settings"));
 
 const Dashboard = () => {
+    // Auto Scroll to Top
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [])
   const { userData } = useContext(AppContext);
   const [activeTab, setActiveTab] = useState(
     userData?.role === "user" ? "userdashboard" : "recruiterdashboard"
@@ -55,7 +58,6 @@ const Dashboard = () => {
     settings: Settings,
     "blog-management": AdminListedBlogs,
     "add-blog": AdminBlog,
-    "employee-requests": RecruiterApprovalRequests,
     "employee-profile-requests": EmployeeProfileRequests,
     users: AdminUsers,
     recruiters: AdminRecruiters,

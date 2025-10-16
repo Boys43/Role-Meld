@@ -1,9 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import assets from '../assets/assets'
 import LoginModel from '../components/LoginModel'
 import DetailsModel from '../components/DetailsModel'
 
 const Login = () => {
+    // Auto Scroll to Top
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [])
   const [step, setStep] = useState(1);
 
   return (

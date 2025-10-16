@@ -14,7 +14,7 @@ const DetailsModel = () => {
 
     const updateProfile = async (e) => {
         e.preventDefault();
-        
+
         if (!company.trim()) {
             toast.error("Company name is required");
             return;
@@ -62,11 +62,11 @@ const DetailsModel = () => {
                         <span className="text-red-500 ml-1">*</span>
                     </label>
                     <div className="relative">
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             id="company"
-                            name="company" 
-                            value={company} 
+                            name="company"
+                            value={company}
                             onChange={(e) => setCompany(e.target.value)}
                             placeholder="Enter your company name"
                             required
@@ -79,7 +79,7 @@ const DetailsModel = () => {
 
                 {/* Action Buttons */}
                 <div className="space-y-4 pt-4">
-                    <button 
+                    <button
                         type="submit"
                         disabled={loading || !company.trim()}
                         className="w-full bg-gradient-to-r from-[var(--primary-color)] to-blue-600 text-white py-3 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
@@ -96,7 +96,7 @@ const DetailsModel = () => {
                             </>
                         )}
                     </button>
-                    
+
                     <div className="text-center">
                         <span className="text-xs text-gray-500">
                             By continuing, you agree to our Terms of Service and Privacy Policy

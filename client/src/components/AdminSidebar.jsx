@@ -32,7 +32,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     { name: 'Job Requests', key: "job-requests", icon: <Building size={25} /> },
     { name: 'Users', key: "users", icon: <User size={25} /> },
     { name: 'Recruiters', key: "recruiters", icon: <Users2 size={25} /> },
-    { name: 'Employee Requests', key: "employee-requests", icon: <Clock size={25} /> },
     { name: 'Emplyee Profile Requests', key: "employee-profile-requests", icon: <MdRequestPage size={25} /> },
     {
       name: 'Jobs', key: "jobs", icon: <Briefcase size={25} />,

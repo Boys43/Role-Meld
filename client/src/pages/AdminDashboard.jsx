@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AnalyticDashboard from '../components/AnalyticDashboard'
 import AdminUsers from '../components/AdminUsers'
 import AdminRecruiters from '../components/AdminRecruiters'
@@ -8,12 +8,15 @@ import AdminSidebar from '../components/AdminSidebar'
 import AdminBlog from '../components/AdminBlog'
 import AdminListedBlogs from '../components/AdminListedBlogs'
 import CategoryManager from '../components/CategoryManager'
-import RecruiterApprovalRequests from '../components/RecruiterApprovalRequests'
 import EmployeeProfileRequests from '../components/EmployeeProfileRequests'
 import AddAssistant from '../components/AddAssistant'
 import AdminAssistants from '../components/AdminAssistants'
 
 const AdminDashboard = () => {
+    // Auto Scroll to Top
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [])
   const [activeTab, setActiveTab] = useState('analytic-dashboard')
 
   const renderContent = () => {
@@ -36,8 +39,6 @@ const AdminDashboard = () => {
         return <AdminListedBlogs />
       case "category-manager":
         return <CategoryManager />
-      case "employee-requests":
-        return <RecruiterApprovalRequests />
       case "employee-profile-requests":
         return <EmployeeProfileRequests />
       case "add-assistant":

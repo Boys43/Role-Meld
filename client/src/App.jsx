@@ -86,7 +86,7 @@ const App = () => {
       duration: 800,
       once: true,
     });
-  }, []);
+  }, []);  
 
   return (
 

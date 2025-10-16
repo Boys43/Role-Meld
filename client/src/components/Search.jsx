@@ -47,10 +47,6 @@ const Search = ({ Param }) => {
           <span className="w-1 h-10 bg-white/35">
 
           </span>
-
-          {
-            location.pathname === "/"
-            &&
             <div className="relative w-full">
               <Building
                 size={15}
@@ -63,10 +59,9 @@ const Search = ({ Param }) => {
                 className="border-3 border-transparent focus:border-[var(--primary-color)] 
               focus:outline-none py-3 pl-14 rounded-2xl w-full transition-all"
                 type="text"
-                placeholder="City"
+                placeholder="City, Country, Location"
               />
             </div>
-          }
         </div>
         <div className="p-1">
           <button type="submit" className="flex items-center gap-3">

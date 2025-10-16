@@ -51,17 +51,13 @@ const RegisterModel = ({ setRegStep }) => {
         setLoading(true);
         localStorage.setItem("email", email);
         axios.defaults.withCredentials = true;
-        
+
         try {
             const { data } = await axios.post(`${backendUrl}/api/auth/register`, { name, email, password, role });
-            
+
             if (data.success) {
                 toast.success(data.message);
-                if (role === "user") {
-                    setRegStep(1); 
-                }else{
-                    navigate('/')
-                }
+                setRegStep(1);
             } else {
                 toast.error(data.message);
             }
@@ -74,12 +70,11 @@ const RegisterModel = ({ setRegStep }) => {
 
     // Component for a single role selection card/toggle
     const RoleToggle = ({ value, label, icon: Icon, isSelected, onClick }) => (
-        <div 
-            className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 w-full md:w-1/2 ${
-                isSelected 
-                    ? 'border-[var(--primary-color)] bg-[var(--primary-color)]/10 shadow-md shadow-[var(--primary-color)]/20' 
+        <div
+            className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 w-full md:w-1/2 ${isSelected
+                    ? 'border-[var(--primary-color)] bg-[var(--primary-color)]/10 shadow-md shadow-[var(--primary-color)]/20'
                     : 'border-gray-300 hover:border-gray-400 bg-white'
-            }`}
+                }`}
             onClick={onClick}
         >
             <Icon size={24} className={`${isSelected ? 'text-[var(--primary-color)]' : 'text-gray-500'}`} />
@@ -141,7 +136,7 @@ const RegisterModel = ({ setRegStep }) => {
                             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </span>
                     </div>
-                    
+
                     {/* CONFIRM Password Field with Toggle & Feedback */}
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center border-2 py-3 px-4 rounded-full focus-within:border-[var(--primary-color)] transition-colors">
@@ -180,17 +175,17 @@ const RegisterModel = ({ setRegStep }) => {
                             </div>
                         )}
                     </div>
-                    
+
                     {/* Role Selection Toggle Boxes (NEW) */}
                     <div className="flex flex-col md:flex-row gap-4 mt-2">
-                        <RoleToggle 
+                        <RoleToggle
                             value="user"
                             label="Job Seeker"
                             icon={Search}
                             isSelected={role === 'user'}
                             onClick={() => setRole('user')}
                         />
-                        <RoleToggle 
+                        <RoleToggle
                             value="recruiter"
                             label="Recruiter"
                             icon={Building}
@@ -208,15 +203,15 @@ const RegisterModel = ({ setRegStep }) => {
                     >
                         {loading ? "Registering..." : "Register"}
                     </button>
-                    
+
                     {/* Footer Links */}
                     <div className="flex justify-between mt-4 text-sm">
                         <span className="text-gray-500 hover:text-[var(--primary-color)] cursor-pointer transition-colors">
                             Forgot Password?
                         </span>
 
-                        <Link 
-                            to="/login" 
+                        <Link
+                            to="/login"
                             className="text-gray-500 hover:text-[var(--primary-color)] cursor-pointer transition-colors font-medium"
                         >
                             Already have an account?

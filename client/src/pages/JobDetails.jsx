@@ -7,7 +7,7 @@ import { IoHome, IoHomeOutline, IoWarning } from "react-icons/io5";
 import { toast } from 'react-toastify';
 import { MdCancel, MdTitle } from "react-icons/md";
 import { IoIosWarning } from "react-icons/io";
-import { FaDollarSign } from "react-icons/fa";
+import { FaDollarSign, FaMoneyBill } from "react-icons/fa";
 import { FaAudioDescription } from "react-icons/fa6";
 import { IoIosMail } from "react-icons/io";
 import JobCard from '../components/JobCard';
@@ -26,16 +26,17 @@ import {
 import Currency from '../components/CurrencyCovertor';
 
 const JobDetails = () => {
+    // Auto Scroll to top
+    useEffect(() => {
+        window.scrollTo({ top: 0 });
+    }, []);
+
     const { backendUrl, userData } = useContext(AppContext);
     const [loginReminder, setLoginReminder] = useState(false)
     const [jobData, setJobData] = useState(null);
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
     const { id } = useParams();
-
-    useEffect(() => {
-        window.scrollTo({ top: 0 });
-    }, []);
 
     const getJob = async () => {
         setLoading(true)
@@ -50,6 +51,7 @@ const JobDetails = () => {
             setLoading(false)
         }
     }
+
     const [applyJobModel, setApplyJobModel] = useState(false);
     const applyJob = async () => {
         try {
@@ -84,205 +86,349 @@ const JobDetails = () => {
     useEffect(() => {
         getJob();
         getCompanyJobs();
-    }, [])
+    }, [id])
 
     if (loading) {
         return <Loading />
     }
 
+    console.log(jobData);
+
+
     return (
-        <main className='p-2 md:p-4 min-h-screen lg:p-6'>
-            <section className='p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                <div className='col-span-2 order-2 md:order-1'>
-                    <h4 className='p-4 flex items-center text-lg gap-4 font-semibold'>
-                        <IoHomeOutline size={20} onClick={() => navigate('/')} className='cursor-pointer' /> <span className='text-[var(--primary-color)]'>/</span> {jobData?.category} {jobData?.subCategory ? <span className='text-[var(--primary-color)]'>/</span> + jobData?.subCategory : null}
-                    </h4>
-                    <div className='my-4 w-full border rounded-2xl p-4 shadow-lg bg-[var(--primary-color)]/10 flex items-center justify-between'>
-                        <div className=''>
-                            <div className='flex items-center gap-4'>
-                                <Img src={jobData?.companyProfile} style='w-8 object-cover h-8 rounded-lg' />
-                                <h4 className='font-bold'>
-                                    {jobData?.company}
-                                </h4>
+        <main className='max-w-7xl mx-auto p-4 min-h-screen'>
+            {/* Breadcrumb */}
+            <nav className='mb-6'>
+                <div className='flex items-center text-sm text-gray-600'>
+                    <span onClick={() => navigate('/')} className='cursor-pointer hover:text-blue-600 flex items-center gap-1'>
+                        <IoHome size={16} />
+                        Home
+                    </span>
+                    <span className='mx-2'>/</span>
+                    <span>Jobs</span>
+                    <span className='mx-2'>/</span>
+                    <span className='text-gray-900 font-medium'>{jobData?.category}</span>
+                    {jobData?.subCategory && (
+                        <>
+                            <span className='mx-2'>/</span>
+                            <span className='text-gray-900 font-medium'>{jobData?.subCategory}</span>
+                        </>
+                    )}
+                </div>
+            </nav>
+
+            {/* Main Content */}
+            <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+                {/* Left Content */}
+                <div className='lg:col-span-2 space-y-6'>
+                    {/* Job Header */}
+                    <div className='bg-white rounded-lg border border-gray-200 p-6'>
+                        <div className='flex items-start gap-4'>
+                            <Img src={jobData?.companyProfile} style='w-12 h-12 rounded-lg object-cover border' />
+                            <div className='flex-1'>
+                                <h1 className='text-2xl font-bold text-gray-900 mb-2'>{jobData?.title}</h1>
+                                <div className='flex items-center gap-2 text-gray-600 mb-3'>
+                                    <span className='font-medium'>by {jobData?.company}</span>
+                                    <span>•</span>
+                                    <span>{jobData?.location || 'Remote'}</span>
+                                    <span>•</span>
+                                    <span className='text-green-600 font-medium'>
+                                        {new Date(jobData?.createdAt).toLocaleDateString('en-US', {
+                                            day: 'numeric',
+                                            month: 'short'
+                                        })}
+                                    </span>
+                                </div>
+                                <div className='flex items-center gap-4 text-sm text-gray-600'>
+                                    <span className='bg-blue-50 text-blue-700 px-3 py-1 rounded-full'>
+                                        {jobData?.jobType?.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                    </span>
+                                    <span className='bg-green-50 text-green-700 px-3 py-1 rounded-full'>
+                                        {jobData?.locationType?.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                    </span>
+                                </div>
                             </div>
-                            <h3 className='font-bold my-4 flex items-center gap-4 text-[var(--secondary-color)]'>
-                                <MdTitle size={30} className='text-[var(--primary-color)]' /> {jobData?.title}
-                            </h3>
                         </div>
                     </div>
-                    <div className='w-full p-5 bg-white border border-gray-300 rounded-lg'>
-                        {/* Header */}
-                        <h2 className='text-lg font-bold text-slate-800 flex items-center gap-2 mb-4'>
-                            {/* Using a hypothetical icon for consistency: 'TbListDetails' */}
-                            <Clipboard className='text-green-500' />
-                            Job Details
-                        </h2>
 
-                        {/* Details Grid */}
-                        <div className='grid grid-cols-2 gap-4 text-center'>
-
-                            {/* Job Type Card */}
-                            <div className='flex flex-col p-3 bg-gray-50 rounded-md'>
-                                <span className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1'>
-                                    Job Type
-                                </span>
-                                <span className="text-base font-semibold text-slate-800">
-                                    {/* Job Type (formatted nicely, e.g., 'Full time') */}
-                                    {jobData?.jobType
-                                        ? jobData.jobType
-                                            .split("-")
-                                            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                                            .join(" ")
-                                        : "N/A"}{" "}
-
-                                    {/* Job Type Specific Details */}
-                                    {(() => {
-                                        switch (jobData?.jobType) {
-                                            case "full-time":
-                                                return jobData?.hoursPerWeek ? ` - ${jobData.hoursPerWeek} Hours/Week` : "";
-                                            case "part-time":
-                                                return jobData?.shift ? ` - ${jobData.shift} Shift` : "";
-                                            case "contract":
-                                                return jobData?.contractDuration ? ` - ${jobData.contractDuration} Years` : "";
-                                            case "internship":
-                                                return jobData?.internshipDuration ? ` - ${jobData.internshipDuration}` : "";
-                                            case "temporary":
-                                                return jobData?.temporaryDuration ? ` - ${jobData.temporaryDuration}` : "";
-                                            default:
-                                                return "";
+                    {/* Job Role Insights */}
+                    <div className='bg-white rounded-lg border border-gray-200 p-6'>
+                        <h2 className='text-lg font-semibold text-gray-900 mb-4'>Job role insights</h2>
+                        <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+                            <div className='flex items-center gap-3'>
+                                <div className='w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center'>
+                                    <Clipboard size={16} className='text-blue-600' />
+                                </div>
+                                <div>
+                                    <div className='text-xs text-gray-500'>Date posted</div>
+                                    <div className='font-medium'>
+                                        {new Date(jobData?.createdAt).toLocaleDateString('en-US', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric'
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='flex items-center gap-3'>
+                                <div className='w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center'>
+                                    <IoWarning size={16} className='text-red-600' />
+                                </div>
+                                <div>
+                                    <div className='text-xs text-gray-500'>Closing date</div>
+                                    <div className='font-medium'>
+                                        {jobData?.applicationDeadline ?
+                                            new Date(jobData.applicationDeadline).toLocaleDateString('en-US', {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                year: 'numeric'
+                                            }) : 'Not specified'
                                         }
-                                    })()}
-                                </span>
-
+                                    </div>
+                                </div>
                             </div>
-
-                            {/* Location Type Card */}
-                            <div className='flex flex-col p-3 bg-gray-50 rounded-md'>
-                                <span className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1'>
-                                    Location Type
-                                </span>
-                                <span className='text-base font-semibold text-slate-800'>
-                                    {/* Use 'jobData?.locationType' for the actual data */}
-                                    {jobData?.locationType?.split("-").join(" ")[0].toUpperCase() + jobData?.locationType?.split("-").join(" ").slice(1) || 'On-site'}
-                                </span>
+                            <div className='flex items-center gap-3'>
+                                <div className='w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center'>
+                                    <MapPin size={16} className='text-green-600' />
+                                </div>
+                                <div>
+                                    <div className='text-xs text-gray-500'>Hiring location</div>
+                                    <div className='font-medium'>{jobData?.location || 'Remote'}</div>
+                                </div>
                             </div>
+                            <div className='flex items-center gap-3'>
+                                <div className='w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center'>
+                                    <GraduationCap size={16} className='text-purple-600' />
+                                </div>
+                                <div>
+                                    <div className='text-xs text-gray-500'>Experience</div>
+                                    <div className='font-medium'>{jobData?.experience || 'Bachelor Degree'}</div>
+                                </div>
+                            </div>
+                            <div className='flex items-center gap-3 col-span-2'>
+                                <div className='w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center'>
+                                    <FaMoneyBill size={16} className='text-purple-600' />
+                                </div>
+                                <div>
+                                    <div className='text-xs text-gray-500'>Salary</div>
+                                    <div className='font-medium'>
+                                        {jobData?.salaryType === "fixed" ? <span>
+                                            <Currency amount={jobData?.fixedSalary} from={jobData?.jobsCurrency} />
+                                        </span> : <span>
 
+                                            <Currency amount={jobData?.minSalary} from={jobData?.jobsCurrency} /> - <Currency amount={jobData?.maxSalary} from={jobData?.jobsCurrency} /></span>}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className='p-4 flex flex-col gap-4 h-screen'>
-                        <h2 className='font-bold flex items-center gap-4'>
-                            <FaAudioDescription className='text-[var(--primary-color)]' /> Job Description
-                        </h2>
-                        <div className='px-10'>
-                            <h4 className='text-lg font-semibold mb-4'>
-                                Key Responsibities
-                            </h4>
-                            <ul className='list-disc list-inside'>
-                                {jobData?.responsibilities?.map((res, index) => (
-                                    <li>
-                                        {res}
-                                    </li>
-                                ))}
-                            </ul>
-                            <h4 className='text-lg mt-8 font-semibold mb-4'>
-                                About the Job
-                            </h4>
-                            <span className='text-sm'>
-                                {jobData?.description}
-                            </span>
-                            {jobData?.benefits?.length > 0 &&
-                                <>
-                                    <h4 className='text-lg mt-8 font-semibold mb-4'>
-                                        Benefits
-                                    </h4>
-                                    <ul className='list-disc list-inside'>
-                                        {jobData?.benefits?.map((ben, index) => (
-                                            <li key={index}>
-                                                {ben}
+
+                    {/* Description */}
+                    <div className='bg-white rounded-lg border border-gray-200 p-6'>
+                        <h2 className='text-lg font-semibold text-gray-900 mb-4'>Description</h2>
+
+                        <div className='space-y-6'>
+                            <div>
+                                <h3 className='font-semibold text-gray-900 mb-3'>Overview</h3>
+                                <p className='text-gray-700 leading-relaxed'>{jobData?.description}</p>
+                            </div>
+
+                            {jobData?.responsibilities?.length > 0 && (
+                                <div>
+                                    <h3 className='font-semibold text-gray-900 mb-3'>Requirements</h3>
+                                    <ul className='space-y-2'>
+                                        {jobData.responsibilities.map((req, index) => (
+                                            <li key={index} className='flex items-start gap-2'>
+                                                <div className='w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0'></div>
+                                                <span className='text-gray-700'>{req}</span>
                                             </li>
                                         ))}
                                     </ul>
-                                </>
-                            }
-                            <h4 className='text-lg mt-8 font-semibold mb-4'>
-                                Skills
-                            </h4>
-                            <ul className='list-disc flex flex-col gap-2 list-inside'>
+                                </div>
+                            )}
+
+                            {jobData?.benefits?.length > 0 && (
+                                <div>
+                                    <h3 className='font-semibold text-gray-900 mb-3'>Benefits</h3>
+                                    <ul className='space-y-2'>
+                                        {jobData.benefits.map((benefit, index) => (
+                                            <li key={index} className='flex items-start gap-2'>
+                                                <div className='w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0'></div>
+                                                <span className='text-gray-700'>{benefit}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Skills & Experience */}
+                    <div className='bg-white rounded-lg border border-gray-200 p-6'>
+                        <h2 className='text-lg font-semibold text-gray-900 mb-4'>Skill & Experience</h2>
+                        <div className='space-y-4'>
+                            {jobData?.experience && (
+                                <div>
+                                    <div className='flex items-start gap-2 mb-2'>
+                                        <div className='w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0'></div>
+                                        <span className='text-gray-700'>You have at least {jobData.experience} of experience working as a {jobData?.title}</span>
+                                    </div>
+                                </div>
+                            )}
+                            <div className='flex items-start gap-2'>
+                                <div className='w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0'></div>
+                                <span className='text-gray-700'>You have experience using {jobData?.locationType === 'remote' ? 'remote collaboration tools' : 'on-site work environments'}</span>
+                            </div>
+                        </div>
+
+                        <div className='mt-6'>
+                            <h3 className='font-semibold text-gray-900 mb-3'>Skills</h3>
+                            <div className='flex flex-wrap gap-2'>
                                 {jobData?.skills?.map((skill, index) => (
-                                    <li className='whitespace-nowrap' key={index}>
-                                        {skill[0].toUpperCase() + skill.slice(1)}
-                                    </li>
+                                    <span key={index} className='bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm'>
+                                        {skill.charAt(0).toUpperCase() + skill.slice(1)}
+                                    </span>
                                 ))}
-                            </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Photos Section */}
+                    {jobData?.companyProfile && (
+                        <div className='bg-white rounded-lg border border-gray-200 p-6'>
+                            <h2 className='text-lg font-semibold text-gray-900 mb-4'>Photos</h2>
+                            <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+                                <div className='aspect-video bg-gray-100 rounded-lg overflow-hidden'>
+                                    <Img src={jobData.companyProfile} style='w-full h-full object-cover' />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Right Sidebar */}
+                <div className='lg:col-span-1 w-full'>
+                    <div className='bg-white w-full rounded-lg border border-gray-200 p-6 sticky top-4'>
+                        {/* Apply Section */}
+                        <div className='mb-6 flex flex-col items-center'>
+                            <h2 className='text-lg font-semibold text-gray-900 mb-4'>
+                                Interseted in this Job
+                            </h2>
+                            <div className='text-sm text-gray-600 mb-2'>
+                                {Math.ceil((new Date(jobData?.applicationDeadline) - new Date()) / (1000 * 60 * 60 * 24)) > 0
+                                    ? `${Math.ceil((new Date(jobData.applicationDeadline) - new Date()) / (1000 * 60 * 60 * 24))} day(s) left`
+                                    : 'Deadline passed'}
+                            </div>
+                            <span
+                                disabled={userData?.appliedJobs?.includes(id)}
+                                onClick={() => setApplyJobModel(true)}
+                                className={`cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors ${userData?.role === "recruiter" && "hidden"} ${userData?.appliedJobs?.includes(id) && "bg-gray-400 cursor-not-allowed"}`}
+                            >
+                                {userData?.appliedJobs?.includes(id) ? "Already Applied" : "Apply now"}
+                            </span>
                         </div>
 
-                    </div>
-                </div>
-                <div className='w-full order-1 md:order-2'>
-                    <div className='border border-gray-300 rounded-lg p-2 md:p-4 sticky top-4 shadow-lg flex flex-col'>
-                        <h3 className='font-semibold flex items-center gap-4 bg-gray-300 border-2 border-[var(--secondary-color)] px-4 py-2 rounded-lg'>
-                            {jobData?.salaryType === "fixed" ? <span>
-                                <Currency amount={jobData?.fixedSalary} from={jobData?.jobsCurrency} />
-                            </span> : <span>
+                        {/* Company Info */}
+                        <div className='border-t pt-6'>
+                            <div className='flex items-center gap-3 mb-4'>
+                                <Img src={jobData?.companyProfile} style='w-12 h-12 rounded-lg object-cover border' />
+                                <div>
+                                    <h3 className='font-semibold text-gray-900'>{jobData?.company}</h3>
+                                    <Link to={`/company-profile/${jobData?.postedBy?.authId}`} className='text-blue-600 mt-1 text-sm hover:underline flex items-center gap-2'>
+                                        {jobData?.company} <ExternalLink size={18} />
+                                    </Link>
+                                </div>
+                            </div>
 
-                                <Currency amount={jobData?.minSalary} from={jobData?.jobsCurrency} /> - <Currency amount={jobData?.maxSalary} from={jobData?.jobsCurrency} /></span>}
-                        </h3>
-                        <Link className='mt-3 underline underline-offset-2 flex items-center text-blue-500 gap-3' to={'/company-profile/' + jobData?.postedBy}>
-                            {jobData?.company} <ExternalLink size={20} />
-                        </Link>
-                        <span className='text-sm flex items-center gap-2 mt-3'>
-                            <MapPin />
-                            {jobData?.locationType !== 'remote' ?
-                                <span>
-                                    {jobData?.location}
+                            {/* Tabs */}
+                            <div className='flex border-b mb-4'>
+                                <span className='px-4 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600'>
+                                    Overview
                                 </span>
-                                : "Remote"}
-                        </span>
-                        <div className='flex justify-between w-full py-4'>
-                            <span className='flex items-center gap-2 text-red-500 bgrounded-md'>
-                                <IoWarning size={20} />
-                                {jobData?.applicationDeadline &&
-                                    new Date(jobData.applicationDeadline).toLocaleDateString("en-US", {
-                                        day: "2-digit",
-                                        month: "long"
-                                    })
-                                }
-                            </span>
-                            <span className='flex items-center gap-3 py-1 rounded-md'>
-                                <Mail /> <span className='font-semibold'>{jobData?.applicants.length} </span> Applicants
-                            </span>
+                            </div>
+
+                            {/* Company Details */}
+                            <div className='space-y-4 text-sm'>
+                                <div>
+                                    <div className='text-gray-600'>Industry</div>
+                                    <div className='font-medium'>{jobData?.postedBy?.industry || "Tech Startup"}</div>
+                                </div>
+
+                                <div>
+                                    <div className='text-gray-600'>Company size</div>
+                                    <div className='font-medium'>{jobData?.postedBy?.members || '1'}</div>
+                                </div>
+
+                                <div>
+                                    <div className='text-gray-600'>Founded in</div>
+                                    <div className='font-medium'>{jobData?.postedBy?.foundedAt || '2010'}</div>
+                                </div>
+
+                                <div>
+                                    <div className='text-gray-600'>Location</div>
+                                    <div className='font-medium'>{jobData?.postedBy?.city + ", " + jobData?.postedBy?.country || 'Remote'}</div>
+                                </div>
+
+                                <div>
+                                    <div className='text-gray-600'>Phone</div>
+                                    <div className='font-medium'>{jobData?.postedBy?.contactNumber || '+1234567890'}</div>
+                                </div>
+
+                                <div>
+                                    <div className='text-gray-600'>Email</div>
+                                    <div className='font-medium text-blue-600'>contact@{jobData?.company?.toLowerCase().replace(/\s+/g, '')}.com</div>
+                                </div>
+
+                                <div>
+                                    <div className='text-gray-600'>Website</div>
+                                    <a href={jobData?.postedBy?.website}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className='font-medium text-blue-600 hover:underline flex items-center gap-1'>
+                                        Visit {jobData?.postedBy?.website}
+                                        <ExternalLink size={12} />
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Send Message Button */}
+                            <a className='w-full mt-6 border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2'
+                            href={`mailto:${jobData?.postedBy?.email}`}
+                            >
+                                <Mail size={16} />
+                                Send message
+                            </a>
                         </div>
-                        <div className='p-2 border-2 border-[var(--primary-color)] bg-[var(--primary-color)]/10 flex items-center gap-3 rounded-lg font-medium'>
-                            <File className='text-yellow-800' /> Resume: <span className='font-bold'>
-                                {jobData?.resumeRequirement === "false" ? "Not Required" : "Required"}
-                            </span>
-                        </div>
-                        <button
-                            disabled={userData?.appliedJobs?.includes(id)}
-                            onClick={() => setApplyJobModel(true)}
-                            className={`mt-4 ${userData?.role === "recruiter" && "hidden"} `}
-                        >
-                            {userData?.appliedJobs?.includes(id)? "Already Applied": "Apply Now"}
-                        </button>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <hr className='my-8' />
+            {/* Similar Jobs Section */}
+            <div className='mt-12'>
+                <div className='bg-white rounded-lg border border-gray-200 p-6'>
+                    <div className='flex items-center justify-between mb-6'>
+                        <h2 className='text-xl font-semibold text-gray-900'>Similar jobs</h2>
+                        <Link to="/jobs" className='text-blue-600 text-sm hover:underline'>
+                            View all jobs
+                        </Link>
+                    </div>
 
-            <section className='my-4 min-h-[40vh] w-full'>
-                <h2 className='font-semibold'>More Jobs <span className='font-bold'>
-                    {jobData?.company === "Individual" ? "" : 'from' + jobData?.company} </span></h2>
-                <ul className='grid mt-4 gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    {companyJobs?.filter(job => job._id !== jobData?._id).length > 0 ? companyJobs?.filter(job => job._id !== jobData?._id)?.map((e, i) => (
-                        <JobCard key={i} e={e} />
-                    )) :
-                        <h4 className='font-semibold  mt-8 '>
-                            No Jobs Posted from {jobData?.company}
-                        </h4>
-                    }
-                </ul>
-            </section>
+                    {companyJobs?.filter(job => job._id !== jobData?._id).length > 0 ?
+                        companyJobs?.filter(job => job._id !== jobData?._id).map(job => (
+                            <JobCard e={job} />
+                        )) : (
+                            <div className='text-center py-8'>
+                                <div className='text-gray-400 mb-2'>
+                                    <Briefcase size={48} className='mx-auto' />
+                                </div>
+                                <h3 className='font-semibold text-gray-600 mb-1'>No similar jobs found</h3>
+                                <p className='text-gray-500 text-sm'>
+                                    No other jobs available from {jobData?.company}
+                                </p>
+                            </div>
+                        )}
+                </div>
+            </div>
 
             {/* Login */}
             <div className={`fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center justify-center ${loginReminder ? 'flex' : 'hidden'}`}>

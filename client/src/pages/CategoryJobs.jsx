@@ -13,6 +13,10 @@ import NotFound404 from '../components/NotFound404';
 import "swiper/css";
 
 const CategoryJobs = () => {
+    // Auto Scroll to Top
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [])
   const location = useLocation();
   const search = new URLSearchParams(location.search);
   const category = search.get('category');

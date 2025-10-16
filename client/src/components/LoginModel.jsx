@@ -21,6 +21,9 @@ const LoginModel = ({ setStep }) => {
     try {
       const { data } = await axios.post(`${backendUrl}/api/auth/login`, { email, password }, { withCredentials: true })
 
+      console.log('data', data);
+      
+
       if (data.success) {
         setIsLoggedIn(true)
         await getUserData()
@@ -29,8 +32,8 @@ const LoginModel = ({ setStep }) => {
           setStep(2)
           toast.info('Please add your company details')
         } else {
-            await navigate('/dashboard')
-            toast.success(data.message)
+          await navigate('/dashboard')
+          toast.success(data.message)
         }
       } else {
         toast.error(data.message)

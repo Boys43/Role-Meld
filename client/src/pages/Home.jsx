@@ -31,6 +31,10 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const Home = () => {
+    // Auto Scroll to Top
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [])
   const navigate = useNavigate();
 
   const { backendUrl } = useContext(AppContext);

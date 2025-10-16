@@ -10,6 +10,10 @@ import { FiSearch } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 
 const EditBlog = () => {
+      // Auto Scroll to Top
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [])
     const location = useLocation();
     const search = location.search;
     const params = new URLSearchParams(search);

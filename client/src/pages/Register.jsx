@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import assets from "../assets/assets";
 import RegisterModel from "../components/RegisterModel";
 import VerificationModel from "../components/VerificationModel";
 
 const Register = () => {
+    // Auto Scroll to Top
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [])
   const [regStep, setRegStep] = useState(0);
   return <>
     <div className="h-screen overflow-hidden w-full flex justify-center items-center">

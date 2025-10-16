@@ -14,9 +14,10 @@ export const addJob = async (req, res) => {
     }
 
     try {
+        const userProfile = await recruiterProfileModel.findOne({authId: userId});
         const job = new jobsModel({
             ...jobData,
-            postedBy: userId,
+            postedBy: userProfile._id,
             postedAt: new Date(),
             applicationDeadline: new Date(Date.now() + jobData.applicationDeadline * 24 * 60 * 60 * 1000),
         });
@@ -74,7 +75,7 @@ export const getJob = async (req, res) => {
     }
 
     try {
-        const job = await jobsModel.findById(id);
+        const job = await jobsModel.findById(id).populate('postedBy', 'name email contactNumber members website foundedAt city country industry authId');
 
         if (!job) {
             return res.json({ success: false, message: "Job Not Found, Expired" })
@@ -88,7 +89,7 @@ export const getJob = async (req, res) => {
 
 export const getAllJobs = async (req, res) => {
     try {
-        const jobs = await jobsModel.find().populate('postedBy', 'name email');
+        const jobs = await jobsModel.find().populate('postedBy', 'name email phone members website foundedAt');
 
         if (!jobs || jobs.length < 0) {
             return res.json({ success: false, message: "No Jobs Found" })
@@ -211,7 +212,7 @@ export const searchJob = async (req, res) => {
                 sponsored: false,
                 $or: [
                     { title: { $regex: search, $options: "i" } },
-                    { location: { $regex: search, $options: "i" } },
+                    { location: { $regex: location, $options: "i" } },
                     { company: { $regex: search, $options: "i" } },
                     { category: { $regex: search, $options: "i" } },
                     { subCategory: { $regex: search, $options: "i" } }

@@ -11,6 +11,10 @@ import { FaBloggerB } from "react-icons/fa";
 import Loading from '../components/Loading';
 
 const BlogsDetails = () => {
+    // Auto Scroll to Top
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [])
   const { backendUrl } = useContext(AppContext);
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
