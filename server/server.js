@@ -30,7 +30,8 @@ const allowedOrigins = [
     "https://role-meld.onrender.com",  
     "https://role-meld-1.onrender.com",
     "http://localhost:5174",
-    "http://localhost:4173"
+    "http://localhost:4173",
+    "https://afla-careers-frontend.onrender.com/"
 ];
 
 const __filename = fileURLToPath(import.meta.url);
