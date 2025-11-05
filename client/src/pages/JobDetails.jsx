@@ -1,21 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {  useNavigate, useParams } from 'react-router-dom';
 // React Icons
-import { IoHome, IoHomeOutline, IoWarning } from "react-icons/io5";
+import { IoHome, IoWarning } from "react-icons/io5";
 import { toast } from 'react-toastify';
-import { MdCancel, MdTitle } from "react-icons/md";
-import { IoIosWarning } from "react-icons/io";
-import { FaDollarSign, FaMoneyBill } from "react-icons/fa";
-import { FaAudioDescription } from "react-icons/fa6";
-import { IoIosMail } from "react-icons/io";
+import { MdCancel } from "react-icons/md";
+import { FaMoneyBill } from "react-icons/fa";
 import JobCard from '../components/JobCard';
 import Loading from '../components/Loading';
 import Img from '../components/Image';
-import { Clipboard, ExternalLink, File, Mail, MapPin, X } from 'lucide-react';
+import { Clipboard, ExternalLink, Mail, MapPin, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Pencil, FileText, User, Briefcase } from "lucide-react";
+import { Pencil, User, Briefcase } from "lucide-react";
 import {
     Phone,
     Globe,
@@ -93,7 +90,7 @@ const JobDetails = () => {
     }
 
     console.log(jobData);
-
+    
 
     return (
         <main className='max-w-7xl mx-auto p-4 min-h-screen'>

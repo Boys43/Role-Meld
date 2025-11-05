@@ -5,8 +5,10 @@ import Img from "../components/Image";
 const Search = lazy(() => import("../components/Search"));
 const Testimonials = lazy(() => import("../components/Testimonials"));
 const FeaturedJobs = lazy(() => import("../components/FeaturedJobs"));
+const LatestJobs = lazy(() => import("../components/LatestJobs"));
 const BlogsSection = lazy(() => import("../components/BlogsSection"));
 const LeaveReview = lazy(() => import("../components/LeaveReview"));
+import { useNavigate } from "react-router-dom";
 
 
 // React Icons
@@ -17,11 +19,8 @@ import { MdAccountBalance } from "react-icons/md";
 import { MdPeople } from "react-icons/md";
 import { MdBusinessCenter } from "react-icons/md";
 import { MdEngineering } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
 import { MdFeaturedPlayList } from "react-icons/md";
 import { MdRateReview } from "react-icons/md";
-import { FaBloggerB } from "react-icons/fa";
-import { FaBriefcase } from "react-icons/fa";
 
 // Swiper Slides
 import 'swiper/css';
@@ -31,7 +30,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const Home = () => {
-    // Auto Scroll to Top
+  // Auto Scroll to Top
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [])
@@ -62,17 +61,57 @@ const Home = () => {
 
   return (
     <>
-      <main className="py-6 w-[95vw] mx-auto">
-        <section className="shadow-2xl py-18 bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] p-6 w-full rounded-2xl flex flex-col gap-4 items-center">
-          <h1 className="text-white">
-            Welcome to <span className="text-[var(--accent-color)] font-bold italic">Alfa Career</span>
-          </h1>
-          <p className="text-[var(--accent-color)] text-center">
-            Find the perfect job for you in just a few clicks with Alfa Career
-          </p>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Search />
-          </Suspense>
+      <main className="w-[95vw] mx-auto">
+        <section className="relative grid grid-cols-2 max-h-[500px] p-8 w-full rounded-2xl overflow-hidden">
+          {/* Main Content */}
+          <div className="relative z-20 pt-10">
+            <div className="mb-4">
+              <span className="text-gray-600 text-lg">12k jobs in </span>
+              <span className="text-gray-800 font-semibold text-lg">200 locations</span>
+            </div>
+
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6 leading-tight">
+              Your <span className="text-teal-600">Talents</span> is just a<br />
+              search away!
+            </h1>
+
+            <Suspense fallback={<div>Loading...</div>}>
+              <Search />
+            </Suspense>
+
+            <div className="mt-6">
+              <span className="text-gray-600 text-sm">Popular Searches: </span>
+              <span className="text-teal-600 text-sm">Experimentation, Marketing Manager</span>
+            </div>
+          </div>
+          <Marquee direction="up" pauseOnHover speed={60} className="w-1/2">
+            <div className="flex flex-col gap-6">
+              <div className="ml-10 w-96 bg-[#f9a37f]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}>
+                <span className="text-gray-600 text-sm">California</span>
+                <h5 className="text-black font-semibold text-lg">Customer Success Manager</h5>
+              </div>
+              <div className="mr-10 w-96 bg-[#f46b99]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Data%20Engineer')}>
+                <span className="text-gray-600 text-sm">California</span>
+                <h5 className="text-black font-semibold text-lg">Data Engineer</h5>
+              </div>
+              <div className="ml-10 w-96 bg-[#f49ec4]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Marketing%20Manager')}>
+                <span className="text-gray-600 text-sm">California</span>
+                <h5 className="text-black font-semibold text-lg">Marketing Manager</h5>
+              </div>
+              <div className="mr-10 w-96 bg-[#f9d71c]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Designer')}>
+                <span className="text-gray-600 text-sm">California</span>
+                <h5 className="text-black font-semibold text-lg">Designer</h5>
+              </div>
+              <div className="ml-10 w-96 bg-[#c6f19f]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Software%20Engineer')}>
+                <span className="text-gray-600 text-sm">California</span>
+                <h5 className="text-black font-semibold text-lg">Software Engineer</h5>
+              </div>
+              <div className="mr-10 w-96 bg-[#f9a37f]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Software%20Engineer')}>
+                <span className="text-gray-600 text-sm">California</span>
+                <h5 className="text-black font-semibold text-lg">Software Engineer</h5>
+              </div>
+            </div>
+          </Marquee>
         </section>
         <section className="border z-0 rounded-2xl p-4 mt-4 shadow-xl">
           <Marquee className="z-0" pauseOnHover>
@@ -94,17 +133,16 @@ const Home = () => {
             </div>
           </Marquee>
         </section>
-        <section className="mt-20">
-          <h1 className="font-bold my-8 flex items-center gap-4">
-            <FaBriefcase className="text-[var(--primary-color)]" /> Choose Your <span className="text-[var(--primary-color)]">Career Path</span>
-          </h1>
-          <div className="flex flex-col gap-8 py-10 overflow-hidden">
-            {categories.length > 0 && (() => {
-              const mid = Math.ceil(categories.length / 2);
-              const firstHalf = categories.slice(0, mid);
-              const secondHalf = categories.slice(mid);
+        {/* Popular Categories Section */}
+        <section className="py-16 bg-white">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">Popular category</h2>
+              <p className="text-gray-600 text-lg">Find and hire professionals across all skills</p>
+            </div>
 
-              const renderCategory = (cat, index) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {categories.length > 0 && categories.slice(0, 6).map((cat, index) => {
                 let Icon;
                 switch (cat.name) {
                   case "IT & Software": Icon = MdComputer; break;
@@ -118,37 +156,65 @@ const Home = () => {
                 }
 
                 return (
-                  <h3
+                  <div 
                     key={index}
                     onClick={() => navigate('/category-jobs?category=' + encodeURIComponent(cat.name))}
-                    className="flex-shrink-0 w-[280px] md:w-[340px] lg:w-[400px] h-[160px] 
-                     flex flex-col items-center justify-center gap-3 
-                     font-semibold rounded-2xl border-2 border-[var(--primary-color)] 
-                     text-gray-800 bg-white shadow-md 
-                     hover:bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] 
-                     hover:text-white hover:shadow-2xl hover:-translate-y-2 
-                     transition-all duration-300 cursor-pointer"
+                    className="group bg-gray-50 hover:bg-gray-100 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-md"
                   >
-                    <Icon size={34} className="transition-transform duration-300 group-hover:scale-110" />
-                    <span>{cat.name}</span>
-                  </h3>
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Icon size={24} className="text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 mb-1">{cat.name}</h3>
+                        <p className="text-gray-500 text-sm">{cat.subcategories?.length || 0} jobs</p>
+                      </div>
+                    </div>
+                  </div>
                 );
-              };
+              })}
+            </div>
 
-              return (
-                <>
-                  <Marquee pauseOnHover pauseOnClick gradient={false} speed={45}>
-                    <div className="flex gap-8 px-8">{firstHalf.map(renderCategory)}</div>
-                  </Marquee>
-
-                  <Marquee pauseOnHover pauseOnClick gradient={false} speed={60} direction="right">
-                    <div className="flex gap-8 px-8">{secondHalf.map(renderCategory)}</div>
-                  </Marquee>
-                </>
-              );
-            })()}
+            {/* View All Categories Link */}
+            <div className="text-center">
+              <span  
+                onClick={() => navigate('/categories')}
+                className="text-[var(--primary-color)] cursor-pointer hover:text-[var(--primary-color)] font-medium text-sm hover:underline transition-colors"
+              >
+                View all categories
+              </span>
+            </div>
           </div>
+        </section>
 
+        {/* Latest Jobs Section */}
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 lg:px-8">
+            <div className="relative">
+              <Suspense fallback={
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="bg-white rounded-xl p-6 shadow-sm animate-pulse">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                          <div className="h-3 bg-gray-200 rounded w-1/2 mb-4"></div>
+                          <div className="flex gap-2 mb-4">
+                            <div className="h-6 bg-gray-200 rounded w-16"></div>
+                            <div className="h-6 bg-gray-200 rounded w-20"></div>
+                          </div>
+                          <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              }>
+                <LatestJobs />
+              </Suspense>
+            </div>
+          </div>
         </section>
 
         <section className="p-4 w-full mt-20">
@@ -169,9 +235,6 @@ const Home = () => {
         </section>
         {/* Blogs */}
         <section className="p-4 w-full mt-20">
-          <h1 className="font-bold flex items-center gap-4">
-            <FaBloggerB className="text-[var(--primary-color)] my-4" /> Our <span className="text-[var(--primary-color)]">Blogs</span>
-          </h1>
           <Suspense fallback={<div>Loading Featured Jobs...</div>}>
             <BlogsSection className={'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} />
           </Suspense>

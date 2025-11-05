@@ -19,6 +19,7 @@ import reviewRouter from "./routes/reviewRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import { startStatusCron } from "./cron/recruiterCron.js";
 import notificationRouter from "./routes/notificationRoutes.js";
+import companyReviewRouter from "./routes/companyReviewRoutes.js";
 
 const app = express();
 app.use(cookieParser());
@@ -85,6 +86,7 @@ app.use('/api/chat', chatRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/notifications', notificationRouter)
+app.use('/api/company-reviews', companyReviewRouter)
 
 app.listen(PORT, () => {
     console.log(`App Listening on http://localhost:${PORT}`);

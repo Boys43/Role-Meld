@@ -476,3 +476,77 @@ export const followedAccountsDetails = async (req, res) => {
         return res.status(500).json({ success: false, message: error.message });
     }
 }
+
+export const uploadCompanyImages = async (req, res) => {
+    const userId = req.user._id;
+
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ success: false, message: "No images uploaded" });
+        }
+
+        const recruiter = await recruiterProfileModel.findOne({ authId: userId });
+
+        if (!recruiter) {
+            return res.status(404).json({ success: false, message: "Recruiter profile not found" });
+        }
+
+        // Get image paths from uploaded files
+        const imagePaths = req.files.map(file => file.path);
+
+        // Add new images to existing ones
+        recruiter.companyImages = [...(recruiter.companyImages || []), ...imagePaths];
+
+        await recruiter.save();
+
+        res.json({
+            success: true,
+            message: "Company images uploaded successfully",
+            images: recruiter.companyImages,
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Server Error",
+            error: error.message,
+        });
+    }
+};
+
+export const deleteCompanyImage = async (req, res) => {
+    const userId = req.user._id;
+    const { imageUrl } = req.body;
+
+    try {
+        if (!imageUrl) {
+            return res.status(400).json({ success: false, message: "Image URL is required" });
+        }
+
+        const recruiter = await recruiterProfileModel.findOne({ authId: userId });
+
+        if (!recruiter) {
+            return res.status(404).json({ success: false, message: "Recruiter profile not found" });
+        }
+
+        // Remove image from array
+        recruiter.companyImages = recruiter.companyImages.filter(img => img !== imageUrl);
+
+        await recruiter.save();
+
+        res.json({
+            success: true,
+            message: "Company image deleted successfully",
+            images: recruiter.companyImages,
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Server Error",
+            error: error.message,
+        });
+    }
+};

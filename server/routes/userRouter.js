@@ -14,6 +14,8 @@ import {
   getCompanyDetails,
   updateBanner,
   followedAccountsDetails,
+  uploadCompanyImages,
+  deleteCompanyImage,
 } from "../controllers/userController.js";
 import express from "express";
 import multer from "multer";
@@ -66,5 +68,9 @@ userRouter.get("/allrecruiters", userAuth, getAllRecruiters);
 userRouter.post("/follow-unfollow-acc", userAuth, followUnfollowAccount);
 userRouter.post("/getcompanydetails", userAuth, getCompanyDetails);
 userRouter.get("/followedaccounts", userAuth, followedAccountsDetails);
+
+// Company images
+userRouter.post("/upload-company-images", userAuth, upload.array("companyImages", 10), uploadCompanyImages);
+userRouter.post("/delete-company-image", userAuth, deleteCompanyImage);
 
 export default userRouter;

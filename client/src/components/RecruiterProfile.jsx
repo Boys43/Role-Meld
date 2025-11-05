@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { User, Phone, MapPin, Briefcase, Save, Building, FileText, Camera, Clock } from 'lucide-react'
+import { User, Phone, MapPin, Briefcase, Save, Building, FileText, Camera, Clock, Upload, X, Image } from 'lucide-react'
 import Img from './Image';
 import LocationSelector from './LocationSelector';
 import SearchSelect from './SelectSearch';
@@ -29,6 +29,9 @@ const RecruiterProfile = () => {
         address: userData?.address || "",
         companyType: userData?.companyType || "",
     });
+
+    const [companyImages, setCompanyImages] = useState(userData?.companyImages || []);
+    const [uploadingImages, setUploadingImages] = useState(false);
 
 
     const handleChange = (e) => {
@@ -116,6 +119,58 @@ const RecruiterProfile = () => {
             }
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
+        }
+    };
+
+    // ---------- Company Images Upload ----------
+    const uploadCompanyImages = async (files) => {
+        if (!files || files.length === 0) return;
+
+        setUploadingImages(true);
+        const formData = new FormData();
+        
+        Array.from(files).forEach(file => {
+            formData.append('companyImages', file);
+        });
+
+        try {
+            const { data } = await axios.post(
+                `${backendUrl}/api/user/upload-company-images`,
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
+
+            if (data.success) {
+                setCompanyImages(data.images);
+                setUserData(prev => ({ ...prev, companyImages: data.images }));
+                toast.success(data.message);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to upload images");
+        } finally {
+            setUploadingImages(false);
+        }
+    };
+
+    // ---------- Delete Company Image ----------
+    const deleteCompanyImage = async (imageUrl) => {
+        try {
+            const { data } = await axios.post(
+                `${backendUrl}/api/user/delete-company-image`,
+                { imageUrl }
+            );
+
+            if (data.success) {
+                setCompanyImages(data.images);
+                setUserData(prev => ({ ...prev, companyImages: data.images }));
+                toast.success(data.message);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to delete image");
         }
     };
 
@@ -346,6 +401,62 @@ const RecruiterProfile = () => {
                             <div className={`text-right ${(formData?.about.split(' ').length > 150) ? "text-red-500" : "text-green-500"} `}>
                                 {formData?.about.split(' ').length} / 150
                             </div>
+                        </div>
+
+                        <hr className="mt-2" />
+
+                        <h2 className="flex items-center gap-2 text-lg font-semibold text-blue-600">
+                            <Image className="w-5 h-5" />
+                            Company Images
+                        </h2>
+
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <p className="text-gray-600 text-sm">Upload images to showcase your company</p>
+                                <input
+                                    type="file"
+                                    id="companyImages"
+                                    multiple
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => uploadCompanyImages(e.target.files)}
+                                />
+                                <label
+                                    htmlFor="companyImages"
+                                    className={`flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                >
+                                    <Upload className="w-4 h-4" />
+                                    {uploadingImages ? 'Uploading...' : 'Upload Images'}
+                                </label>
+                            </div>
+
+                            {companyImages.length > 0 && (
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                    {companyImages.map((image, index) => (
+                                        <div key={index} className="relative group">
+                                            <img
+                                                src={image}
+                                                alt={`Company ${index + 1}`}
+                                                className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                                            />
+                                            <button
+                                                onClick={() => deleteCompanyImage(image)}
+                                                className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {companyImages.length === 0 && (
+                                <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+                                    <Image className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                                    <p className="text-gray-500">No company images uploaded yet</p>
+                                    <p className="text-gray-400 text-sm">Upload images to showcase your company</p>
+                                </div>
+                            )}
                         </div>
                     </div>
 

@@ -22,6 +22,7 @@ const recruiterProfileSchema = new mongoose.Schema({
   contactNumber: { type: String, default: "" },
   about: { type: String, default: "" },
   industry: { type: String, default: "" },
+  companyImages: [{ type: String, default: [] }],
   sentJobs: { type: Array, default: [] },
   followedAccounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecruiterProfile" }],
   savedApplicants: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" }],

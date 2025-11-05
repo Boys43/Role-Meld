@@ -1,1 +1,7 @@
 /readme.txt
+*.xlsx
+*.docx
+*.pdf
+*.txt
+*.csv
+*.json

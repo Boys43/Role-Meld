@@ -146,7 +146,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           ${toggleNav ? (isMobile ? "w-64" : "w-20") : "w-72"} 
           fixed text-sm lg:sticky top-0 left-0 bg-[var(--secondary-color)] 
           transition-all duration-300 border-r border-[var(--primary-color)] 
-          text-white flex flex-col justify-between h-screen z-40 min-h-screen `}
+          text-white flex flex-col justify-between z-40 h-screen `}
       >
         {/* User Info */}
         <div className="flex flex-col gap-4 py-4 pl-4 relative">
@@ -356,14 +356,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
               {toggleNav ? <FaChevronRight /> : <FaChevronLeft />}
             </span>
           )}
-        </div>
-
-        {/* Logout */}
-        <div
-          className={`cursor-pointer bg-[var(--primary-color)]/10 border-2 border-[var(--primary-color)] px-3 py-2 m-4 rounded-2xl text-[var(--primary-color)] flex items-center justify-between`}
-          onClick={logout}
-        >
-          {toggleNav ? <IoMdExit size={23} /> : <>Logout <IoMdExit size={23} /></>}
         </div>
       </aside>
 

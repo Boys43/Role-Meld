@@ -88,14 +88,6 @@ const JobCard = ({ e }) => {
                     </span>
                 </div>
                 <div>
-                    <div className='w-full flex justify-between items-center gap-4'>
-                        <span className='text-xs'>
-                            {e?.category || "..."} {e?.subCategory && `/ ${e?.subCategory}`}
-                        </span>
-                        {e?.locationType !== "remote" && <span className='text-xs flex items-center gap-1'>
-                            <MapPin size={15} /> {e?.location || "..."}
-                        </span>}
-                    </div>
 
                     {/* 2. Job Title & Salary */}
                     <div className='flex flex-col gap-2'>
@@ -115,7 +107,7 @@ const JobCard = ({ e }) => {
                                     <Currency amount={e?.minSalary} from={e?.jobsCurrency} /> - <Currency amount={e?.maxSalary} from={e?.jobsCurrency} /></span>}
                             </span>
                             <span className='flex w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
-                                {e?.jobType === 'full-time'? "Full Time": e?.jobType === 'part-time'? "Part Time": e?.jobType === 'contract'? "Contract": e?.jobType === 'internship'? "Internship": e?.jobType === "temporary"? "Temporary": null}
+                                {e?.jobType === 'full-time' ? "Full Time" : e?.jobType === 'part-time' ? "Part Time" : e?.jobType === 'contract' ? "Contract" : e?.jobType === 'internship' ? "Internship" : e?.jobType === "temporary" ? "Temporary" : null}
                             </span>
                         </div>
                     </div>

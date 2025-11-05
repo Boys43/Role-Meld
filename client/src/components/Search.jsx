@@ -27,10 +27,10 @@ const Search = ({ Param }) => {
   return (
     <section
       id="search"
-      className="shadow-2xl backdrop-blur-xs w-[70vw] mx-auto border-[1px] border-[var(--primary-color)] rounded-2xl"
+      className={`shadow-2xl backdrop-blur-xs border-[1px] border-[var(--primary-color)] rounded-2xl ${location.pathname === '/' ? "w-[100%]" : "w-[70vw] mx-auto"}`}
     >
       <form onSubmit={handleSubmit} className="flex gap-2 w-full items-center">
-        <div className={`flex w-full items-center ${location.pathname === '/' ? "text-[var(--accent-color)]" : "text-[var(--primary-color)]"} relative`}>
+        <div className={`flex w-full items-center text-[var(--primary-color)] relative`}>
           <SearchIcon
             size={15}
             className="absolute left-6 top-1/2 -translate-y-1/2"
@@ -39,7 +39,7 @@ const Search = ({ Param }) => {
             value={searchJob}
             required
             onChange={(e) => setSearchJob(e.target.value)}
-            className="border-3 border-transparent focus:border-[var(--primary-color)] 
+            className="border-3 text-sm border-transparent focus:border-[var(--primary-color)] 
               focus:outline-none py-3 pl-14 rounded-2xl w-full transition-all"
             type="text"
             placeholder="Job title, keywords, or company"
@@ -56,7 +56,7 @@ const Search = ({ Param }) => {
                 value={searchLocation}
                 required
                 onChange={(e) => setSearchLocation(e.target.value)}
-                className="border-3 border-transparent focus:border-[var(--primary-color)] 
+                className="border-3 text-sm border-transparent focus:border-[var(--primary-color)] 
               focus:outline-none py-3 pl-14 rounded-2xl w-full transition-all"
                 type="text"
                 placeholder="City, Country, Location"

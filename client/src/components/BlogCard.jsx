@@ -1,12 +1,21 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import assets from '../assets/assets';
-import { useContext } from 'react';
-import { AppContext } from '../context/AppContext';
+import Img from '../components/Image';
 
 const BlogCard = ({ blog }) => {
-    const { backendUrl } = useContext(AppContext);
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Format date function
+    const formatDate = (dateString) => {
+        if (!dateString) return "October 29, 2022";
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+    };
 
     return (
         <div
@@ -15,55 +24,44 @@ const BlogCard = ({ blog }) => {
                     ? () => navigate(`/blogdetails/${blog?.slug}?id=${blog._id}`)
                     : undefined
             }
-            className="rounded-md cursor-pointer bg-white hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-300">
+            className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer max-w-sm mx-auto">
+            
             {/* Image Section */}
-            <div className="overflow-hidden">
-                <img
-                loading='lazy'
+            <div className="relative overflow-hidden w-full h-48 rounded-t-2xl">
+                <Img
+                    loading='lazy'
                     src={
                         blog.coverImage
                             ? location.pathname === "/editblog"
-                                ? `${backendUrl}/${blog.coverImage}` // already saved file path
+                                ? blog.coverImage // already saved file path
                                 : blog.coverImage instanceof File || blog.coverImage instanceof Blob
                                     ? URL.createObjectURL(blog.coverImage) // local file
-                                    : `${backendUrl}/${blog.coverImage}` // fallback if it's a string URL
+                                    : blog.coverImage // fallback if it's a string URL
                             : assets.preview_image // default preview
                     }
                     alt="Blog"
-                    className="w-full border border-gray-300 h-[10rem] object-cover cursor-pointer transition-transform duration-500 hover:scale-110"
+                    className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
                 />
-
             </div>
 
             {/* Content Section */}
-            <div className="p-5 flex flex-col gap-3">
-                <span className="font-medium text-sm leading-snug line-clamp-2 text-gray-800">
-                    {blog?.category || "Category Here"}
-                </span>
+            <div className="p-6">
+                {/* Date and Category */}
+                <div className="flex items-center justify-between mb-4">
+                    <span className="text-gray-500 text-sm font-medium">
+                        {formatDate(blog?.createdAt)}
+                    </span>
+                    <span className="bg-teal-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                        {blog?.category || "Learn"}
+                    </span>
+                </div>
 
                 {/* Title */}
-                <h3 className="font-bold text-lg leading-snug line-clamp-2 text-gray-800">
-                    {blog?.title || "Title Here"}
+                <h3 className="text-gray-900 text-xl font-bold leading-tight mb-3 line-clamp-2">
+                    {blog?.title || "Remote Collaboration: Best Practices, Challenges, and Tools"}
                 </h3>
-
-                {/* Description */}
-                <span className="line-clamp-3 min-h-[50px] text-sm text-gray-600">
-                    {blog?.content?.match(/<p[^>]*>(.*?)<\/p>/i)?.[1]?.replace(/<[^>]+>/g, '').slice(0, 100) || "Expercept Here"}
-                </span>
-
-                {/* Button */}
-                <button className="mt-2 self-start text-[var(--primary-color)] font-semibold text-sm"
-                    onClick={
-                        location.pathname !== "/admin"
-                            ? () => navigate(`/blogdetails/${blog?.slug}?id=${blog._id}`)
-                            : undefined
-                    }
-                >
-                    Read More
-                </button>
             </div>
         </div>
-
     )
 }
 

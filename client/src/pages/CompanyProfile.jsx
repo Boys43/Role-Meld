@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Img from '../components/Image'
-import { ArrowUpFromLine, CircleUser, Filter, Link, Users } from "lucide-react"
-import { Mail, Phone, Globe, MapPin, Building2, Calendar } from 'lucide-react';
+import { ArrowUpFromLine, CircleUser, Filter, Link, Users, Star, MapPin, Calendar, Globe, Mail, Phone, Building2, Camera, Heart, MessageSquare, ThumbsUp, Eye, Briefcase, Clock, Award, TrendingUp } from "lucide-react"
 import copy from 'copy-to-clipboard';
 import { toast } from 'react-toastify';
 import { AppContext } from '../context/AppContext';
@@ -98,17 +97,560 @@ export const CompanyJobs = () => {
 };
 
 
-export const CompanyReviews = () => {
+export const CompanyOverview = ({ companyDetails }) => {
+  // Use uploaded company images if available, otherwise fallback to sample photos
+  const companyImages = companyDetails?.companyImages || [];
+  const samplePhotos = [
+    "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400",
+    "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400",
+    "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400",
+    "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400"
+  ];
+  
+  // Display uploaded images if available, otherwise show sample photos
+  const displayPhotos = companyImages.length > 0 ? companyImages : samplePhotos;
 
   return (
-    <div>
-      <h1>Hello I am Company Reviews</h1>
+    <div className="space-y-8">
+      {/* Company Overview */}
+      <div className="bg-white rounded-lg border p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Building2 className="w-6 h-6 text-blue-600" />
+          <h2 className="text-2xl font-bold text-gray-900">Overview</h2>
+        </div>
+        
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">About {companyDetails?.company}</h3>
+            <p className="text-gray-700 leading-relaxed">
+              {companyDetails?.about || `${companyDetails?.company} is a leading company in the ${companyDetails?.industry || 'technology'} industry. We are committed to delivering exceptional services and creating innovative solutions for our clients. Our team of dedicated professionals works tirelessly to maintain our reputation for excellence and continue growing in the competitive market.`}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="flex items-center gap-3 mb-2">
+                <Calendar className="w-5 h-5 text-blue-600" />
+                <h4 className="font-semibold text-gray-900">Founded</h4>
+              </div>
+              <p className="text-gray-700">
+                {companyDetails?.establishedAt 
+                  ? new Date(companyDetails.establishedAt).getFullYear()
+                  : new Date(companyDetails?.createdAt).getFullYear()
+                }
+              </p>
+            </div>
+            
+            <div className="bg-green-50 p-4 rounded-lg">
+              <div className="flex items-center gap-3 mb-2">
+                <Users className="w-5 h-5 text-green-600" />
+                <h4 className="font-semibold text-gray-900">Company Size</h4>
+              </div>
+              <p className="text-gray-700">{companyDetails?.members || '50-200'} employees</p>
+            </div>
+            
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <div className="flex items-center gap-3 mb-2">
+                <Briefcase className="w-5 h-5 text-purple-600" />
+                <h4 className="font-semibold text-gray-900">Industry</h4>
+              </div>
+              <p className="text-gray-700">{companyDetails?.industry || 'Technology'}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Company Photos */}
+      <div className="bg-white rounded-lg border p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Camera className="w-6 h-6 text-blue-600" />
+            <h2 className="text-2xl font-bold text-gray-900">Photos</h2>
+          </div>
+          <span className="text-sm text-gray-500">{displayPhotos.length} photos</span>
+        </div>
+        
+        {displayPhotos.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {displayPhotos.map((photo, index) => (
+              <div key={index} className="aspect-square rounded-lg overflow-hidden group cursor-pointer">
+                <img 
+                  src={photo} 
+                  alt={`${companyDetails?.company} office ${index + 1}`}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+            <Camera className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+            <p className="text-gray-500">No company photos available</p>
+            <p className="text-gray-400 text-sm">Company photos will appear here once uploaded</p>
+          </div>
+        )}
+      </div>
+
+      {/* Company Statistics */}
+      <div className="bg-white rounded-lg border p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <TrendingUp className="w-6 h-6 text-blue-600" />
+          <h2 className="text-2xl font-bold text-gray-900">Company Stats</h2>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-blue-600 mb-2">
+              {companyDetails?.sentJobs?.length || 0}
+            </div>
+            <div className="text-sm text-gray-600">Active Jobs</div>
+          </div>
+          
+          <div className="text-center">
+            <div className="text-3xl font-bold text-green-600 mb-2">
+              {companyDetails?.followers || 0}
+            </div>
+            <div className="text-sm text-gray-600">Followers</div>
+          </div>
+          
+          <div className="text-center">
+            <div className="text-3xl font-bold text-purple-600 mb-2">
+              {companyDetails?.profileScore || 0}%
+            </div>
+            <div className="text-sm text-gray-600">Profile Score</div>
+          </div>
+          
+          <div className="text-center">
+            <div className="text-3xl font-bold text-orange-600 mb-2">
+              {new Date().getFullYear() - new Date(companyDetails?.establishedAt || companyDetails?.createdAt).getFullYear()}
+            </div>
+            <div className="text-sm text-gray-600">Years Active</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const CompanyReviews = ({ companyId }) => {
+  const { backendUrl, userData } = useContext(AppContext);
+  const [reviews, setReviews] = useState([]);
+  const [reviewStats, setReviewStats] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showAddReview, setShowAddReview] = useState(false);
+  const [newReview, setNewReview] = useState({
+    rating: 5,
+    title: '',
+    review: '',
+    pros: '',
+    cons: '',
+    workLifeBalance: 3,
+    salary: 3,
+    culture: 3,
+    management: 3,
+    careerGrowth: 3,
+    isAnonymous: false,
+    jobTitle: '',
+    employmentStatus: 'current',
+    workDuration: ''
+  });
+
+  const fetchReviews = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/company-reviews/${companyId}`);
+      if (data.success) {
+        setReviews(data.reviews);
+        setReviewStats(data.stats);
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitReview = async () => {
+    if (!userData) {
+      toast.error('Please login to add a review');
+      return;
+    }
+
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/company-reviews/${companyId}`,
+        newReview,
+        { withCredentials: true }
+      );
+      
+      if (data.success) {
+        toast.success('Review added successfully!');
+        setShowAddReview(false);
+        setNewReview({
+          rating: 5,
+          title: '',
+          review: '',
+          pros: '',
+          cons: '',
+          workLifeBalance: 3,
+          salary: 3,
+          culture: 3,
+          management: 3,
+          careerGrowth: 3,
+          isAnonymous: false,
+          jobTitle: '',
+          employmentStatus: 'current',
+          workDuration: ''
+        });
+        fetchReviews();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error adding review');
+    }
+  };
+
+  const renderStars = (rating) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+      />
+    ));
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  useEffect(() => {
+    if (companyId) {
+      fetchReviews();
+    }
+  }, [companyId]);
+
+  if (loading) return <Loading />;
+
+  return (
+    <div className="space-y-6">
+      {/* Reviews Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-bold text-gray-900">Reviews</h2>
+          {reviewStats && (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center">
+                {renderStars(Math.round(reviewStats.avgRating))}
+              </div>
+              <span className="text-lg font-semibold text-gray-700">
+                {reviewStats.avgRating?.toFixed(1) || '0.0'}
+              </span>
+              <span className="text-gray-500">({reviewStats.totalReviews} reviews)</span>
+            </div>
+          )}
+        </div>
+        <span
+          onClick={() => setShowAddReview(true)}
+          className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Write a Review
+        </span>
+      </div>
+
+      {/* Rating Breakdown */}
+      {reviewStats && (
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-4">Rating Breakdown</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">
+                {reviewStats.avgWorkLifeBalance?.toFixed(1) || '0.0'}
+              </div>
+              <div className="text-sm text-gray-600">Work-Life Balance</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">
+                {reviewStats.avgSalary?.toFixed(1) || '0.0'}
+              </div>
+              <div className="text-sm text-gray-600">Salary & Benefits</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-600">
+                {reviewStats.avgCulture?.toFixed(1) || '0.0'}
+              </div>
+              <div className="text-sm text-gray-600">Culture</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-600">
+                {reviewStats.avgManagement?.toFixed(1) || '0.0'}
+              </div>
+              <div className="text-sm text-gray-600">Management</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-600">
+                {reviewStats.avgCareerGrowth?.toFixed(1) || '0.0'}
+              </div>
+              <div className="text-sm text-gray-600">Career Growth</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reviews List */}
+      <div className="space-y-4">
+        {reviews.length > 0 ? (
+          reviews.map((review) => (
+            <div key={review._id} className="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  {review.reviewerProfilePicture && !review.isAnonymous ? (
+                    <Img src={review.reviewerProfilePicture} style="w-10 h-10 rounded-full" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                      <CircleUser className="w-6 h-6 text-gray-600" />
+                    </div>
+                  )}
+                  <div>
+                    <h4 className="font-semibold text-gray-900">{review.reviewerName}</h4>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      {review.jobTitle && <span>{review.jobTitle}</span>}
+                      {review.employmentStatus && (
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          review.employmentStatus === 'current' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {review.employmentStatus === 'current' ? 'Current Employee' : 'Former Employee'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center gap-1 mb-1">
+                    {renderStars(review.rating)}
+                  </div>
+                  <div className="text-sm text-gray-500">{formatDate(review.createdAt)}</div>
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{review.title}</h3>
+              <p className="text-gray-700 mb-4 leading-relaxed">{review.review}</p>
+              
+              {(review.pros || review.cons) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  {review.pros && (
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <h5 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                        <ThumbsUp className="w-4 h-4" />
+                        Pros
+                      </h5>
+                      <p className="text-green-700 text-sm">{review.pros}</p>
+                    </div>
+                  )}
+                  {review.cons && (
+                    <div className="bg-red-50 p-4 rounded-lg">
+                      <h5 className="font-semibold text-red-800 mb-2 flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4" />
+                        Cons
+                      </h5>
+                      <p className="text-red-700 text-sm">{review.cons}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                  {review.workDuration && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      {review.workDuration}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600">
+                    <ThumbsUp className="w-4 h-4" />
+                    Helpful ({review.isHelpful})
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Reviews Yet</h3>
+            <p className="text-gray-600">Be the first to review this company!</p>
+          </div>
+        )}
+      </div>
+
+      {/* Add Review Modal */}
+      {showAddReview && (
+        <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-900">Write a Review</h3>
+                <span
+                  onClick={() => setShowAddReview(false)}
+                  className="cursor-pointer text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </span>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Overall Rating</label>
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <span
+                        key={i}
+                        onClick={() => setNewReview({...newReview, rating: i + 1})}
+                        className="cursor-pointer focus:outline-none"
+                      >
+                        <Star
+                          className={`w-6 h-6 ${i < newReview.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                        />
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Review Title</label>
+                  <input
+                    type="text"
+                    value={newReview.title}
+                    onChange={(e) => setNewReview({...newReview, title: e.target.value})}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Summarize your experience"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
+                  <textarea
+                    value={newReview.review}
+                    onChange={(e) => setNewReview({...newReview, review: e.target.value})}
+                    rows={4}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Share your experience working at this company"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Pros</label>
+                    <textarea
+                      value={newReview.pros}
+                      onChange={(e) => setNewReview({...newReview, pros: e.target.value})}
+                      rows={3}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="What did you like about working here?"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Cons</label>
+                    <textarea
+                      value={newReview.cons}
+                      onChange={(e) => setNewReview({...newReview, cons: e.target.value})}
+                      rows={3}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="What could be improved?"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Work-Life Balance</label>
+                    <select
+                      value={newReview.workLifeBalance}
+                      onChange={(e) => setNewReview({...newReview, workLifeBalance: parseInt(e.target.value)})}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value={1}>1 - Poor</option>
+                      <option value={2}>2 - Fair</option>
+                      <option value={3}>3 - Good</option>
+                      <option value={4}>4 - Very Good</option>
+                      <option value={5}>5 - Excellent</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Salary & Benefits</label>
+                    <select
+                      value={newReview.salary}
+                      onChange={(e) => setNewReview({...newReview, salary: parseInt(e.target.value)})}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value={1}>1 - Poor</option>
+                      <option value={2}>2 - Fair</option>
+                      <option value={3}>3 - Good</option>
+                      <option value={4}>4 - Very Good</option>
+                      <option value={5}>5 - Excellent</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Culture</label>
+                    <select
+                      value={newReview.culture}
+                      onChange={(e) => setNewReview({...newReview, culture: parseInt(e.target.value)})}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value={1}>1 - Poor</option>
+                      <option value={2}>2 - Fair</option>
+                      <option value={3}>3 - Good</option>
+                      <option value={4}>4 - Very Good</option>
+                      <option value={5}>5 - Excellent</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={newReview.isAnonymous}
+                      onChange={(e) => setNewReview({...newReview, isAnonymous: e.target.checked})}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">Post anonymously</span>
+                  </label>
+                </div>
+                
+                <div className="flex justify-end gap-3 pt-4 border-t">
+                  <span
+                    onClick={() => setShowAddReview(false)}
+                    className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Cancel
+                  </span>
+                  <span
+                    onClick={submitReview}
+                    disabled={!newReview.title || !newReview.review}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Submit Review
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 const CompanyProfile = () => {
-  const [activeTab, setActiveTab] = useState('jobs');
+  const [activeTab, setActiveTab] = useState('overview');
   const { id } = useParams();
 
   const { backendUrl, userData, frontendUrl } = useContext(AppContext);
@@ -175,71 +717,119 @@ const CompanyProfile = () => {
   }
 
   return (
-    <main className='p-4 min-h-[calc(100vh-4.6rem)]'>
-      <section className='pb-8 border-b border-gray-300'>
-        <div className='rounded-2xl overflow-hidden border-2 border-gray-500'>
-          <Img src={companyDetails.banner} style={"w-full h-[30vh] object-cover"} />
-        </div>
-
-        <div className='flex items-center justify-between mt-4 px-8'>
-          <div className='flex items-center gap-8'>
-            {
-              companyDetails.profilePicture ? <Img src={companyDetails.profilePicture} style={"w-32 h-32 rounded-full border-4 border-gray-500"} /> :
-                <span className='w-32 h-32 rounded-full border-4 border-gray-500 flex items-center justify-center text-4xl font-bold text-gray-500'>
-                  {companyDetails?.company?.slice(0, 1).toUpperCase()}
-                </span>
-            }
-
-            <div className='flex flex-col gap-2'>
-              <h1 className='font-bold'>
-                {companyDetails.company}
-              </h1>
-              <div className='flex items-center gap-8'>
-                <p className='flex text-gray-500 items-center gap-2'>
-                  <CircleUser /> <span className='font-semibold'>{companyDetails.followers}</span> Followers
-                </p>
-                <p className='flex text-gray-500 items-center gap-2'>
-                  <ArrowUpFromLine /> <span className='font-semibold'>{companyDetails?.sentJobs?.length}</span> Jobs Posted
-                </p>
-                <p className='flex text-gray-500 items-center gap-2'>
-                  <Users /> <span className='font-semibold'>{companyDetails.members}</span> Members
-                </p>
-              </div>
-              <div onClick={() => {
-                copy(frontendUrl + location.pathname)
-                toast.success('Copied to clipboard')
-
-              }}
-                className='flex mt-5 items-center gap-2 text-sm'
-              >
-                <Link size={20} />
-                <span className='px-2 rounded-md bg-gray-200 cursor-pointer'>
-                  {frontendUrl + location.pathname}
-                </span>
+    <main className='bg-gray-50 min-h-[calc(100vh-4.6rem)]'>
+      {/* Hero Section */}
+      <section className='bg-white shadow-sm'>
+        <div className='relative'>
+          <div className='h-64 bg-gradient-to-r from-blue-600 to-purple-600 overflow-hidden'>
+            {companyDetails.banner ? (
+              <Img src={companyDetails.banner} style="w-full h-full object-cover" />
+            ) : (
+              <div className='w-full h-full bg-gradient-to-r from-blue-600 to-purple-600' />
+            )}
+          </div>
+          
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='relative -mt-16 pb-8'>
+              <div className='flex flex-col sm:flex-row items-start sm:items-end gap-6'>
+                <div className='flex-shrink-0'>
+                  {companyDetails.profilePicture ? (
+                    <Img src={companyDetails.profilePicture} style="w-32 h-32 rounded-2xl border-4 border-white shadow-lg bg-white" />
+                  ) : (
+                    <div className='w-32 h-32 rounded-2xl border-4 border-white shadow-lg bg-white flex items-center justify-center text-4xl font-bold text-gray-600'>
+                      {companyDetails?.company?.slice(0, 1).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                
+                <div className='flex-1 min-w-0'>
+                  <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between'>
+                    <div>
+                      <h1 className='text-3xl font-bold text-gray-900 mb-2'>
+                        {companyDetails.company}
+                      </h1>
+                      <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-4'>
+                        <div className='flex items-center gap-2'>
+                          <CircleUser className='w-4 h-4' />
+                          <span className='font-semibold'>{companyDetails.followers}</span> Followers
+                        </div>
+                        <div className='flex items-center gap-2'>
+                          <Briefcase className='w-4 h-4' />
+                          <span className='font-semibold'>{companyDetails?.sentJobs?.length || 0}</span> Jobs Posted
+                        </div>
+                        <div className='flex items-center gap-2'>
+                          <Users className='w-4 h-4' />
+                          <span className='font-semibold'>{companyDetails.members || '50-200'}</span> Employees
+                        </div>
+                        {companyDetails?.industry && (
+                          <div className='flex items-center gap-2'>
+                            <Building2 className='w-4 h-4' />
+                            <span>{companyDetails.industry}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className='flex items-center gap-3'>
+                      <span
+                        onClick={() => {
+                          copy(frontendUrl + location.pathname)
+                          toast.success('Link copied to clipboard!')
+                        }}
+                        className='cursor-pointer flex items-center gap-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
+                      >
+                        <Link className='w-4 h-4' />
+                        Share
+                      </span>
+                      
+                      {id !== userData?.authId && (
+                        <span
+                          onClick={followUnfollow}
+                          disabled={followLoading}
+                          className={`cursor-pointer flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${
+                            isFollowing 
+                              ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' 
+                              : 'bg-blue-600 text-white hover:bg-blue-700'
+                          }`}
+                        >
+                          {followLoading ? (
+                            'Loading...'
+                          ) : isFollowing ? (
+                            <>
+                              <Heart className='w-4 h-4 fill-current' />
+                              Following
+                            </>
+                          ) : (
+                            <>
+                              <Heart className='w-4 h-4' />
+                              Follow
+                            </>
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div>
-            <button
-              onClick={followUnfollow}
-              disabled={followLoading}
-              className={`follow-btn mr-20 ${id === userData?.authId ? "hidden" : ""} `}
-            >
-              {followLoading ? 'Loading...' : isFollowing ? 'Unfollow' : 'Follow'}
-            </button>
           </div>
         </div>
       </section>
       <section>
         {/* Navigation Bar */}
-        <nav className='p-3 border-b border-gray-300'>
+        <nav className='p-3 border-b border-gray-300 w-[90%] mx-auto'>
           <ul className='flex items-center gap-10'>
-            <li className={` cursor-pointer ${activeTab === 'jobs' && "underline"} underline-offset-8  font-semibold text-lg`}
+            <li className={`cursor-pointer ${activeTab === 'overview' && "underline"} underline-offset-8 font-semibold text-lg hover:text-blue-600 transition-colors`}
+              onClick={() => setActiveTab('overview')}
+            >
+              Overview
+            </li>
+            <li className={`cursor-pointer ${activeTab === 'jobs' && "underline"} underline-offset-8 font-semibold text-lg hover:text-blue-600 transition-colors`}
               onClick={() => setActiveTab('jobs')}
             >
               Jobs
             </li>
-            <li className={` cursor-pointer ${activeTab === 'reviews' && "underline"} underline-offset-8  font-semibold text-lg`}
+            <li className={`cursor-pointer ${activeTab === 'reviews' && "underline"} underline-offset-8 font-semibold text-lg hover:text-blue-600 transition-colors`}
               onClick={() => setActiveTab('reviews')}
             >
               Reviews
@@ -247,18 +837,25 @@ const CompanyProfile = () => {
           </ul>
         </nav>
       </section>
-      <section className='min-h-[100vh] w-full flex gap-8'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        <div className='flex flex-col lg:flex-row gap-8'>
         <div className='w-full'>
-          {activeTab === 'jobs' ? <CompanyJobs /> : <CompanyReviews />}
+          {activeTab === 'overview' ? (
+            <CompanyOverview companyDetails={companyDetails} />
+          ) : activeTab === 'jobs' ? (
+            <CompanyJobs />
+          ) : (
+            <CompanyReviews companyId={id} />
+          )}
         </div>
 
-        <aside className="w-[50%] bg-white border-l border-slate-200 overflow-y-auto shadow-lg">
-          <div className="sticky top-0 bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)] px-6 py-6 z-10">
+        <aside className="lg:w-80 bg-white rounded-lg border border-gray-200 shadow-sm h-fit">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-6 rounded-t-lg">
             <div className="flex items-center gap-3">
               <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                 <Building2 className="w-6 h-6 text-white" />
               </div>
-              <h2 className="font-bold text-xl text-white">Company Profile</h2>
+              <h2 className="font-bold text-xl text-white">Information</h2>
             </div>
           </div>
 
@@ -380,7 +977,8 @@ const CompanyProfile = () => {
             </div>
           </div>
         </aside>
-      </section>
+        </div>
+      </div>
     </main>
   )
 }

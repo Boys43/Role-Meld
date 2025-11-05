@@ -28,6 +28,7 @@ const CategoryJobs = lazy(() => import("./pages/CategoryJobs"));
 const BlogsDetails = lazy(() => import("./pages/BlogsDetails"));
 const EditBlog = lazy(() => import("./pages/EditBlog"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
+const Categories = lazy(() => import("./pages/Categories"));
 
 // 🔒 Admin-only route
 export const AdminRoute = ({ children }) => {
@@ -86,17 +87,18 @@ const App = () => {
       duration: 800,
       once: true,
     });
-  }, []);  
+  }, []);
 
   return (
 
-    <>
+    <div className="flex flex-col min-h-screen">
       <ToastContainer
+        className="toastify-container"
         position="bottom-right"
         autoClose={3000}
         hideProgressBar
         newestOnTop={false}
-        closeOnClick={false}
+        closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable
@@ -104,8 +106,10 @@ const App = () => {
         theme="light"
         transition={Bounce}
       />
-      <Suspense fallback={<Loading />}>
+      <div>
         <Navbar />
+      </div>
+      <div className="flex flex-1 flex-col">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -139,15 +143,16 @@ const App = () => {
           <Route path="/company-profile/:id" element={<CompanyProfile />} />
           <Route path="/help-center" element={<HelpCenter />} />
           <Route path="/find-jobs" element={<FindJobs />} />
+          <Route path="/categories" element={<Categories />} />
           <Route path="/test" element={<Test />} />
           <Route path="/followed-accounts" element={<FollowedAccounts />} />
           <Route path="/category-jobs" element={<CategoryJobs />} />
           <Route path="/blogdetails/:slug" element={<BlogsDetails />} />
         </Routes>
-        <ChatBotBubble />
-        <Footer />
-      </Suspense>
-    </>
+      </div>
+      <ChatBotBubble />
+      <Footer />
+    </div>
   );
 };
 

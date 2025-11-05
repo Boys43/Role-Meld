@@ -5,8 +5,9 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import assets from '../assets/assets';
 import NotFound404 from './NotFound404';
+import { FaBlogger } from 'react-icons/fa';
 
-const BlogsSection = ({ className }) => {
+const BlogsSection = ({ className, limit = 4 }) => {
   const { backendUrl } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [blogs, setBlogs] = useState([])
@@ -35,15 +36,23 @@ const BlogsSection = ({ className }) => {
   }
 
   return (
-    <section className={`w-full grid ${className} items-center gap-4`}>
-      {blogs.length > 0 ? blogs?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // newest first
-        .slice(0, 4) 
-        .map((blog, index) => (
-          <BlogCard key={index} blog={blog} />
-        )) :
-        <NotFound404 margin={"mt-10"} value={"No Recent Blogs"} />
-      }
-    </section>
+    <>
+      <h1 className="flex flex-col justify-center w-full items-center mb-8">
+        <span className="font-bold flex items-center gap-2">
+          <FaBlogger className=" text-[var(--primary-color)] my-4" /> Latest <span className="text-[var(--primary-color)]">Blogs</span>
+        </span>
+        <span className='text-gray-600 text-lg'>2025 blogs live - {blogs.filter(blog => new Date(blog.createdAt).toDateString() === new Date().toDateString()).length} uploaded today </span>
+      </h1>
+      <section className={`w-full grid ${className} items-center gap-4`}>
+        {blogs.length > 0 ? blogs?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // newest first
+          .slice(0, {limit})
+          .map((blog, index) => (
+            <BlogCard key={index} blog={blog} />
+          )) :
+          <NotFound404 margin={"mt-10"} value={"No Recent Blogs"} />
+        }
+      </section>
+    </>
   )
 }
 
