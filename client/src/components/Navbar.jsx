@@ -20,7 +20,7 @@ const USER_NAV_LINKS = [
   { to: "/help-center", icon: HelpCircle, label: "Help Center" },
 ];
 
-const Navbar = () => {
+const Navbar = ({ className }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isLoggedIn, loading, backendUrl, setIsLoggedIn, setUserData, userData } =
@@ -249,15 +249,15 @@ const Navbar = () => {
         <div
           className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
         >
-          <span className={`w-2.5 h-2.5 rounded-full ${userData?.isActive? "bg-green-500": "bg-red-500"} animate-pulse`}></span>
-          <span className={`text-sm font-medium ${userData?.isActive? "text-green-500": "text-red-500"}`}>
+          <span className={`w-2.5 h-2.5 rounded-full ${userData?.isActive ? "bg-green-500" : "bg-red-500"} animate-pulse`}></span>
+          <span className={`text-sm font-medium ${userData?.isActive ? "text-green-500" : "text-red-500"}`}>
             {userData?.isActive ?
               "Active" :
               "InActive"}
           </span>
         </div>
 
-        {userData?.profileScore === 100 && userData?.reviewStatus === "underReview"  ?
+        {userData?.profileScore === 100 && userData?.reviewStatus === "underReview" ?
           <div
             className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
           >
@@ -342,7 +342,7 @@ const Navbar = () => {
             <p className="text-sm font-semibold text-gray-800">
               {userData?.name}
             </p>
-            <span className="text-sm text-gray-500">{userData?.role === "recruiter" ? "Employer": "Job Seeker"}</span>
+            <span className="text-sm text-gray-500">{userData?.role === "recruiter" ? "Employer" : "Job Seeker"}</span>
           </div>
           <ul className="py-2 flex flex-col">
             <li
@@ -378,25 +378,26 @@ const Navbar = () => {
     <div className="flex items-center gap-6">
       <NavLink
         to={"/login"}
-        className="font-medium text-sm text-[var(--primary-color)] transition-colors duration-200"
+        className="font-medium text-sm transition-colors duration-200"
         onClick={() => setIsMenuOpen(false)}
       >
-        Log In
+        Login
       </NavLink>
       <NavLink
         to={"/register"}
-        className="px-4 py-1 font-medium border border-[var(--primary-color)] text-white bg-[var(--primary-color)] text-sm rounded-lg hover:bg-white hover:text-[var(--primary-color)] transition-colors duration-200"
         onClick={() => setIsMenuOpen(false)}
       >
-        Sign Up
+        <button>
+          Post a job
+        </button>
       </NavLink>
     </div>
   );
 
   // --- Main Render ---
   return (
-    <nav className="bg-white max-w-7xl mx-auto py-2 border-b border-gray-200">
-      <div className="flex items-center h-16 px-4 justify-between">
+    <nav className={`max-w-6xl mx-auto relative z-999 ${className}`}>
+      <div className="flex items-center px-4 justify-between">
         {/* Left Section - Logo and Desktop Links */}
         <div className="flex items-center gap-10">
           <NavLink to={"/"}>

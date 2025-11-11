@@ -28,6 +28,10 @@ import 'swiper/css/autoplay';
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Navbar from "../components/Navbar";
+import { HiDocument } from "react-icons/hi";
+import { Bell, Code, FileText, Icon, Timer } from "lucide-react";
+import { Briefcase, Palette, PenTool, Headphones } from "lucide-react";
 
 const Home = () => {
   // Auto Scroll to Top
@@ -61,77 +65,97 @@ const Home = () => {
 
   return (
     <>
-      <main className="w-[95vw] mx-auto">
-        <section className="relative grid grid-cols-2 max-h-[500px] p-8 w-full rounded-2xl overflow-hidden">
-          {/* Main Content */}
-          <div className="relative z-20 pt-10">
-            <div className="mb-4">
-              <span className="text-gray-600 text-lg">12k jobs in </span>
-              <span className="text-gray-800 font-semibold text-lg">200 locations</span>
+      <main className="">
+        <section className={`bg-cover bg-center w-full relative p-8 w-full`} style={{ backgroundImage: `url(${assets.hero})`, overflow: 'hidden' }}>
+          <Navbar />
+          <div className="max-w-6xl flex flex-col items-center mx-auto grid grid-cols-2">
+            {/* Main Content */}
+            <div className="relative z-20">
+              <div className="mb-4">
+                <span className="text-gray-600 text-lg">12k jobs in </span>
+                <span className="text-gray-800 font-semibold text-lg">200 locations</span>
+              </div>
+
+              <span className="text-4xl md:text-5xl font-semibold text-gray-800 leading-tight">
+                Your <span className="text-[var(--primary-color)]">Talents</span> is just a<br />
+                search away!
+              </span>
+
+              <Suspense fallback={<div>Loading...</div>}>
+                <div className="my-4">
+                  <Search />
+                </div>
+              </Suspense>
+
+              <div className="mt-6">
+                <span className="text-gray-600 text-sm">Popular Searches: </span>
+                <span className="text-[var(--primary-color)] text-sm">Experimentation, Marketing Manager</span>
+              </div>
             </div>
+            <Marquee direction="up" pauseOnHover speed={60} className="w-1/2">
+              <div className="flex flex-col h-[500px] justify-between">
+                <div className="ml-w-96 bg-[#f9a37f]/90 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}>
+                  <span className="text-gray-600 text-sm">California</span>
+                  <h5 className="text-black font-semibold text-lg">Customer Success Manager</h5>
+                </div>
+                <div className="ml-w-96 bg-[#f9a37f]/90 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}>
+                  <span className="text-gray-600 text-sm">California</span>
+                  <h5 className="text-black font-semibold text-lg">Customer Success Manager</h5>
+                </div>
+                <div className="mr-10 w-96 bg-[#f46b99]/90 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Data%20Engineer')}>
+                  <span className="text-gray-600 text-sm">California</span>
+                  <h5 className="text-black font-semibold text-lg">Data Engineer</h5>
+                </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6 leading-tight">
-              Your <span className="text-teal-600">Talents</span> is just a<br />
-              search away!
-            </h1>
+                <div className="ml-10 w-96 bg-[#f9d71c]/90 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Designer')}>
+                  <span className="text-gray-600 text-sm">California</span>
+                  <h5 className="text-black font-semibold text-lg">Designer</h5>
+                </div>
+              </div>
+            </Marquee>
+          </div>
 
-            <Suspense fallback={<div>Loading...</div>}>
-              <Search />
-            </Suspense>
-
-            <div className="mt-6">
-              <span className="text-gray-600 text-sm">Popular Searches: </span>
-              <span className="text-teal-600 text-sm">Experimentation, Marketing Manager</span>
+        </section>
+        <section className="py-4 md:py-8 lg:py-12 max-w-6xl mx-auto border-b border-gray-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 z-0">
+          <div className="flex items-center gap-4 ">
+            <div className="p-5 inline-flex rounded-full bg-[var(--accent-color)]">
+              <FileText />
+            </div>
+            <div className="flex flex-col gap-2">
+              <h4 className="text-md font-semibold">
+                Create your resume
+              </h4>
+              <p className="text-sm text-gray-600">
+                Upload your resume and let employers find you
+              </p>
             </div>
           </div>
-          <Marquee direction="up" pauseOnHover speed={60} className="w-1/2">
-            <div className="flex flex-col gap-6">
-              <div className="ml-10 w-96 bg-[#f9a37f]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}>
-                <span className="text-gray-600 text-sm">California</span>
-                <h5 className="text-black font-semibold text-lg">Customer Success Manager</h5>
-              </div>
-              <div className="mr-10 w-96 bg-[#f46b99]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Data%20Engineer')}>
-                <span className="text-gray-600 text-sm">California</span>
-                <h5 className="text-black font-semibold text-lg">Data Engineer</h5>
-              </div>
-              <div className="ml-10 w-96 bg-[#f49ec4]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Marketing%20Manager')}>
-                <span className="text-gray-600 text-sm">California</span>
-                <h5 className="text-black font-semibold text-lg">Marketing Manager</h5>
-              </div>
-              <div className="mr-10 w-96 bg-[#f9d71c]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Designer')}>
-                <span className="text-gray-600 text-sm">California</span>
-                <h5 className="text-black font-semibold text-lg">Designer</h5>
-              </div>
-              <div className="ml-10 w-96 bg-[#c6f19f]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Software%20Engineer')}>
-                <span className="text-gray-600 text-sm">California</span>
-                <h5 className="text-black font-semibold text-lg">Software Engineer</h5>
-              </div>
-              <div className="mr-10 w-96 bg-[#f9a37f]/50 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Software%20Engineer')}>
-                <span className="text-gray-600 text-sm">California</span>
-                <h5 className="text-black font-semibold text-lg">Software Engineer</h5>
-              </div>
+          <div className="flex items-center gap-4 ">
+            <div className="p-5 inline-flex rounded-full bg-[var(--accent-color)]">
+              <Timer />
             </div>
-          </Marquee>
-        </section>
-        <section className="border z-0 rounded-2xl p-4 mt-4 shadow-xl">
-          <Marquee className="z-0" pauseOnHover>
-            <div className="flex flex-wrap items-center gap-10 md:gap-20 lg:gap-30 w-full mr-10 md:mr-20 lg:mr-30">
-              <Img src={assets.nt} style="w-20" />
-              <Img src={assets.am} style="w-20" />
-              <Img src={assets.sm} style="w-20" />
-              <Img src={assets.apple} style="w-20" />
-              <Img src={assets.tcs} style="w-15" />
-              <Img src={assets.mt} style="w-20" />
-              <Img src={assets.fb} style="w-20" />
-              <Img src={assets.nt} style="w-20" />
-              <Img src={assets.am} style="w-20" />
-              <Img src={assets.sm} style="w-20" />
-              <Img src={assets.apple} style="w-20" />
-              <Img src={assets.tcs} style="w-15" />
-              <Img src={assets.mt} style="w-20" />
-              <Img src={assets.fb} style="w-20 mr-10 lg:mr-15" />
+            <div className="flex flex-col gap-2">
+              <h4 className="text-md font-semibold">
+                Get matched in minutes
+              </h4>
+              <p className="text-sm text-gray-600">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              </p>
             </div>
-          </Marquee>
+          </div>
+          <div className="flex items-center gap-4 ">
+            <div className="p-5 inline-flex rounded-full bg-[var(--accent-color)]">
+              <Bell />
+            </div>
+            <div className="flex flex-col gap-2">
+              <h4 className="text-md font-semibold">
+                Never miss an opportunity
+              </h4>
+              <p className="text-sm text-gray-600">
+                Never miss an opportunity to apply for jobs
+              </p>
+            </div>
+          </div>
         </section>
         {/* Popular Categories Section */}
         <section className="py-16 bg-white">
@@ -142,42 +166,95 @@ const Home = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {categories.length > 0 && categories.slice(0, 6).map((cat, index) => {
-                let Icon;
-                switch (cat.name) {
-                  case "IT & Software": Icon = MdComputer; break;
-                  case "Digital Marketing": Icon = MdCampaign; break;
-                  case "Design & Creative": Icon = MdDesignServices; break;
-                  case "Finance & Accounting": Icon = MdAccountBalance; break;
-                  case "Human Resources": Icon = MdPeople; break;
-                  case "Sales & Business Development": Icon = MdBusinessCenter; break;
-                  case "Engineering & Architecture": Icon = MdEngineering; break;
-                  default: Icon = MdComputer;
-                }
-
-                return (
-                  <div 
-                    key={index}
-                    onClick={() => navigate('/category-jobs?category=' + encodeURIComponent(cat.name))}
-                    className="group bg-gray-50 hover:bg-gray-100 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-md"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Icon size={24} className="text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 mb-1">{cat.name}</h3>
-                        <p className="text-gray-500 text-sm">{cat.subcategories?.length || 0} jobs</p>
-                      </div>
-                    </div>
+              <div
+                onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Development & IT'))}
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg border-gray-200 border"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Code size={24} className="text-white" />
                   </div>
-                );
-              })}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Development & IT</h4>
+                    <p className="text-gray-500 text-sm">16 jobs</p>
+                  </div>
+                </div>
+              </div>
+              <div
+                onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Marketing & Sales'))}
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg border-gray-200 border"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Briefcase size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Marketing & Sales</h4>
+                    <p className="text-gray-500 text-sm">4 jobs</p>
+                  </div>
+                </div>
+              </div>
+              <div
+                onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Design & Creative'))}
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg border-gray-200 border"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Palette size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Design & Creative</h4>
+                    <p className="text-gray-500 text-sm">5 jobs</p>
+                  </div>
+                </div>
+              </div>
+              <div
+                onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Writing & Translation'))}
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg border-gray-200 border"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                    <PenTool size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Writing & Translation</h4>
+                    <p className="text-gray-500 text-sm">1 jobs</p>
+                  </div>
+                </div>
+              </div>
+              <div
+                onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Customer Service'))}
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg border-gray-200 border"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Headphones size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Customer Service</h4>
+                    <p className="text-gray-500 text-sm">8 jobs</p>
+                  </div>
+                </div>
+              </div>
+              <div
+                onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Product Management'))}
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg border-gray-200 border"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Briefcase size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Product Management</h4>
+                    <p className="text-gray-500 text-sm">6 jobs</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* View All Categories Link */}
             <div className="text-center">
-              <span  
+              <span
                 onClick={() => navigate('/categories')}
                 className="text-[var(--primary-color)] cursor-pointer hover:text-[var(--primary-color)] font-medium text-sm hover:underline transition-colors"
               >

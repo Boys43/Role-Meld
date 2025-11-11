@@ -107,7 +107,7 @@ const App = () => {
         transition={Bounce}
       />
       <div>
-        <Navbar />
+        <Navbar className={location.pathname === "/" && "hidden"} />
       </div>
       <div className="flex flex-1 flex-col">
         <Routes>

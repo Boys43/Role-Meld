@@ -1,14 +1,14 @@
 @import 'tailwindcss';
 
 * {
-  font-family: "Poppins", sans-serif;
+  font-family: "Inter", sans-serif;
   box-sizing: border-box;
 }
 
 :root {
-  --primary-color: #009689;
-  --secondary-color: #007456;
-  --accent-color: #ecf2ff;
+  --primary-color: #007456;
+  --secondary-color: #005d45;
+  --accent-color: #f2f8f7;
   --text-color: #4d4d4d;
 }
 
@@ -52,34 +52,25 @@ body {
 
 
 button {
-  padding: 0.4rem 0.7rem;
-  /* More balanced padding */
+  padding: 0.5rem 1.7rem;
   justify-content: center;
+
+  border-radius: 2rem;
   
   align-items: center;
   gap: 0.5rem;
-  /* Space for icons + text */
-
-  border-radius: 0.4rem;
-  /* Softer rounded edges */
-  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.5px;
 
   background: var(--primary-color);
-  color: white;
-  border: none;
+    color: white;
+    border: none;
   outline: none;
   cursor: pointer;
-
-  box-shadow: 0 4px 10px rgba(114, 14, 158, 0.25);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 button:hover {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  box-shadow: 0 6px 14px rgba(114, 14, 158, 0.35);
-  transform: translateY(-2px);
+  background-color: #005d45;
 }
 
 button:active {

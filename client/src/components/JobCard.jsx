@@ -33,7 +33,7 @@ const JobCard = ({ e }) => {
     // --- Main Render ---
 
     return (
-        <li className='p-6 min-w-[300px] cursor-pointer border border-gray-200 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between gap-4'
+        <li className='p-6 min-w-[300px] cursor-pointer border border-gray-200 bg-white rounded-xl hover:shadow-lg shadow-black/5 transition-all duration-300 flex flex-col justify-between gap-4'
             onClick={() =>
                 navigate('/jobDetails/' + e._id)
             }
@@ -44,11 +44,11 @@ const JobCard = ({ e }) => {
                     <div className='flex items-center gap-4'>
                         {e?.companyProfile ? (
                             <Img
-                                style="w-14 h-14 rounded-lg object-cover border border-gray-100 flex-shrink-0"
+                                style="w-14 h-14 rounded-full object-cover border border-gray-100 flex-shrink-0"
                                 src={e?.companyProfile}
                             />
                         ) : (
-                            <div className="w-14 h-14 rounded-lg border border-gray-300 flex items-center justify-center bg-gray-100 text-[var(--primary-color)] font-bold text-xl flex-shrink-0"
+                            <div className="w-14 h-14 rounded-full border border-gray-300 flex items-center justify-center bg-gray-100 text-[var(--primary-color)] font-bold text-xl flex-shrink-0"
                                 onClick={(e) => {
                                     e.stopPropagation()
                                     navigate('/company-profile/' + e?.postedBy)
@@ -60,11 +60,11 @@ const JobCard = ({ e }) => {
 
                         {/* Company Name & Followers */}
                         <div>
-                            <h4 className='font-semibold text-lg text-gray-800'>
-                                {e?.company || "..."}
+                            <h4 className='font-semibold text-lg text-gray-800 line-clamp-1'>
+                                {e?.title || "..."}
                             </h4>
-                            <span className='text-xs text-gray-500'>
-                                {e?.followers ? `${e.followers} Followers` : `View Company`}
+                            <span className='text-md text-gray-500 line-clamp-1'>
+                                by <span className='font-semibold'>{e?.company || "..."}</span> in <span className='font-semibold text-[var(--primary-color)]'>{e?.category || "..."}</span>
                             </span >
                         </div>
                     </div>
@@ -91,14 +91,16 @@ const JobCard = ({ e }) => {
 
                     {/* 2. Job Title & Salary */}
                     <div className='flex flex-col gap-2'>
-                        {/* Job Title - Bold and Prominent */}
-                        <h4 className='mt-2 line-clamp-1 font-bold text-[var(--secondary-color)] leading-snug'>
-                            {e?.title || "..."}
-                        </h4>
 
                         {/* Salary Badge - Themed */}
                         <div className='flex items-center gap-2  font-semibold text-xs'>
                             {/* <DollarSign size={14} /> */}
+                            <span className='flex px-3 py-1 rounded-lg bg-[#e9e0f2] text-[#6c4cbe]'>
+                                {e?.jobType === 'full-time' ? "Full Time" : e?.jobType === 'part-time' ? "Part Time" : e?.jobType === 'contract' ? "Contract" : e?.jobType === 'internship' ? "Internship" : e?.jobType === "temporary" ? "Temporary" : null}
+                            </span>
+                            <span className='flex gap-1 items-center px-3 py-1 rounded-lg bg-[var(--accent-color)] text-[var(--primary-color)]'>
+                                <MapPin size={14} /> {e?.location || "..."}
+                            </span>
                             <span className='w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
                                 {e?.salaryType === "fixed" ? <span>
                                     <Currency amount={e?.fixedSalary} from={e?.jobsCurrency} />
@@ -106,28 +108,22 @@ const JobCard = ({ e }) => {
 
                                     <Currency amount={e?.minSalary} from={e?.jobsCurrency} /> - <Currency amount={e?.maxSalary} from={e?.jobsCurrency} /></span>}
                             </span>
-                            <span className='flex w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
-                                {e?.jobType === 'full-time' ? "Full Time" : e?.jobType === 'part-time' ? "Part Time" : e?.jobType === 'contract' ? "Contract" : e?.jobType === 'internship' ? "Internship" : e?.jobType === "temporary" ? "Temporary" : null}
-                            </span>
                         </div>
                     </div>
 
 
                     {/* 4. Footer: Actions and Timestamp */}
-                    <div className='flex mt-4 items-center justify-between pt-3 border-t border-gray-100'>
-
-                        {/* Action Buttons */}
-                        {location.pathname !== "/dashboard" && <div className='flex gap-3 items-center'>
-                            <span className='text-sm flex items-center gap-3'>
-                                <FaPaperPlane className='text-[var(--primary-color)]' />
-                                {e?.applicationMethod[0]?.toUpperCase() + e?.applicationMethod?.substring(1) || "Apply"}
-                            </span>
-                        </div>}
-
-                        {/* Time Since Posted */}
-                        <span className='flex text-xs items-center gap-1 text-gray-500'>
-                            <Clock size={14} />
-                            {timeSince(e?.createdAt)}
+                    <div className='flex mt-4 items-center justify-between pt-3'>
+                        <span>
+                            {(() => {
+                                const d = new Date(e?.applicationDeadline);
+                                const diff = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
+                                return diff > 0 ?
+                                    <div>
+                                        <span className='font-semibold text-[var(--primary-color)]'>{diff} </span> days left to apply
+                                    </div>
+                                    : 'Deadline passed';
+                            })()}
                         </span>
                     </div>
                 </div>

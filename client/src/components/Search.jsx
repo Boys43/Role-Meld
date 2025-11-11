@@ -1,4 +1,4 @@
-import { Building, SearchIcon } from "lucide-react";
+import { Building, SearchIcon, ChevronDown } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -8,7 +8,21 @@ const Search = ({ Param }) => {
   const location = useLocation()
 
   const [searchJob, setSearchJob] = useState('')
-  const [searchLocation, setSearchLocation] = useState('')
+  const [searchLocation, setSearchLocation] = useState('All Cities')
+  const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false)
+
+  const cities = [
+    'All Cities',
+    'New York',
+    'Los Angeles', 
+    'Chicago',
+    'Houston',
+    'Phoenix',
+    'Philadelphia',
+    'San Antonio',
+    'San Diego',
+    'Lahore'
+  ];
 
   useEffect(() => {
     setSearchJob(Param ?? "");
@@ -18,56 +32,80 @@ const Search = ({ Param }) => {
     if (!searchJob.trim()) return;
     e.preventDefault();
     let url = `/find-jobs?job=${encodeURIComponent(searchJob)}`;
-    if (searchLocation) {
+    if (searchLocation && searchLocation !== 'All Cities') {
       url += `&location=${encodeURIComponent(searchLocation)}`;
     }
     navigate(url);
   };
 
+  const handleLocationSelect = (city) => {
+    setSearchLocation(city);
+    setIsLocationDropdownOpen(false);
+  };
+
   return (
     <section
       id="search"
-      className={`shadow-2xl backdrop-blur-xs border-[1px] border-[var(--primary-color)] rounded-2xl ${location.pathname === '/' ? "w-[100%]" : "w-[70vw] mx-auto"}`}
+      className={`bg-white rounded-full border border-gray-200 ${location.pathname === '/' ? "w-[100%] max-w-4xl mx-auto" : "w-[70vw] mx-auto"}`}
     >
-      <form onSubmit={handleSubmit} className="flex gap-2 w-full items-center">
-        <div className={`flex w-full items-center text-[var(--primary-color)] relative`}>
+      <form onSubmit={handleSubmit} className="flex items-center p-2">
+        {/* Job Search Input */}
+        <div className="flex-1 relative">
           <SearchIcon
-            size={15}
-            className="absolute left-6 top-1/2 -translate-y-1/2"
+            size={20}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
           />
           <input
             value={searchJob}
-            required
             onChange={(e) => setSearchJob(e.target.value)}
-            className="border-3 text-sm border-transparent focus:border-[var(--primary-color)] 
-              focus:outline-none py-3 pl-14 rounded-2xl w-full transition-all"
+            className="w-full py-3 pl-12 pr-4 text-gray-700 placeholder-gray-400 bg-transparent border-none outline-none text-sm"
             type="text"
-            placeholder="Job title, keywords, or company"
+            placeholder="Jobs title or keyword"
           />
-          <span className="w-1 h-10 bg-white/35">
+        </div>
 
-          </span>
-            <div className="relative w-full">
-              <Building
-                size={15}
-                className="absolute left-6 top-1/2 -translate-y-1/2"
-              />
-              <input
-                value={searchLocation}
-                required
-                onChange={(e) => setSearchLocation(e.target.value)}
-                className="border-3 text-sm border-transparent focus:border-[var(--primary-color)] 
-              focus:outline-none py-3 pl-14 rounded-2xl w-full transition-all"
-                type="text"
-                placeholder="City, Country, Location"
-              />
+        {/* Divider */}
+        <div className="w-px h-8 bg-gray-200 mx-2"></div>
+
+        {/* Location Dropdown */}
+        <div className="relative">
+          <div 
+            className="flex items-center gap-2 px-4 py-3 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
+            onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
+          >
+            <Building size={20} className="text-gray-400" />
+            <span className="text-gray-700 text-sm min-w-[100px]">{searchLocation}</span>
+            <ChevronDown 
+              size={16} 
+              className={`text-gray-400 transition-transform ${isLocationDropdownOpen ? 'rotate-180' : ''}`} 
+            />
+          </div>
+          
+          {/* Dropdown Menu */}
+          {isLocationDropdownOpen && (
+            <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[200px]">
+              <div className="py-1 max-h-60 overflow-y-auto">
+                {cities.map((city) => (
+                  <div
+                    key={city}
+                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                    onClick={() => handleLocationSelect(city)}
+                  >
+                    {city}
+                  </div>
+                ))}
+              </div>
             </div>
+          )}
         </div>
-        <div className="p-1">
-          <button type="submit" className="flex items-center gap-3">
-            Find <FaSearch />
-          </button>
-        </div>
+
+        {/* Search Button */}
+        <button 
+          type="submit" 
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-medium text-sm transition-colors ml-2"
+        >
+          Search
+        </button>
       </form>
     </section>
   );

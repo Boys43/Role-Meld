@@ -9,6 +9,7 @@ import mt from './mt.webp'
 import not_found from './not_found.webp'
 import register_side from './register_side.webp'
 import preview_image from './preview.webp'
+import hero from './hero_img.webp'
 
 const assets = {
     apple,
@@ -21,7 +22,8 @@ const assets = {
     am,
     not_found,
     register_side,
-    preview_image
+    preview_image,
+    hero
 }
 
 export default assets;
