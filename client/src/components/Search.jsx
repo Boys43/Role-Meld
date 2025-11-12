@@ -64,9 +64,6 @@ const Search = ({ Param }) => {
           />
         </div>
 
-        {/* Divider */}
-        <div className="w-px h-8 bg-gray-200 mx-2"></div>
-
         {/* Location Dropdown */}
         <div className="relative">
           <div 

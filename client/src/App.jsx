@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import { useContext, useEffect, useState, Suspense, lazy } from "react";
 import axios from "axios";
@@ -34,6 +34,8 @@ const Categories = lazy(() => import("./pages/Categories"));
 export const AdminRoute = ({ children }) => {
   const { backendUrl, isLoggedIn } = useContext(AppContext);
   const [isAdmin, setIsAdmin] = useState(null);
+
+  const location = useLocation()
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -106,9 +108,6 @@ const App = () => {
         theme="light"
         transition={Bounce}
       />
-      <div>
-        <Navbar className={location.pathname === "/" && "hidden"} />
-      </div>
       <div className="flex flex-1 flex-col">
         <Routes>
           <Route path="/" element={<Home />} />

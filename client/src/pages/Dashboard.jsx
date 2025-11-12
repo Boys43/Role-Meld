@@ -1,6 +1,8 @@
 import React, { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import { Loader, Loader2 } from "lucide-react";
+import Navbar from "../components/Navbar";
+import Loading from "../components/Loading";
 
 // Layout
 const Sidebar = lazy(() => import("../components/Sidebar"));
@@ -33,17 +35,27 @@ const Applications = lazy(() => import("../components/Applications"));
 const Settings = lazy(() => import("../components/Settings"));
 
 const Dashboard = () => {
-    // Auto Scroll to Top
+  // Auto Scroll to Top
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [])
   const { userData } = useContext(AppContext);
-  const [activeTab, setActiveTab] = useState(
-    userData?.role === "user" ? "userdashboard" : "recruiterdashboard"
-  );
+  const [activeTab, setActiveTab] = useState("dashboard");
 
   // Map activeTab to lazy-loaded components
   const componentMap = {
+    // New modern sidebar tabs
+    dashboard: userData?.role === "user" ? ApplicantDashboard : EmployeeDashboard,
+    jobs: RecruiterJobs,
+    applicants: Applications,
+    candidates: AdminUsers,
+    package: SavedJobs,
+    messages: () => <div className="p-6"><h1 className="text-2xl font-bold">Messages</h1><p>Messages feature coming soon...</p></div>,
+    meetings: () => <div className="p-6"><h1 className="text-2xl font-bold">Meetings</h1><p>Meetings feature coming soon...</p></div>,
+    company: () => <div className="p-6"><h1 className="text-2xl font-bold">Company</h1><p>Company management coming soon...</p></div>,
+    "post-job": JobForm,
+    
+    // Legacy tabs for backward compatibility
     userdashboard: ApplicantDashboard,
     savedjobs: SavedJobs,
     "applied-jobs": AppliedJobs,
@@ -70,19 +82,20 @@ const Dashboard = () => {
     (userData?.role === "user" ? ApplicantDashboard : EmployeeDashboard);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-50">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <Suspense
-        fallback={
-          <div className="w-full h-screen flex items-center justify-center">
-            <span className="animate-spin">
-              <Loader2 size={30} />
-            </span>
-          </div>
-        }
-      >
-        <ActiveComponent setActiveTab={setActiveTab} />
-      </Suspense>
+      <div className="flex-1 ml-64">
+        <Navbar />
+        <main className="p-6">
+          <Suspense
+            fallback={
+              <Loading />
+            }
+          >
+            <ActiveComponent setActiveTab={setActiveTab} />
+          </Suspense>
+        </main>
+      </div>
     </div>
   );
 };

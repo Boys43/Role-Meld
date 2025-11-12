@@ -18,7 +18,6 @@ const Login = () => {
       {step === 1 && <div className="border hidden md:block md:w-1/2 border-l-3 border-[var(--primary-color)]">
         <img loading='lazy' src={assets.register_side} alt="Register Side" />
       </div>}
-
     </main>
   )
 }

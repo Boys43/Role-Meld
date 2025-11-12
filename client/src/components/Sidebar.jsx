@@ -1,116 +1,55 @@
 // components/Sidebar.jsx
 import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
-import { MdOutlineDashboard, MdFindInPage, MdPublish, MdRequestPage } from "react-icons/md";
-import { CiViewList } from "react-icons/ci";
-import { VscGitStashApply } from "react-icons/vsc";
-import { HiOutlineHeart } from "react-icons/hi";
-import { IoDocumentOutline, IoLockClosedOutline } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { IoMdExit } from "react-icons/io";
-import { FiMenu } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Briefcase,
+  Users,
+  UserCheck,
+  Heart,
+  MessageSquare,
+  Calendar,
+  Building2,
+  Settings,
+  LogOut,
+  ChevronLeft,
+  Plus,
+  ArrowLeft
+} from "lucide-react";
 import Img from "./Image";
-import { Blocks, Building, ChevronRight, Clock, List, Server, Settings, User, User2 } from "lucide-react";
+import { FaArrowLeft } from "react-icons/fa";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const { userData, backendUrl, setIsLoggedIn, setUserData } = useContext(AppContext);
-  const [toggleNav, setToggleNav] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // detect screen size
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // Modern navigation structure matching the image
+  const navLinks = [
+    { name: "Dashboard", key: "dashboard", icon: <LayoutDashboard size={20} /> },
+    { name: "Jobs", key: "jobs", icon: <Briefcase size={20} /> },
+    { name: "Applicants", key: "applicants", icon: <Users size={20} /> },
+    { name: "Candidates", key: "candidates", icon: <UserCheck size={20} /> },
+    { name: "Package", key: "package", icon: <Heart size={20} /> },
+    { name: "Messages", key: "messages", icon: <MessageSquare size={20} /> },
+    { name: "Meetings", key: "meetings", icon: <Calendar size={20} /> },
+    { name: "Company", key: "company", icon: <Building2 size={20} /> },
+    { name: "Settings", key: "settings", icon: <Settings size={20} /> },
+    { name: "Logout", key: "logout", icon: <LogOut size={20} /> },
+  ];
 
-  let navLinks;
-  if (userData?.role === "recruiter") {
-    navLinks = [
-      { name: "Dashboard", key: "recruiterdashboard", icon: <MdOutlineDashboard size={23} /> },
-      { name: "Applications", key: "applications", icon: <MdFindInPage size={23} /> },
-      { name: "My Profile", key: "recruiter-profile", icon: <CgProfile size={23} /> },
-      {
-        name: "Jobs",
-        key: "listed-jobs",
-        icon: <CiViewList size={23} />,
-        subTabs: [
-          { name: "Publish New Job", key: "list-job", icon: <MdPublish size={23} /> },
-          { name: "Listed Jobs", key: "listed-jobs", icon: <List size={23} /> },
-        ],
-      },
-    ];
-  } else {
-    navLinks = [
-      { name: "Dashboard", key: "userdashboard", icon: <MdOutlineDashboard size={23} /> },
-      { name: "Saved Jobs", key: "savedjobs", icon: <HiOutlineHeart size={23} /> },
-      { name: "Applied Jobs", key: "applied-jobs", icon: <VscGitStashApply size={23} /> },
-      { name: "My Resumes", key: "my-resume", icon: <IoDocumentOutline size={23} /> },
-      { name: "My Profile", key: "my-profile", icon: <CgProfile size={23} /> },
-      { name: "Change Password", key: "change-password", icon: <IoLockClosedOutline size={23} /> },
-    ];
-  }
 
-  let assitantNavLinks = []
-
-  if (userData?.isAssistant) {
-    if (userData?.assistantRoles?.includes("blog")) {
-      assitantNavLinks.push({
-        name: 'Admin Blogs', key: "blog-management", icon: <Blocks size={23} />,
-        subTabs: [
-          { name: "Blog Management", key: "blog-management" },
-          { name: "Add Blog", key: "add-blog" },
-        ]
-      },);
+  const handleNavClick = (key) => {
+    if (key === "logout") {
+      logout();
+    } else {
+      setActiveTab(key);
     }
-
-    if (userData?.assistantRoles?.includes("emp-profile-req")) {
-      assitantNavLinks.push(
-        { name: 'Admin Emplyee Profile Requests', key: "employee-profile-requests", icon: <MdRequestPage size={23} /> },
-      );
-    }
-
-    if (userData?.assistantRoles?.includes("emp-approval-req")) {
-      assitantNavLinks.push(
-        { name: 'Admin Employee Requests', key: "employee-requests", icon: <Clock size={23} /> },
-      );
-    }
-
-    if (userData?.assistantRoles?.includes("user")) {
-      assitantNavLinks.push(
-        { name: 'Admin Users', key: "users", icon: <User size={23} /> },
-      );
-    }
-
-    if (userData?.assistantRoles?.includes("employee")) {
-      assitantNavLinks.push(
-        { name: 'Admin Employees', key: "recruiters", icon: <User2 size={23} /> },
-      );
-    }
-
-    if (userData?.assistantRoles?.includes("job-requests")) {
-      assitantNavLinks.push(
-        { name: 'Job Requests', key: "job-requests", icon: <Building size={23} /> },
-      );
-    }
-    
-    if (userData?.assistantRoles?.includes("cat-manager")) {
-      assitantNavLinks.push(
-        { name: 'Category Manager', key: "cat-manager", icon: <Server size={23} /> },
-      );
-    }
-  }
-
-
-  axios.defaults.withCredentials = true;
+  };
 
   const logout = async () => {
     try {
@@ -129,247 +68,64 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
   };
 
   return (
-    <>
-      {/* Mobile Hamburger */}
-      {isMobile && (
-        <button
-          className="lg:hidden fixed top-4 left-4 z-50 bg-[var(--primary-color)] text-white p-2 rounded"
-          onClick={() => setToggleNav(!toggleNav)}
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} bg-white border-r border-gray-200 h-screen flex flex-col transition-all duration-300 fixed left-0 top-0 z-50`}>
+      {/* Logo Section */}
+      <div className="flex items-center justify-between p-4">
+        <div className="flex items-center gap-3">
+          <Img src={'/logo.webp'} />
+        </div>
+
+        <span
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="w-full flex items-center justify-center p-2 hover:text-[var(--primary-color)] rounded-lg transition-colors"
         >
-          <FiMenu size={22} />
-        </button>
-      )}
+          <FaArrowLeft className={`text-gray-600 transition-transform ${isCollapsed ? 'rotate-180' : ''}`} />
+        </span>
+      </div>
 
-      {/* Sidebar */}
-      <aside
-        className={`${toggleNav ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-          ${toggleNav ? (isMobile ? "w-64" : "w-20") : "w-72"} 
-          fixed text-sm lg:sticky top-0 left-0 bg-[var(--secondary-color)] 
-          transition-all duration-300 border-r border-[var(--primary-color)] 
-          text-white flex flex-col justify-between z-40 h-screen `}
-      >
-        {/* User Info */}
-        <div className="flex flex-col gap-4 py-4 pl-4 relative">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden">
-              {userData?.profilePicture ? (
-                <Img
-                  src={userData?.profilePicture}
-                  style={"w-full h-full object-cover"}
-                />
-              ) : (
-                <span>{userData?.name?.charAt(0).toUpperCase()}</span>
-              )}
-            </div>
-            {!toggleNav && <h4 className="font-bold whitespace-nowrap">{userData?.name}</h4>}
-          </div>
-
-          {/* Navigation */}
-          <ul className="flex flex-col gap-2 mt-4">
-            {navLinks.map((e, i) => {
-              const isParentActive =
-                activeTab === e.key || (e.subTabs && e.subTabs.some((sub) => sub.key === activeTab));
-              return (
-                <li key={i} className="relative group">
-                  {/* Parent tab */}
-                  <span
-                    onClick={(event) => {
-                      event.preventDefault();
-                      if (e.key === "applications" && userData?.reviewStatus !== "approved") {
-                        toast.warn("Your account is not approved yet.");
-                        return;
-                      }
-
-                      if (isMobile && e.subTabs) {
-                        setActiveTab(e.key);
-                      } else if (!e.subTabs) {
-                        setActiveTab(e.key);
-                      }
-                    }}
-                    className={`px-3 py-2 rounded-xl cursor-pointer flex items-center justify-between gap-3 hover:bg-[var(--primary-color)]/10 transition 
-                      ${isParentActive ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)] shadow  px-1" : ""}
-                    `}
-                  >
-                    <span className="flex items-center gap-3">
-                      {e.icon}
-                      {!toggleNav && <h4 className="whitespace-nowrap">{e.name}</h4>}
-                    </span>
-                    {!toggleNav && <span>
-                      {e.subTabs && <ChevronRight />}
-                    </span>}
-                  </span>
-
-                  {/* Floating submenu (desktop only) */}
-                  {e.subTabs && !isMobile && (
-                    <div className="absolute top-0 left-full ml-1 hidden group-hover:flex flex-col bg-[var(--secondary-color)] border border-[var(--primary-color)] rounded-xl shadow-lg p-2 z-50 min-w-[230px] animate-fadeIn">
-                      {e.subTabs.map((sub, idx) => (
-                        <span
-                          key={idx}
-                          onClick={(event) => {
-                            event.preventDefault();
-                            if (
-                              (sub.key === "list-job" || sub.key === "listed-jobs") &&
-                              userData?.reviewStatus !== "approved"
-                            ) {
-                              toast.warn("Your account is not approved yet.");
-                              return;
-                            }
-                            setActiveTab(sub.key);
-                          }}
-                          className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition flex items-center gap-2
-                            ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
-                          `}
-                        >
-                          {sub.icon}
-                          {sub.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Inline submenu (mobile only) */}
-                  {e.subTabs && isMobile && activeTab === e.key && (
-                    <div className="flex flex-col gap-1 pl-6 mt-1">
-                      {e.subTabs.map((sub, idx) => (
-                        <span
-                          key={idx}
-                          onClick={() => setActiveTab(sub.key)}
-                          className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition 
-                            ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
-                          `}
-                        >
-                          {sub.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </li>
-              );
-            })}
-
-
-            {/* Assistant Panel */}
-            {userData?.isAssistant &&
-              <>
-                <span className="pl-3 mt-4 text-gray-300">Assistant Panel</span>
-                {assitantNavLinks.map((e, i) => {
-                  const isParentActive =
-                    activeTab === e.key || (e.subTabs && e.subTabs.some((sub) => sub.key === activeTab));
-                  return (
-                    <li key={i} className="relative group">
-                      {/* Parent tab */}
-                      <span
-                        onClick={(event) => {
-                          event.preventDefault();
-                          if (e.key === "applications" && userData?.reviewStatus !== "approved") {
-                            toast.warn("Your account is not approved yet.");
-                            return;
-                          }
-
-                          if (isMobile && e.subTabs) {
-                            setActiveTab(e.key);
-                          } else if (!e.subTabs) {
-                            setActiveTab(e.key);
-                          }
-                        }}
-                        className={`px-3 py-2 rounded-xl cursor-pointer flex items-center justify-between gap-3 hover:bg-[var(--primary-color)]/10 transition 
-                      ${isParentActive ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)] shadow  px-1" : ""}
-                    `}
-                      >
-                        <span className="flex items-center gap-3">
-                          {e.icon}
-                          {!toggleNav && <h4 className="whitespace-nowrap">{e.name}</h4>}
-                        </span>
-                        {!toggleNav && <span>
-                          {e.subTabs && <ChevronRight />}
-                        </span>}
-                      </span>
-
-                      {/* Floating submenu (desktop only) */}
-                      {e.subTabs && !isMobile && (
-                        <div className="absolute top-0 left-full ml-1 hidden group-hover:flex flex-col bg-[var(--secondary-color)] border border-[var(--primary-color)] rounded-xl shadow-lg p-2 z-50 min-w-[230px] animate-fadeIn">
-                          {e.subTabs.map((sub, idx) => (
-                            <span
-                              key={idx}
-                              onClick={(event) => {
-                                event.preventDefault();
-                                if (
-                                  (sub.key === "list-job" || sub.key === "listed-jobs") &&
-                                  userData?.reviewStatus !== "approved"
-                                ) {
-                                  toast.warn("Your account is not approved yet.");
-                                  return;
-                                }
-                                setActiveTab(sub.key);
-                              }}
-                              className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition flex items-center gap-2
-                            ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
-                          `}
-                            >
-                              {sub.icon}
-                              {sub.name}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Inline submenu (mobile only) */}
-                      {e.subTabs && isMobile && activeTab === e.key && (
-                        <div className="flex flex-col gap-1 pl-6 mt-1">
-                          {e.subTabs.map((sub, idx) => (
-                            <span
-                              key={idx}
-                              onClick={() => setActiveTab(sub.key)}
-                              className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition 
-                            ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
-                            `}
-                            >
-                              {sub.name}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </li>
-                  );
-                })}
-              </>
-            }
-
-            <span className="pl-3 mt-4 text-gray-300">Settings</span>
-
-            <li>
+      {/* Navigation Links */}
+      <nav className="flex-1 px-7 py-4">
+        <ul className="space-y-1">
+          {navLinks.map((item) => (
+            <li key={item.key}>
               <span
-                onClick={() => setActiveTab('settings')}
-                className="px-3 py-2 rounded-xl cursor-pointer bg-gray-500 hover:bg-gray-600 flex items-center gap-3 text-white transition border border-gray-500"
+                onClick={() => handleNavClick(item.key)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-3xl text-left transition-colors ${activeTab === item.key
+                  ? 'bg-[var(--accent-color)] text-[var(--primary-color)]'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
               >
-                <Settings /> {!toggleNav && <h4 className="whitespace-nowrap">Settings</h4>}
+                <span className="flex-shrink-0">
+                  {item.icon}
+                </span>
+                {!isCollapsed && (
+                  <span className="font-medium">{item.name}</span>
+                )}
               </span>
             </li>
-          </ul>
+          ))}
+        </ul>
+      </nav>
 
-          {/* Toggle Button (Desktop only) */}
-          {!isMobile && (
-            <span
-              onClick={() => setToggleNav(!toggleNav)}
-              className="bg-[var(--primary-color)] absolute top-5 right-[-1rem] rounded-full w-8 h-8 flex items-center justify-center text-white cursor-pointer"
+      {/* Bottom Section - Post Job CTA */}
+      {!isCollapsed && (
+        <div className="p-4 border-t border-gray-200">
+          <div className="bg-gray-50 rounded-lg p-4 text-center">
+            <h3 className="font-semibold text-gray-900 mb-2">Post your first job!</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Your first 2 job postings for just $50 each.
+            </p>
+            <button
+              onClick={() => setActiveTab('post-job')}
+              className="w-full bg-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors flex items-center justify-center gap-2"
             >
-              {toggleNav ? <FaChevronRight /> : <FaChevronLeft />}
-            </span>
-          )}
+              <Plus size={16} />
+              Post a job
+            </button>
+          </div>
         </div>
-      </aside>
-
-      {/* Small fade animation */}
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateX(8px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-in-out;
-        }
-      `}</style>
-    </>
+      )}
+    </div>
   );
 };
 
