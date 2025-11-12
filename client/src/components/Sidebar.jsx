@@ -84,7 +84,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-7 py-4">
+      <nav className={`${isCollapsed ? 'flex-1 px-2' : 'flex-1 px-7'} py-4`}>
         <ul className="space-y-1">
           {navLinks.map((item) => (
             <li key={item.key}>
@@ -107,24 +107,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         </ul>
       </nav>
 
-      {/* Bottom Section - Post Job CTA */}
-      {!isCollapsed && (
-        <div className="p-4 border-t border-gray-200">
-          <div className="bg-gray-50 rounded-lg p-4 text-center">
-            <h3 className="font-semibold text-gray-900 mb-2">Post your first job!</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Your first 2 job postings for just $50 each.
-            </p>
-            <button
-              onClick={() => setActiveTab('post-job')}
-              className="w-full bg-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors flex items-center justify-center gap-2"
-            >
-              <Plus size={16} />
-              Post a job
-            </button>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };

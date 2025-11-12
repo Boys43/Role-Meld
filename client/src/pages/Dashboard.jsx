@@ -3,6 +3,7 @@ import { AppContext } from "../context/AppContext";
 import { Loader, Loader2 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Loading from "../components/Loading";
+import FooterBottom from "../components/FooterBottom";
 
 // Layout
 const Sidebar = lazy(() => import("../components/Sidebar"));
@@ -95,6 +96,7 @@ const Dashboard = () => {
             <ActiveComponent setActiveTab={setActiveTab} />
           </Suspense>
         </main>
+        <FooterBottom />
       </div>
     </div>
   );
