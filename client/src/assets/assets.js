@@ -10,6 +10,10 @@ import not_found from './not_found.webp'
 import register_side from './register_side.webp'
 import preview_image from './preview.webp'
 import hero from './hero_img.webp'
+import wave_bg from './wave-bg.svg'
+import girl_illus from './girl-illus.svg'
+import post_job from './post_job.webp'
+import wave_2 from './wave_2.svg'
 
 const assets = {
     apple,
@@ -23,7 +27,11 @@ const assets = {
     not_found,
     register_side,
     preview_image,
-    hero
+    hero,
+    wave_bg,
+    girl_illus,
+    post_job,
+    wave_2
 }
 
 export default assets;

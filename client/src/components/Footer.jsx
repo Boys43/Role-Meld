@@ -1,92 +1,163 @@
-import { Facebook, Twitter, Linkedin, Instagram, Youtube } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Instagram, Youtube, Monitor, ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 const Footer = () => {
+  const [openSections, setOpenSections] = useState({});
+
+  const toggleSection = (section) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
   return (
     <footer className="bg-white border-t border-gray-200 text-gray-700">
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-10">
-          {/* About Us */}
-          <div className="lg:col-span-2">
-            <h4 className="text-lg font-semibold mb-4">About Us</h4>
-            <p className="text-sm text-gray-500 mb-6 leading-relaxed">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mauris
-              risus, lobortis a commodo at, varius sit amet ipsum.
-            </p>
-            <p className="text-sm mb-1">
-              <span className="font-semibold">T.</span> (00) 658 54332
-            </p>
-            <p className="text-sm">
-              <span className="font-semibold">E.</span>{" "}
-              <a href="mailto:hello@uxper.co" className="hover:underline">
-                hello@uxper.co
-              </a>
-            </p>
+      {/* Newsletter Pre-footer */}
+      <div className="border border-gray-200 py-12">
+        <div className="max-w-6xl px-5 mx-auto grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-6">
+          {/* Left side - Icon, Title and Description */}
+          <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+            <div className="p-3 bg-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
+              <Monitor className="w-10 h-10 text-white" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-2xl font-semibold text-gray-900 mb-1">
+                Subscribe to our newsletter
+              </span>
+              <span className="text-md text-gray-600">
+                We'll keep you updated with the best new jobs.
+              </span>
+            </div>
           </div>
 
-          {/* Company */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Company</h4>
-            <ul className="space-y-2 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-gray-800">About us</a></li>
-              <li><a href="#" className="hover:text-gray-800">Career</a></li>
-              <li><a href="#" className="hover:text-gray-800">Blogs</a></li>
-              <li><a href="#" className="hover:text-gray-800">FAQ’s</a></li>
-              <li><a href="#" className="hover:text-gray-800">Contact</a></li>
-            </ul>
+          {/* Right side - Email Input and Subscribe Button */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent text-sm"
+            />
+            <button className="px-6 py-3 bg-[var(--primary-color)] text-white font-medium rounded-lg hover:bg-[var(--secondary-color)] transition-colors whitespace-nowrap">
+              Subscribe
+            </button>
           </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Services</h4>
-            <ul className="space-y-2 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-gray-800">Jobs</a></li>
-              <li><a href="#" className="hover:text-gray-800">Companies</a></li>
-              <li><a href="#" className="hover:text-gray-800">Candidates</a></li>
-              <li><a href="#" className="hover:text-gray-800">Pricing</a></li>
-              <li><a href="#" className="hover:text-gray-800">Partner</a></li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Support</h4>
-            <ul className="space-y-2 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-gray-800">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-gray-800">Terms of Use</a></li>
-              <li><a href="#" className="hover:text-gray-800">Help Center</a></li>
-              <li><a href="#" className="hover:text-gray-800">Updates</a></li>
-              <li><a href="#" className="hover:text-gray-800">Documentation</a></li>
-            </ul>
-          </div>
-
-          {/* Connect */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Connect</h4>
-            <ul className="space-y-3 text-sm text-gray-500">
-              <li className="flex items-center gap-2">
-                <Linkedin size={16} /> Linkedin
-              </li>
-              <li className="flex items-center gap-2">
-                <Twitter size={16} /> Twitter
-              </li>
-              <li className="flex items-center gap-2">
-                <Facebook size={16} /> Facebook
-              </li>
-              <li className="flex items-center gap-2">
-                <Instagram size={16} /> Instagram
-              </li>
-              <li className="flex items-center gap-2">
-                <Youtube size={16} /> Youtube
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Bottom Line */}
-        <div className="border-t border-gray-200 mt-10 pt-6 text-center text-sm text-gray-500">
-          © 2025 Uxper. All Right Reserved.
         </div>
       </div>
+      <div>
+        <div className="max-w-6xl px-5 mx-auto">
+          <div className="py-12 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-10">
+            {/* About Us */}
+            <div className="lg:col-span-2">
+              <h4 className="text-lg font-semibold mb-4">About Us</h4>
+              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mauris
+                risus, lobortis a commodo at, varius sit amet ipsum.
+              </p>
+              <p className="text-sm mb-1">
+                <span className="font-semibold">T.</span> (00) 658 54332
+              </p>
+              <p className="text-sm">
+                <span className="font-semibold">E.</span>{" "}
+                <a href="mailto:hello@uxper.co" className="hover:underline">
+                  hello@uxper.co
+                </a>
+              </p>
+            </div>
+
+            {/* Company */}
+            <div>
+              <span 
+                onClick={() => toggleSection('company')}
+                className="flex md:hidden items-center justify-between w-full text-lg font-semibold mb-4 text-left"
+              >
+                Company
+                <ChevronDown className={`w-5 h-5 transition-transform ${openSections.company ? 'rotate-180' : ''}`} />
+              </span>
+              <h4 className="hidden md:block text-lg font-semibold mb-4">Company</h4>
+              <ul className={`space-y-4 text-sm text-gray-500 transition-all duration-300 ease-in-out overflow-hidden ${openSections.company ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} md:max-h-none md:opacity-100 md:block`}>
+                <li><a href="#" className="hover:text-gray-800">About us</a></li>
+                <li><a href="#" className="hover:text-gray-800">Career</a></li>
+                <li><a href="#" className="hover:text-gray-800">Blogs</a></li>
+                <li><a href="#" className="hover:text-gray-800">FAQ's</a></li>
+                <li><a href="#" className="hover:text-gray-800">Contact</a></li>
+              </ul>
+            </div>
+
+            {/* Services */}
+            <div>
+              <span 
+                onClick={() => toggleSection('services')}
+                className="flex md:hidden items-center justify-between w-full text-lg font-semibold mb-4 text-left"
+              >
+                Services
+                <ChevronDown className={`w-5 h-5 transition-transform ${openSections.services ? 'rotate-180' : ''}`} />
+              </span>
+              <h4 className="hidden md:block text-lg font-semibold mb-4">Services</h4>
+              <ul className={`space-y-4 text-sm text-gray-500 transition-all duration-300 ease-in-out overflow-hidden ${openSections.services ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} md:max-h-none md:opacity-100 md:block`}>
+                <li><a href="#" className="hover:text-gray-800">Jobs</a></li>
+                <li><a href="#" className="hover:text-gray-800">Companies</a></li>
+                <li><a href="#" className="hover:text-gray-800">Candidates</a></li>
+                <li><a href="#" className="hover:text-gray-800">Pricing</a></li>
+                <li><a href="#" className="hover:text-gray-800">Partner</a></li>
+              </ul>
+            </div>
+
+            {/* Support */}
+            <div>
+              <span 
+                onClick={() => toggleSection('support')}
+                className="flex md:hidden items-center justify-between w-full text-lg font-semibold mb-4 text-left"
+              >
+                Support
+                <ChevronDown className={`w-5 h-5 transition-transform ${openSections.support ? 'rotate-180' : ''}`} />
+              </span>
+              <h4 className="hidden md:block text-lg font-semibold mb-4">Support</h4>
+              <ul className={`space-y-4 text-sm text-gray-500 transition-all duration-300 ease-in-out overflow-hidden ${openSections.support ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} md:max-h-none md:opacity-100 md:block`}>
+                <li><a href="#" className="hover:text-gray-800">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-gray-800">Terms of Use</a></li>
+                <li><a href="#" className="hover:text-gray-800">Help Center</a></li>
+                <li><a href="#" className="hover:text-gray-800">Updates</a></li>
+                <li><a href="#" className="hover:text-gray-800">Documentation</a></li>
+              </ul>
+            </div>
+
+            {/* Connect */}
+            <div>
+              <span 
+                onClick={() => toggleSection('connect')}
+                className="flex md:hidden items-center justify-between w-full text-lg font-semibold mb-4 text-left"
+              >
+                Connect
+                <ChevronDown className={`w-5 h-5 transition-transform ${openSections.connect ? 'rotate-180' : ''}`} />
+              </span>
+              <h4 className="hidden md:block text-lg font-semibold mb-4">Connect</h4>
+              <ul className={`space-y-4 text-sm text-gray-500 transition-all duration-300 ease-in-out overflow-hidden ${openSections.connect ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} md:max-h-none md:opacity-100 md:block`}>
+                <li className="flex items-center gap-2">
+                  <Linkedin size={20} /> Linkedin
+                </li>
+                <li className="flex items-center gap-2">
+                  <Twitter size={20} /> Twitter
+                </li>
+                <li className="flex items-center gap-2">
+                  <Facebook size={20} /> Facebook
+                </li>
+                <li className="flex items-center gap-2">
+                  <Instagram size={20} /> Instagram
+                </li>
+                <li className="flex items-center gap-2">
+                  <Youtube size={20} /> Youtube
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Line */}
+          <div className="border-t border-gray-200 py-7 text-sm text-gray-500">
+            © 2025 Uxper. All Right Reserved.
+          </div>
+        </div>
+      </div>
+
     </footer>
   );
 };

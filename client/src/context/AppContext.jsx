@@ -16,6 +16,20 @@ export const AppContextProvider = (props) => {
   const [jobId, setJobId] = useState("");
   const [savedJobs, setSavedJobs] = useState(() => new Set());
 
+  // follow company 
+  async function followUnfollowCompany(companyId) {
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/user/follow-unfollow-acc`, { companyId })
+      if (data.success) {
+        toast.success(data.message)
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong")
+    }
+  }
+
   axios.defaults.withCredentials = true;
 
   const sendNotification = async (user, subject, type) => {
@@ -140,7 +154,8 @@ export const AppContextProvider = (props) => {
     savedJobs,
     setSavedJobs,
     toggleSaveJob,
-    sendNotification
+    sendNotification,
+    followUnfollowCompany
   }), [
     frontendUrl,
     backendUrl,
@@ -149,7 +164,8 @@ export const AppContextProvider = (props) => {
     profileScore,
     loading,
     jobId,
-    savedJobs
+    savedJobs,
+    followUnfollowCompany
   ]);
 
   return (

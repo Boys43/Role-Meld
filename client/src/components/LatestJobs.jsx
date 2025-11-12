@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation } from "swiper/modules";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
+import "swiper/css/pagination";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -104,7 +105,103 @@ const LatestJobs = () => {
     return slides;
   };
 
-  const jobSlides = groupJobsIntoSlides(latestJobs);
+
+  // Static data for 5 job cards
+  const staticJobs = [
+    {
+      _id: "1",
+      title: "Senior Frontend Developer",
+      company: "TechCorp Solutions",
+      location: "New York, NY",
+      jobType: "full-time",
+      jobsCurrency: "PKR",
+      locationType: "hybrid",
+      salaryType: "fixed",
+      fixedSalary: 80000,
+      applicationDeadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+      postedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+      category: "Technology",
+      subCategory: "Web Development",
+      description: "Join our dynamic team as a Senior Frontend Developer and help build cutting-edge web applications.",
+      skills: ["React", "JavaScript", "TypeScript", "CSS", "HTML"],
+      experience: "3-5 years"
+    },
+    {
+      _id: "2",
+      title: "Digital Marketing Manager",
+      jobsCurrency: "PKR",
+      company: "Creative Agency Inc",
+      location: "Los Angeles, CA",
+      jobType: "full-time",
+      locationType: "remote",
+      minSalary: 60000,
+      maxSalary: 85000,
+      applicationDeadline: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000), // 25 days from now
+      postedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+      category: "Marketing",
+      subCategory: "Digital Marketing",
+      description: "Lead our digital marketing initiatives and drive brand growth across multiple channels.",
+      skills: ["SEO", "Google Ads", "Social Media", "Analytics", "Content Marketing"],
+      experience: "2-4 years"
+    },
+    {
+      _id: "3",
+      title: "UX/UI Designer",
+      jobsCurrency: "PKR",
+      company: "Design Studio Pro",
+      location: "San Francisco, CA",
+      jobType: "contract",
+      locationType: "on-site",
+      minSalary: 70000,
+      maxSalary: 95000,
+      applicationDeadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days from now
+      postedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+      category: "Design",
+      subCategory: "UI/UX Design",
+      description: "Create intuitive and beautiful user experiences for our diverse portfolio of clients.",
+      skills: ["Figma", "Adobe XD", "Sketch", "Prototyping", "User Research"],
+      experience: "2-3 years"
+    },
+    {
+      _id: "4",
+      title: "Data Scientist",
+      jobsCurrency: "PKR",
+      company: "Analytics Hub",
+      location: "Chicago, IL",
+      jobType: "full-time",
+      locationType: "hybrid",
+      minSalary: 90000,
+      maxSalary: 130000,
+      applicationDeadline: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000), // 35 days from now
+      postedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+      category: "Technology",
+      subCategory: "Data Science",
+      description: "Analyze complex datasets and build predictive models to drive business insights.",
+      skills: ["Python", "R", "SQL", "Machine Learning", "Statistics"],
+      experience: "3-6 years"
+    },
+    {
+      _id: "5",
+      title: "Product Manager",
+      jobsCurrency: "PKR",
+      company: "Innovation Labs",
+      location: "Austin, TX",
+      jobType: "full-time",
+      locationType: "remote",
+      minSalary: 85000,
+      maxSalary: 115000,
+      applicationDeadline: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000), // 28 days from now
+      postedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
+      category: "Management",
+      subCategory: "Product Management",
+      description: "Drive product strategy and execution for our innovative software solutions.",
+      skills: ["Product Strategy", "Agile", "User Stories", "Analytics", "Leadership"],
+      experience: "4-7 years"
+    }
+  ];
+
+  const jobSlides = groupJobsIntoSlides(staticJobs);
+
 
   if (loading) {
     return (
@@ -129,31 +226,44 @@ const LatestJobs = () => {
     );
   }
 
-  if (latestJobs.length === 0) {
+  if (staticJobs.length === 0) {
     return (
-      <div className="text-center py-16">
-        <div className="text-gray-400 mb-4">
-          <MdWork size={64} className="mx-auto" />
+      <>
+        <h1 className="flex flex-col justify-center w-full items-center mb-8">
+          <span className="font-bold flex items-center gap-2">
+            Latest <span className="text-[var(--primary-color)]">Jobs</span>
+          </span>
+          <span className='text-gray-600 text-lg'>2025 jobs live - {latestJobs.filter(job => new Date(job.createdAt).toDateString() === new Date().toDateString()).length} uploaded today </span>
+        </h1>
+        <div className="text-center py-16">
+          <div className="text-gray-400 mb-4">
+            <MdWork size={64} className="mx-auto" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">No jobs found</h3>
+          <p className="text-gray-600">Check back later for new opportunities.</p>
         </div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">No jobs found</h3>
-        <p className="text-gray-600">Check back later for new opportunities.</p>
-      </div>
+      </>
     );
   }
 
   return (
     <>
-      <h1 className="flex flex-col justify-center w-full items-center mb-8">
-        <span className="font-bold flex items-center gap-2">
-          <MdWork className=" text-[var(--primary-color)] my-4" /> Latest <span className="text-[var(--primary-color)]">Jobs</span>
+      <div className="flex flex-col justify-center w-full items-center mb-8">
+        <span className="text-xl md:text-2xl lg:text-3xl font-semibold">
+          Latest jobs
         </span>
         <span className='text-gray-600 text-lg'>2025 jobs live - {latestJobs.filter(job => new Date(job.createdAt).toDateString() === new Date().toDateString()).length} uploaded today </span>
-      </h1>
+      </div>
       <div className="relative max-w-5xl mx-auto">
         <Swiper
-          modules={[Autoplay, Navigation]}
+          modules={[Autoplay, Navigation, Pagination]}
           spaceBetween={24}
-          slidesPerView={1}
+          slidesPerView={1} // default
+          breakpoints={{
+            768: { // md
+              slidesPerView: 1, // still 1 slide per view
+            },
+          }}
           autoplay={{
             delay: 4000,
             disableOnInteraction: false,
@@ -162,11 +272,17 @@ const LatestJobs = () => {
             nextEl: '.swiper-button-next-custom',
             prevEl: '.swiper-button-prev-custom',
           }}
-          className="pb-12"
+          pagination={{
+            clickable: true,
+            el: '.swiper-pagination-custom',
+            bulletClass: 'swiper-pagination-bullet-custom',
+            bulletActiveClass: 'swiper-pagination-bullet-active-custom',
+          }}
+          className="pb-16"
         >
           {jobSlides.map((slideJobs, slideIndex) => (
             <SwiperSlide key={slideIndex}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 grid-rows-2 md:grid-cols-2 gap-6">
                 {slideJobs.map((job, jobIndex) => (
                   <div key={job._id || jobIndex} className="w-full">
                     <JobCard e={job} />
@@ -177,19 +293,9 @@ const LatestJobs = () => {
           ))}
         </Swiper>
 
-        {/* Custom Navigation Buttons */}
-        <div className="flex justify-center gap-4 mt-8">
-          <span className="swiper-button-prev-custom w-10 h-10 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </span>
-          <span className="swiper-button-next-custom w-10 h-10 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </span>
-        </div>
+
+        {/* Custom Pagination Dots */}
+        <div className="swiper-pagination-custom flex justify-center gap-2 mt-6"></div>
       </div>
     </>
   );

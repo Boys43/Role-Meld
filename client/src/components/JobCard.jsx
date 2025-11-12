@@ -91,9 +91,8 @@ const JobCard = ({ e }) => {
 
                     {/* 2. Job Title & Salary */}
                     <div className='flex flex-col gap-2'>
-
                         {/* Salary Badge - Themed */}
-                        <div className='flex items-center gap-2  font-semibold text-xs'>
+                        <div className='flex flex-wrap items-center gap-2 font-semibold text-xs'>
                             {/* <DollarSign size={14} /> */}
                             <span className='flex px-3 py-1 rounded-lg bg-[#e9e0f2] text-[#6c4cbe]'>
                                 {e?.jobType === 'full-time' ? "Full Time" : e?.jobType === 'part-time' ? "Part Time" : e?.jobType === 'contract' ? "Contract" : e?.jobType === 'internship' ? "Internship" : e?.jobType === "temporary" ? "Temporary" : null}
@@ -105,12 +104,10 @@ const JobCard = ({ e }) => {
                                 {e?.salaryType === "fixed" ? <span>
                                     <Currency amount={e?.fixedSalary} from={e?.jobsCurrency} />
                                 </span> : <span>
-
                                     <Currency amount={e?.minSalary} from={e?.jobsCurrency} /> - <Currency amount={e?.maxSalary} from={e?.jobsCurrency} /></span>}
                             </span>
                         </div>
                     </div>
-
 
                     {/* 4. Footer: Actions and Timestamp */}
                     <div className='flex mt-4 items-center justify-between pt-3'>

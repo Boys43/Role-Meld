@@ -56,15 +56,15 @@ button {
   justify-content: center;
 
   border-radius: 2rem;
-  
+
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
   letter-spacing: 0.5px;
 
   background: var(--primary-color);
-    color: white;
-    border: none;
+  color: white;
+  border: none;
   outline: none;
   cursor: pointer;
 }
@@ -79,6 +79,43 @@ button:active {
 }
 
 button:disabled {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.secondary-btn {
+  padding: 0.6rem 1.5rem;
+  justify-content: center;
+  text-align: center;
+
+  border-radius: 2rem;
+  cursor: pointer;
+
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.secondary-btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 6px rgba(114, 14, 158, 0.25);
+}
+
+.secondary-btn:disabled {
   background: #ccc;
   color: #666;
   cursor: not-allowed;
@@ -124,10 +161,40 @@ select {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fadeIn {
   animation: fadeIn 0.15s ease-in-out;
+}
+
+/* Custom Swiper Pagination Dots */
+.swiper-pagination-bullet-custom,
+.testimonials-pagination-bullet-custom {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 1;
+}
+
+.swiper-pagination-bullet-custom:hover,
+.testimonials-pagination-bullet-custom:hover {
+  background-color: #9ca3af;
+  transform: scale(1.1);
+}
+
+.swiper-pagination-bullet-active-custom,
+.testimonials-pagination-bullet-active-custom {
+  background-color: var(--primary-color);
 }

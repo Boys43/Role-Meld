@@ -46,9 +46,9 @@ const Search = ({ Param }) => {
   return (
     <section
       id="search"
-      className={`bg-white rounded-full border border-gray-200 ${location.pathname === '/' ? "w-[100%] max-w-4xl mx-auto" : "w-[70vw] mx-auto"}`}
+      className={`bg-white rounded-4xl border border-gray-200 ${location.pathname === '/' ? "w-[100%] max-w-4xl mx-auto" : "w-[70vw] mx-auto"}`}
     >
-      <form onSubmit={handleSubmit} className="flex items-center p-2">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 p-6 md:p-2">
         {/* Job Search Input */}
         <div className="flex-1 relative">
           <SearchIcon
@@ -102,7 +102,7 @@ const Search = ({ Param }) => {
         {/* Search Button */}
         <button 
           type="submit" 
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-medium text-sm transition-colors ml-2"
+          className="mt-4 md:mt-0 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-medium text-sm transition-colors ml-2"
         >
           Search
         </button>

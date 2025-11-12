@@ -12,7 +12,7 @@ const Currency = ({ amount, from }) => {
     const convert = async () => {
       try {
         const res = await fetch(
-          `https://v6.exchangerate-api.com/v6/fca65323df0cc46a8920b15f/latest/${from}`
+          `https://v6.exchangerate-api.com/v6/b3c9345a1ea0fdc1e88d609d/latest/${from}`
         );
         const data = await res.json();
 
