@@ -39,10 +39,13 @@ const AdminJobs = () => {
   }
 
   return (
-    <div className='p-6 bg-white rounded-lg w-full overflow-y-auto h-[calc(100vh-4.6rem)]'>
-      <h1 className='text-2xl font-bold mb-4 flex items-center gap-2'>
-        <FaUsers /> Jobs
+    <div className='bg-white rounded-lg w-full overflow-y-auto h-[calc(100vh-4.6rem)]'>
+      <div className='mb-6'>
+
+      <h1 className="text-xl md:text-2xl font-bold flex items-center gap-3 text-gray-800">
+        Manage Jobs
       </h1>
+      </div>
       <div className='flex p-4 shadow-lg flex-col gap-4 w-full rounded-2xl border'>
         <div className='flex justify-center gap-4 text-2xl font-bold w-full items-center bg-gradient-to-br px-10 py-4 rounded-2xl from-red-500 to-red-700 text-white'>
           <FaUsers size={32} /> {jobs.length} Jobs
@@ -53,7 +56,6 @@ const AdminJobs = () => {
             <table className="w-full text-sm text-left text-gray-700">
               <thead className="bg-gradient-to-r from-blue-600 to-blue-800 text-white sticky top-0">
                 <tr>
-                  <th className="px-6 py-3">#</th>
                   <th className="px-6 py-3">Posted At</th>
                   <th className="px-6 py-3">Salary</th>
                   <th className="px-6 py-3">Status</th>
@@ -69,7 +71,6 @@ const AdminJobs = () => {
                     className={`transition duration-200 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"
                       } hover:bg-blue-50`}
                   >
-                    <td className="px-6 py-4 font-medium">{index + 1}</td>
                     <td className="px-6 py-4">{new Date(job.postedAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4">{job.salary} $</td>
                     <td className="px-6 py-4">

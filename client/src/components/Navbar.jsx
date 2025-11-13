@@ -101,8 +101,6 @@ const Navbar = ({ className }) => {
     }
   };
 
-  // --- Effects ---
-
   // Check Admin status on login change
   useEffect(() => {
     if (isLoggedIn) {
@@ -268,7 +266,7 @@ const Navbar = ({ className }) => {
           </div> :
           null}
 
-        <div
+        {/* <div
           className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
         >
           <span className={`w-2.5 h-2.5 rounded-full bg-${color}-500 animate-pulse`}></span>
@@ -280,7 +278,7 @@ const Navbar = ({ className }) => {
           >
             Score: {score}
           </div>
-        </div>
+        </div> */}
 
         {/* Dropdown Reminder */}
         <AnimatePresence>
@@ -396,7 +394,7 @@ const Navbar = ({ className }) => {
 
   // --- Main Render ---
   return (
-    <nav className={`max-w-6xl py-5 mx-auto relative z-999 ${className}`}>
+    <nav className={`max-w-6xl w-full py-5 mx-auto relative z-999 ${className}`}>
       <div className="flex items-center px-4 justify-between">
         {/* Left Section - Logo and Desktop Links */}
         <div className={`flex items-center gap-10`}>

@@ -16,6 +16,7 @@ import { FaFilter, FaDollarSign, FaStar, FaClock, FaMapMarkerAlt, FaBriefcase } 
 import { FaClockRotateLeft } from "react-icons/fa6";
 import { MdFeaturedPlayList, MdClear } from "react-icons/md";
 import { HiAdjustments } from "react-icons/hi";
+import Navbar from '../components/Navbar'
 
 const FindJobs = () => {
     // Auto Scroll to Top
@@ -176,6 +177,7 @@ const FindJobs = () => {
 
   return (
     <>
+    <Navbar />
       <div className='min-h-[calc(100vh-4.6rem)]'>
         {/* Search Header */}
         <div className='sticky top-0 z-10 px-6 py-4'>

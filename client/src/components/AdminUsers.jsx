@@ -18,6 +18,10 @@ const AdminUsers = () => {
   const [timeFilter, setTimeFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
 
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const getUsers = async () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/user/allusers`);
@@ -89,6 +93,7 @@ const AdminUsers = () => {
     if (sortOrder === "z-a") filtered.sort((a, b) => b.name.localeCompare(a.name));
 
     setFilteredUsers(filtered);
+    setCurrentPage(1); // Reset to first page when filters change
   }, [selectedCity, selectedRole, selectedStatus, timeFilter, sortOrder, users]);
 
   // Stats
@@ -96,12 +101,20 @@ const AdminUsers = () => {
   const bannedUsers = users.filter((u) => u.isBanned).length;
   const activeUsers = totalUsers - bannedUsers;
 
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentUsers = filteredUsers.slice(startIndex, endIndex);
+  const startItem = filteredUsers.length === 0 ? 0 : startIndex + 1;
+  const endItem = Math.min(endIndex, filteredUsers.length);
+
   return (
-    <div className="p-6 bg-white rounded-xl w-full min-h-screen shadow-sm">
+    <div className="rounded-xl w-full min-h-screen border border-gray-200 p-6 rouned-lg">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold flex items-center gap-3 text-gray-800">
-          <FaUsers className="text-[var(--primary-color)]" /> Users Management
+        <h1 className="text-xl md:text-2xl font-bold flex items-center gap-3 text-gray-800 mb-3">
+          Manage Users
         </h1>
       </div>
       {/* Stats */}
@@ -121,11 +134,8 @@ const AdminUsers = () => {
       </div>
 
       {/* Filters */}
-      <div className="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
+      <div className="mb-6 rounded-lg p-4">
         <div className="flex flex-wrap gap-4 items-center">
-          <div className="flex items-center gap-2 text-gray-700 font-semibold">
-            <Filter size={18} /> Filters:
-          </div>
 
           <div className="w-full grid grid-cols-2 md:grid-cols- lg:grid-cols-4 gap-2">
             <CustomSelect
@@ -169,39 +179,37 @@ const AdminUsers = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
         <table className="w-full text-sm text-left text-gray-700">
           <thead className="bg-[var(--primary-color)] text-white uppercase text-xs tracking-wide">
             <tr>
-              <th className="px-6 py-3">#</th>
-              <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3">Email</th>
-              <th className="px-6 py-3">City</th>
-              <th className="px-6 py-3 text-center">Applied Jobs</th>
-              <th className="px-6 py-3 text-center">Status</th>
-              <th className="px-6 py-3 text-center">Actions</th>
+              <th className="px-6 py-6">Name</th>
+              <th className="px-6 py-6">Email</th>
+              <th className="px-6 py-6">City</th>
+              <th className="px-6 py-6 text-center">Applied Jobs</th>
+              <th className="px-6 py-6 text-center">Status</th>
+              <th className="px-6 py-6 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((u, i) => (
+            {currentUsers.map((u, i) => (
               <tr key={u.authId || i} className={`transition duration-200 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-blue-50`}>
-                <td className="px-6 py-4 font-medium">{i + 1}</td>
-                <td className="px-6 py-4 font-semibold text-gray-800">{u.name}</td>
-                <td className="px-6 py-4 flex items-center gap-2">
+                <td className="px-6 py-6 font-semibold text-gray-800">{u.name}</td>
+                <td className="px-6 py-6 flex items-center gap-2">
                   <Mail size={15} className="text-gray-500" /> {u.email}
                 </td>
-                <td className="px-6 py-4">{u.city || <span className="text-gray-400">N/A</span>}</td>
-                <td className="px-6 py-4 text-center">
+                <td className="px-6 py-6">{u.city || <span className="text-gray-400">N/A</span>}</td>
+                <td className="px-6 py-6 text-center">
                   <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
                     {u.appliedJobs?.length || 0}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-center">
+                <td className="px-6 py-6 text-center">
                   <span className={`px-3 py-1 text-xs rounded-full font-semibold ${u.isBanned ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
                     {u.isBanned ? "Banned" : "Active"}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-center">
+                <td className="px-6 py-6 text-center">
                   <div className="flex justify-center items-center gap-4">
                     <span onClick={() => deleteUser(u.authId)} className="cursor-pointer text-red-500 hover:text-red-700 transition" title="Delete">
                       <FaTrash size={18} />
@@ -219,9 +227,131 @@ const AdminUsers = () => {
                 </td>
               </tr>
             ))}
+            <tr>
+              <td className="py-6 px-6" colSpan={7}>
+                {filteredUsers.length > 0 && (
+                  <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
+                    {/* Items per page selector */}
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={itemsPerPage}
+                        onChange={(e) => {
+                          setItemsPerPage(Number(e.target.value));
+                          setCurrentPage(1);
+                        }}
+                        className="border border-gray-300 rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value={10}>10</option>
+                        <option value={25}>25</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                      </select>
+                      <span className="text-sm text-gray-600">
+                        {startItem} - {endItem} of {filteredUsers.length} items
+                      </span>
+                    </div>
+
+                    {/* Page navigation */}
+                    <div className="flex items-center gap-1">
+                      {/* Previous button */}
+                      <span
+                        type="button"
+                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </span>
+
+                      {/* Page numbers */}
+                      {(() => {
+                        const pages = [];
+                        const maxVisiblePages = 5;
+                        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+                        if (endPage - startPage + 1 < maxVisiblePages) {
+                          startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                        }
+
+                        // First page
+                        if (startPage > 1) {
+                          pages.push(
+                            <span
+                              key={1}
+                              onClick={() => setCurrentPage(1)}
+                              className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                            >
+                              1
+                            </span>
+                          );
+                          if (startPage > 2) {
+                            pages.push(
+                              <span key="ellipsis1" className="px-2 text-gray-500">
+                                ...
+                              </span>
+                            );
+                          }
+                        }
+
+                        // Visible pages
+                        for (let i = startPage; i <= endPage; i++) {
+                          pages.push(
+                            <span
+                              key={i}
+                              onClick={() => setCurrentPage(i)}
+                              className={`px-3 cursor-pointer py-1 text-sm border rounded-md ${currentPage === i
+                                ? "bg-[var(--primary-color)] text-white border-[var(--primary-color)]"
+                                : "border-gray-300 hover:bg-gray-50"
+                                }`}
+                            >
+                              {i}
+                            </span>
+                          );
+                        }
+
+                        // Last page
+                        if (endPage < totalPages) {
+                          if (endPage < totalPages - 1) {
+                            pages.push(
+                              <span key="ellipsis2" className="px-2 text-gray-500">
+                                ...
+                              </span>
+                            );
+                          }
+                          pages.push(
+                            <span
+                              key={totalPages}
+                              onClick={() => setCurrentPage(totalPages)}
+                              className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                            >
+                              {totalPages}
+                            </span>
+                          );
+                        }
+
+                        return pages;
+                      })()}
+
+                      {/* Next button */}
+                      <span
+                        onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+
     </div>
   );
 };

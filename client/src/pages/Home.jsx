@@ -9,7 +9,6 @@ const BlogsSection = lazy(() => import("../components/BlogsSection"));
 const LeaveReview = lazy(() => import("../components/LeaveReview"));
 import { useNavigate } from "react-router-dom";
 
-
 // React Icons
 import { MdMessage } from "react-icons/md";
 
@@ -56,7 +55,7 @@ const Home = () => {
   return (
     <>
       <main className="">
-        <section className={`h-160  bg-cover bg-center relative p-3 pt-0 md:p-6 md:pt-0 lg:pt-0 lg:p-8 w-full`} style={{ backgroundImage: `url(${assets.hero})`, overflow: 'hidden' }}>
+        <section className={`h-160 bg-cover bg-center relative p-3 pt-0 md:p-6 md:pt-0 lg:pt-0 lg:p-8 w-full`} style={{ backgroundImage: `url(${assets.hero})`, overflow: 'hidden' }}>
           <Navbar />
           <div className="max-w-6xl h-full items-center mx-auto grid grid-cols-1 md:grid-cols-2">
             {/* Main Content */}
@@ -82,9 +81,9 @@ const Home = () => {
                 <span className="text-[var(--primary-color)] text-md">Experimentation, Marketing Manager</span>
               </div>
             </div>
-            <div className="hidden md:block h-[500px]">
+            <div className="hidden md:flex">
               <Marquee direction="up" pauseOnHover speed={60} className="">
-                <div className="flex flex-col h-[500px] justify-around">
+                <div className="flex flex-col gap-15 justify-around">
                   <div className="ml-10 w-96 bg-[#f9a37f]/90 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}>
                     <span className="text-gray-600 text-sm">California</span>
                     <h5 className="text-black font-semibold text-lg">Customer Success Manager</h5>
@@ -97,7 +96,6 @@ const Home = () => {
                     <span className="text-gray-600 text-sm">California</span>
                     <h5 className="text-black font-semibold text-lg">Data Engineer</h5>
                   </div>
-
                   <div className="mr-10 w-96 bg-[#f9d71c]/90 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Designer')}>
                     <span className="text-gray-600 text-sm">California</span>
                     <h5 className="text-black font-semibold text-lg">Designer</h5>

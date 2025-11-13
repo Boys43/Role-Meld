@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement } from 'chart.js/auto'
 import Img from './Image';
-import { Loader, Loader2 } from 'lucide-react';
+import { Loader } from 'lucide-react';
 ChartJS.register(LineElement, ArcElement, Legend, PointElement, CategoryScale, LinearScale, BarElement);
 
 const EmployeeDashboard = () => {

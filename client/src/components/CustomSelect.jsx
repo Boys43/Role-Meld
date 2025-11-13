@@ -28,7 +28,7 @@ const CustomSelect = ({ name, value, onChange, children, className }) => {
       {/* Display Button */}
       <div
         onClick={() => setOpen(!open)}
-        className={`w-full flex items-center justify-between px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer hover:border-[var(--primary-color)] transition-colors duration-200 ${
+        className={`w-full flex items-center justify-between px-6 py-3 border border-gray-300 rounded-md cursor-pointer hover:border-[var(--primary-color)] transition-colors duration-200 ${
           open ? "ring-2 ring-[var(--primary-color)] border-[var(--primary-color)]" : ""
         }`}
       >

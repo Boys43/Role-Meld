@@ -7,12 +7,22 @@ import { MdCancel } from "react-icons/md";
 import { FaClock } from "react-icons/fa";
 import { FaRegListAlt } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
-import { Trash } from 'lucide-react';
+import { Trash, Filter, Search } from 'lucide-react';
+import CustomSelect from './CustomSelect';
 
 const RecruiterJobs = () => {
     const { userData, backendUrl } = useContext(AppContext);
     const [filter, setFilter] = useState('all')
     const [jobs, setJobs] = useState([]);
+
+    // Filter states
+    const [selectedStatus, setSelectedStatus] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortOrder, setSortOrder] = useState('newest');
+
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const getJobs = async () => {
         try {
             const { data } = await axios.post(`${backendUrl}/api/jobs/getcompanyjobsbyid`, { id: userData.authId });
@@ -47,92 +57,129 @@ const RecruiterJobs = () => {
     const pendingJobs = jobs.filter(job => job.approved === "pending");
 
     const filteredJobs = jobs.filter((job) => {
-        return filter === 'all' ? true : job.approved === filter;
+        // Apply status filter
+        let statusMatch = true;
+        if (selectedStatus) {
+            statusMatch = job.approved === selectedStatus;
+        } else if (filter !== 'all') {
+            statusMatch = job.approved === filter;
+        }
+
+        // Apply search filter
+        const searchMatch = searchTerm === '' ||
+            job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            job.category.toLowerCase().includes(searchTerm.toLowerCase());
+
+        return statusMatch && searchMatch;
+    }).sort((a, b) => {
+        // Apply sorting
+        if (sortOrder === 'newest') return new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date);
+        if (sortOrder === 'oldest') return new Date(a.createdAt || a.date) - new Date(b.createdAt || b.date);
+        if (sortOrder === 'a-z') return a.title.localeCompare(b.title);
+        if (sortOrder === 'z-a') return b.title.localeCompare(a.title);
+        return 0;
     });
 
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentJobs = filteredJobs.slice(startIndex, endIndex);
+    const startItem = filteredJobs.length === 0 ? 0 : startIndex + 1;
+    const endItem = Math.min(endIndex, filteredJobs.length);
+
+    // Reset to first page when filters change
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedStatus, searchTerm, sortOrder]);
+
     return (
-        <div className='w-full p-6 min-h-screen rounded-lg overflow-y-auto '>
-            <div className='p-4 bg-white border rounded-lg shadow-lg'>
-                <h1 className='flex my-4 font-semibold gap-3 items-center'>
-                    <FaRegListAlt className='text-[var(--primary-color)]' /> Listed Jobs
-                </h1>
-                <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-center'>
-                    <div className='flex shadow-xl flex-1 flex-col items-center gap-2 py-4 px-8 border-2 border-green-500 bg-green-300 rounded-2xl'>
-                        <h3 className='font-bold text-shadow-md text-white flex items-center gap-2'
-                        >
-                            Approved Jobs<FaCircleCheck className='text-green-600' />
-                        </h3>
-                        <h6>
-                            {approvedJobs.length > 0 ? <div className='bg-white text-green-600 font-bold px-4 py-1 rounded-full'>{approvedJobs.length}</div> : <div className='bg-white text-green-600 font-bold px-4 py-1 rounded-full'>0</div>}
-                        </h6>
+        <div className='w-full min-h-screen rounded-lg overflow-y-auto border border-gray-200 p-6 rouned-lg'>
+            <div className='rounded-lg'>
+                <div className="flex items-center justify-between mb-6">
+                    <h1 className="text-xl md:text-2xl font-bold flex items-center gap-3 text-gray-800 mb-3">
+                        Manage Jobs
+                    </h1>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                    <div className="p-5 bg-gradient-to-br from-green-100 to-green-50 rounded-lg shadow-md border border-green-200">
+                        <p className="text-gray-600 font-medium">Approved Jobs</p>
+                        <h2 className="text-3xl font-bold text-green-600 mt-1">{approvedJobs.length}</h2>
                     </div>
-
-                    <div className='flex flex-1 shadow-xl flex-col items-center gap-2 py-4 px-8 border-2 border-red-500 bg-red-300 rounded-2xl'
-                    >
-                        <h3 className='font-bold text-shadow-md text-white flex items-center gap-2'>
-                            Rejected Jobs<MdCancel className='text-red-600' />
-                        </h3>
-                        <h5>
-                            {rejectedJobs.length > 0 ? <div className='bg-white text-red-600 font-bold px-4 py-1 rounded-full'>{rejectedJobs.length}</div> : <div className='bg-white text-red-600 font-bold px-4 py-1 rounded-full'>0</div>}
-                        </h5>
+                    <div className="p-5 bg-gradient-to-br from-red-100 to-red-50 rounded-lg shadow-md border border-red-200">
+                        <p className="text-gray-600 font-medium">Rejected Jobs</p>
+                        <h2 className="text-3xl font-bold text-red-600 mt-1">{rejectedJobs.length}</h2>
                     </div>
-
-                    <div className='flex flex-1 shadow-xl flex-col items-center gap-2 py-4 px-8 border-2 border-yellow-500 bg-yellow-300 rounded-2xl'>
-                        <h3 className='font-bold text-shadow-md text-white flex items-center gap-2'>
-                            Pending Jobs<FaClock className='text-yellow-600' />
-                        </h3>
-                        <h5>
-                            {pendingJobs.length > 0 ? <div className='bg-white text-yellow-600 font-bold px-4 py-1 rounded-full'>{pendingJobs.length}</div> : <div className='bg-white text-yellow-600 font-bold px-4 py-1 rounded-full'>0</div>}
-                        </h5>
+                    <div className="p-5 bg-gradient-to-br from-yellow-100 to-yellow-50 rounded-lg shadow-md border border-yellow-200">
+                        <p className="text-gray-600 font-medium">Pending Jobs</p>
+                        <h2 className="text-3xl font-bold text-yellow-600 mt-1">{pendingJobs.length}</h2>
                     </div>
                 </div>
 
-                <div className='flex items-center flex-wrap p-4 border border-gray-300 mt-4 rounded-md gap-4'>
-                    <span className='px-4 py-1 bg-white border border-gray-300 rounded-md'
-                        onClick={() => setFilter('all')}
-                    >
-                        All Job <span className='ml-2 font-bold text-[var(--primary-color)]'>{jobs.length}</span>
-                    </span>
-                    <span className='px-4 py-1 bg-green-200 border border-green-500 rounded-md'
-                        onClick={() => setFilter('approved')}
-                    >
-                        Approved <span className='ml-2 font-bold text-green-500'>{jobs.filter(job => job.approved === 'approved').length}</span>
-                    </span>
-                    <span className='px-4 py-1 bg-red-200 border border-red-500 rounded-md'
-                        onClick={() => setFilter('rejected')}
-                    >
-                        Rejected <span className='ml-2 font-bold text-red-500'>{jobs.filter(job => job.status === 'rejected').length}</span>
-                    </span>
-                    <span className='px-4 py-1 bg-yellow-200 border border-yellow-500 rounded-md'
-                        onClick={() => setFilter('pending')}
-                    >
-                        Pending <span className='ml-2 font-bold text-yellow-500'>{jobs.filter(job => job.status === 'pending').length}</span>
-                    </span>
+                {/* Filter Bar */}
+                <div className="mb-6">
+                    <div className="flex flex-wrap gap-4 items-center">
+                        <div className="w-full flex justify-between gap-4">
+                            {/* Status Filter */}
+                            <div className='flex gap-4'>
+                                <CustomSelect
+                                    value={selectedStatus}
+                                    onChange={(e) => setSelectedStatus(e.target.value)}
+                                >
+                                    <option value="">All Status</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="rejected">Rejected</option>
+                                    <option value="pending">Pending</option>
+                                </CustomSelect>
+
+                                {/* Search Input */}
+                                <div className="relative">
+                                    <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search jobs..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Sort Order */}
+                            <CustomSelect
+                                value={sortOrder}
+                                onChange={(e) => setSortOrder(e.target.value)}
+                            >
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="a-z">A–Z</option>
+                                <option value="z-a">Z–A</option>
+                            </CustomSelect>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="overflow-x-auto rounded-lg shadow-xl">
+                <div className="overflow-x-auto rounded-lg border border-gray-300">
                     <table className="min-w-full bg-white border-collapse">
                         <thead>
-                            <tr className="text-left bg-gray-100 border-b border-gray-200">
-                                <th className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">#</th>
-                                <th className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">Job Title</th>
-                                <th className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">Job Category</th>
-                                <th className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">Active Till</th>
-                                <th className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">Sponsored</th>
-                                <th className="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider text-center">Action</th>
+                            <tr className="text-left text-white bg-[var(--primary-color)] border-b border-gray-200">
+                                <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">Job Title</th>
+                                <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">Job Category</th>
+                                <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">Active Till</th>
+                                <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider">Sponsored</th>
+                                <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredJobs.map((job, idx) => (
+                            {currentJobs.map((job, idx) => (
                                 <tr
                                     key={job._id}
-                                    className={`hover:bg-indigo-50/50 border-t transition duration-150 ease-in-out`}
+                                    className={`hover:bg-indigo-50/50 border-t border-gray-300 transition duration-150 ease-in-out`}
                                 >
-                                    <td className="px-6 py-3 font-medium text-gray-700">{idx + 1}</td>
                                     <td className="px-6 py-3 font-semibold text-gray-800">{job.title}</td>
-                                    <td className="px-6 py-3 text-gray-600">{job.category}</td>
-                                    <td className="px-6 py-3 text-gray-600">
+                                    <td className="px-6 py-3 text-sm text-gray-600">{job.category}</td>
+                                    <td className="px-6 py-3 text-sm text-gray-600">
                                         {new Date(job.applicationDeadline).toLocaleDateString()}
                                     </td>
                                     <td className="px-6 py-3">
@@ -170,9 +217,129 @@ const RecruiterJobs = () => {
                                     </td>
                                 </tr>
                             ))}
+                            <tr>
+                                <td className='px-6 py-3' colSpan={7}>
+                                    {/* Pagination */}
+                                    {filteredJobs.length > 0 && (
+                                        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
+                                            {/* Items per page selector */}
+                                            <div className="flex items-center gap-2">
+                                                <select
+                                                    value={itemsPerPage}
+                                                    onChange={(e) => {
+                                                        setItemsPerPage(Number(e.target.value));
+                                                        setCurrentPage(1);
+                                                    }}
+                                                    className="border border-gray-300 rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                >
+                                                    <option value={10}>10</option>
+                                                    <option value={25}>25</option>
+                                                    <option value={50}>50</option>
+                                                    <option value={100}>100</option>
+                                                </select>
+                                                <span className="text-sm text-gray-600">
+                                                    {startItem} - {endItem} of {filteredJobs.length} items
+                                                </span>
+                                            </div>
+
+                                            {/* Page navigation */}
+                                            <div className="flex items-center gap-1">
+                                                {/* Previous button */}
+                                                <span
+                                                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                                                    disabled={currentPage === 1}
+                                                    className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    Previous
+                                                </span>
+
+                                                {/* Page numbers */}
+                                                {(() => {
+                                                    const pages = [];
+                                                    const maxVisiblePages = 5;
+                                                    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                                                    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+                                                    if (endPage - startPage + 1 < maxVisiblePages) {
+                                                        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                                                    }
+
+                                                    // First page
+                                                    if (startPage > 1) {
+                                                        pages.push(
+                                                            <span
+                                                                key={1}
+                                                                onClick={() => setCurrentPage(1)}
+                                                                className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                                                            >
+                                                                1
+                                                            </span>
+                                                        );
+                                                        if (startPage > 2) {
+                                                            pages.push(
+                                                                <span key="ellipsis1" className="px-2 text-gray-500">
+                                                                    ...
+                                                                </span>
+                                                            );
+                                                        }
+                                                    }
+
+                                                    // Visible pages
+                                                    for (let i = startPage; i <= endPage; i++) {
+                                                        pages.push(
+                                                            <span
+                                                                key={i}
+                                                                onClick={() => setCurrentPage(i)}
+                                                                className={`px-3 cursor-pointer py-1 text-sm border rounded-md ${currentPage === i
+                                                                    ? "bg-[var(--primary-color)] text-white border-[var(--primary-color)]"
+                                                                    : "border-gray-300 hover:bg-gray-50"
+                                                                    }`}
+                                                            >
+                                                                {i}
+                                                            </span>
+                                                        );
+                                                    }
+
+                                                    // Last page
+                                                    if (endPage < totalPages) {
+                                                        if (endPage < totalPages - 1) {
+                                                            pages.push(
+                                                                <span key="ellipsis2" className="px-2 text-gray-500">
+                                                                    ...
+                                                                </span>
+                                                            );
+                                                        }
+                                                        pages.push(
+                                                            <button
+                                                                key={totalPages}
+                                                                onClick={() => setCurrentPage(totalPages)}
+                                                                className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                                                            >
+                                                                {totalPages}
+                                                            </button>
+                                                        );
+                                                    }
+
+                                                    return pages;
+                                                })()}
+
+                                                {/* Next button */}
+                                                <span
+                                                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                                                    disabled={currentPage === totalPages}
+                                                    className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    Next
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
+
             </div>
         </div>
     )
