@@ -199,7 +199,7 @@ const RegisterModel = ({ setRegStep }) => {
                         type="submit"
                         // Disable button if loading, passwords don't match, or required fields are empty
                         disabled={loading || password.length === 0 || confirmPassword.length === 0 || !passwordsMatch}
-                        className="block w-full bg-[var(--primary-color)] mt-4 py-3 rounded-full hover:bg-[var(--primary-color)]/90 transition-all duration-300 text-white font-semibold text-lg shadow-md shadow-[var(--primary-color)]/30"
+                        className="primary-btn"
                     >
                         {loading ? "Registering..." : "Register"}
                     </button>

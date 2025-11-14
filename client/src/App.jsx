@@ -11,6 +11,7 @@ import CompanyProfile from "./pages/CompanyProfile";
 import FollowedAccounts from "./pages/FollowedAccounts";
 import Test from "./components/Test";
 import EmployeeDashboard from "./components/EmployeeDashboard";
+import DashboardLayout from "./components/DashboardLayout";
 
 // Lazy-loaded components
 const Navbar = lazy(() => import("./components/Navbar"));
@@ -21,7 +22,6 @@ const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const JobDetails = lazy(() => import("./pages/JobDetails"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const FindJobs = lazy(() => import("./pages/FindJobs"));
 const CategoryJobs = lazy(() => import("./pages/CategoryJobs"));
@@ -29,6 +29,17 @@ const BlogsDetails = lazy(() => import("./pages/BlogsDetails"));
 const EditBlog = lazy(() => import("./pages/EditBlog"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 const Categories = lazy(() => import("./pages/Categories"));
+
+// Dashboard pages
+const DashboardHome = lazy(() => import("./pages/dashboard/DashboardHome"));
+const Jobs = lazy(() => import("./pages/dashboard/Jobs"));
+const Applicants = lazy(() => import("./pages/dashboard/Applicants"));
+const Candidates = lazy(() => import("./pages/dashboard/Candidates"));
+const Package = lazy(() => import("./pages/dashboard/Package"));
+const Messages = lazy(() => import("./pages/dashboard/Messages"));
+const Meetings = lazy(() => import("./pages/dashboard/Meetings"));
+const Company = lazy(() => import("./pages/dashboard/Company"));
+const DashboardSettings = lazy(() => import("./pages/dashboard/DashboardSettings"));
 
 // 🔒 Admin-only route
 export const AdminRoute = ({ children }) => {
@@ -117,10 +128,20 @@ const App = () => {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <DashboardLayout />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route index element={<DashboardHome />} />
+            <Route path="jobs" element={<Jobs />} />
+            <Route path="applicants" element={<Applicants />} />
+            <Route path="candidates" element={<Candidates />} />
+            <Route path="package" element={<Package />} />
+            <Route path="messages" element={<Messages />} />
+            <Route path="meetings" element={<Meetings />} />
+            <Route path="company" element={<Company />} />
+            <Route path="settings" element={<DashboardSettings />} />
+          </Route>
           <Route path="/jobdetails/:id" element={<JobDetails />} />
           <Route
             path="/admin"

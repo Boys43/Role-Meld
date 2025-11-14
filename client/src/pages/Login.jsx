@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import assets from '../assets/assets'
 import LoginModel from '../components/LoginModel'
 import DetailsModel from '../components/DetailsModel'
+import Img from '../components/Image'
 
 const Login = () => {
     // Auto Scroll to Top
@@ -16,7 +17,7 @@ const Login = () => {
         {step === 1 ? <LoginModel setStep={setStep} /> : <DetailsModel />}
       </div>
       {step === 1 && <div className="border hidden md:block md:w-1/2 border-l-3 border-[var(--primary-color)]">
-        <img loading='lazy' src={assets.register_side} alt="Register Side" />
+        <Img src={assets.register_side} />
       </div>}
     </main>
   )

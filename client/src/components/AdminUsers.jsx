@@ -211,17 +211,17 @@ const AdminUsers = () => {
                 </td>
                 <td className="px-6 py-6 text-center">
                   <div className="flex justify-center items-center gap-4">
-                    <span onClick={() => deleteUser(u.authId)} className="cursor-pointer text-red-500 hover:text-red-700 transition" title="Delete">
+                    <button onClick={() => deleteUser(u.authId)} className="cursor-pointer text-red-500 hover:text-red-700 transition" title="Delete">
                       <FaTrash size={18} />
-                    </span>
+                    </button>
                     {u.isBanned ? (
-                      <span onClick={() => toggleBan(u.email, true)} className="cursor-pointer text-green-500 hover:text-green-700 transition" title="Unban">
+                      <button onClick={() => toggleBan(u.email, true)} className="cursor-pointer text-green-500 hover:text-green-700 transition" title="Unban">
                         <Unlock size={18} />
-                      </span>
+                      </button>
                     ) : (
-                      <span onClick={() => toggleBan(u.email, false)} className="cursor-pointer text-red-500 hover:text-red-700 transition" title="Ban">
+                      <button onClick={() => toggleBan(u.email, false)} className="cursor-pointer text-red-500 hover:text-red-700 transition" title="Ban">
                         <Ban size={18} />
-                      </span>
+                      </button>
                     )}
                   </div>
                 </td>
@@ -254,14 +254,14 @@ const AdminUsers = () => {
                     {/* Page navigation */}
                     <div className="flex items-center gap-1">
                       {/* Previous button */}
-                      <span
+                      <button
                         type="button"
                         onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                         disabled={currentPage === 1}
                         className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Previous
-                      </span>
+                      </button>
 
                       {/* Page numbers */}
                       {(() => {
@@ -277,13 +277,13 @@ const AdminUsers = () => {
                         // First page
                         if (startPage > 1) {
                           pages.push(
-                            <span
+                            <button
                               key={1}
                               onClick={() => setCurrentPage(1)}
                               className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
                             >
                               1
-                            </span>
+                            </button>
                           );
                           if (startPage > 2) {
                             pages.push(
@@ -297,7 +297,7 @@ const AdminUsers = () => {
                         // Visible pages
                         for (let i = startPage; i <= endPage; i++) {
                           pages.push(
-                            <span
+                            <button
                               key={i}
                               onClick={() => setCurrentPage(i)}
                               className={`px-3 cursor-pointer py-1 text-sm border rounded-md ${currentPage === i
@@ -306,7 +306,7 @@ const AdminUsers = () => {
                                 }`}
                             >
                               {i}
-                            </span>
+                            </button>
                           );
                         }
 
@@ -320,13 +320,13 @@ const AdminUsers = () => {
                             );
                           }
                           pages.push(
-                            <span
+                            <button
                               key={totalPages}
                               onClick={() => setCurrentPage(totalPages)}
                               className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
                             >
                               {totalPages}
-                            </span>
+                            </button>
                           );
                         }
 
@@ -334,13 +334,13 @@ const AdminUsers = () => {
                       })()}
 
                       {/* Next button */}
-                      <span
+                      <button
                         onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                         disabled={currentPage === totalPages}
                         className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Next
-                      </span>
+                      </button>
                     </div>
                   </div>
                 )}

@@ -206,13 +206,13 @@ const RecruiterJobs = () => {
                                     </td>
                                     <td className="px-6 py-3 font-medium text-gray-700">
                                         <div className='w-full flex justify-center items-center'>
-                                            <span
+                                            <button
                                                 onClick={() => removeJob(job._id)}
                                                 className='p-2 rounded-full hover:bg-red-50 transition-colors'
                                                 aria-label={`Remove job: ${job.title}`}
                                             >
                                                 <Trash className='text-red-500 cursor-pointer' size={18} />
-                                            </span>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -245,13 +245,13 @@ const RecruiterJobs = () => {
                                             {/* Page navigation */}
                                             <div className="flex items-center gap-1">
                                                 {/* Previous button */}
-                                                <span
+                                                <button
                                                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                                     disabled={currentPage === 1}
                                                     className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
                                                     Previous
-                                                </span>
+                                                </button>
 
                                                 {/* Page numbers */}
                                                 {(() => {
@@ -267,13 +267,13 @@ const RecruiterJobs = () => {
                                                     // First page
                                                     if (startPage > 1) {
                                                         pages.push(
-                                                            <span
+                                                            <button
                                                                 key={1}
                                                                 onClick={() => setCurrentPage(1)}
                                                                 className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
                                                             >
                                                                 1
-                                                            </span>
+                                                            </button>
                                                         );
                                                         if (startPage > 2) {
                                                             pages.push(
@@ -324,13 +324,13 @@ const RecruiterJobs = () => {
                                                 })()}
 
                                                 {/* Next button */}
-                                                <span
+                                                <button
                                                     onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                                                     disabled={currentPage === totalPages}
                                                     className="px-3 cursor-pointer py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
                                                     Next
-                                                </span>
+                                                </button>
                                             </div>
                                         </div>
                                     )}

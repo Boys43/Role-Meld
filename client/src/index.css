@@ -7,7 +7,7 @@
 
 :root {
   --primary-color: #007456;
-  --secondary-color: #005d45;
+  --secondary-color: #004a38;
   --accent-color: #f2f8f7;
   --text-color: #4d4d4d;
 }
@@ -51,8 +51,8 @@ body {
 }
 
 
-button {
-  padding: 0.5rem 1.7rem;
+button.primary-btn {
+  padding: 0.7rem 1.7rem;
   justify-content: center;
 
   border-radius: 2rem;
@@ -69,23 +69,23 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+button.primary-btn:hover {
   background-color: #005d45;
 }
 
-button:active {
+button.primary-btn:active {
   transform: translateY(1px) scale(0.98);
   box-shadow: 0 2px 6px rgba(114, 14, 158, 0.25);
 }
 
-button:disabled {
+button.primary-btn:disabled {
   background: #ccc;
   color: #666;
   cursor: not-allowed;
   box-shadow: none;
 }
 
-.secondary-btn {
+button.secondary-btn {
   padding: 0.6rem 1.5rem;
   justify-content: center;
   text-align: center;
@@ -105,17 +105,17 @@ button:disabled {
   transition: all 0.2s ease;
 }
 
-.secondary-btn:hover {
+button.secondary-btn:hover {
   background-color: var(--primary-color);
   color: white;
 }
 
-.secondary-btn:active {
+button.secondary-btn:active {
   transform: translateY(1px) scale(0.98);
   box-shadow: 0 2px 6px rgba(114, 14, 158, 0.25);
 }
 
-.secondary-btn:disabled {
+button.secondary-btn:disabled {
   background: #ccc;
   color: #666;
   cursor: not-allowed;
@@ -158,6 +158,10 @@ select {
 .follow-btn.unfollow:hover {
   background-color: #0076b5;
   color: white;
+}
+
+input{
+  color: var(--primary-color);
 }
 
 @keyframes fadeIn {

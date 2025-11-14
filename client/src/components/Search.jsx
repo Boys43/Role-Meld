@@ -10,17 +10,28 @@ const Search = ({ Param }) => {
   const [searchJob, setSearchJob] = useState('')
   const [searchLocation, setSearchLocation] = useState('All Cities')
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false)
+  const [locationSearchTerm, setLocationSearchTerm] = useState('')
 
   const cities = [
     'All Cities',
-    'New York',
+    'California',
+    'San Francisco',
     'Los Angeles', 
+    'San Diego',
+    'Sacramento',
+    'New York',
     'Chicago',
     'Houston',
     'Phoenix',
     'Philadelphia',
     'San Antonio',
-    'San Diego',
+    'Miami',
+    'Boston',
+    'Seattle',
+    'Denver',
+    'Atlanta',
+    'Dallas',
+    'Austin',
     'Lahore'
   ];
 
@@ -38,9 +49,24 @@ const Search = ({ Param }) => {
     navigate(url);
   };
 
+  // Filter cities based on search term
+  const filteredCities = cities.filter(city =>
+    city.toLowerCase().includes(locationSearchTerm.toLowerCase())
+  );
+
   const handleLocationSelect = (city) => {
     setSearchLocation(city);
     setIsLocationDropdownOpen(false);
+    setLocationSearchTerm('');
+  };
+
+  // Close dropdown when clicking outside
+  const handleLocationBlur = () => {
+    setTimeout(() => setIsLocationDropdownOpen(false), 150);
+  };
+
+  const handleLocationSearchChange = (e) => {
+    setLocationSearchTerm(e.target.value);
   };
 
   return (
@@ -48,9 +74,9 @@ const Search = ({ Param }) => {
       id="search"
       className={`bg-white rounded-4xl border border-gray-200 ${location.pathname === '/' ? "w-[100%] max-w-4xl mx-auto" : "w-[70vw] mx-auto"}`}
     >
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 p-6 md:p-2">
+      <form onSubmit={handleSubmit} className="flex p-3 md:p-2">
         {/* Job Search Input */}
-        <div className="flex-1 relative">
+        <div className="flex flex-1 relative">
           <SearchIcon
             size={20}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
@@ -64,33 +90,45 @@ const Search = ({ Param }) => {
           />
         </div>
 
-        {/* Location Dropdown */}
-        <div className="relative">
-          <div 
-            className="flex items-center gap-2 px-4 py-3 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
-            onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
-          >
+        {/* Location Select Search */}
+        <div className="flex flex-1 relative">
+          <div className="flex items-center gap-2 px-4 py-3 w-full">
             <Building size={20} className="text-gray-400" />
-            <span className="text-gray-700 text-sm min-w-[100px]">{searchLocation}</span>
-            <ChevronDown 
+            <input
+              type="text"
+              placeholder={searchLocation === 'All Cities' ? 'Location' : searchLocation}
+              value={locationSearchTerm}
+              onChange={handleLocationSearchChange}
+              onFocus={() => setIsLocationDropdownOpen(true)}
+              onBlur={handleLocationBlur}
+              className="w-full text-gray-700 placeholder-gray-400 bg-transparent border-none outline-none text-sm flex-1"
+            />
+            <ChevronDown
               size={16} 
-              className={`text-gray-400 transition-transform ${isLocationDropdownOpen ? 'rotate-180' : ''}`} 
+              className={`text-gray-400 transition-transform cursor-pointer ${isLocationDropdownOpen ? 'rotate-180' : ''}`}
+              onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
             />
           </div>
           
           {/* Dropdown Menu */}
           {isLocationDropdownOpen && (
-            <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[200px]">
-              <div className="py-1 max-h-60 overflow-y-auto">
-                {cities.map((city) => (
-                  <div
-                    key={city}
-                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
-                    onClick={() => handleLocationSelect(city)}
-                  >
-                    {city}
+            <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-full">
+              <div className="max-h-48 overflow-y-auto py-1">
+                {filteredCities.length > 0 ? (
+                  filteredCities.map((city) => (
+                    <div
+                      key={city}
+                      className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                      onClick={() => handleLocationSelect(city)}
+                    >
+                      {city}
+                    </div>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 text-sm text-gray-500">
+                    No locations found
                   </div>
-                ))}
+                )}
               </div>
             </div>
           )}
@@ -99,7 +137,7 @@ const Search = ({ Param }) => {
         {/* Search Button */}
         <button 
           type="submit" 
-          className="mt-4 md:mt-0 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-medium text-sm transition-colors ml-2"
+          className="primary-btn"
         >
           Search
         </button>

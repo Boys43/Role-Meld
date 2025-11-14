@@ -11,7 +11,6 @@ import Currency from './CurrencyCovertor';
 const JobCard = ({ e }) => {
     const { isLoggedIn, toggleSaveJob, savedJobs } = useContext(AppContext);
     const navigate = useNavigate();
-    const location = useLocation();
 
     // Check if job is saved or applied
     const isSaved = [...savedJobs].includes(e?._id);
@@ -33,7 +32,7 @@ const JobCard = ({ e }) => {
     // --- Main Render ---
 
     return (
-        <li className='p-6 min-w-[300px] cursor-pointer border border-gray-200 bg-white rounded-xl hover:shadow-lg shadow-black/5 transition-all duration-300 flex flex-col justify-between gap-4'
+        <li className='p-6 min-w-[300px] cursor-pointer border border-gray-200 bg-white rounded-2xl hover:shadow-lg shadow-black/5 transition-all duration-300 flex flex-col justify-between gap-4'
             onClick={() =>
                 navigate('/jobDetails/' + e._id)
             }
@@ -90,17 +89,17 @@ const JobCard = ({ e }) => {
                 <div>
 
                     {/* 2. Job Title & Salary */}
-                    <div className='flex flex-col gap-2'>
+                    <div className='flex mt-2 flex-col gap-2'>
                         {/* Salary Badge - Themed */}
                         <div className='flex flex-wrap items-center gap-2 font-semibold text-xs'>
                             {/* <DollarSign size={14} /> */}
-                            <span className='flex px-3 py-1 rounded-lg bg-[#e9e0f2] text-[#6c4cbe]'>
+                            <span className='flex px-3 py-1 rounded-full bg-[#e9e0f2] text-[#6c4cbe]'>
                                 {e?.jobType === 'full-time' ? "Full Time" : e?.jobType === 'part-time' ? "Part Time" : e?.jobType === 'contract' ? "Contract" : e?.jobType === 'internship' ? "Internship" : e?.jobType === "temporary" ? "Temporary" : null}
                             </span>
-                            <span className='flex gap-1 items-center px-3 py-1 rounded-lg bg-[var(--accent-color)] text-[var(--primary-color)]'>
+                            <span className='flex gap-1 items-center px-3 py-1 rounded-full bg-[var(--accent-color)] text-[var(--primary-color)]'>
                                 <MapPin size={14} /> {e?.location || "..."}
                             </span>
-                            <span className='w-max px-3 py-1 rounded-md bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
+                            <span className='w-max px-3 py-1 rounded-full bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
                                 {e?.salaryType === "fixed" ? <span>
                                     <Currency amount={e?.fixedSalary} from={e?.jobsCurrency} />
                                 </span> : <span>

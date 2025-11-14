@@ -266,20 +266,6 @@ const Navbar = ({ className }) => {
           </div> :
           null}
 
-        {/* <div
-          className={`flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-sm`}
-        >
-          <span className={`w-2.5 h-2.5 rounded-full bg-${color}-500 animate-pulse`}></span>
-          <span className={`text-sm font-medium text-${color}-500`}>
-            {label}
-          </span>
-          <div
-            className={`ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-${color}-100 text-${color}-700`}
-          >
-            Score: {score}
-          </div>
-        </div> */}
-
         {/* Dropdown Reminder */}
         <AnimatePresence>
           {!isActive && showReminder && (
@@ -316,9 +302,9 @@ const Navbar = ({ className }) => {
       </h4>
 
       {/* Profile/Followed Accounts Button */}
-      <span
+      <button
         onClick={toggleUserDropdown}
-        className="h-10 w-10 text-white rounded-full bg-black cursor-pointer overflow-hidden ring-2 ring-transparent hover:ring-blue-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="h-10 w-10 text-white rounded-full bg-black overflow-hidden ring-2 ring-transparent hover:ring-[var(--primary-color)] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
         aria-label="User menu"
       >
         {userData?.profilePicture ? (
@@ -331,7 +317,7 @@ const Navbar = ({ className }) => {
             {userData?.name?.[0]?.toUpperCase() || "?"}
           </span>
         )}
-      </span>
+      </button>
 
       {/* Dropdown Menu */}
       {isUserDropdownOpen && (
@@ -376,7 +362,7 @@ const Navbar = ({ className }) => {
     <div className="flex items-center gap-6">
       <NavLink
         to={"/login"}
-        className="font-medium text-sm transition-colors duration-200"
+        className="font-medium text-sm text-[var(--primary-color)] transition-colors duration-200"
         onClick={() => setIsMenuOpen(false)}
       >
         Login
@@ -385,7 +371,7 @@ const Navbar = ({ className }) => {
         to={"/register"}
         onClick={() => setIsMenuOpen(false)}
       >
-        <button>
+        <button className="primary-btn">
           Post a job
         </button>
       </NavLink>
@@ -394,13 +380,13 @@ const Navbar = ({ className }) => {
 
   // --- Main Render ---
   return (
-    <nav className={`max-w-6xl w-full py-5 mx-auto relative z-999 ${className}`}>
+    <nav className={`w-full ${location.pathname.includes("dashboard") ? "bg-white border-b border-gray-300" : ""} py-5 relative z-999 ${className}`}>
       <div className="flex items-center px-4 justify-between">
         {/* Left Section - Logo and Desktop Links */}
         <div className={`flex items-center gap-10`}>
           <NavLink to={"/"}>
             {/* The image styling should be outside the component if possible, or ensure it's responsive */}
-            <img src="/logo.webp" className={`${location.pathname === "/dashboard" ? "hidden" : ""} w-28 sm:w-32`} alt="Company Logo" />
+            <Img src="/logo.webp" style={`${location.pathname.includes("dashboard") ? "hidden" : ""} w-28 sm:w-32`} alt="Company Logo" />
           </NavLink>
           <DesktopNavLinks />
         </div>

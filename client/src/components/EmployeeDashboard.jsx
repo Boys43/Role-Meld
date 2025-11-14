@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement } from 'chart.js/auto'
 import Img from './Image';
-import { Loader } from 'lucide-react';
+import { Clipboard, ClipboardList, ClipboardPenLine, Loader, User } from 'lucide-react';
 ChartJS.register(LineElement, ArcElement, Legend, PointElement, CategoryScale, LinearScale, BarElement);
 
 const EmployeeDashboard = () => {
@@ -116,7 +116,7 @@ const EmployeeDashboard = () => {
   }, [])
 
   return (
-    <div className='flex flex-col w-full p-6 bg-white rounded-lg min-h-screen overflow-y-auto'>
+    <div className='flex flex-col w-full p-6 bg-white rounded-lg min-h-screen overflow-y-auto border border-gray-300'>
       <div className="relative w-full">
         {/* Profile Circle */}
         <div className="w-full h-[30vh] border-2 border-gray-300 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">
@@ -200,40 +200,60 @@ const EmployeeDashboard = () => {
 
         {/* User Info */}
         <div className='w-1/2'>
-          <h1 className='text-2xl font-bold text-[var(--primary-color)]'>
-            {userData?.company === "Individual" ? userData?.name : userData?.company}
+          <h1 className='font-semibold'>
+            Hi, {" "}
+            <span className="text-[var(--primary-color)]">
+              {userData?.company === "Individual" ? userData?.name : userData?.company}
+            </span>
           </h1>
         </div>
-        <span className='py-1 px-3 rounded-2xl border border-gray-300 text-sm cursor-pointer hover:bg-gray-100 shadow-sm'
+        <button className='primary-btn'
           onClick={() => navigate(`/company-profile/${userData?.authId}`)}
         >
           View Profile Page
-        </span>
+        </button>
       </div>
 
       {/* Stats */}
       <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5 w-full'>
-        <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-red-500 p-4 cursor-pointer flex flex-col items-center justify-center'>
-          <h3 className='flex items-center gap-4 font-semibold'><LuGitPullRequest />Total Applications</h3>
-          <h1>
-            {Applications.length}
-          </h1>
+        <div className='flex justify-between p-6 border border-gray-300 rounded-lg items-center'>
+          <div className='flex flex-col gap-3'>
+            <span className='text-gray-600 font-semibold'>
+              POSTED JOBS
+            </span>
+            <div className='text-5xl text-black font-semibold'>
+              {Jobs.length}
+            </div>
+          </div>
+          <div className='p-3 rounded-full h-15 w-15 bg-[#b3e5fb] flex items-center justify-center'>
+            <ClipboardPenLine />
+          </div>
         </div>
-        <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-blue-500 p-4 cursor-pointer flex flex-col items-center justify-center'>
-          <h3 className='flex items-center gap-4 font-semibold'><IoPersonAddSharp />Total Active Jobs</h3>
-          <h1>
-            {Jobs.filter((job) => {
-              return job.isActive === true && job.company === userData.authId;
-            }).length}
-          </h1>
+        <div className='flex justify-between p-6 border border-gray-300 rounded-lg items-center'>
+          <div className='flex flex-col gap-3'>
+            <span className='text-gray-600 font-semibold'>
+              APPLICATIONS
+            </span>
+            <div className='text-5xl text-black font-semibold'>
+              {Applications.length}
+            </div>
+          </div>
+          <div className='p-3 rounded-full h-15 w-15 bg-[#cabffd] flex items-center justify-center'>
+            <ClipboardList />
+          </div>
         </div>
-        <div className='hover:translate-y-[-5px] hover:shadow-xl transition-all shadow-lg rounded-2xl border-2 border-yellow-500 p-4 cursor-pointer flex flex-col items-center justify-center'>
-          <h3 className='flex items-center gap-4 font-semibold'><IoPersonAddSharp />Total Pending Jobs</h3>
-          <h1>
-            {Jobs.filter((job) => {
-              return job.approved === "pending" && job.company === userData.authId;
-            }).length}
-          </h1>
+        <div className='flex justify-between p-6 border border-gray-300 rounded-lg items-center'>
+          <div className='flex flex-col gap-3'>
+            <span className='text-gray-600 font-semibold'>
+              MY FOLLOWERS
+            </span>
+            <div className='text-5xl text-black font-semibold'>
+              {userData.followers}
+            </div>
+          </div>
+          <div className='p-3 rounded-full h-15 w-15 bg-[#b7e4cb] flex items-center justify-center'>
+            <User />
+          </div>
         </div>
       </div>
 

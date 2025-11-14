@@ -229,12 +229,12 @@ const LatestJobs = () => {
   if (staticJobs.length === 0) {
     return (
       <>
-        <h1 className="flex flex-col justify-center w-full items-center mb-8">
-          <span className="font-bold flex items-center gap-2">
-            Latest <span className="text-[var(--primary-color)]">Jobs</span>
-          </span>
+        <div className="flex flex-col justify-center w-full items-center mb-8">
+          <h2 className="font-semibold text-black flex items-center gap-2">
+            Latest Jobs
+          </h2>
           <span className='text-gray-600 text-lg'>2025 jobs live - {latestJobs.filter(job => new Date(job.createdAt).toDateString() === new Date().toDateString()).length} uploaded today </span>
-        </h1>
+        </div>
         <div className="text-center py-16">
           <div className="text-gray-400 mb-4">
             <MdWork size={64} className="mx-auto" />
@@ -248,13 +248,13 @@ const LatestJobs = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-center w-full items-center mb-8">
+      <div className="max-w-6xl mx-auto flex flex-col justify-center w-full items-center mb-8">
         <span className="text-xl md:text-2xl lg:text-3xl font-semibold">
           Latest jobs
         </span>
         <span className='text-gray-600 text-lg'>2025 jobs live - {latestJobs.filter(job => new Date(job.createdAt).toDateString() === new Date().toDateString()).length} uploaded today </span>
       </div>
-      <div className="relative max-w-5xl mx-auto">
+      <div className="relative">
         <Swiper
           modules={[Autoplay, Navigation, Pagination]}
           spaceBetween={24}

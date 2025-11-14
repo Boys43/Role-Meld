@@ -6,11 +6,7 @@ const Search = lazy(() => import("../components/Search"));
 const Testimonials = lazy(() => import("../components/Testimonials"));
 const LatestJobs = lazy(() => import("../components/LatestJobs"));
 const BlogsSection = lazy(() => import("../components/BlogsSection"));
-const LeaveReview = lazy(() => import("../components/LeaveReview"));
 import { useNavigate } from "react-router-dom";
-
-// React Icons
-import { MdMessage } from "react-icons/md";
 
 // Swiper Slides
 import 'swiper/css';
@@ -21,6 +17,7 @@ import { toast } from "react-toastify";
 import Navbar from "../components/Navbar";
 import { Bell, Code, FileText, Timer } from "lucide-react";
 import { Briefcase, Palette, PenTool, Headphones } from "lucide-react";
+import Announcementbar from "../components/Announcementbar";
 
 const Home = () => {
   // Auto Scroll to Top
@@ -31,6 +28,27 @@ const Home = () => {
 
   const { backendUrl } = useContext(AppContext);
   const [categoriesLoading, setCategoriesLoading] = useState(false)
+  
+  // Animated text state
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const animatedTexts = ["Talents", "Dream Job"];
+
+  // Text animation effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      
+      setTimeout(() => {
+        setCurrentTextIndex((prevIndex) => 
+          prevIndex === animatedTexts.length - 1 ? 0 : prevIndex + 1
+        );
+        setIsAnimating(false);
+      }, 400); // Half of the animation duration
+    }, 2500); // Change every 2 seconds
+
+    return () => clearInterval(interval);
+  }, []);
   const [categories, setCategories] = useState([])
   const getCategories = async () => {
     setCategoriesLoading(true)
@@ -54,10 +72,12 @@ const Home = () => {
 
   return (
     <>
+    {/* Announcement Bar */}
+    <Announcementbar />
       <main className="">
-        <section className={`h-160 bg-cover bg-center relative p-3 pt-0 md:p-6 md:pt-0 lg:pt-0 lg:p-8 w-full`} style={{ backgroundImage: `url(${assets.hero})`, overflow: 'hidden' }}>
-          <Navbar />
-          <div className="max-w-6xl h-full items-center mx-auto grid grid-cols-1 md:grid-cols-2">
+        <section className={`bg-cover bg-center relative md:p-6 md:pt-0 lg:pt-0lg:p-8 w-full px-4 pb-4`} style={{ backgroundImage: `url(${assets.hero})`}}>
+          <Navbar className={"max-w-6xl mx-auto"} />
+          <div className="max-w-6xl mx-auto  pt-10 h-full items-center grid grid-cols-1 md:grid-cols-2">
             {/* Main Content */}
             <div className="relative z-20 w-full">
               <div className="mb-4">
@@ -65,10 +85,16 @@ const Home = () => {
                 <span className="text-gray-800 font-semibold text-lg">200 locations</span>
               </div>
 
-              <span className="text-4xl md:text-5xl font-semibold text-gray-800 leading-tight">
-                Your <span className="text-[var(--primary-color)]">Talents</span> is just a<br />
+              <div className="text-4xl md:text-5xl font-semibold text-gray-800 leading-tight">
+                Your <span className={`text-[var(--primary-color)] inline-block transition-all duration-500 ease-in-out transform ${
+                  isAnimating 
+                    ? 'opacity-0 scale-125' 
+                    : 'opacity-100 scale-100'
+                }`}>
+                  {animatedTexts[currentTextIndex]}
+                </span> is just a<br />
                 search away!
-              </span>
+              </div>
 
               <Suspense fallback={<div>Loading...</div>}>
                 <div className="my-4">
@@ -154,31 +180,29 @@ const Home = () => {
         <section className="py-16 bg-white">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center flex flex-col gap-2 mb-12">
-              <span className="text-2xl md:text-3xl font-bold text-gray-900">Popular category</span>
+              <h2 className=" font-bold text-gray-900">Popular category</h2>
               <p className="text-gray-600 text-lg">Find and hire professionals across all skills</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               <div
                 onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Development & IT'))}
-                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 border-gray-200 border"
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-2xl p-8 cursor-pointer transition-all duration-300 border-gray-200 border flex gap-3"
               >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-14 h-14 bg-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
                     <Code size={24} className="text-white" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Development & IT</h4>
                     <p className="text-gray-500 text-sm">16 jobs</p>
-                  </div>
                 </div>
               </div>
               <div
                 onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Marketing & Sales'))}
-                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 border-gray-200 border"
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-2xl p-8 cursor-pointer transition-all duration-300 border-gray-200 border"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-14 h-14 bg-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
                     <Briefcase size={24} className="text-white" />
                   </div>
                   <div>
@@ -189,10 +213,10 @@ const Home = () => {
               </div>
               <div
                 onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Design & Creative'))}
-                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 border-gray-200 border"
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-2xl p-8 cursor-pointer transition-all duration-300 border-gray-200 border"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-14 h-14 bg-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
                     <Palette size={24} className="text-white" />
                   </div>
                   <div>
@@ -203,10 +227,10 @@ const Home = () => {
               </div>
               <div
                 onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Writing & Translation'))}
-                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 border-gray-200 border"
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-2xl p-8 cursor-pointer transition-all duration-300 border-gray-200 border"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-14 h-14 bg-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
                     <PenTool size={24} className="text-white" />
                   </div>
                   <div>
@@ -217,10 +241,10 @@ const Home = () => {
               </div>
               <div
                 onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Customer Service'))}
-                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 border-gray-200 border"
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-2xl p-8 cursor-pointer transition-all duration-300 border-gray-200 border"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-14 h-14 bg-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
                     <Headphones size={24} className="text-white" />
                   </div>
                   <div>
@@ -231,10 +255,10 @@ const Home = () => {
               </div>
               <div
                 onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Product Management'))}
-                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-xl p-6 cursor-pointer transition-all duration-300 border-gray-200 border"
+                className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-2xl p-8 cursor-pointer transition-all duration-300 border-gray-200 border"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[var(--primary-color)]/80 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-14 h-14 bg-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
                     <Briefcase size={24} className="text-white" />
                   </div>
                   <div>
@@ -259,7 +283,7 @@ const Home = () => {
 
         {/* Latest Jobs Section */}
         <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 lg:px-8">
+          <div className="max-w-6xl mx-auto px-4 lg:px-8">
             <div className="relative">
               <Suspense fallback={
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -297,14 +321,14 @@ const Home = () => {
           <div className="absolute top-1/2 z-0 -translate-1/2 left-1/2 w-full h-full">
             <Img src={assets.wave_bg} style={"w-full h-full"} />
           </div>
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 relative z-2">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 relative z-2">
             <div className="flex items-center justify-center">
               <Img src={assets.girl_illus} />
             </div>
             <div className="relative z-10 p-8 md:p-12 flex flex-col justify-center">
-              <h4 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
+              <h2 className="font-bold text-gray-900 mb-4 leading-tight">
                 Discover why more companies are using Civi to make hiring easy
-              </h4>
+              </h2>
 
               <p className="text-gray-600 text-lg mb-8 max-w-lg">
                 Faucibus sed diam lorem nibh nibh risus dui ultricies purus eget
@@ -331,6 +355,7 @@ const Home = () => {
               </div>
 
               <button
+                className="primary-btn"
                 onClick={() => navigate('/post-job')}
               >
                 Post your job for FREE
@@ -354,9 +379,9 @@ const Home = () => {
         {/* Testimonials */}
         <section className="max-w-6xl mx-auto p-4 w-full mt-20">
           <div className="flex md:w-1/2 text-center mx-auto flex-col items-center gap-2">
-            <span className="text-3xl font-semibold">
+            <h2 className="text-black font-semibold">
               Trusted by leading brands and startups
-            </span>
+            </h2>
             <p className="text-lg">
               Here’s what they say about us
             </p>
@@ -367,7 +392,7 @@ const Home = () => {
         </section>
 
         {/* Post a Job 2  */}
-        <section className="max-w-6xl mx-3 mt-10 relative md:mx-auto rounded-4xl bg-[#faf6eb] pt-15 flex flex-col md:flex-row z-1">
+        <section className="max-w-6xl max-auto mt-10 relative md:mx-auto rounded-4xl bg-[#faf6eb] pt-15 flex flex-col md:flex-row z-1">
           <div className="absolute top-1/2 left-0 z-0 -translate-y-1/2 w-[60%] h-full">
             <Img src={assets.wave_2} style={"w-full h-full"} />
           </div>
@@ -378,9 +403,9 @@ const Home = () => {
               </span>
             </div>
 
-            <span className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+            <h2 className="font-semibold text-black mb-6">
               Looking to post a job?
-            </span>
+            </h2>
 
             <p className="text-gray-600 text-lg mb-8 max-w-md">
               Find professionals from around the world and across all skills.
@@ -388,7 +413,7 @@ const Home = () => {
 
             <button
               onClick={() => navigate('/post-job')}
-              className="bg-[var(--primary-color)] hover:bg-[var(--primary-color)]/90 text-white font-semibold py-4 px-8 rounded-full transition-all duration-300 w-fit"
+              className="primary-btn"
             >
               Post your job for FREE
             </button>
@@ -400,11 +425,11 @@ const Home = () => {
 
 
         {/* Blogs */}
-        <section className="p-4 w-full mt-20">
+        <section className="max-w-6xl mx-auto p-4 w-full mt-20">
           <div className="flex md:w-1/2 text-center mx-auto flex-col items-center gap-2">
-            <span className="text-3xl md:text-4xl font-semibold">
+            <h2 className="font-semibold text-black">
               Latest from our blog
-            </span>
+            </h2>
             <p className="text-lg">
               Get interesting insights, articles, and news
             </p>

@@ -15,6 +15,7 @@ export const AppContextProvider = (props) => {
   const [profileScore, setProfileScore] = useState(0);
   const [jobId, setJobId] = useState("");
   const [savedJobs, setSavedJobs] = useState(() => new Set());
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // follow company 
   async function followUnfollowCompany(companyId) {
@@ -155,7 +156,9 @@ export const AppContextProvider = (props) => {
     setSavedJobs,
     toggleSaveJob,
     sendNotification,
-    followUnfollowCompany
+    followUnfollowCompany,
+    isSidebarOpen,
+    setIsSidebarOpen
   }), [
     frontendUrl,
     backendUrl,
@@ -165,7 +168,9 @@ export const AppContextProvider = (props) => {
     loading,
     jobId,
     savedJobs,
-    followUnfollowCompany
+    followUnfollowCompany,
+    isSidebarOpen,
+    setIsSidebarOpen
   ]);
 
   return (

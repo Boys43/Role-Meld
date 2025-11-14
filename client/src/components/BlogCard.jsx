@@ -18,16 +18,9 @@ const BlogCard = ({ blog }) => {
     };
 
     return (
-        <div
-            onClick={
-                location.pathname !== "/admin"
-                    ? () => navigate(`/blogdetails/${blog?.slug}?id=${blog._id}`)
-                    : undefined
-            }
-            className="bg-white rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer max-w-sm mx-auto">
-
+        <div className="bg-white border border-gray-100 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer max-w-sm mx-auto">
             {/* Image Section */}
-            <div className="relative group overflow-hidden w-full h-60 rounded-2xl">
+            <div className="relative group overflow-hidden w-full h-48">
                 <Img
                     loading='lazy'
                     src={
@@ -45,23 +38,48 @@ const BlogCard = ({ blog }) => {
             </div>
 
             {/* Content Section */}
-            <div className="p-6">
-                {/* Date and Category */}
-                <div className="flex items-center gap-2 mb-4">
-                    <span className="text-gray-500 text-sm font-medium">
-                        {formatDate(blog?.createdAt)}
-                    </span>
-                    <span className="text-gray-300">•</span>
-                    <span className="text-sm text-[var(--primary-color)]">
-                        {blog?.category || "Learn"}
+            <div className="p-6 flex flex-col">
+                {/* Category */}
+                <div className="mb-1">
+                    <span className="text-red-500 text-sm font-semibold uppercase tracking-wide">
+                        {blog?.category || "RECRUITMENT & HIRING"}
                     </span>
                 </div>
 
                 {/* Title */}
-                <span className="text-gray-600 h-20 text-xl font-bold leading-tight mb-3 line-clamp-2">
-                    {blog?.title || "Remote Collaboration: Best Practices, Challenges, and Tools"}
-                </span>
+                <h3 className="text-gray-900 text-xl font-bold leading-tight mb-1 line-clamp-2">
+                    {blog?.title || "How to Find and Hire Top Talent Quickly"}
+                </h3>
 
+                {/* Author and Date */}
+                <div className="flex items-center gap-2 mb-1 text-sm text-gray-500">
+                    <span>BY</span>
+                    <span className="text-blue-500 font-medium">
+                        {blog?.author || "ADMIN"}
+                    </span>
+                    <span>|</span>
+                    <span>
+                        {formatDate(blog?.createdAt)}
+                    </span>
+                </div>
+
+                {/* Excerpt */}
+                <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3">
+                    {blog?.description || "In today's fast-paced business environment, finding and hiring top talent efficiently is crucial for maintaining a competitive edge. Companies that..."}
+                </p>
+
+                {/* Read More Button */}
+                <button 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (location.pathname !== "/admin") {
+                            navigate(`/blogdetails/${blog?.slug}?id=${blog._id}`);
+                        }
+                    }}
+                    className="primary-btn w-full"
+                >
+                    READ ARTICLES
+                </button>
             </div>
         </div>
     )

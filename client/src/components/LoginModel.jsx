@@ -61,7 +61,7 @@ const LoginModel = ({ setStep }) => {
               type="email"
               name="email"
               placeholder="Email Address"
-              className="pl-2 text-sm w-full outline-none border-none text-gray-800"
+              className="pl-2 text-sm w-full outline-none border-none text-[var(--primary-color)]"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -76,25 +76,24 @@ const LoginModel = ({ setStep }) => {
               type={showPassword ? 'text' : 'password'}
               name="password"
               placeholder="Password"
-              className="pl-2 text-sm pr-8 w-full outline-none border-none text-gray-800"
+              className="text-[var(--primary-color)] pl-2 text-sm pr-8 w-full outline-none border-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <span
+            <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute cursor-pointer right-3 text-gray-500 hover:text-gray-700 transition-all"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </span>
+            </button>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loginLoading}
-            className="block w-full bg-indigo-600 mt-5 py-2 rounded-2xl hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold mb-2"
+            className="primary-btn"
           >
             {loginLoading ? 'Loading...' : 'Login'}
           </button>

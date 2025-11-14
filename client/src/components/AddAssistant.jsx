@@ -9,7 +9,6 @@ import {
   Users,
   UserCircle,
   ClipboardCheck,
-  BarChart3,
   Check,
   Building,
   Server,

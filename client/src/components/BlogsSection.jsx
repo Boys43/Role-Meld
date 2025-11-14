@@ -3,9 +3,7 @@ import BlogCard from './BlogCard'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import assets from '../assets/assets';
 import NotFound404 from './NotFound404';
-import { FaBlogger } from 'react-icons/fa';
 
 const BlogsSection = ({ className, limit = 4 }) => {
   const { backendUrl } = useContext(AppContext);
@@ -25,6 +23,7 @@ const BlogsSection = ({ className, limit = 4 }) => {
     }
   }
 
+
   useEffect(() => {
     getAllBlogs();
   }, []);
@@ -42,6 +41,7 @@ const BlogsSection = ({ className, limit = 4 }) => {
       coverImage: `https://picsum.photos/200/300/?random`,
       createdAt: "2022-01-01",
       slug: "the-best-practices-for-software-development",
+      category: "RECRUITMENT & HIRING"
     },
     {
       title: "Why Software Development is so Important",
@@ -49,6 +49,7 @@ const BlogsSection = ({ className, limit = 4 }) => {
       coverImage: `https://picsum.photos/200/300/?random`,
       createdAt: "2022-01-15",
       slug: "why-software-development-is-so-important",
+      category: " & HIRING"
     },
     {
       title: "The Future of Software Development",
@@ -56,8 +57,8 @@ const BlogsSection = ({ className, limit = 4 }) => {
       coverImage: "https://picsum.photos/200/300/?random",
       createdAt: "2022-02-01",
       slug: "the-future-of-software-development",
-    },
-
+      category: "RECRUITMENT & HIRING"
+    }
   ]
 
   return (
@@ -71,9 +72,9 @@ const BlogsSection = ({ className, limit = 4 }) => {
           <NotFound404 margin={"mt-10"} value={"No Recent Blogs"} />
         }
       </section>
-      <span className='secondary-btn'>
+      <button className='mt-10 secondary-btn'>
         View more articles
-      </span>
+      </button>
     </div>
   )
 }
