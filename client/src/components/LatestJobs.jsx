@@ -197,6 +197,60 @@ const LatestJobs = () => {
       description: "Drive product strategy and execution for our innovative software solutions.",
       skills: ["Product Strategy", "Agile", "User Stories", "Analytics", "Leadership"],
       experience: "4-7 years"
+    },
+    {
+      _id: "6",
+      title: "UX/UI Designer",
+      jobsCurrency: "PKR",
+      company: "Design Studio Pro",
+      location: "San Francisco, CA",
+      jobType: "contract",
+      locationType: "on-site",
+      minSalary: 70000,
+      maxSalary: 95000,
+      applicationDeadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days from now
+      postedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+      category: "Design",
+      subCategory: "UI/UX Design",
+      description: "Create intuitive and beautiful user experiences for our diverse portfolio of clients.",
+      skills: ["Figma", "Adobe XD", "Sketch", "Prototyping", "User Research"],
+      experience: "2-3 years"
+    },
+    {
+      _id: "4",
+      title: "Data Scientist",
+      jobsCurrency: "PKR",
+      company: "Analytics Hub",
+      location: "Chicago, IL",
+      jobType: "full-time",
+      locationType: "hybrid",
+      minSalary: 90000,
+      maxSalary: 130000,
+      applicationDeadline: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000), // 35 days from now
+      postedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+      category: "Technology",
+      subCategory: "Data Science",
+      description: "Analyze complex datasets and build predictive models to drive business insights.",
+      skills: ["Python", "R", "SQL", "Machine Learning", "Statistics"],
+      experience: "3-6 years"
+    },
+    {
+      _id: "5",
+      title: "Product Manager",
+      jobsCurrency: "PKR",
+      company: "Innovation Labs",
+      location: "Austin, TX",
+      jobType: "full-time",
+      locationType: "remote",
+      minSalary: 85000,
+      maxSalary: 115000,
+      applicationDeadline: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000), // 28 days from now
+      postedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
+      category: "Management",
+      subCategory: "Product Management",
+      description: "Drive product strategy and execution for our innovative software solutions.",
+      skills: ["Product Strategy", "Agile", "User Stories", "Analytics", "Leadership"],
+      experience: "4-7 years"
     }
   ];
 

@@ -7,10 +7,12 @@ import { FiMenu, FiX } from "react-icons/fi";
 import Loading from "./Loading";
 import Img from "./Image"; // Assuming this is a local component for image rendering
 import { AnimatePresence, motion } from "framer-motion";
+import Search from "./Search";
 
 // React iCONS
 import { IoMdPerson, IoMdExit } from "react-icons/io";
 import { Gauge, Briefcase, HelpCircle, Building2, UserCircle, LogOut } from "lucide-react";
+import { FaSearch } from "react-icons/fa";
 
 // --- Configuration ---
 const USER_NAV_LINKS = [
@@ -23,7 +25,7 @@ const USER_NAV_LINKS = [
 const Navbar = ({ className }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, loading, backendUrl, setIsLoggedIn, setUserData, userData } =
+  const { isLoggedIn, loading, backendUrl, setIsLoggedIn, setUserData, userData, isSearchOpen, setIsSearchOpen } =
     useContext(AppContext);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -154,63 +156,128 @@ const Navbar = ({ className }) => {
     </div>
   );
 
-  const MobileNavLinks = () => (
-    <div
-      ref={mobileMenuRef}
-      className={`md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 shadow-lg p-4 space-y-4 transition-transform duration-300 ease-out z-40 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-    >
-      {USER_NAV_LINKS.map(({ to, icon: Icon, label }) => (
-        <NavLink
-          key={to}
-          to={to}
-          onClick={() => handleLinkClick(to)}
-          className="flex items-center gap-3 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <Icon size={20} className="text-[var(--primary-color)]" />
-          {label}
-        </NavLink>
-      ))}
+  const MobileSidebar = () => (
+    <>
+      {/* Overlay */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/70 z-40 md:hidden"
+          onClick={() => setIsMenuOpen(false)}
+        />
+      )}
 
-      {isLoggedIn ? (
-        <>
-          <NavLink
-            to="/dashboard"
-            onClick={() => handleLinkClick("/dashboard")}
-            className="flex items-center gap-3 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+      {/* Sidebar */}
+      <div
+        ref={mobileMenuRef}
+        className={`fixed top-0 left-0 h-full w-80 bg-white shadow-xl z-50 duration-300 ease-in-out md:hidden transition-all ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          {isLoggedIn && userData ? (
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[var(--primary-color)] rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">
+                  {userData.name?.charAt(0)?.toUpperCase() || "U"}
+                </span>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">{userData.name || "User"}</p>
+                <p className="text-sm text-gray-500 capitalize">{userData.role || "Member"}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                <UserCircle size={20} className="text-gray-600" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Guest</p>
+                <p className="text-sm text-gray-500">Not signed in</p>
+              </div>
+            </div>
+          )}
+
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <UserCircle size={20} className="text-[var(--primary-color)]" />
-            Dashboard
-          </NavLink>
-          {isAdmin && (
+            <FiX size={20} className="text-gray-600" />
+          </button>
+        </div>
+
+        {/* Navigation Links */}
+        <div className="p-6 space-y-2">
+          {USER_NAV_LINKS.map(({ to, icon: Icon, label }) => (
             <NavLink
-              to="/admin"
-              onClick={() => handleLinkClick("/admin")}
-              className="flex items-center gap-3 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              key={to}
+              to={to}
+              onClick={() => handleLinkClick(to)}
+              className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${location.pathname === to
+                ? "bg-[var(--primary-color)]/10 text-[var(--primary-color)]"
+                : "text-gray-700 hover:bg-gray-100"
+                }`}
             >
-              <Gauge size={20} className="text-red-500" />
-              Admin Panel
+              <Icon size={20} />
+              <span className="font-medium">{label}</span>
+            </NavLink>
+          ))}
+
+          {isLoggedIn && (
+            <>
+              <div className="border-t border-gray-200 my-4"></div>
+              <NavLink
+                to="/dashboard"
+                onClick={() => handleLinkClick("/dashboard")}
+                className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${location.pathname === "/dashboard"
+                  ? "bg-[var(--primary-color)]/10 text-[var(--primary-color)]"
+                  : "text-gray-700 hover:bg-gray-100"
+                  }`}
+              >
+                <UserCircle size={20} />
+                <span className="font-medium">Dashboard</span>
+              </NavLink>
+
+              {isAdmin && (
+                <NavLink
+                  to="/admin"
+                  onClick={() => handleLinkClick("/admin")}
+                  className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${location.pathname === "/admin"
+                    ? "bg-red-50 text-red-600"
+                    : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                >
+                  <Gauge size={20} />
+                  <span className="font-medium">Admin Panel</span>
+                </NavLink>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Bottom Action */}
+        <div className="absolute bottom-6 left-6 right-6">
+          {isLoggedIn ? (
+            <button
+              onClick={logout}
+              className="flex items-center justify-center gap-3 w-full p-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-red-200"
+            >
+              <LogOut size={20} />
+              <span className="font-medium">Logout</span>
+            </button>
+          ) : (
+            <NavLink
+              to="/login"
+              onClick={() => handleLinkClick("/login")}
+              className="flex items-center justify-center gap-3 w-full p-3 bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90 rounded-lg transition-colors"
+            >
+              <IoMdExit size={20} />
+              <span className="font-medium">Sign In</span>
             </NavLink>
           )}
-          <button
-            onClick={logout}
-            className="flex items-center gap-3 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full text-left"
-          >
-            <LogOut size={20} />
-            Logout
-          </button>
-        </>
-      ) : (
-        <NavLink
-          to="/login"
-          onClick={() => handleLinkClick("/login")}
-          className="flex items-center gap-3 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <IoMdExit size={20} className="text-[var(--primary-color)]" />
-          Sign In
-        </NavLink>
-      )}
-    </div>
+        </div>
+      </div>
+    </>
   );
 
   const score = userData?.profileScore ?? 0;
@@ -381,35 +448,41 @@ const Navbar = ({ className }) => {
   // --- Main Render ---
   return (
     <nav className={`w-full ${location.pathname.includes("dashboard") ? "bg-white border-b border-gray-300" : ""} py-5 relative z-999 ${className}`}>
-      <div className="flex items-center px-4 justify-between">
+      <div className="flex items-center md:px-2 lg:px-4 justify-between">
         {/* Left Section - Logo and Desktop Links */}
-        <div className={`flex items-center gap-10`}>
-          <NavLink to={"/"}>
-            {/* The image styling should be outside the component if possible, or ensure it's responsive */}
-            <Img src="/logo.webp" style={`${location.pathname.includes("dashboard") ? "hidden" : ""} w-28 sm:w-32`} alt="Company Logo" />
-          </NavLink>
-          <DesktopNavLinks />
+        <div className="flex items-center gap-3">
+          <div className="md:hidden">
+            <button
+              onClick={toggleMobileMenu}
+              className="p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {isMenuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
+            </button>
+          </div>
+
+          <div className={`flex items-center gap-10`}>
+            <NavLink to={"/"}>
+              {/* The image styling should be outside the component if possible, or ensure it's responsive */}
+              <Img src="/logo.webp" style={`${location.pathname.includes("dashboard") ? "hidden" : ""} w-28 sm:w-32`} alt="Company Logo" />
+            </NavLink>
+            <DesktopNavLinks />
+          </div>
+        </div>
+
+        <div className="md:hidden items-center gap-4" onClick={() => setIsSearchOpen(true)}>
+          <FaSearch />
         </div>
 
         {/* Right Section - Auth/User Actions */}
         <div className="hidden md:flex items-center gap-4">
           {isLoggedIn ? <UserProfileDropdown /> : <AuthButtons />}
         </div>
-
-        {/* Mobile Hamburger/Close Button */}
-        <div className="md:hidden">
-          <button
-            onClick={toggleMobileMenu}
-            className="p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {isMenuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
-          </button>
-        </div>
       </div>
 
-      {/* Mobile Menu Content (Outside the main flex container for full width) */}
-      <MobileNavLinks />
+      {/* Mobile Sidebar Content */}
+      <MobileSidebar />
+
     </nav>
   );
 };

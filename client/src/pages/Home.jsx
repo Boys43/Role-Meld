@@ -15,7 +15,7 @@ import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Navbar from "../components/Navbar";
-import { Bell, Code, FileText, Timer } from "lucide-react";
+import { Bell, Code, FileText, Timer, X } from "lucide-react";
 import { Briefcase, Palette, PenTool, Headphones } from "lucide-react";
 import Announcementbar from "../components/Announcementbar";
 
@@ -26,9 +26,9 @@ const Home = () => {
   }, [])
   const navigate = useNavigate();
 
-  const { backendUrl } = useContext(AppContext);
+  const { isSearchOpen, setIsSearchOpen, backendUrl } = useContext(AppContext);
   const [categoriesLoading, setCategoriesLoading] = useState(false)
-  
+
   // Animated text state
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -38,9 +38,9 @@ const Home = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setIsAnimating(true);
-      
+
       setTimeout(() => {
-        setCurrentTextIndex((prevIndex) => 
+        setCurrentTextIndex((prevIndex) =>
           prevIndex === animatedTexts.length - 1 ? 0 : prevIndex + 1
         );
         setIsAnimating(false);
@@ -72,25 +72,26 @@ const Home = () => {
 
   return (
     <>
-    {/* Announcement Bar */}
-    <Announcementbar />
+      {/* Announcement Bar */}
+      <Announcementbar />
       <main className="">
-        <section className={`bg-cover bg-center relative md:p-6 md:pt-0 lg:pt-0lg:p-8 w-full px-4 pb-4`} style={{ backgroundImage: `url(${assets.hero})`}}>
-          <Navbar className={"max-w-6xl mx-auto"} />
-          <div className="max-w-6xl mx-auto  pt-10 h-full items-center grid grid-cols-1 md:grid-cols-2">
+        <section className={`overflow-hidden bg-cover bg-center relative`} style={{ backgroundImage: `url(${assets.hero})` }}>
+          <div className="w-full absolute top-0 left-1/2 -translate-x-1/2 z-999">
+            <Navbar className={"max-w-6xl mx-auto"} />
+          </div>
+          <div className="max-w-6xl mx-auto h-full items-center grid grid-cols-1 md:grid-cols-2">
             {/* Main Content */}
             <div className="relative z-20 w-full">
-              <div className="mb-4">
-                <span className="text-gray-600 text-lg">12k jobs in </span>
-                <span className="text-gray-800 font-semibold text-lg">200 locations</span>
+              <div className="mb-4 text-lg">
+                <b>12k</b> jobs in {" "}
+                <b>200</b> locations
               </div>
 
-              <div className="text-4xl md:text-5xl font-semibold text-gray-800 leading-tight">
-                Your <span className={`text-[var(--primary-color)] inline-block transition-all duration-500 ease-in-out transform ${
-                  isAnimating 
-                    ? 'opacity-0 scale-125' 
-                    : 'opacity-100 scale-100'
-                }`}>
+              <div className="text-3xl md:text-5xl font-semibold text-gray-800 leading-tight">
+                Your <span className={`text-[var(--primary-color)] inline-block transition-all duration-500 ease-in-out transform ${isAnimating
+                  ? 'opacity-0 scale-125'
+                  : 'opacity-100 scale-100'
+                  }`}>
                   {animatedTexts[currentTextIndex]}
                 </span> is just a<br />
                 search away!
@@ -107,28 +108,75 @@ const Home = () => {
                 <span className="text-[var(--primary-color)] text-md">Experimentation, Marketing Manager</span>
               </div>
             </div>
-            <div className="hidden md:flex">
-              <Marquee direction="up" pauseOnHover speed={60} className="">
-                <div className="flex flex-col gap-15 justify-around">
-                  <div className="ml-10 w-96 bg-[#f9a37f]/90 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}>
+            <div className="relative h-[700px] overflow-hidden group">
+              <div className="scroll-vertical group-hover:[animation-play-state:paused]">
+                <div className="flex flex-col gap-15">
+                  <div
+                    className="ml-10 w-112 bg-[#f9ab85]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
                     <span className="text-gray-600 text-sm">California</span>
-                    <h5 className="text-black font-semibold text-lg">Customer Success Manager</h5>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
                   </div>
-                  <div className="mr-10 w-96 bg-[#f9a37f]/90 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}>
+
+                  <div
+                    className="mr-10 w-112 bg-[#fff]/90 rounded-2xl p-4 flex flex-col cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
                     <span className="text-gray-600 text-sm">California</span>
-                    <h5 className="text-black font-semibold text-lg">Customer Success Manager</h5>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
                   </div>
-                  <div className="ml-10 w-96 bg-[#f46b99]/90 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Data%20Engineer')}>
+
+                  <div
+                    className="ml-10 w-112 bg-[#ffd865]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Data%20Engineer')}
+                  >
                     <span className="text-gray-600 text-sm">California</span>
-                    <h5 className="text-black font-semibold text-lg">Data Engineer</h5>
+                    <h4 className="text-black font-semibold text-xl">Data Engineer</h4>
                   </div>
-                  <div className="mr-10 w-96 bg-[#f9d71c]/90 rounded-xl p-4 cursor-pointer" onClick={() => navigate('/find-jobs?job=Designer')}>
+
+                  <div
+                    className="mr-10 w-112 bg-[#f9ab85]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Designer')}
+                  >
                     <span className="text-gray-600 text-sm">California</span>
-                    <h5 className="text-black font-semibold text-lg">Designer</h5>
+                    <h4 className="text-black font-semibold text-xl">Designer</h4>
+                  </div>
+                  <div
+                    className="ml-10 w-112 bg-[#fff]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#ffd865]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="ml-10 w-112 bg-[#f9ab85]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Data%20Engineer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Data Engineer</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#fff]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Designer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Designer</h4>
                   </div>
                 </div>
-              </Marquee>
+              </div>
             </div>
+
           </div>
         </section>
 
@@ -178,7 +226,7 @@ const Home = () => {
         <hr className="border-gray-200" />
         {/* Popular Categories Section */}
         <section className="py-16 bg-white">
-          <div className="max-w-6xl mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
             <div className="text-center flex flex-col gap-2 mb-12">
               <h2 className=" font-bold text-gray-900">Popular category</h2>
               <p className="text-gray-600 text-lg">Find and hire professionals across all skills</p>
@@ -189,12 +237,12 @@ const Home = () => {
                 onClick={() => navigate('/category-jobs?category=' + encodeURIComponent('Development & IT'))}
                 className="group bg-[var(--accent-color)] shadow-gray-100 hover:shadow rounded-2xl p-8 cursor-pointer transition-all duration-300 border-gray-200 border flex gap-3"
               >
-                  <div className="w-14 h-14 bg-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
-                    <Code size={24} className="text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">Development & IT</h4>
-                    <p className="text-gray-500 text-sm">16 jobs</p>
+                <div className="w-14 h-14 bg-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
+                  <Code size={24} className="text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-1">Development & IT</h4>
+                  <p className="text-gray-500 text-sm">16 jobs</p>
                 </div>
               </div>
               <div
@@ -283,7 +331,7 @@ const Home = () => {
 
         {/* Latest Jobs Section */}
         <section className="py-16">
-          <div className="max-w-6xl mx-auto px-4 lg:px-8">
+          <div className="max-w-6xl mx-auto">
             <div className="relative">
               <Suspense fallback={
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -377,7 +425,7 @@ const Home = () => {
         {/* Featured Companies */}
 
         {/* Testimonials */}
-        <section className="max-w-6xl mx-auto p-4 w-full mt-20">
+        <section className="max-w-6xl mx-auto py-4 w-full mt-20">
           <div className="flex md:w-1/2 text-center mx-auto flex-col items-center gap-2">
             <h2 className="text-black font-semibold">
               Trusted by leading brands and startups
@@ -425,7 +473,7 @@ const Home = () => {
 
 
         {/* Blogs */}
-        <section className="max-w-6xl mx-auto p-4 w-full mt-20">
+        <section className="max-w-6xl mx-auto py-4 w-full mt-20">
           <div className="flex md:w-1/2 text-center mx-auto flex-col items-center gap-2">
             <h2 className="font-semibold text-black">
               Latest from our blog
@@ -439,6 +487,14 @@ const Home = () => {
           </Suspense>
         </section>
       </main>
+      {isSearchOpen && (
+        <div className=" fixed z-999 w-full flex items-center justify-center h-full bg-black/60">
+          <X className="absolute top-6 right-6 cursor-pointer z-9999 text-white" onClick={() => setIsSearchOpen(false)} />
+          <div className="mx-6 w-full">
+            <Search />
+          </div>
+        </div>
+      )}
     </>
   );
 };

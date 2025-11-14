@@ -69,7 +69,7 @@ const JobCard = ({ e }) => {
                     </div>
 
                     {/* Save Button (Absolute positioning removed for cleaner flow) */}
-                    <span
+                    <button
                         onClick={(event) => {
                             event.stopPropagation()
                             toggleSaveJob(e?._id)
@@ -78,13 +78,13 @@ const JobCard = ({ e }) => {
                         className={`p-2 rounded-full transition-all duration-200 flex-shrink-0
                         ${isSaved
                                 ? 'bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90 shadow-md'
-                                : 'bg-gray-100 text-gray-600 hover:text-[var(--primary-color)] hover:bg-gray-200'
+                                : 'text-gray-600 hover:text-[var(--primary-color)] hover:bg-gray-200'
                             }`}
                         aria-label={isSaved ? "Unsave job" : "Save job"}
                         disabled={!isLoggedIn}
                     >
-                        {isSaved ? <Heart size={20} fill='white' /> : <Heart size={20} />}
-                    </span>
+                        {isSaved ? <Heart size={24} fill='white' /> : <Heart size={24} />}
+                    </button>
                 </div>
                 <div>
 
