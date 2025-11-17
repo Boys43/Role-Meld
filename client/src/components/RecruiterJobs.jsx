@@ -94,7 +94,7 @@ const RecruiterJobs = () => {
     }, [selectedStatus, searchTerm, sortOrder]);
 
     return (
-        <div className='w-full min-h-screen rounded-lg overflow-y-auto border border-gray-200 p-6 rouned-lg'>
+        <div className='bg-white w-full min-h-screen rounded-lg overflow-y-auto border border-gray-200 p-6 rouned-lg'>
             <div className='rounded-lg'>
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-xl md:text-2xl font-bold flex items-center gap-3 text-gray-800 mb-3">

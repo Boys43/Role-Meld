@@ -217,7 +217,7 @@ const LatestJobs = () => {
       experience: "2-3 years"
     },
     {
-      _id: "4",
+      _id: "7",
       title: "Data Scientist",
       jobsCurrency: "PKR",
       company: "Analytics Hub",
@@ -235,7 +235,7 @@ const LatestJobs = () => {
       experience: "3-6 years"
     },
     {
-      _id: "5",
+      _id: "8",
       title: "Product Manager",
       jobsCurrency: "PKR",
       company: "Innovation Labs",

@@ -4,9 +4,12 @@ import Category from '../models/categoryModel.js';
 const adminRouter = express.Router()
 
 adminRouter.post("/categories", async (req, res) => {
-  const { name } = req.body;
+  console.log("POST");
+  const { name, icon = "Tag" } = req.body;
+
+  console.log(req.body);
   try {
-    const category = new Category({ name, subcategories: [] });
+    const category = new Category({ name, icon, subcategories: [] });
     await category.save();
     res.status(201).json(category);
   } catch (err) {
@@ -71,8 +74,39 @@ adminRouter.delete("/categories/:id", async (req, res) => {
   }
 });
 
+adminRouter.patch("/categories/:id", async (req, res) => {
+  console.log("PATCH");
+  const { id } = req.params;
+  const updates = {};
+
+  console.log(req.body);
+
+  if (typeof req.body.name === "string" && req.body.name.trim()) {
+    updates.name = req.body.name.trim();
+  }
+
+  if (typeof req.body.icon === "string" && req.body.icon.trim()) {
+    updates.icon = req.body.icon.trim();
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return res.status(400).json({ error: "No updates provided" });
+  }
+
+  try {
+    const category = await Category.findByIdAndUpdate(id, updates, { new: true });
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+    res.json({ success: true, category });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // Bulk import categories from Excel data
 adminRouter.post("/categories/bulk-import", async (req, res) => {
+  console.log("BULK");
   const { categories } = req.body;
 
   try {
@@ -84,7 +118,7 @@ adminRouter.post("/categories/bulk-import", async (req, res) => {
 
     for (const categoryData of categories) {
       try {
-        const { name, subcategories = [] } = categoryData;
+        const { name, subcategories = [], icon = "Tag" } = categoryData;
 
         if (!name || !name.trim()) {
           results.errors.push(`Category name is required for entry: ${JSON.stringify(categoryData)}`);
@@ -109,6 +143,7 @@ adminRouter.post("/categories/bulk-import", async (req, res) => {
           // Create new category
           const newCategory = new Category({
             name: name.trim(),
+            icon: icon || "Tag",
             subcategories: subcategories.filter(sub => sub && sub.trim()).map(sub => sub.trim())
           });
           await newCategory.save();

@@ -1,9 +1,64 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { AppContext } from "../context/AppContext";
-import { Plus, Trash2, Tag, FolderPlus, Upload, FileSpreadsheet, Download } from 'lucide-react';
+import { Plus, Trash2, Tag, FolderPlus, Upload, FileSpreadsheet, Download, Search } from 'lucide-react';
 import { toast } from "react-toastify";
 import * as XLSX from 'xlsx';
+import { categoryIconOptions, getCategoryIcon } from "../utils/categoryIcons";
+
+const IconSelect = ({ value, onChange, className }) => {
+    const [open, setOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const selectedOption = categoryIconOptions.find((option) => option.value === value) || categoryIconOptions[0];
+
+    return (
+        <div ref={dropdownRef} className={`relative ${className || ""}`}>
+            <button
+                type="button"
+                onClick={() => setOpen((prev) => !prev)}
+                className="w-full flex items-center justify-between gap-3 px-4 py-3 cursor-pointer border border-gray-300 rounded-3xl bg-white hover:border-[var(--primary-color)] focus:outline-none"
+            >
+                <span className="flex items-center gap-2">
+                    {React.createElement(selectedOption.icon, { size: 18, className: "text-[var(--primary-color)]" })}
+                    <span className="text-sm font-medium text-gray-700">{selectedOption.label}</span>
+                </span>
+                <span className="text-gray-400 text-sm">{open ? "▲" : "▼"}</span>
+            </button>
+
+            {open && (
+                <div className="absolute z-20 mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-lg max-h-64 overflow-y-auto">
+                    {categoryIconOptions.map((option) => (
+                        <button
+                            type="button"
+                            key={option.value}
+                            onClick={() => {
+                                onChange(option.value);
+                                setOpen(false);
+                            }}
+                            className={`w-full flex items-center gap-3 px-4 py-2 text-left text-sm hover:bg-gray-50 ${
+                                option.value === value ? "bg-gray-100" : ""
+                            }`}
+                        >
+                            {React.createElement(option.icon, { size: 18, className: "text-[var(--primary-color)]" })}
+                            <span className="text-gray-700">{option.label}</span>
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
 
 const CategoryManager = () => {
     const { backendUrl } = useContext(AppContext);
@@ -13,6 +68,11 @@ const CategoryManager = () => {
     const [loading, setLoading] = useState(false);
     const [importing, setImporting] = useState(false);
     const [importResults, setImportResults] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [newCategoryIcon, setNewCategoryIcon] = useState("Tag");
+    const [iconSelections, setIconSelections] = useState({});
 
     // Fetch categories
     const fetchCategories = async () => {
@@ -31,19 +91,71 @@ const CategoryManager = () => {
         }
     };
 
+    const handleIconUpdate = async (categoryId) => {
+        const icon = iconSelections[categoryId];
+        try {
+            const { data } = await axios.patch(backendUrl + `/api/admin/categories/${categoryId}`, { icon });
+            if (data.success) {
+                toast.success("Icon updated successfully");
+                fetchCategories();
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error(err.response?.data?.error || "Failed to update icon");
+        }
+    };
+
     useEffect(() => {
         fetchCategories();
     }, []);
 
+    useEffect(() => {
+        setIconSelections(() => {
+            const map = {};
+            categories.forEach(cat => {
+                map[cat._id] = cat.icon || "Tag";
+            });
+            return map;
+        });
+    }, [categories]);
+
     console.log('categories', categories);
+
+    const totalSubcategories = categories.reduce((total, cat) => total + (cat.subcategories?.length || 0), 0);
+
+    const filteredCategories = categories.filter((cat) => {
+        if (!searchTerm.trim()) return true;
+        const term = searchTerm.toLowerCase();
+        const nameMatch = cat.name.toLowerCase().includes(term);
+        const subMatch = cat.subcategories?.some((sub) => sub.toLowerCase().includes(term));
+        return nameMatch || subMatch;
+    });
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
+
+    const totalPages = Math.max(1, Math.ceil(filteredCategories.length / itemsPerPage) || 1);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentCategories = filteredCategories.slice(startIndex, endIndex);
+    const startItem = filteredCategories.length === 0 ? 0 : startIndex + 1;
+    const endItem = Math.min(endIndex, filteredCategories.length);
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [totalPages, currentPage]);
 
 
     // Add category
     const handleAddCategory = async () => {
         if (!newCategory.trim()) return;
         try {
-            await axios.post(backendUrl + "/api/admin/categories", { name: newCategory });
+            await axios.post(backendUrl + "/api/admin/categories", { name: newCategory, icon: newCategoryIcon });
             setNewCategory("");
+            setNewCategoryIcon("Tag");
             fetchCategories();
         } catch (err) {
             console.error(err);
@@ -224,8 +336,8 @@ const CategoryManager = () => {
     };
 
     return (
-        <div className="w-full overflow-y-auto min-h-screen p-6">
-            <div className="max-w-4xl mx-auto">
+        <div className="border border-gray-300 rounded-3xl bg-white w-full overflow-y-auto min-h-screen p-6">
+            <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Category Manager</h1>
@@ -235,17 +347,27 @@ const CategoryManager = () => {
                 {/* Add New Category */}
                 <div className="mb-8">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Add New Category</h3>
-                    <div className="flex gap-3">
-                        <input
-                            type="text"
-                            value={newCategory}
-                            placeholder="Enter category name..."
-                            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            onChange={(e) => setNewCategory(e.target.value)}
-                        />
+                    <div className="grid gap-3 md:grid-cols-3">
+                        <div className="md:col-span-2 flex gap-3">
+                            <input
+                                type="text"
+                                value={newCategory}
+                                placeholder="Enter category name..."
+                                className="flex-1 border border-gray-300 rounded-3xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]"
+                                onChange={(e) => setNewCategory(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex gap-3 items-center">
+                            <IconSelect value={newCategoryIcon} onChange={setNewCategoryIcon} className="flex-1" />
+                            <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center">
+                                {React.createElement(getCategoryIcon(newCategoryIcon), { size: 22 })}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex justify-end mt-4">
                         <button
                             onClick={handleAddCategory}
-                            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                            className="primary-btn flex items-center gap-2"
                         >
                             <Plus className="w-4 h-4" />
                             Add Category
@@ -264,13 +386,13 @@ const CategoryManager = () => {
                     <div className="flex flex-wrap gap-3 my-4">
                         <button
                             onClick={downloadTemplate}
-                            className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+                            className="primary-btn flex items-center gap-2"
                         >
                             <Download className="w-4 h-4" />
                             Download Template
                         </button>
                         
-                        <label className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 cursor-pointer">
+                        <label className="bg-white text-[var(--primary-color)] px-4 py-2 rounded-3xl hover:bg-[var(--primary-color)] hover:text-white transition-colors flex items-center gap-2 cursor-pointer">
                             <Upload className="w-4 h-4" />
                             {importing ? 'Importing...' : 'Import Excel File'}
                             <input
@@ -318,88 +440,289 @@ const CategoryManager = () => {
                     )}
                 </div>
 
-                {/* Categories List */}
-                <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Categories</h3>
-                    {loading ? (
-                        <div className="text-center py-8">
-                            <div className="inline-block w-8 h-8 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
-                            <p className="text-gray-500">Loading categories...</p>
+                {/* Category Overview */}
+                <div className="mb-8">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Overview</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="p-5 bg-gradient-to-br from-blue-50 to-white rounded-2xl border border-blue-100 shadow-sm">
+                            <p className="text-gray-500 text-sm font-medium">Total Categories</p>
+                            <p className="text-3xl font-bold text-blue-600 mt-2">{categories.length}</p>
                         </div>
-                    ) : categories.length === 0 ? (
-                        <div className="text-center py-8">
-                            <Tag className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                            <h3 className="text-lg font-semibold text-gray-700 mb-2">No Categories Yet</h3>
-                            <p className="text-gray-500">Start by adding your first category above</p>
+                        <div className="p-5 bg-gradient-to-br from-green-50 to-white rounded-2xl border border-green-100 shadow-sm">
+                            <p className="text-gray-500 text-sm font-medium">Total Subcategories</p>
+                            <p className="text-3xl font-bold text-green-600 mt-2">{totalSubcategories}</p>
                         </div>
-                    ) : (
-                        <div className="space-y-4">
-                            {categories?.map((cat) => (
-                                <div key={cat._id} className="border border-gray-200 rounded-lg p-4">
-                                    {/* Category Header */}
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="flex items-center gap-3">
-                                            <Tag className="w-5 h-5 text-blue-600" />
-                                            <h3 className="text-xl font-semibold text-gray-800">{cat.name}</h3>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-                                                {cat.subcategories.length} subcategories
-                                            </span>
-                                            <button
-                                                onClick={() => handleDeleteCategory(cat._id, cat.name)}
-                                                className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                                                title={`Delete category "${cat.name}"`}
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
+                        <div className="p-5 bg-gradient-to-br from-purple-50 to-white rounded-2xl border border-purple-100 shadow-sm">
+                            <p className="text-gray-500 text-sm font-medium">Last Import</p>
+                            <p className="text-base font-semibold text-purple-600 mt-2">
+                                {importResults
+                                    ? `+${importResults.created} created / ${importResults.updated} updated`
+                                    : "No imports yet"}
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-                                    {/* Subcategories List */}
-                                    {cat.subcategories.length > 0 && (
-                                        <div className="mb-4">
-                                            <h4 className="text-sm font-medium text-gray-600 mb-2">Subcategories</h4>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                                                {cat.subcategories.map((sub) => (
-                                                    <div
-                                                        key={sub}
-                                                        className="flex justify-between items-center bg-gray-50 rounded-lg px-3 py-2 hover:bg-gray-100 transition-colors group"
-                                                    >
-                                                        <span className="text-gray-700">{sub}</span>
+                {/* Categories Table */}
+                <div className="rounded-2xl border border-gray-200 p-4 bg-white">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <div className="relative w-full md:max-w-md">
+                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Search categories or subcategories..."
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent"
+                            />
+                        </div>
+                        <div className="text-sm text-gray-500">
+                            {filteredCategories.length === 0
+                                ? "0 categories"
+                                : `${startItem} - ${endItem} of ${filteredCategories.length} categories`}
+                        </div>
+                    </div>
+
+                    <div className="overflow-x-auto mt-4 rounded-xl border border-gray-200">
+                        <table className="min-w-full bg-white border-collapse">
+                            <thead>
+                                <tr className="text-left bg-[var(--primary-color)]/95 text-white">
+                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide">Category</th>
+                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide">Subcategories</th>
+                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide">Highlights</th>
+                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan={4} className="py-12 text-center text-gray-500">
+                                            <div className="inline-block w-8 h-8 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                                            <p className="mt-3">Loading categories...</p>
+                                        </td>
+                                    </tr>
+                                ) : filteredCategories.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={4} className="py-12 text-center text-gray-500">
+                                            <div className="flex flex-col items-center gap-2">
+                                                <Tag className="w-10 h-10 text-gray-400" />
+                                                <p>No categories match your search.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    currentCategories.map((cat) => (
+                                        <React.Fragment key={cat._id}>
+                                            <tr className="border-t border-gray-200 hover:bg-gray-50">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                                                            {React.createElement(getCategoryIcon(cat.icon), { size: 22 })}
+                                                        </span>
+                                                        <div>
+                                                            <p className="font-semibold text-gray-900">{cat.name}</p>
+                                                            <p className="text-sm text-gray-500">{cat._id}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-full font-medium">
+                                                        {cat.subcategories.length} total
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {cat.subcategories.slice(0, 3).map((sub) => (
+                                                            <span key={sub} className="px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-700">
+                                                                {sub}
+                                                            </span>
+                                                        ))}
+                                                        {cat.subcategories.length > 3 && (
+                                                            <span className="px-3 py-1 rounded-full text-xs bg-gray-200 text-gray-600">
+                                                                +{cat.subcategories.length - 3} more
+                                                            </span>
+                                                        )}
+                                                        {cat.subcategories.length === 0 && (
+                                                            <span className="text-sm text-gray-400">No subcategories yet</span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center justify-center gap-3">
                                                         <button
-                                                            onClick={() => handleDeleteSub(cat._id, sub)}
-                                                            className="text-red-500 hover:text-red-700 p-1 rounded transition-colors opacity-0 group-hover:opacity-100"
+                                                            onClick={() => handleDeleteCategory(cat._id, cat.name)}
+                                                            className="p-2 rounded-full hover:bg-red-50 transition-colors"
+                                                            title={`Delete category "${cat.name}"`}
                                                         >
-                                                            <Trash2 className="w-4 h-4" />
+                                                            <Trash2 className="w-4 h-4 text-red-500" />
                                                         </button>
                                                     </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
+                                                </td>
+                                            </tr>
+                                            <tr className="bg-gray-50/60 border-t border-gray-200">
+                                                <td colSpan={4} className="px-6 py-4">
+                                                    <div className="space-y-3">
+                                                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Manage Subcategories</p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {cat.subcategories.length > 0 ? (
+                                                                cat.subcategories.map((sub) => (
+                                                                    <span key={sub} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-gray-200 text-sm text-gray-700">
+                                                                        {sub}
+                                                                        <button
+                                                                            onClick={() => handleDeleteSub(cat._id, sub)}
+                                                                            className="text-red-500 hover:text-red-700"
+                                                                            title="Remove subcategory"
+                                                                        >
+                                                                            <Trash2 className="w-3 h-3" />
+                                                                        </button>
+                                                                    </span>
+                                                                ))
+                                                            ) : (
+                                                                <span className="text-sm text-gray-400">No subcategories created yet.</span>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                                                            <div className="flex flex-1 gap-2 items-center">
+                                                                <IconSelect
+                                                                    value={iconSelections[cat._id] || cat.icon || "Tag"}
+                                                                    onChange={(selectedValue) => setIconSelections({ ...iconSelections, [cat._id]: selectedValue })}
+                                                                    className="flex-1"
+                                                                />
+                                                                <button
+                                                                    onClick={() => handleIconUpdate(cat._id)}
+                                                                    className="px-4 py-2 rounded-3xl border border-gray-300 text-sm hover:bg-gray-100"
+                                                                >
+                                                                    Save Icon
+                                                                </button>
+                                                            </div>
+                                                            <input
+                                                                type="text"
+                                                                value={newSub[cat._id] || ""}
+                                                                placeholder="Add new subcategory..."
+                                                                className="flex-1 border border-gray-300 rounded-3xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                                onChange={(e) => setNewSub({ ...newSub, [cat._id]: e.target.value })}
+                                                            />
+                                                            <button
+                                                                onClick={() => handleAddSubcategory(cat._id)}
+                                                                className="primary-btn flex items-center gap-2"
+                                                            >
+                                                                <Plus className="w-4 h-4" />
+                                                                Add Subcategory
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </React.Fragment>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
 
-                                    {/* Add Subcategory */}
-                                    <div className="flex gap-3">
-                                        <input
-                                            type="text"
-                                            value={newSub[cat._id] || ""}
-                                            placeholder="Add new subcategory..."
-                                            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                            onChange={(e) =>
-                                                setNewSub({ ...newSub, [cat._id]: e.target.value })
-                                            }
-                                        />
-                                        <button
-                                            onClick={() => handleAddSubcategory(cat._id)}
-                                            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
-                                        >
-                                            <Plus className="w-4 h-4" />
-                                            Add
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                    {filteredCategories.length > 0 && (
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-6">
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500">Rows per page:</span>
+                                <select
+                                    value={itemsPerPage}
+                                    onChange={(e) => {
+                                        setItemsPerPage(Number(e.target.value));
+                                        setCurrentPage(1);
+                                    }}
+                                    className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+                                >
+                                    {[10, 25, 50, 100].map((size) => (
+                                        <option key={size} value={size}>
+                                            {size}
+                                        </option>
+                                    ))}
+                                </select>
+                                <span className="text-sm text-gray-500">
+                                    {startItem} - {endItem} of {filteredCategories.length}
+                                </span>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-sm">
+                                <button
+                                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Previous
+                                </button>
+                                {(() => {
+                                    const pages = [];
+                                    const maxVisiblePages = 5;
+                                    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                                    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+                                    if (endPage - startPage + 1 < maxVisiblePages) {
+                                        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                                    }
+
+                                    if (startPage > 1) {
+                                        pages.push(
+                                            <button
+                                                key={1}
+                                                onClick={() => setCurrentPage(1)}
+                                                className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50"
+                                            >
+                                                1
+                                            </button>
+                                        );
+                                        if (startPage > 2) {
+                                            pages.push(
+                                                <span key="ellipsis-start" className="px-2 text-gray-400">
+                                                    ...
+                                                </span>
+                                            );
+                                        }
+                                    }
+
+                                    for (let i = startPage; i <= endPage; i++) {
+                                        pages.push(
+                                            <button
+                                                key={i}
+                                                onClick={() => setCurrentPage(i)}
+                                                className={`px-3 py-1 border rounded-md ${currentPage === i
+                                                    ? 'bg-[var(--primary-color)] text-white border-[var(--primary-color)]'
+                                                    : 'border-gray-300 hover:bg-gray-50'}`}
+                                            >
+                                                {i}
+                                            </button>
+                                        );
+                                    }
+
+                                    if (endPage < totalPages) {
+                                        if (endPage < totalPages - 1) {
+                                            pages.push(
+                                                <span key="ellipsis-end" className="px-2 text-gray-400">
+                                                    ...
+                                                </span>
+                                            );
+                                        }
+                                        pages.push(
+                                            <button
+                                                key={totalPages}
+                                                onClick={() => setCurrentPage(totalPages)}
+                                                className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50"
+                                            >
+                                                {totalPages}
+                                            </button>
+                                        );
+                                    }
+
+                                    return pages;
+                                })()}
+                                <button
+                                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Next
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>

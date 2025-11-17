@@ -1,61 +1,79 @@
-// components/Sidebar.jsx
-import React, { useContext, useState, useEffect } from "react";
+// components/AdminSidebar.jsx
+import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
-import { FaChevronLeft, FaChevronRight, FaTrash } from "react-icons/fa";
-import { IoMdExit } from "react-icons/io";
-import { FiMenu } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import Img from "./Image";
-import { Blocks, Briefcase, Building, ChevronRight, Clock, LayoutDashboard, User, Users2 } from "lucide-react";
+import {
+  LayoutDashboard,
+  Briefcase,
+  Building,
+  User,
+  Users2,
+  LogOut,
+  Menu,
+  X,
+  Blocks
+} from "lucide-react";
 import { MdAssistant, MdRequestPage } from "react-icons/md";
+import Img from "./Image";
+import { FaArrowLeft } from "react-icons/fa";
 
-const Sidebar = ({ activeTab, setActiveTab }) => {
-  const { userData, backendUrl, setIsLoggedIn, setUserData } = useContext(AppContext);
-  const [toggleNav, setToggleNav] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+const AdminSidebar = ({ activeTab }) => {
+  const { backendUrl, setIsLoggedIn, setUserData, isSidebarOpen, setIsSidebarOpen } = useContext(AppContext);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
 
-  // detect screen size
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Close mobile sidebar when clicking outside
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
+    const handleClickOutside = (event) => {
+      if (isMobileOpen && !event.target.closest('.sidebar') && !event.target.closest('.mobile-menu-btn')) {
+        setIsMobileOpen(false);
+      }
     };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMobileOpen]);
+
+  // Modern navigation structure with routes
+  const navLinks = [
+    { name: "Analytics", key: "analytic-dashboard", icon: <LayoutDashboard size={20} />, path: "/admin" },
+    { name: "Job Requests", key: "job-requests", icon: <Building size={20} />, path: "/admin/job-requests" },
+    { name: "Users", key: "users", icon: <User size={20} />, path: "/admin/users" },
+    { name: "Recruiters", key: "recruiters", icon: <Users2 size={20} />, path: "/admin/recruiters" },
+    { name: "Employee Requests", key: "employee-profile-requests", icon: <MdRequestPage size={20} />, path: "/admin/employee-profile-requests" },
+    { name: "All Jobs", key: "jobs", icon: <Briefcase size={20} />, path: "/admin/jobs" },
+    { name: "Category Manager", key: "category-manager", icon: <Briefcase size={20} />, path: "/admin/category-manager" },
+    { name: "Add Assistant", key: "add-assistant", icon: <MdAssistant size={20} />, path: "/admin/add-assistant" },
+    { name: "All Assistants", key: "all-assistant", icon: <MdAssistant size={20} />, path: "/admin/all-assistant" },
+    { name: "Blog Management", key: "blog-management", icon: <Blocks size={20} />, path: "/admin/blog-management" },
+    { name: "Add Blog", key: "add-blog", icon: <Blocks size={20} />, path: "/admin/add-blog" },
+    { name: "Logout", key: "logout", icon: <LogOut size={20} /> },
+  ];
+
+  const handleNavClick = (item) => {
+    if (item.key === "logout") {
+      logout();
+    } else {
+      navigate(item.path);
+    }
+    // Close mobile sidebar after navigation
+    setIsMobileOpen(false);
+  };
+
+  const handleMobile = () => {
+    setIsMobile(window.innerWidth < 768);
+  }
+
+  useEffect(() => {
+    window.addEventListener("resize", handleMobile);
+    return () => {
+      window.removeEventListener("resize", handleMobile);
+    };
   }, []);
-
-  let navLinks = [
-    { name: 'Analytics', key: "analytic-dashboard", icon: <LayoutDashboard size={25} /> },
-    { name: 'Job Requests', key: "job-requests", icon: <Building size={25} /> },
-    { name: 'Users', key: "users", icon: <User size={25} /> },
-    { name: 'Recruiters', key: "recruiters", icon: <Users2 size={25} /> },
-    { name: 'Emplyee Profile Requests', key: "employee-profile-requests", icon: <MdRequestPage size={25} /> },
-    {
-      name: 'Jobs', key: "jobs", icon: <Briefcase size={25} />,
-      subTabs: [
-        { name: 'Category', key: "category-manager" },
-      ]
-    },
-    {
-      name: 'Assistant', key: "add-assistant", icon: <MdAssistant size={25} />,
-      subTabs: [
-        { name: 'Add Assitant', key: "add-assistant" },
-        { name: 'All Assitants', key: "all-assistant" },
-      ]
-    },
-    {
-      name: 'Blog', key: "blog-management", icon: <Blocks size={25} />,
-      subTabs: [
-        { name: "Blog Management", key: "blog-management" },
-        { name: "Add Blog", key: "add-blog" },
-      ]
-    },
-  ]
-
-  axios.defaults.withCredentials = true;
 
   const logout = async () => {
     try {
@@ -75,141 +93,76 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
   return (
     <>
-      {/* Mobile Hamburger */}
-      {isMobile && (
-        <button
-          className="lg:hidden fixed top-4 left-4 z-50 bg-[var(--primary-color)] text-white p-2 rounded"
-          onClick={() => setToggleNav(!toggleNav)}
-        >
-          <FiMenu size={22} />
-        </button>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        className={`mobile-menu-btn fixed top-1/2 translate-y-1/2 z-9999 lg:hidden bg-[var(--primary-color)] text-white p-2 rounded-r-lg shadow-lg ${isMobileOpen ? 'left-64' : 'left-0'} transition-all duration-300 ease-in-out cursor-pointer`}
+      >
+        {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div className="fixed inset-0 bg-black/70 z-9998 lg:hidden" />
       )}
 
       {/* Sidebar */}
-      <aside
-        className={`${toggleNav ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-          ${toggleNav ? (isMobile ? "w-64 h-screen" : "w-20 ") : "w-72"} 
-          fixed text-sm lg:sticky top-0 left-0 bg-[var(--secondary-color)] 
-          transition-all duration-300 border-r border-[var(--primary-color)] 
-          text-white flex flex-col justify-between z-40 h-screen`}
-      >
-        {/* User Info */}
-        <div className="flex flex-col gap-4 py-4 pl-4 relative">
+      <div className={`
+        sidebar
+        ${isMobile ? 'w-72' : isSidebarOpen ? 'w-16' : 'w-72'} 
+        bg-white border-r border-gray-200 h-screen flex flex-col transition-all duration-300 
+        fixed left-0 top-0 z-9999
+        ${isMobileOpen ? 'translate-x-0 absolute' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        {/* Logo Section */}
+        <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden">
-              {userData?.profilePicture ? (
-                <Img
-                  src={userData?.profilePicture}
-                  style={"w-full h-full object-cover"}
-                />
-              ) : (
-                <span>{userData?.name?.charAt(0).toUpperCase()}</span>
-              )}
-            </div>
-            {!toggleNav && <h4 className="font-bold whitespace-nowrap">{userData?.name}</h4>}
+            <Img src={'/logo.webp'} />
           </div>
 
-          {/* Navigation */}
-          <ul className="flex flex-col gap-2 mt-4">
-            {navLinks.map((e, i) => {
-              const isParentActive =
-                activeTab === e.key || (e.subTabs && e.subTabs.some((sub) => sub.key === activeTab));
-              return (
-                <li key={i} className="relative group">
-                  {/* Parent tab */}
-                  <span
-                    onClick={() => {
-                      if (isMobile && e.subTabs) {
-                        setActiveTab(e.key);
-                      } else if (!e.subTabs) {
-                        setActiveTab(e.key);
-                      }
-                    }}
-                    className={`px-3 py-2 rounded-xl cursor-pointer flex items-center justify-between gap-3 hover:bg-[var(--primary-color)]/10 transition 
-                      ${isParentActive ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)] shadow  px-1" : ""}
-                    `}
-                  >
-                    <span className="flex items-center gap-3">
-                      {e.icon}
-                      {!toggleNav && <h4 className="whitespace-nowrap">{e.name}</h4>}
-                    </span>
-                    {!toggleNav && <span>
-                      {e.subTabs && <ChevronRight />}
-                    </span>}
+          {/* Desktop collapse button */}
+          <span
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="cursor-pointer hidden lg:flex items-center justify-center p-2 rounded-lg transition-colors"
+          >
+            <FaArrowLeft className={`text-gray-600 hover:text-[var(--primary-color)] transition-transform ${isSidebarOpen ? 'rotate-180' : ''}`} />
+          </span>
 
+          {/* Mobile close button */}
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <X size={20} className="text-gray-600" />
+          </button>
+        </div>
+
+        {/* Navigation Links */}
+        <nav className={`${isSidebarOpen ? 'flex-1 px-2' : 'flex-1 px-7'} py-4`}>
+          <ul className="space-y-1">
+            {navLinks.map((item) => (
+              <li key={item.key}>
+                <span
+                  onClick={() => handleNavClick(item)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-3xl text-left transition-colors cursor-pointer ${activeTab === item.key
+                    ? 'bg-[var(--accent-color)] text-[var(--primary-color)]'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                >
+                  <span className="flex-shrink-0">
+                    {item.icon}
                   </span>
-
-                  {/* Floating submenu (desktop only) */}
-                  {e.subTabs && !isMobile && (
-                    <div className="absolute top-0 left-full ml-0.5 hidden group-hover:flex flex-col bg-[var(--secondary-color)] border border-[var(--primary-color)] rounded-xl shadow-lg p-2 z-50 min-w-[230px] animate-fadeIn">
-                      {e.subTabs.map((sub, idx) => (
-                        <span
-                          key={idx}
-                          onClick={() => setActiveTab(sub.key)}
-                          className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition flex items-center gap-2
-                            ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
-                          `}
-                        >
-                          {sub.icon}
-                          {sub.name}
-                        </span>
-                      ))}
-                    </div>
+                  {!isSidebarOpen && (
+                    <span className="font-medium">{item.name}</span>
                   )}
-
-                  {/* Inline submenu (mobile only) */}
-                  {e.subTabs && isMobile && activeTab === e.key && (
-                    <div className="flex flex-col gap-1 pl-6 mt-1">
-                      {e.subTabs.map((sub, idx) => (
-                        <span
-                          key={idx}
-                          onClick={() => setActiveTab(sub.key)}
-                          className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[var(--primary-color)]/10 text-white transition 
-                            ${activeTab === sub.key ? "bg-[var(--primary-color)]/20 border border-[var(--primary-color)]" : ""}
-                          `}
-                        >
-                          {sub.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </li>
-              );
-            })}
+                </span>
+              </li>
+            ))}
           </ul>
-
-          {/* Toggle Button (Desktop only) */}
-          {!isMobile && (
-            <span
-              onClick={() => setToggleNav(!toggleNav)}
-              className="bg-[var(--primary-color)] absolute top-5 right-[-1rem] rounded-full w-8 h-8 flex items-center justify-center text-white cursor-pointer"
-            >
-              {toggleNav ? <FaChevronRight /> : <FaChevronLeft />}
-            </span>
-          )}
-        </div>
-
-        {/* Logout */}
-        <div
-          className={`cursor-pointer bg-[var(--primary-color)]/10 border-2 border-[var(--primary-color)] px-3 py-2 m-4 rounded-2xl text-[var(--primary-color)] flex items-center justify-between`}
-          onClick={logout}
-        >
-          {toggleNav ? <IoMdExit size={23} /> : <>Logout <IoMdExit size={23} /></>}
-        </div>
-      </aside>
-
-      {/* Small fade animation */}
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateX(8px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-in-out;
-        }
-      `}</style>
+        </nav>
+      </div>
     </>
   );
 };
 
-export default Sidebar;
+export default AdminSidebar;

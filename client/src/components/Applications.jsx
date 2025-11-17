@@ -61,7 +61,7 @@ const Applications = () => {
 
     const filteredApplications = Applications.filter((application) => {
         const matchesFilter = filter === 'all' ? true : application.status === filter;
-        const matchesSearch = searchTerm === '' ? true : 
+        const matchesSearch = searchTerm === '' ? true :
             application.applicant?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             application.applicant?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             application.job?.title?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -75,17 +75,17 @@ const Applications = () => {
         }
 
         try {
-            const promises = selectedApplications.map(id => 
+            const promises = selectedApplications.map(id =>
                 axios.post(`${backendUrl}/api/applications/update-status`, { applicationId: id, status: action, feedback: feedback })
             );
             await Promise.all(promises);
-            
-            setApplications(prev => 
-                prev.map(app => 
+
+            setApplications(prev =>
+                prev.map(app =>
                     selectedApplications.includes(app._id) ? { ...app, status: action } : app
                 )
             );
-            
+
             setSelectedApplications([]);
             toast.success(`${selectedApplications.length} applications ${action} successfully`);
         } catch (error) {
@@ -94,7 +94,7 @@ const Applications = () => {
     };
 
     const toggleSelectApplication = (id) => {
-        setSelectedApplications(prev => 
+        setSelectedApplications(prev =>
             prev.includes(id) ? prev.filter(appId => appId !== id) : [...prev, id]
         );
     };
@@ -106,15 +106,20 @@ const Applications = () => {
             setSelectedApplications(filteredApplications.map(app => app._id));
         }
     };
-    
+
     console.log('selectedApplication', selectedApplication)
 
     return (
-        <div className='flex w-full min-h-screen'>
-            {/* Main Content - Three Panel Layout */}
-            <div className='flex w-full h-full'>
-                {/* Left Sidebar - Applicant List */}
-                <div className='w-1/4 bg-white border-r border-[var(--primary-color)]/20 flex flex-col shadow-lg'>
+        <div className=' w-full h-full max-w-6xl bg-white border border-gray-300 rounded-3xl p-6 '>
+            {/* Left Sidebar - Applicant List */}
+            <div className="flex items-center justify-between mb-6">
+                <h1 className="text-xl md:text-2xl font-bold flex items-center gap-3 text-gray-800 mb-3">
+                    Manage Applications
+                </h1>
+            </div>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+
+                <div className=' flex flex-col'>
                     {/* Search and Filters */}
                     <div className='p-3 border-b border-[var(--primary-color)]/10'>
                         <div className='relative mb-6'>
@@ -122,12 +127,12 @@ const Applications = () => {
                             <input
                                 type="text"
                                 placeholder="Search by name, email, or job title..."
-                                className='w-full pl-12 pr-4 py-3 border-2 border-[var(--primary-color)]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all duration-300 bg-white shadow-sm'
+                                className='w-full pl-12 pr-4 py-3 border-2 border-[var(--primary-color)]/20 rounded-2xl focus:outline-none focus:ring-1 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all duration-300 bg-white'
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        
+
                         {/* Status Filters */}
                         <div className='flex flex-wrap gap-3 mb-6'>
                             {[
@@ -139,13 +144,12 @@ const Applications = () => {
                                 <span
                                     key={status.key}
                                     onClick={() => setFilter(status.key)}
-                                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md transform hover:scale-105 ${
-                                        filter === status.key 
-                                            ? `${status.color} text-white shadow-lg` 
-                                            : 'bg-white text-[var(--text-color)] border-2 border-[var(--primary-color)]/20 hover:border-[var(--primary-color)]/40'
-                                    }`}
+                                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md transform hover:scale-105 ${filter === status.key
+                                        ? `${status.color} text-white shadow-lg`
+                                        : 'bg-white text-[var(--text-color)] border-2 border-[var(--primary-color)]/20 hover:border-[var(--primary-color)]/40'
+                                        }`}
                                 >
-                                    {status.label} 
+                                    {status.label}
                                     <span className='ml-1 px-2 py-0.5 rounded-full bg-white/20 text-xs'>
                                         {Applications.filter(app => status.key === 'all' || app.status === status.key).length}
                                     </span>
@@ -192,9 +196,8 @@ const Applications = () => {
                                 <div
                                     key={app._id}
                                     onClick={() => setSelectedApplication(app)}
-                                    className={`p-5 border-b border-[var(--primary-color)]/10 cursor-pointer hover:bg-[var(--accent-color)]/50 transition-all duration-300 ${
-                                        selectedApplication?._id === app._id ? 'bg-[var(--primary-color)]/10 border-l-4 border-l-[var(--primary-color)] shadow-md' : ''
-                                    }`}
+                                    className={`p-5 border-b border-[var(--primary-color)]/10 cursor-pointer hover:bg-[var(--accent-color)]/50 transition-all duration-300 ${selectedApplication?._id === app._id ? 'bg-[var(--primary-color)]/10 border-l-4 border-l-[var(--primary-color)] shadow-md' : ''
+                                        }`}
                                 >
                                     <div className='flex items-start gap-4'>
                                         <input
@@ -209,11 +212,10 @@ const Applications = () => {
                                         <div className='flex-1 min-w-0'>
                                             <div className='flex items-center gap-3 mb-2'>
                                                 <h4 className='font-semibold text-sm text-[var(--secondary-color)] truncate'>{app.applicant?.name}</h4>
-                                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                    app.status === 'hired' ? 'bg-green-100 text-green-700 border border-green-200' :
+                                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${app.status === 'hired' ? 'bg-green-100 text-green-700 border border-green-200' :
                                                     app.status === 'rejected' ? 'bg-red-100 text-red-700 border border-red-200' :
-                                                    'bg-yellow-100 text-yellow-700 border border-yellow-200'
-                                                }`}>
+                                                        'bg-yellow-100 text-yellow-700 border border-yellow-200'
+                                                    }`}>
                                                     {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                                                 </span>
                                             </div>
@@ -234,7 +236,7 @@ const Applications = () => {
                 </div>
 
                 {/* Center Panel - Application Preview */}
-                <div className='flex-1 bg-white flex flex-col shadow-lg'>
+                <div className='flex-1 bg-white flex flex-col border-l border-gray-300'>
                     {selectedApplication ? (
                         <>
                             {/* Application Header */}
@@ -256,11 +258,10 @@ const Applications = () => {
                                             </span>
                                         </div>
                                     </div>
-                                    <span className={`px-4 py-2 rounded-xl text-sm font-semibold shadow-md ${
-                                        selectedApplication.status === 'hired' ? 'bg-green-500 text-white' :
+                                    <span className={`px-4 py-2 rounded-xl text-sm font-semibold shadow-md ${selectedApplication.status === 'hired' ? 'bg-green-500 text-white' :
                                         selectedApplication.status === 'rejected' ? 'bg-red-500 text-white' :
-                                        'bg-yellow-500 text-white'
-                                    }`}>
+                                            'bg-yellow-500 text-white'
+                                        }`}>
                                         {selectedApplication.status.charAt(0).toUpperCase() + selectedApplication.status.slice(1)}
                                     </span>
                                 </div>
@@ -317,7 +318,7 @@ const Applications = () => {
                                     </h4>
                                     <div className='bg-white p-3 rounded-xl shadow-md border border-[var(--primary-color)]/10'>
                                         <h5 className='font-bold text-lg text-[var(--secondary-color)] mb-4'>{selectedApplication.job?.title}</h5>
-                                        <div 
+                                        <div
                                             className='text-sm text-[var(--text-color)] mb-4 leading-relaxed'
                                             dangerouslySetInnerHTML={{
                                                 __html: selectedApplication.job?.description?.replace(/<[^>]+>/g, "")
@@ -355,7 +356,7 @@ const Applications = () => {
                 </div>
 
                 {/* Right Sidebar - Actions and Details */}
-                <div className='w-80 bg-white border-l border-[var(--primary-color)]/20 flex flex-col shadow-lg'>
+                <div className='w-80 bg-white border-l border-[var(--primary-color)]/20 flex flex-col'>
                     {selectedApplication ? (
                         <>
                             {/* Contact Information */}
@@ -385,7 +386,7 @@ const Applications = () => {
                                 <h4 className='font-bold mb-4 text-[var(--secondary-color)]'>Quick Actions</h4>
                                 <div className='space-y-3'>
                                     <span
-                                        onClick={() => updateStatus(selectedApplication.applicant.authId , selectedApplication._id, "hired")}
+                                        onClick={() => updateStatus(selectedApplication.applicant.authId, selectedApplication._id, "hired")}
                                         className='w-full bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 font-semibold'
                                     >
                                         <IoCheckmarkCircle className='text-lg' />
@@ -402,7 +403,7 @@ const Applications = () => {
                                         onClick={() => updateStatus(selectedApplication.applicant.authId, selectedApplication._id, "shortlisted")}
                                         className='w-full bg-orange-500 text-white px-4 py-2 rounded-xl hover:bg-orange-600 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 font-semibold'
                                     >
-                                        <List  />
+                                        <List />
                                         Shortlist Candidate
                                     </span>
                                 </div>
@@ -440,6 +441,7 @@ const Applications = () => {
                     )}
                 </div>
             </div>
+
         </div>
     )
 }

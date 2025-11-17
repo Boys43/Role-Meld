@@ -10,8 +10,8 @@ import Loading from "./components/Loading";
 import CompanyProfile from "./pages/CompanyProfile";
 import FollowedAccounts from "./pages/FollowedAccounts";
 import Test from "./components/Test";
-import EmployeeDashboard from "./components/EmployeeDashboard";
 import DashboardLayout from "./components/DashboardLayout";
+import AdminDashboardLayout from "./components/AdminDashboardLayout";
 
 // Lazy-loaded components
 const Navbar = lazy(() => import("./components/Navbar"));
@@ -22,13 +22,14 @@ const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const JobDetails = lazy(() => import("./pages/JobDetails"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const FindJobs = lazy(() => import("./pages/FindJobs"));
 const CategoryJobs = lazy(() => import("./pages/CategoryJobs"));
 const BlogsDetails = lazy(() => import("./pages/BlogsDetails"));
 const EditBlog = lazy(() => import("./pages/EditBlog"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 const Categories = lazy(() => import("./pages/Categories"));
+const CandidatesPage = lazy(() => import("./pages/Candidates"));
+const CompaniesPage = lazy(() => import("./pages/Companies"));
 
 // Dashboard pages
 const DashboardHome = lazy(() => import("./pages/dashboard/DashboardHome"));
@@ -40,6 +41,19 @@ const Messages = lazy(() => import("./pages/dashboard/Messages"));
 const Meetings = lazy(() => import("./pages/dashboard/Meetings"));
 const Company = lazy(() => import("./pages/dashboard/Company"));
 const DashboardSettings = lazy(() => import("./pages/dashboard/DashboardSettings"));
+
+// Admin dashboard pages
+const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
+const AdminJobRequests = lazy(() => import("./pages/admin/AdminJobRequests"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminRecruiters = lazy(() => import("./pages/admin/AdminRecruiters"));
+const AdminEmployeeProfileRequests = lazy(() => import("./pages/admin/AdminEmployeeProfileRequests"));
+const AdminJobs = lazy(() => import("./pages/admin/AdminJobs"));
+const AdminCategoryManager = lazy(() => import("./pages/admin/AdminCategoryManager"));
+const AdminAddAssistant = lazy(() => import("./pages/admin/AdminAddAssistant"));
+const AdminAllAssistants = lazy(() => import("./pages/admin/AdminAllAssistants"));
+const AdminBlogManagement = lazy(() => import("./pages/admin/AdminBlogManagement"));
+const AdminAddBlog = lazy(() => import("./pages/admin/AdminAddBlog"));
 
 // 🔒 Admin-only route
 export const AdminRoute = ({ children }) => {
@@ -147,10 +161,22 @@ const App = () => {
             path="/admin"
             element={
               <AdminRoute>
-                <AdminDashboard />
+                <AdminDashboardLayout />
               </AdminRoute>
             }
-          />
+          >
+            <Route index element={<AdminAnalytics />} />
+            <Route path="job-requests" element={<AdminJobRequests />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="recruiters" element={<AdminRecruiters />} />
+            <Route path="employee-profile-requests" element={<AdminEmployeeProfileRequests />} />
+            <Route path="jobs" element={<AdminJobs />} />
+            <Route path="category-manager" element={<AdminCategoryManager />} />
+            <Route path="add-assistant" element={<AdminAddAssistant />} />
+            <Route path="all-assistant" element={<AdminAllAssistants />} />
+            <Route path="blog-management" element={<AdminBlogManagement />} />
+            <Route path="add-blog" element={<AdminAddBlog />} />
+          </Route>
           <Route
             path="/editblog"
             element={
@@ -161,6 +187,8 @@ const App = () => {
           />
 
           <Route path="/company-profile/:id" element={<CompanyProfile />} />
+          <Route path="/candidates" element={<CandidatesPage />} />
+          <Route path="/companies" element={<CompaniesPage />} />
           <Route path="/help-center" element={<HelpCenter />} />
           <Route path="/find-jobs" element={<FindJobs />} />
           <Route path="/categories" element={<Categories />} />

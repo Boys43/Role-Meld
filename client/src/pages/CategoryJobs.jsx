@@ -11,9 +11,11 @@ import JobCard from '../components/JobCard';
 import Loading from '../components/Loading';
 import NotFound404 from '../components/NotFound404';
 import "swiper/css";
+import Navbar from '../components/Navbar';
+import CustomSelect from '../components/CustomSelect';
 
 const CategoryJobs = () => {
-    // Auto Scroll to Top
+  // Auto Scroll to Top
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [])
@@ -85,90 +87,95 @@ const CategoryJobs = () => {
   const currentCategory = categories.find(cat => cat.name === category);
 
   console.log('', currentCategory);
-  
+
 
   return (
-    <main className='p-6'>
-      <section className={`py-12 rounded-2xl shadow-2xl bg-gradient-to-br ${randomGradient}`}>
-        <h1 className="text-3xl font-bold text-center text-white flex flex-col items-center justify-center gap-2">
-          <MdComputer size={60} /> {category}
-        </h1>
-      </section>
+    <div>
+      <Navbar className={"max-w-6xl mx-auto"} />
+      <main className='p-6 max-w-6xl mx-auto'>
+        <section className={`py-12 rounded-2xl shadow-2xl bg-gradient-to-br ${randomGradient}`}>
+          <h1 className="text-3xl font-bold text-center text-white flex flex-col items-center justify-center gap-2">
+            <MdComputer size={60} /> {category}
+          </h1>
+        </section>
 
-      {/* Subcategories */}
-      <section className="p-2 mt-4">
-        <Swiper
-          spaceBetween={20}
-          slidesPerView={5}
-          breakpoints={{
-            320: { slidesPerView: 1 },
-            480: { slidesPerView: 2 },
-            768: { slidesPerView: 3 },
-            1024: { slidesPerView: 5 },
-          }}
-        >
-          {currentCategory?.subcategories?.map((sub, i) => (
-            <SwiperSlide
-              key={i}
-              className="py-4 my-4 px-6 text-xl font-semibold bg-white rounded-2xl border whitespace-nowrap cursor-pointer shadow hover:shadow-lg transition"
-              onClick={() => setSubCategory(sub)}
-            >
-              {sub}
-            </SwiperSlide>
-          ))}
-        </Swiper>
-        {subCategory && (
-          <span
-            onClick={() => setSubCategory('')}
-            className='w-full flex items-center gap-2 cursor-pointer justify-end mt-2'
+        {/* Subcategories */}
+        <section className="p-2 mt-4">
+          <Swiper
+            spaceBetween={20}
+            slidesPerView={5}
+            breakpoints={{
+              320: { slidesPerView: 1 },
+              480: { slidesPerView: 2 },
+              768: { slidesPerView: 3 },
+              1024: { slidesPerView: 5 },
+            }}
           >
-            <MdLoop size={20} /> Reset
-          </span>
-        )}
-      </section>
-
-      {/* Breadcrumb */}
-      <section className='p-2'>
-        <h3 className='flex items-center gap-4 font-semibold'>
-          <IoHomeOutline size={30} className='text-[var(--primary-color)]' /> / {category} {subCategory && `/ ${subCategory}`}
-        </h3>
-      </section>
-
-      {/* Filters */}
-      <section className='mt-5 p-2'>
-        <div className='flex items-center gap-8'>
-          <h2 className='flex items-center gap-4 font-semibold'>
-            <FaFilter className='text-[var(--primary-color)]' /> Filter:
-          </h2>
-          <div className='flex items-center gap-4'>
-            <select
-              className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
-              onChange={(e) => setFilteredJobType(e.target.value)}
+            {currentCategory?.subcategories?.map((sub, i) => (
+              <SwiperSlide
+                key={i}
+                className="py-4 my-4 px-6 text-xl font-semibold bg-white rounded-2xl border whitespace-nowrap cursor-pointer shadow hover:shadow-lg transition"
+                onClick={() => setSubCategory(sub)}
+              >
+                {sub}
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          {subCategory && (
+            <span
+              onClick={() => setSubCategory('')}
+              className='w-full flex items-center gap-2 cursor-pointer justify-end mt-2'
             >
-              <option value="jobType">Job Type</option>
-              <option value="Full Time">Full Time</option>
-              <option value="Part Time">Part Time</option>
-              <option value="Contract">Contract</option>
-            </select>
-            <select
-              className="border border-gray-300 rounded-lg py-2 px-4 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-800 transition-all"
-              onChange={(e) => setFilteredLocationType(e.target.value)}
-            >
-              <option value="locationType">Location Type</option>
-              <option value="Remote">Remote</option>
-              <option value="On Site">On Site</option>
-              <option value="Hybrid">Hybrid</option>
-            </select>
+              <MdLoop size={20} /> Reset
+            </span>
+          )}
+        </section>
+
+        {/* Breadcrumb */}
+        <section className='p-2'>
+          <h3 className='flex items-center gap-4 font-semibold'>
+            <IoHomeOutline size={30} className='text-[var(--primary-color)]' /> / {category} {subCategory && `/ ${subCategory}`}
+          </h3>
+        </section>
+
+        {/* Filters */}
+        <section className='mt-5 p-2'>
+          <div className='flex items-center gap-8'>
+            <h2 className='flex items-center gap-4 font-semibold'>
+              <FaFilter className='text-[var(--primary-color)]' /> Filter:
+            </h2>
+            <div className='flex items-center gap-4'>
+              <CustomSelect
+                value={filteredJobType}
+                name={"jobType"}
+                onChange={(e) => setFilteredJobType(e.target.value)}
+              >
+                <option value="jobType">Job Type</option>
+                <option value="Full Time">Full Time</option>
+                <option value="Part Time">Part Time</option>
+                <option value="Contract">Contract</option>
+              </CustomSelect>
+              <CustomSelect
+                value={filteredLocationType}
+                name={"locationType"}
+                onChange={(e) => setFilteredLocationType(e.target.value)}
+              >
+                <option value="locationType">Location Type</option>
+                <option value="Remote">Remote</option>
+                <option value="On Site">On Site</option>
+                <option value="Hybrid">Hybrid</option>
+              </CustomSelect>
+            </div>
           </div>
-        </div>
 
-        <div className='grid my-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {filteredJobs.length !== 0
-            ? filteredJobs.map((job, i) => <JobCard key={i} e={job} />)
-            : <NotFound404 value={"No Jobs Found"} margin={"my-10"} />}
-        </div>
-      </section>
-    </main>
+          <div className='grid my-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+            {filteredJobs.length !== 0
+              ? filteredJobs.map((job, i) => <JobCard key={i} e={job} />)
+              : <NotFound404 value={"No Jobs Found"} margin={"my-10"} />}
+          </div>
+        </section>
+      </main>
+    </div>
   );
 };
 

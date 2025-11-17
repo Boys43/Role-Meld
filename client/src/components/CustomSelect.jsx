@@ -48,8 +48,10 @@ const CustomSelect = ({ name, value, onChange, children, className }) => {
             <div
               key={opt.props.value}
               onClick={() => handleSelect(opt.props.value)}
-              className={`px-4 py-2 cursor-pointer transition-all hover:bg-[var(--accent-color)] ${
-                opt.props.value === value ? "bg-[var(--primary-color)] text-white" : "text-gray-700"
+              className={`px-4 py-2 cursor-pointer transition-all ${
+                opt.props.value === value 
+                  ? "bg-[var(--primary-color)] text-white" 
+                  : "text-gray-700 hover:bg-[var(--accent-color)]"
               }`}
             >
               {opt.props.children}

@@ -72,7 +72,7 @@ const Search = ({ Param }) => {
   return (
     <section
       id="search"
-      className={`bg-white rounded-4xl border border-gray-200 ${location.pathname === '/' ? "w-[100%] max-w-4xl mx-auto" : "w-[70vw] mx-auto"}`}
+      className={`bg-white rounded-4xl border border-gray-200 ${location.pathname === '/' ? "max-w-4xl mx-auto" : "w-6xl mx-auto"}`}
     >
       <form onSubmit={handleSubmit} className="flex-col flex gap-3 md:flex-row md:gap-0 p-3 md:p-2">
         {/* Job Search Input */}

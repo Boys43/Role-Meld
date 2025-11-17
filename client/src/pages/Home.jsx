@@ -79,7 +79,7 @@ const Home = () => {
           <div className="w-full absolute top-0 left-1/2 -translate-x-1/2 z-999">
             <Navbar className={"max-w-6xl mx-auto"} />
           </div>
-          <div className="max-w-6xl mx-auto h-full items-center grid grid-cols-1 md:grid-cols-2">
+          <div className="p-6 pt-30 lg:p-4 max-w-6xl mx-auto h-full items-center grid grid-cols-1 md:grid-cols-2">
             {/* Main Content */}
             <div className="relative z-20 w-full">
               <div className="mb-4 text-lg">
@@ -108,7 +108,7 @@ const Home = () => {
                 <span className="text-[var(--primary-color)] text-md">Experimentation, Marketing Manager</span>
               </div>
             </div>
-            <div className="relative h-[700px] overflow-hidden group">
+            <div className="relative h-[700px] overflow-hidden hidden md:block group">
               <div className="scroll-vertical group-hover:[animation-play-state:paused]">
                 <div className="flex flex-col gap-15">
                   <div

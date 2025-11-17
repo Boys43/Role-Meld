@@ -8,9 +8,10 @@ import { FaPaperPlane } from 'react-icons/fa';
 import Img from './Image';
 import Currency from './CurrencyCovertor';
 
-const JobCard = ({ e }) => {
+const JobCard = ({ e, className }) => {
     const { isLoggedIn, toggleSaveJob, savedJobs } = useContext(AppContext);
     const navigate = useNavigate();
+    const location = useLocation()
 
     // Check if job is saved or applied
     const isSaved = [...savedJobs].includes(e?._id);
@@ -32,10 +33,14 @@ const JobCard = ({ e }) => {
     // --- Main Render ---
 
     return (
-        <li className='p-6 min-w-[300px] cursor-pointer border border-gray-200 bg-white rounded-2xl hover:shadow-lg shadow-black/5 transition-all duration-300 flex flex-col justify-between gap-4'
-            onClick={() =>
-                navigate('/jobDetails/' + e._id)
-            }
+        <li className={`p-6 min-w-[300px] cursor-pointer border border-gray-200 bg-white rounded-2xl hover:shadow-lg shadow-black/5 transition-all duration-300 flex flex-col justify-between gap-4 ${e?.sponsored ? 'border-2 border-yellow-300' : ''} `}
+            onClick={() => {
+                if (location.pathname === '/find-jobs') {
+                    null
+                } else {
+                    navigate('/jobDetails/' + e._id)
+                }
+            }}
         >
             <div className='flex flex-col gap-4'>
                 {/* 1. Header: Company Info and Save Button */}
@@ -73,8 +78,7 @@ const JobCard = ({ e }) => {
                         onClick={(event) => {
                             event.stopPropagation()
                             toggleSaveJob(e?._id)
-                        }
-                        }
+                        }}
                         className={`p-2 rounded-full transition-all duration-200 flex-shrink-0
                         ${isSaved
                                 ? 'bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90 shadow-md'

@@ -97,7 +97,7 @@ const Sidebar = ({ activeTab }) => {
       {/* Sidebar */}
       <div className={`
         sidebar
-        ${isSidebarOpen ? 'w-16' : 'w-64'} 
+        ${isSidebarOpen ? 'w-16' : 'w-72'} 
         bg-white border-r border-gray-200 h-screen flex flex-col transition-all duration-300 
         fixed left-0 top-0 z-9999
         ${isMobileOpen ? 'translate-x-0 absolute' : '-translate-x-full lg:translate-x-0'}

@@ -116,7 +116,7 @@ const EmployeeDashboard = () => {
   }, [])
 
   return (
-    <div className='flex flex-col w-full p-6 bg-white rounded-lg min-h-screen overflow-y-auto border border-gray-300'>
+    <div className='flex flex-col w-full p-4 md:p-6 bg-white rounded-lg min-h-screen overflow-y-auto border border-gray-300'>
       <div className="relative w-full">
         {/* Profile Circle */}
         <div className="w-full h-[30vh] border-2 border-gray-300 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-200 text-xl font-semibold">

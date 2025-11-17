@@ -137,8 +137,6 @@ const Navbar = ({ className }) => {
     return <Loading />;
   }
 
-  // --- Reusable Components/JSX ---
-
   const DesktopNavLinks = () => (
     <div className="hidden md:flex items-baseline gap-6">
       {USER_NAV_LINKS.map(({ to, label }) => (
@@ -447,7 +445,7 @@ const Navbar = ({ className }) => {
 
   // --- Main Render ---
   return (
-    <nav className={`w-full ${location.pathname.includes("dashboard") ? "bg-white border-b border-gray-300" : ""} py-5 relative z-999 ${className}`}>
+    <nav className={`max-w-7xl mx-auto w-full ${location.pathname.includes("dashboard") ? "bg-white border-b border-gray-300" : ""} py-5 relative z-999 ${className}`}>
       <div className="flex items-center md:px-2 lg:px-4 justify-between">
         {/* Left Section - Logo and Desktop Links */}
         <div className="flex items-center gap-3">

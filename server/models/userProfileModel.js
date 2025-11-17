@@ -25,6 +25,7 @@ const userProfileSchema = new mongoose.Schema({
   resume: { type: String, default: "" },   // file URL (PDF/Doc)
   portfolio: { type: String, default: "" },
   github: { type: String, default: "" },
+  gender: { type: String, enum: ["male", "female", "other"], default: "male" },
 }, { timestamps: true });
 
 

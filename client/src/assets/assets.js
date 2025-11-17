@@ -14,6 +14,7 @@ import wave_bg from './wave-bg.svg'
 import girl_illus from './girl-illus.svg'
 import post_job from './post_job.webp'
 import wave_2 from './wave_2.svg'
+import find_jobs_banner from './find_jobs_banner.png'
 
 const assets = {
     apple,
@@ -31,7 +32,8 @@ const assets = {
     wave_bg,
     girl_illus,
     post_job,
-    wave_2
+    wave_2,
+    find_jobs_banner
 }
 
 export default assets;

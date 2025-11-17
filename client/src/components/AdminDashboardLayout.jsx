@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import Navbar from "./Navbar";
-import Sidebar from "./Sidebar";
+import AdminSidebar from "./AdminSidebar";
 import FooterBottom from "./FooterBottom";
 
-const DashboardLayout = () => {
+const AdminDashboardLayout = () => {
   const { userData, isSidebarOpen, setIsSidebarOpen } = useContext(AppContext);
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -18,12 +18,12 @@ const DashboardLayout = () => {
   // Extract active tab from current route
   const getActiveTabFromPath = () => {
     const path = location.pathname;
-    if (path === "/dashboard" || path === "/dashboard/") {
-      return "dashboard";
+    if (path === "/admin" || path === "/admin/") {
+      return "analytic-dashboard";
     }
     // Extract the last segment of the path
     const segments = path.split("/");
-    return segments[segments.length - 1] || "dashboard";
+    return segments[segments.length - 1] || "analytic-dashboard";
   };
 
   const activeTab = getActiveTabFromPath();
@@ -41,7 +41,7 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar activeTab={activeTab} />
+      <AdminSidebar activeTab={activeTab} />
       <div className={`flex-1 transition-all duration-300 ${isMobile ? "ml-0" : isSidebarOpen ? "ml-8" : "ml-72"}`}>
         <Navbar className={isSidebarOpen && "ml-8"} />
         <main className="p-2 md:p-4 lg:p-6">
@@ -53,4 +53,4 @@ const DashboardLayout = () => {
   );
 };
 
-export default DashboardLayout;
+export default AdminDashboardLayout;

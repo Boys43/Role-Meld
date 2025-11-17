@@ -215,5 +215,10 @@ input{
 .scroll-vertical {
   animation: vertical-scroll 17s linear infinite;
   will-change: transform;
+  margin-left: 3rem;
+}
+
+.scroll-vertical:hover {
+  animation-play-state: paused;
 }
 

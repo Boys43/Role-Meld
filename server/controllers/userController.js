@@ -16,7 +16,7 @@ export const getAllUsers = async (req, res) => {
 
 export const getAllRecruiters = async (req, res) => {
     try {
-        const recruiters = await recruiterProfileModel.find({})
+        const recruiters = (await recruiterProfileModel.find({})).populate('sentJobs', "isActive approved")
         return res.json({ success: true, recruiters })
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server Error" })
@@ -318,11 +318,11 @@ export const applyJob = async (req, res) => {
         const user = await userProfileModel.findOne({ authId: userId });
 
         console.log(user);
-        
+
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
-        
+
         const job = await jobsModel.findById(jobId);
-        
+
         console.log(job);
 
         if (!job) return res.status(404).json({ success: false, message: "Job not found" });
@@ -548,5 +548,36 @@ export const deleteCompanyImage = async (req, res) => {
             message: "Server Error",
             error: error.message,
         });
+    }
+};
+
+export const searchCandidate = async (req, res) => {
+    try {
+        const { search, location } = req.body;
+
+        console.log(search, location);
+
+        // Search for approved jobs matching title (case-insensitive)
+        let candidates;
+
+        if (!location) {
+            candidates = await userProfileModel.find({
+                name: { $regex: search, $options: "i" },
+            });
+        } else {
+            candidates = await userProfileModel.find({
+                $or: [
+                    { name: { $regex: search, $options: "i" } },
+                    { location: { $regex: location, $options: "i" } },
+                ]
+            });
+        }
+
+        return res.json({
+            success: true,
+            candidates
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
     }
 };

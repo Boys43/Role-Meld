@@ -27,6 +27,7 @@ const MyProfile = () => {
         country: userData.country || "",
         skills: userData.skills || [],
         currency: userData.currency || "USD",
+        gender: userData.gender || "male",
     });
 
     const handleChange = (e) => {
@@ -196,6 +197,20 @@ const MyProfile = () => {
                                 placeholder="e.g. USD"
                             />
                         </div>
+
+                        <div>
+                            <CustomSelect
+                                value={formData.gender}
+                                onChange={handleChange}
+                                placeholder="e.g Male"
+                            >
+                                <option value="">Select</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </CustomSelect>
+                        </div>
+
 
                         <hr className="mt-2" />
                         <h2 className="flex items-center gap-2 text-lg font-semibold text-blue-600">
