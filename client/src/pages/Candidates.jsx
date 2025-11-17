@@ -8,8 +8,13 @@ import { toast } from "react-toastify";
 import CandidateCards from "../components/CandidateCards";
 import { Building, ChevronDown, LayoutGrid, List, SearchIcon, Crosshair, FolderClosed } from "lucide-react";
 import CustomSelect from "../components/CustomSelect";
+import { useLocation } from "react-router-dom";
 
 const Candidates = () => {
+    const searchParam = useLocation().search;
+    const search = new URLSearchParams(searchParam);
+    const category = search.get("category");
+    console.log(category);
     const { backendUrl } = useContext(AppContext);
 
     const [loading, setLoading] = useState(false);
@@ -18,7 +23,7 @@ const Candidates = () => {
     const [sortOption, setSortOption] = useState("newest");
     const [searchQuery, setSearchQuery] = useState("");
     const [heroCity, setHeroCity] = useState("");
-    const [heroCategory, setHeroCategory] = useState("");
+    const [heroCategory, setHeroCategory] = useState(category || "");
 
     // Filters
     const [filters, setFilters] = useState({

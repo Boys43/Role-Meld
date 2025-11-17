@@ -12,6 +12,7 @@ import FollowedAccounts from "./pages/FollowedAccounts";
 import Test from "./components/Test";
 import DashboardLayout from "./components/DashboardLayout";
 import AdminDashboardLayout from "./components/AdminDashboardLayout";
+import CandidateProfile from "./pages/CandidateProfile";
 
 // Lazy-loaded components
 const Navbar = lazy(() => import("./components/Navbar"));
@@ -187,6 +188,7 @@ const App = () => {
           />
 
           <Route path="/company-profile/:id" element={<CompanyProfile />} />
+          <Route path="/candidate-profile/:id" element={<CandidateProfile />} />
           <Route path="/candidates" element={<CandidatesPage />} />
           <Route path="/companies" element={<CompaniesPage />} />
           <Route path="/help-center" element={<HelpCenter />} />

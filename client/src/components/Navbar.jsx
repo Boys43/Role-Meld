@@ -18,8 +18,8 @@ import { FaSearch } from "react-icons/fa";
 const USER_NAV_LINKS = [
   { to: "/", icon: Gauge, label: "Home" },
   { to: "/find-jobs", icon: Briefcase, label: "Find Jobs" },
-  { to: "/company-reviews", icon: Building2, label: "Company Reviews" },
-  { to: "/help-center", icon: HelpCircle, label: "Help Center" },
+  { to: "/candidates", icon: Building2, label: "Candidates" },
+  { to: "/companies", icon: HelpCircle, label: "Companies" },
 ];
 
 const Navbar = ({ className }) => {
