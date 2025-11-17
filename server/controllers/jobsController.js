@@ -88,7 +88,7 @@ export const getJob = async (req, res) => {
 
 export const getAllJobs = async (req, res) => {
     try {
-        const jobs = await jobsModel.find().populate('postedBy', 'name email phone members website foundedAt');
+        const jobs = await jobsModel.find().populate('postedBy', 'name email phone members website foundedAt about');
 
         if (!jobs || jobs.length < 0) {
             return res.json({ success: false, message: "No Jobs Found" })

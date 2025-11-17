@@ -101,7 +101,7 @@ const JobCard = ({ e, className }) => {
                                 {e?.jobType === 'full-time' ? "Full Time" : e?.jobType === 'part-time' ? "Part Time" : e?.jobType === 'contract' ? "Contract" : e?.jobType === 'internship' ? "Internship" : e?.jobType === "temporary" ? "Temporary" : null}
                             </span>
                             <span className='flex gap-1 items-center px-3 py-1 rounded-full bg-[var(--accent-color)] text-[var(--primary-color)]'>
-                                <MapPin size={14} /> {e?.location || "..."}
+                                <MapPin size={14} /> {e?.location || "Remote"}
                             </span>
                             <span className='w-max px-3 py-1 rounded-full bg-[var(--primary-color)]/10  text-[var(--primary-color)]'>
                                 {e?.salaryType === "fixed" ? <span>
