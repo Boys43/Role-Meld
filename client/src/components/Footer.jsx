@@ -15,7 +15,7 @@ const Footer = () => {
 
   const location = useLocation();
   return (
-    <footer className={`bg-white border-t border-gray-200 text-gray-700 ${location.pathname === "/" ? "" : "hidden"}`}>
+    <footer className={`bg-white border-t border-gray-200 text-gray-700`}>
       {/* Newsletter Pre-footer */}
       <div className="border border-gray-200 py-12">
         <div className="max-w-6xl px-5 mx-auto grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-6">

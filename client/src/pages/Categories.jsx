@@ -3,11 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Footer from "../components/Footer";
 
 // React Icons
 import { MdComputer, MdCampaign, MdDesignServices, MdAccountBalance, MdPeople, MdBusinessCenter, MdEngineering } from "react-icons/md";
 import { FaSearch, FaArrowLeft } from "react-icons/fa";
 import Navbar from "../components/Navbar";
+import { getCategoryIcon } from "../utils/categoryIcons";
+import { Search } from "lucide-react";
 
 const Categories = () => {
   const navigate = useNavigate();
@@ -16,11 +19,23 @@ const Categories = () => {
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
+  const [jobs, setJobs] = useState([])
 
   // Auto Scroll to Top
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, []);
+
+  const getAllJobs = async () => {
+    try {
+      const {data} = await axios.get(backendUrl + "/api/jobs/getalljobs")
+      if (data.success) {
+        setJobs(data.jobs)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const getCategories = async () => {
     setLoading(true);
@@ -41,6 +56,7 @@ const Categories = () => {
 
   useEffect(() => {
     getCategories();
+    getAllJobs();
   }, []);
 
   // Filter categories based on search term
@@ -55,19 +71,6 @@ const Categories = () => {
     }
   }, [searchTerm, categories]);
 
-  const getIcon = (categoryName) => {
-    switch (categoryName) {
-      case "IT & Software": return MdComputer;
-      case "Digital Marketing": return MdCampaign;
-      case "Design & Creative": return MdDesignServices;
-      case "Finance & Accounting": return MdAccountBalance;
-      case "Human Resources": return MdPeople;
-      case "Sales & Business Development": return MdBusinessCenter;
-      case "Engineering & Architecture": return MdEngineering;
-      default: return MdComputer;
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -76,23 +79,19 @@ const Categories = () => {
     );
   }
 
+  console.log(jobs)
+
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Navbar className={"max-w-6xl mx-auto"} />
-      <div className="min-h-screen bg-gray-50">
+      <main className="flex-1 ">
         {/* Header Section */}
-        <div className="bg-white border-b">
+        <div className="bg-[#f9f9f9]">
           <div className="max-w-6xl mx-auto px-4 py-8">
-            <div className="flex items-center gap-4 mb-6">
-              <button
-                onClick={() => navigate(-1)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <FaArrowLeft className="text-gray-600" />
-              </button>
+            <div className=" flex items-center gap-4 mb-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">All Categories</h1>
-                <p className="text-gray-600 mt-2">Browse all available job categories and find your perfect match</p>
+                <p className="text-md font-bold text-black uppercase ">Job Categories</p>
+                <h4 className="text-4xl font-semibold text-black mt-2">Find Jobs by Categories</h4>
               </div>
             </div>
 
@@ -111,7 +110,7 @@ const Categories = () => {
         </div>
 
         {/* Categories Grid */}
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="mb-6">
             <p className="text-gray-600">
               {filteredCategories.length} {filteredCategories.length === 1 ? 'category' : 'categories'} found
@@ -121,7 +120,7 @@ const Categories = () => {
           {filteredCategories.length === 0 ? (
             <div className="text-center py-16">
               <div className="text-gray-400 mb-4">
-                <MdComputer size={64} className="mx-auto" />
+                <Search size={64} className="mx-auto" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No categories found</h3>
               <p className="text-gray-600">Try adjusting your search terms or browse all categories.</p>
@@ -129,7 +128,7 @@ const Categories = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredCategories.map((cat, index) => {
-                const Icon = getIcon(cat.name);
+                const Icon = getCategoryIcon(cat?.icon || 'Tag');
 
                 return (
                   <div
@@ -137,34 +136,17 @@ const Categories = () => {
                     onClick={() => navigate('/category-jobs?category=' + encodeURIComponent(cat.name))}
                     className="group bg-white hover:bg-gray-50 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg border border-gray-100"
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-teal-600 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                        <Icon size={24} className="text-white" />
+                    <div className="flex flex-col items-start gap-4">
+                      <div className="w-12 h-12 bg-[var(--accent-color)] rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <Icon size={24} className="text-[var(--primary-color)]" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors">
+                        <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors">
                           {cat.name}
-                        </h3>
-                        <p className="text-gray-500 text-sm mb-3">
-                          {cat.subcategories?.length || 0} subcategories
+                        </h4>
+                        <p className="text-black mb-3">
+                          {jobs.filter(job => job.category === cat.name)?.length || 0} jobs
                         </p>
-                        {cat.subcategories && cat.subcategories.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {cat.subcategories.slice(0, 3).map((subcat, subIndex) => (
-                              <span
-                                key={subIndex}
-                                className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md"
-                              >
-                                {subcat.name}
-                              </span>
-                            ))}
-                            {cat.subcategories.length > 3 && (
-                              <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md">
-                                +{cat.subcategories.length - 3} more
-                              </span>
-                            )}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -173,7 +155,7 @@ const Categories = () => {
             </div>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 };

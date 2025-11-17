@@ -47,7 +47,6 @@ export const addJob = async (req, res) => {
     }
 };
 
-
 export const saveJob = async (req, res) => {
     const { savedJobs } = req.body;            
     const userId = req.user._id
