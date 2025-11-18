@@ -1,4 +1,4 @@
-import React, { Suspense, useContext, useEffect, useState } from 'react'
+import React, { Suspense, useContext, useEffect, useRef, useState } from 'react'
 import Search from '../components/Search'
 import { Link, useLocation, } from 'react-router-dom'
 import axios from 'axios'
@@ -74,6 +74,19 @@ const FindJobs = () => {
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
   const [showRecentOnly, setShowRecentOnly] = useState(false);
   const [experienceLevel, setExperienceLevel] = useState([]);
+  const filterRef = useRef(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (filterRef.current && !filterRef.current.contains(e.target)) {
+        setIsFilterOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Enhanced filtering logic
   const filteredJobs = approvedCategoryJobs?.filter((job) => {
@@ -192,12 +205,14 @@ const FindJobs = () => {
     return <Loading />
   }
 
+
   return (
-    <>
+    <div className={``}>
+      <div className={`${isFilterOpen ? "bg-black/80 " : "hidden"} w-full h-full fixed top-0 left-0 z-9998`} />
       <Navbar />
-      <main className=' min-h-[calc(100vh-4.6rem)] bg-gray-50'>
+      <main className='min-h-[calc(100vh-4.6rem)] flex flex-col bg-gray-50'>
         {/* Search Header */}
-        <div className='h-100 relative flex gap-3 flex-col items-center justify-center'>
+        <div className='h-80 relative flex gap-3 flex-col items-center justify-center'>
           <h1 className='relative z-1 text-4xl text-white'>
             Find Your Dream Jobs
           </h1>
@@ -208,14 +223,15 @@ const FindJobs = () => {
         </div>
 
         {/* Main Content */}
-        <div className='flex max-w-6xl mt-10 mx-auto '>
+        <div className="flex w-full max-w-6xl mt-10 mx-auto flex-1 h-full">
           {/* Sidebar Filters - 30% width */}
-          {/* <div className='w-full lg:w-[25%] bg-white border-r border-gray-200 p-6 h-[calc(100vh-120px)] overflow-y-auto sticky top-[120px]'>
+          <div ref={filterRef} className={`fixed transition-all bg-white  border-gray-200  h-screen overflow-y-auto top-0 left-0 z-9999 ${isFilterOpen ? 'w-[75%] lg:w-[25%] p-6 border-r' : 'w-0 py-6 px-0'}`}>
             <div className='space-y-6'>
               <div className='flex items-center justify-between'>
                 <h2 className='text-lg font-semibold text-gray-900 flex items-center gap-2'>
-                  <HiAdjustments className='text-blue-600' />
-                  Filters
+                  <p className='text-md flex items-center gap-2'>
+                    Filters
+                  </p>
                   {getActiveFiltersCount() > 0 && (
                     <span className='bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full'>
                       {getActiveFiltersCount()}
@@ -233,11 +249,12 @@ const FindJobs = () => {
                 )}
               </div>
 
+              <hr className='border-gray-300' />
+
               <div className='space-y-3'>
-                <h3 className='font-medium text-gray-900 flex items-center gap-2'>
-                  <FaDollarSign className='text-green-600' />
+                <h4 className='text-md uppercase font-medium text-gray-400'>
                   Salary Range
-                </h3>
+                </h4>
                 <div className='space-y-3'>
                   <div className='flex items-center gap-2 text-sm text-gray-600'>
                     <span>${salaryRange[0].toLocaleString()}</span>
@@ -271,12 +288,12 @@ const FindJobs = () => {
                   </div>
                 </div>
               </div>
+              <hr className='border-gray-300' />
 
               <div className='space-y-3'>
-                <h3 className='font-medium text-gray-900 flex items-center gap-2'>
-                  <FaBriefcase className='text-purple-600' />
+                <h4 className='text-md uppercase font-medium text-gray-400'>
                   Categories
-                </h3>
+                </h4>
                 <div className='space-y-2 max-h-48 overflow-y-auto'>
                   {searchedCategories?.map((category, index) => (
                     <label key={index} className='flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors'>
@@ -291,12 +308,12 @@ const FindJobs = () => {
                   ))}
                 </div>
               </div>
+              <hr className='border-gray-300' />
 
               <div className='space-y-3'>
-                <h3 className='font-medium text-gray-900 flex items-center gap-2'>
-                  <FaClock className='text-orange-600' />
+                <h4 className='text-md uppercase font-medium text-gray-400'>
                   Job Type
-                </h3>
+                </h4>
                 <div className='space-y-2'>
                   {['full-time', 'part-time', 'contract', 'internship', 'temporary'].map((jobType) => (
                     <label key={jobType} className='flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors'>
@@ -314,33 +331,12 @@ const FindJobs = () => {
                 </div>
               </div>
 
-              <div className='space-y-3'>
-                <h3 className='font-medium text-gray-900 flex items-center gap-2'>
-                  <FaMapMarkerAlt className='text-red-600' />
-                  Location Type
-                </h3>
-                <div className='space-y-2'>
-                  {['remote', 'on-site', 'hybrid'].map((locationType) => (
-                    <label key={locationType} className='flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors'>
-                      <input
-                        type="checkbox"
-                        checked={selectedLocationTypes.includes(locationType)}
-                        onChange={() => handleLocationTypeChange(locationType)}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                      />
-                      <span className='text-sm text-gray-700 capitalize'>
-                        {locationType.split('-').join(' ')}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+              <hr className='border-gray-300' />
 
               <div className='space-y-3'>
-                <h3 className='font-medium text-gray-900 flex items-center gap-2'>
-                  <FaStar className='text-yellow-600' />
+                <h4 className='text-md uppercase font-medium text-gray-400'>
                   Experience Level
-                </h3>
+                </h4>
                 <div className='space-y-2'>
                   {['Entry Level', 'Mid Level', 'Senior Level', 'Executive'].map((experience) => (
                     <label key={experience} className='flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors'>
@@ -356,8 +352,11 @@ const FindJobs = () => {
                 </div>
               </div>
 
+              <hr className='border-gray-300' />
+
+
               <div className='space-y-3'>
-                <h3 className='font-medium text-gray-900'>Special Filters</h3>
+                <h4 className='text-md uppercase font-medium text-gray-400'>Special Filters</h4>
                 <div className='space-y-2'>
                   <label className='flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors'>
                     <input
@@ -367,7 +366,6 @@ const FindJobs = () => {
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                     />
                     <span className='text-sm text-gray-700 flex items-center gap-2'>
-                      <FaStar className='text-yellow-500' />
                       Featured Jobs Only
                     </span>
                   </label>
@@ -379,14 +377,13 @@ const FindJobs = () => {
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                     />
                     <span className='text-sm text-gray-700 flex items-center gap-2'>
-                      <FaClock className='text-green-500' />
                       Recent Jobs (Last 7 days)
                     </span>
                   </label>
                 </div>
               </div>
             </div>
-          </div> */}
+          </div>
 
           {/* Jobs list - left column */}
           <div className='w-[40%] p-3 border-r border-gray-100'>
@@ -402,18 +399,18 @@ const FindJobs = () => {
                     <>
                     </>
                   )}
-                  <p className='text-gray-600 flex items-center gap-2'>
+                  <p className='text-gray-600 flex items-center gap-2 cursor-pointer' onClick={() => setIsFilterOpen(true)}>
                     <Filter size={17} />
-                    <span>
+                    <span className='hover:text-[var(--primary-color)] ' >
                       Filter
                     </span>
-                    {filteredJobs.length} jobs found
+                    {filteredJobs.length} jobs
                   </p>
                 </div>
               </div>
 
               {/* Jobs List */}
-              <div className='flex flex-col gap-6'>
+              <div className='flex flex-col gap-6 '>
                 {filteredJobs.length !== 0 ? filteredJobs
                   ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))?.map((job, index) => (
                     <div key={job._id}>
@@ -706,7 +703,7 @@ const FindJobs = () => {
         onClose={() => setLoginReminder(false)}
         showLoginForm={true}
       />
-    </>
+    </div>
   )
 }
 export default FindJobs;
