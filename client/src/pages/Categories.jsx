@@ -87,7 +87,7 @@ const Categories = () => {
       <main className="flex-1 ">
         {/* Header Section */}
         <div className="bg-[#f9f9f9]">
-          <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="max-w-6xl mx-auto flex justify-between items-center px-4 py-8">
             <div className=" flex items-center gap-4 mb-6">
               <div>
                 <p className="text-md font-bold text-black uppercase ">Job Categories</p>
