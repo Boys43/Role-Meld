@@ -13,6 +13,8 @@ import Test from "./components/Test";
 import DashboardLayout from "./components/DashboardLayout";
 import AdminDashboardLayout from "./components/AdminDashboardLayout";
 import CandidateProfile from "./pages/CandidateProfile";
+import NotFound404 from "./components/NotFound404";
+import NotFoundPage from "./pages/NotFoundPage";
 
 // Lazy-loaded components
 const Navbar = lazy(() => import("./components/Navbar"));
@@ -197,6 +199,7 @@ const App = () => {
           <Route path="/test" element={<Test />} />
           <Route path="/followed-accounts" element={<FollowedAccounts />} />
           <Route path="/category-jobs" element={<CategoryJobs />} />
+          <Route path="/*" element={<NotFoundPage />} />
           <Route path="/blogdetails/:slug" element={<BlogsDetails />} />
         </Routes>
       </div>

@@ -386,7 +386,7 @@ const FindJobs = () => {
           </div>
 
           {/* Jobs list - left column */}
-          <div className='w-[40%] p-3 border-r border-gray-100'>
+          <div className='w-full lg:w-[40%] p-3 border-r border-gray-100'>
             <div className='space-y-6'>
               {/* Results Header */}
               <div className='flex items-center justify-between'>

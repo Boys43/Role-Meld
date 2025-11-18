@@ -15,6 +15,7 @@ import girl_illus from './girl-illus.svg'
 import post_job from './post_job.webp'
 import wave_2 from './wave_2.svg'
 import find_jobs_banner from './find_jobs_banner.png'
+import not_found_404 from './NotFoundPage.webp'
 
 const assets = {
     apple,
@@ -33,7 +34,8 @@ const assets = {
     girl_illus,
     post_job,
     wave_2,
-    find_jobs_banner
+    find_jobs_banner,
+    not_found_404
 }
 
 export default assets;

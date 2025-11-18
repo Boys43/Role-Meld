@@ -47,7 +47,6 @@ const CandidateCards = ({candidate}) => {
                 </div>
             </div>
         </div>
-
     )
 }
 

@@ -20,6 +20,8 @@ const userProfileSchema = new mongoose.Schema({
   skills: { type: Array, default: [] },
   isBanned: {type: Boolean, default: false},
   currency: {type: String, default: "USD"},
+  followers: [{ type: mongoose.Schema.Types.ObjectId}],
+  following: [{ type: mongoose.Schema.Types.ObjectId}],
 
   // 🆕 Resume & extra fields
   resume: { type: String, default: "" },   // file URL (PDF/Doc)
