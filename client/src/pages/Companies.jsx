@@ -329,7 +329,7 @@ const Companies = () => {
                     </section>
                 </div>
 
-                <section className="flex gap-20 max-w-7xl mt-20 mx-auto">
+                <section className="flex gap-20 max-w-7xl py-20 mx-auto">
                     {/* Sidebar Filters */}
                     <div className="border border-gray-300 w-[25%] p-6 space-y-6 rounded-2xl bg-white">
                         <h4 className="text-lg font-semibold">Filter</h4>

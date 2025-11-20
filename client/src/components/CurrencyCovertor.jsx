@@ -45,7 +45,7 @@ const Currency = ({ amount, from }) => {
       lastRequestTime = Date.now();
       
       const res = await fetch(
-        `https://v6.exchangerate-api.com/v6/b3c9345a1ea0fdc1e88d609d/latest/${fromCurrency}`,
+        `https://v6.exchangerate-api.com/v6/18ef2ecc4add652d01ec96ce/latest/${fromCurrency}`,
         {
           method: 'GET',
           headers: {

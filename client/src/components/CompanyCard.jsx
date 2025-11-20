@@ -6,14 +6,14 @@ const CompanyCard = ({ company }) => {
         <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg shadow-gray-200 transition-all cursor-pointer w-full max-w-5xl mx-auto">
             {/* Header */}
             <header className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                <div className="flex items-start gap-4 w-full sm:w-auto">
+                <div className="flex flex-wrap items-start gap-4 sm:w-auto">
                     <Img
                         src={company?.companyProfile || "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=facearea&w=120&h=120&q=80"}
                         style="h-16 w-16 rounded-full object-cover flex-shrink-0"
                     />
                     <div className="space-y-1 flex-1">
                         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-                            <h3 className="text-md font-semibold text-gray-900 line-clamp-1">{company?.company}</h3>
+                            <h3 className="text-md font-semibold text-gray-900 whitespace-nowrap">{company?.company}</h3>
                         </div>
                         <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mt-1">
                             <span className="flex items-center gap-1 text-[var(--primary-color,#1dbf73)] font-medium">
@@ -34,18 +34,18 @@ const CompanyCard = ({ company }) => {
             </header>
 
             {/* About */}
-            <p className="mt-4 text-gray-600 text-base sm:text-lg leading-relaxed line-clamp-4">
+            <p className="line-clamp-3 mt-4 text-gray-600 text-base sm:text-lg leading-relaxed">
                 {company?.about}
             </p>
 
             {/* Footer: Tags + Jobs */}
-            <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="mt-4 flex flex-wrap justify-between gap-4">
                 <div className="flex flex-wrap gap-3">
                     <span className="rounded-full bg-[var(--accent-color)] px-4 py-1.5 text-sm font-medium text-[var(--primary-color)]">
                         {company?.industry}
                     </span>
                 </div>
-                <div className="text-[var(--primary-color)] font-semibold">
+                <div className="text-[var(--primary-color)] font-semibold whitespace-nowrap">
                     {company?.sentJobs?.length} jobs available
                 </div>
             </div>

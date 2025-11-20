@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useRef } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -10,9 +10,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import Search from "./Search";
 
 // React iCONS
-import { IoMdPerson, IoMdExit } from "react-icons/io";
-import { Gauge, Briefcase, HelpCircle, Building2, UserCircle, LogOut } from "lucide-react";
+import { Gauge, HelpCircle, Building2, UserCircle, LogOut } from "lucide-react";
 import { FaSearch } from "react-icons/fa";
+
+import {
+  Briefcase,
+  LayoutDashboard,
+  Users,
+  UserCheck,
+  Heart,
+  MessageSquare,
+  Calendar,
+  Settings,
+} from "lucide-react";
 
 // --- Configuration ---
 const USER_NAV_LINKS = [
@@ -22,12 +32,38 @@ const USER_NAV_LINKS = [
   { to: "/companies", icon: HelpCircle, label: "Companies" },
 ];
 
+
+
+
 const Navbar = ({ className }) => {
+
   const location = useLocation();
   const navigate = useNavigate();
   const { isLoggedIn, loading, backendUrl, setIsLoggedIn, setUserData, userData, isSearchOpen, setIsSearchOpen } =
     useContext(AppContext);
 
+  const handleNavClick = (item) => {
+    if (item.key === "logout") {
+      logout();
+    } else {
+      navigate(item.path);
+    }
+    // Close mobile sidebar after navigation
+    setIsMenuOpen(false);
+  };
+
+  const navLinks = [
+    { name: "Dashboard", key: "dashboard", icon: <LayoutDashboard size={20} />, path: "/dashboard" },
+    { name: "Jobs", key: "jobs", icon: <Briefcase size={20} />, path: "/dashboard/jobs" },
+    { name: "Applicants", key: "applicants", icon: <Users size={20} />, path: "/dashboard/applicants" },
+    { name: "Candidates", key: "candidates", icon: <UserCheck size={20} />, path: "/dashboard/candidates" },
+    { name: "Package", key: "package", icon: <Heart size={20} />, path: "/dashboard/package" },
+    { name: "Messages", key: "messages", icon: <MessageSquare size={20} />, path: "/dashboard/messages" },
+    { name: "Meetings", key: "meetings", icon: <Calendar size={20} />, path: "/dashboard/meetings" },
+    { name: "Company", key: "company", icon: <Building2 size={20} />, path: "/dashboard/company" },
+    { name: "Settings", key: "settings", icon: <Settings size={20} />, path: "/dashboard/settings" },
+    { name: "Logout", key: "logout", icon: <LogOut size={20} /> },
+  ];
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -269,7 +305,7 @@ const Navbar = ({ className }) => {
               onClick={() => handleLinkClick("/login")}
               className="flex items-center justify-center gap-3 w-full p-3 bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90 rounded-lg transition-colors"
             >
-              <IoMdExit size={20} />
+              <LogOut size={20} />
               <span className="font-medium">Sign In</span>
             </NavLink>
           )}
@@ -362,64 +398,60 @@ const Navbar = ({ className }) => {
           )}
         </AnimatePresence>
       </div>
-      <h4 className="hidden lg:block text-sm text-[var(--primary-color)]">
-        Hi, {userData?.name || "Buddy"}
-      </h4>
+
 
       {/* Profile/Followed Accounts Button */}
-      <button
-        onClick={toggleUserDropdown}
-        className="h-10 w-10 text-white rounded-full bg-black overflow-hidden ring-2 ring-transparent hover:ring-[var(--primary-color)] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
-        aria-label="User menu"
-      >
-        {userData?.profilePicture ? (
-          <Img
-            src={userData.profilePicture}
-            style="w-full h-full object-cover"
-          />
-        ) : (
-          <span className="text-lg font-semibold flex items-center justify-center h-full w-full">
-            {userData?.name?.[0]?.toUpperCase() || "?"}
-          </span>
-        )}
-      </button>
+      <div className="flex relative group items-center gap-3 cursor-pointer">
+        <h4 className="hidden lg:block text-sm text-[var(--primary-color)]">
+          Hi, {userData?.name || "Buddy"}
+        </h4>
+        <button
+          className="h-10 w-10 text-white rounded-full bg-black overflow-hidden ring-2 ring-transparent hover:ring-[var(--primary-color)] transition-all duration-200 focus:outline-none"
+          aria-label="User menu"
+        >
+          {userData?.profilePicture ? (
+            <Img
+              src={userData.profilePicture}
+              style="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-lg font-semibold flex items-center justify-center h-full w-full">
+              {userData?.name?.[0]?.toUpperCase() || "?"}
+            </span>
+          )}
+        </button>
 
-      {/* Dropdown Menu */}
-      {isUserDropdownOpen && (
-        <div className="absolute top-full right-0 z-50 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-100">
-          <div className="p-4 border-b">
-            <p className="text-sm font-semibold text-gray-800">
-              {userData?.name}
-            </p>
-            <span className="text-sm text-gray-500">{userData?.role === "recruiter" ? "Employer" : "Job Seeker"}</span>
-          </div>
-          <ul className="py-2 flex flex-col">
-            <li
-              onClick={() => handleLinkClick("/dashboard")}
-              className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3 transition-colors"
-            >
-              <UserCircle size={18} />
-              Dashboard
-            </li>
-            {isAdmin && (
-              <li
-                onClick={() => handleLinkClick("/admin")}
-                className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3 transition-colors border-t border-gray-100"
-              >
-                <Gauge size={18} className="text-red-500" />
-                Admin Panel
+        {/* DROPDOWN */}
+        <div
+          className="
+    absolute top-full right-0 z-50 mt-1 w-50 
+    rounded-2xl shadow-xl border border-gray-100 bg-white
+    transition-all duration-500 ease-in-out
+    opacity-0 translate-y-6 invisible
+    group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible
+  "
+        >
+          <ul className="p-3">
+            {navLinks.map((item) => (
+              <li key={item.key}>
+                <span
+                  onClick={() => handleNavClick(item)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-3xl text-left transition-colors cursor-pointer text-gray-600 hover:bg-[var(--accent-color)] hover:text-[var(--primary-color)]`}
+                >
+                  <span className="flex-shrink-0">
+                    {item.icon}
+                  </span>
+                  <span className="font-medium">{item.name}</span>
+                </span>
               </li>
-            )}
-            <li
-              onClick={logout}
-              className="cursor-pointer px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors border-t border-gray-100"
-            >
-              <LogOut size={18} />
-              Logout
-            </li>
+            ))}
           </ul>
         </div>
-      )}
+      </div>
+
+
+      {/* Dropdown Menu */}
+
     </div>
   );
 
@@ -445,7 +477,7 @@ const Navbar = ({ className }) => {
 
   // --- Main Render ---
   return (
-    <nav className={` max-w-7xl mx-auto w-full ${location.pathname.includes("dashboard") ? "bg-white border-b border-gray-300" : ""} py-5 relative z-999 ${className}`}>
+    <nav className={`px-4 max-w-7xl mx-auto w-full ${location.pathname.includes("dashboard") ? "bg-white border-b border-gray-300" : ""} py-5 relative z-999 ${className}`}>
       <div className="flex items-center md:px-2 lg:px-4 justify-between">
         {/* Left Section - Logo and Desktop Links */}
         <div className="flex items-center gap-3">

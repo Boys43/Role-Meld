@@ -213,7 +213,7 @@ input{
 }
 
 .scroll-vertical {
-  animation: vertical-scroll 17s linear infinite;
+  animation: vertical-scroll 60s linear infinite;
   will-change: transform;
   margin-left: 3rem;
 }

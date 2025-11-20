@@ -6,7 +6,7 @@ const Search = lazy(() => import("../components/Search"));
 const Testimonials = lazy(() => import("../components/Testimonials"));
 const LatestJobs = lazy(() => import("../components/LatestJobs"));
 const BlogsSection = lazy(() => import("../components/BlogsSection"));
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // Swiper Slides
 import 'swiper/css';
@@ -18,6 +18,8 @@ import Navbar from "../components/Navbar";
 import { Bell, Code, FileText, Timer, X } from "lucide-react";
 import { Briefcase, Palette, PenTool, Headphones } from "lucide-react";
 import Announcementbar from "../components/Announcementbar";
+import CompanySection from "../components/CompanySection";
+import AnimatedText from "./AnimatedText";
 
 const Home = () => {
   // Auto Scroll to Top
@@ -29,26 +31,6 @@ const Home = () => {
   const { isSearchOpen, setIsSearchOpen, backendUrl } = useContext(AppContext);
   const [categoriesLoading, setCategoriesLoading] = useState(false)
 
-  // Animated text state
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const animatedTexts = ["Talents", "Dream Job"];
-
-  // Text animation effect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsAnimating(true);
-
-      setTimeout(() => {
-        setCurrentTextIndex((prevIndex) =>
-          prevIndex === animatedTexts.length - 1 ? 0 : prevIndex + 1
-        );
-        setIsAnimating(false);
-      }, 400); // Half of the animation duration
-    }, 2500); // Change every 2 seconds
-
-    return () => clearInterval(interval);
-  }, []);
   const [categories, setCategories] = useState([])
   const getCategories = async () => {
     setCategoriesLoading(true)
@@ -88,12 +70,7 @@ const Home = () => {
               </div>
 
               <div className="text-3xl md:text-5xl font-semibold text-gray-800 leading-tight">
-                Your <span className={`text-[var(--primary-color)] inline-block transition-all duration-500 ease-in-out transform ${isAnimating
-                  ? 'opacity-0 scale-125'
-                  : 'opacity-100 scale-100'
-                  }`}>
-                  {animatedTexts[currentTextIndex]}
-                </span> is just a<br />
+                Your <AnimatedText /> is just a<br />
                 search away!
               </div>
 
@@ -111,6 +88,192 @@ const Home = () => {
             <div className="relative h-[700px] overflow-hidden hidden md:block group">
               <div className="scroll-vertical group-hover:[animation-play-state:paused]">
                 <div className="flex flex-col gap-15">
+                  <div
+                    className="ml-10 w-112 bg-[#f9ab85]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#fff]/90 rounded-2xl p-4 flex flex-col cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="ml-10 w-112 bg-[#ffd865]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Data%20Engineer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Data Engineer</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#f9ab85]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Designer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Designer</h4>
+                  </div>
+                  <div
+                    className="ml-10 w-112 bg-[#fff]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#ffd865]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="ml-10 w-112 bg-[#f9ab85]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Data%20Engineer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Data Engineer</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#fff]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Designer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Designer</h4>
+                  </div>
+                  <div
+                    className="ml-10 w-112 bg-[#f9ab85]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#fff]/90 rounded-2xl p-4 flex flex-col cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="ml-10 w-112 bg-[#ffd865]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Data%20Engineer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Data Engineer</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#f9ab85]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Designer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Designer</h4>
+                  </div>
+                  <div
+                    className="ml-10 w-112 bg-[#fff]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#ffd865]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="ml-10 w-112 bg-[#f9ab85]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Data%20Engineer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Data Engineer</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#fff]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Designer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Designer</h4>
+                  </div>
+                  <div
+                    className="ml-10 w-112 bg-[#f9ab85]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#fff]/90 rounded-2xl p-4 flex flex-col cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="ml-10 w-112 bg-[#ffd865]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Data%20Engineer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Data Engineer</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#f9ab85]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
+                    onClick={() => navigate('/find-jobs?job=Designer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Designer</h4>
+                  </div>
+                  <div
+                    className="ml-10 w-112 bg-[#fff]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#ffd865]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Customer Success Manager</h4>
+                  </div>
+
+                  <div
+                    className="ml-10 w-112 bg-[#f9ab85]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Data%20Engineer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Data Engineer</h4>
+                  </div>
+
+                  <div
+                    className="mr-10 w-112 bg-[#fff]/90 rounded-2xl p-5 cursor-pointer flex flex-col gap-2"
+                    onClick={() => navigate('/find-jobs?job=Designer')}
+                  >
+                    <span className="text-gray-600 text-sm">California</span>
+                    <h4 className="text-black font-semibold text-xl">Designer</h4>
+                  </div>
                   <div
                     className="ml-10 w-112 bg-[#f9ab85]/90 rounded-2xl flex flex-col p-4 cursor-pointer gap-2"
                     onClick={() => navigate('/find-jobs?job=Customer%20Success%20Manager')}
@@ -360,8 +523,22 @@ const Home = () => {
         </section>
 
         {/* Featured Companies */}
-        <section>
-          {/* Soon ... */}
+        <section className="mt-20 bg-[#f9f9f9] w-full py-20">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-black font-semibold">
+              Featured companies actively hiring
+            </h2>
+            <div className="flex mt-5 justify-between items-center">
+              <p>
+                Over 100 million jobs
+              </p>
+              <Link to="/companies" className="text-[var(--primary-color)] cursor-pointer hover:text-[var(--primary-color)] font-medium text-md underline underline-offset-6 transition-colors">View all companies</Link>
+            </div>
+            <div className="mt-10">
+              <CompanySection />
+            </div>
+          </div>
+
         </section>
 
         {/* Post a Job  */}
@@ -411,18 +588,6 @@ const Home = () => {
             </div>
           </div>
         </section>
-
-        {/* Featured Jobs */}
-        {/* <section className="p-4 w-full mt-20">
-          <h1 className="font-bold flex items-center gap-4">
-            <MdFeaturedPlayList className="text-[var(--primary-color)]" /> Featured <span className="text-[var(--primary-color)]">Jobs</span>
-          </h1>
-          <Suspense fallback={<div>Loading Featured Jobs...</div>}>
-            <FeaturedJobs />
-          </Suspense>
-        </section> */}
-
-        {/* Featured Companies */}
 
         {/* Testimonials */}
         <section className="max-w-6xl mx-auto py-4 w-full mt-20">

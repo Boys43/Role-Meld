@@ -6,9 +6,9 @@ import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CandidateCards from "../components/CandidateCards";
-import { Building, ChevronDown, LayoutGrid, List, SearchIcon, Crosshair, FolderClosed } from "lucide-react";
+import { Building, ChevronDown, LayoutGrid, List, SearchIcon, Crosshair, FolderClosed, ChevronRight } from "lucide-react";
 import CustomSelect from "../components/CustomSelect";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Candidates = () => {
     const searchParam = useLocation().search;
@@ -16,6 +16,7 @@ const Candidates = () => {
     const category = search.get("category");
     console.log(category);
     const { backendUrl } = useContext(AppContext);
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
     const [candidates, setCandidates] = useState([]);
@@ -193,6 +194,7 @@ const Candidates = () => {
 
     const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
     const [isSkillDropdownOpen, setIsSkillDropdownOpen] = useState(false);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const handleSkillSelect = (skill) => {
         setHeroCategory(skill);
@@ -212,7 +214,7 @@ const Candidates = () => {
             <Navbar />
 
             <main className="bg-gray-50">
-                <div className="h-80 relative flex gap-3 flex-col items-center justify-center">
+                <div className="h-80 p-10 relative flex gap-3 flex-col items-center justify-center">
                     <h1 className="relative z-1 text-4xl text-white">
                         Hire people for your business
                     </h1>
@@ -220,12 +222,12 @@ const Candidates = () => {
                         src={assets.find_jobs_banner}
                         style="absolute z-0 top-0 left-0 w-full h-full"
                     />
-                    <section className="relative z-999 w-full max-w-4xl mt-8">
+                    <section className="relative z-997 w-full  max-w-4xl mt-8">
                         <form
                             onSubmit={handleHeroSearch}
-                            className="flex flex-wrap items-center gap-3 rounded-full bg-white shadow-xl px-4 py-3 divide-x divide-gray-200"
+                            className="flex flex-col md:flex-row flex-wrap items-center gap-3 rounded-3xl md:rounded-2xl bg-white shadow-xl px-4 py-3 divide-x divide-gray-200"
                         >
-                            <div className="flex items-center gap-3 px-2 py-1 flex-1 min-w-[200px]">
+                            <div className="w-full flex items-center gap-3 px-2 py-1 flex-1 min-w-[200px]">
                                 <SearchIcon className="text-gray-400" size={18} />
                                 <input
                                     type="text"
@@ -236,7 +238,7 @@ const Candidates = () => {
                                 />
                             </div>
 
-                            <div className="flex flex-1 relative">
+                            <div className="w-full flex flex-1 relative">
                                 <div className="flex items-center gap-2 px-4 py-3 w-full">
                                     <Building size={20} className="text-gray-400" />
                                     <input
@@ -279,7 +281,7 @@ const Candidates = () => {
                                 )}
                             </div>
 
-                            <div className="flex flex-1 relative">
+                            <div className="w-full flex flex-1 relative">
                                 <div className="flex items-center gap-2 px-4 py-3 w-full">
                                     <Building size={20} className="text-gray-400" />
                                     <input
@@ -322,17 +324,18 @@ const Candidates = () => {
                                 )}
                             </div>
 
-                            <div className="flex items-center gap-3 px-2 py-1">
+                            <div className="w-full flex items-center gap-3 px-2 py-1">
                                 <button
                                     type="button"
                                     onClick={handleClearSearch}
-                                    className="text-sm text-gray-400 hover:text-gray-600"
+                                    className="text-sm text-gray-400 hover:text-gray-600 w-full"
+
                                 >
                                     Clear
                                 </button>
                                 <button
                                     type="submit"
-                                    className="bg-emerald-600 text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-emerald-500"
+                                    className="bg-emerald-600 text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-emerald-500 w-full "
                                 >
                                     Search
                                 </button>
@@ -341,10 +344,37 @@ const Candidates = () => {
                     </section>
                 </div>
 
-                <section className="flex gap-20 max-w-7xl mt-20 mx-auto">
+                <div className="px-4 md:hidden mt-6">
+                    <button
+                        type="button"
+                        onClick={() => setIsFilterOpen(prev => !prev)}
+                        className="text-[var(--primary-color)] underline underline-offset-4 text-lg font-semibold cursor-pointer flex items-center gap-2"
+                    >
+                        <span className="text-lg font-semibold">Filter</span>
+                        <ChevronRight
+                            size={18}
+                            className={`text-gray-500 transition-transform ${isFilterOpen ? 'rotate-180' : ''}`}
+                        />
+                    </button>
+                </div>
+
+                {isFilterOpen && (
+                    <div className="fixed inset-0 bg-black/40 z-998 md:hidden" onClick={() => setIsFilterOpen(false)} />
+                )}
+
+                <section className="px-5 md:ox-2 lg:ox-0 flex flex-col md:flex-row gap-6 md:gap-20 max-w-7xl my-10 mx-auto">
                     {/* Sidebar Filters */}
-                    <div className="border border-gray-300 w-[25%] p-6 space-y-6 rounded-2xl bg-white">
-                        <h4 className="text-lg font-semibold">Filter</h4>
+                    <div className={`border border-gray-300 md:relative md:w-[25%] w-[80%] p-6 space-y-6 rounded-2xl bg-white md:block fixed left-0 top-0 h-screen overflow-y-auto z-999 transform transition-transform duration-300 ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-lg font-semibold">Filter</h4>
+                            <button
+                                type="button"
+                                className="md:hidden text-gray-500"
+                                onClick={() => setIsFilterOpen(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
 
                         {/* Location */}
                         <div className="border-t border-gray-200 py-4 space-y-4">
@@ -470,7 +500,7 @@ const Candidates = () => {
                     </div>
 
                     {/* Candidates */}
-                    <div className="w-[70%]">
+                    <div className="w-full md:w-[70%]">
                         <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-gray-500 mb-4">
                             <h4 className="text-lg font-medium text-gray-800">
                                 {sortedCandidates.length} candidates
@@ -518,7 +548,9 @@ const Candidates = () => {
                                 }`}
                         >
                             {sortedCandidates.map((candidate) => (
-                                <CandidateCards candidate={candidate} key={candidate._id} />
+                                <div onClick={() => navigate(`/candidate-profile/${candidate._id}`)} className="w-full" key={candidate._id}>
+                                    <CandidateCards candidate={candidate} />
+                                </div>
                             ))}
                         </div>
                     </div>

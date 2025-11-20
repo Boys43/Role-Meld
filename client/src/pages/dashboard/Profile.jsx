@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import Loading from "../../components/Loading";
 
-const SavedJobs = React.lazy(() => import("../../components/SavedJobs"));
+const SavedJobs = React.lazy(() => import("../../components/"));
 
 const Package = () => {
   return (

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { Eye, Mail, Search, Trash } from 'lucide-react'
+import { Download, Eye, Mail, MoreVerticalIcon, Phone, Search, Trash } from 'lucide-react'
 import CustomSelect from './CustomSelect';
 import Img from './Image';
 
@@ -47,9 +47,9 @@ const applicants = () => {
     ]
 
     useEffect(() => {
-      setapplicants(sampleApplicants)
+        setapplicants(sampleApplicants)
     }, [])
-    
+
 
     return (
         <div className="bg-white rounded-xl w-full min-h-screen border border-gray-200 p-6 rouned-lg">
@@ -100,7 +100,7 @@ const applicants = () => {
                     <tbody>
                         {paginatedapplicants.length === 0 && (
                             <tr>
-                                <td colSpan={2} className='px-6 py-6 text-center text-gray-500'>
+                                <td colSpan={4} className='px-6 py-6 text-center text-gray-500'>
                                     No applicants found.
                                 </td>
                             </tr>
@@ -114,24 +114,39 @@ const applicants = () => {
                                     </div>
                                 </td>
                                 <td>
-                                    <div className={`${applicant.status === "pending" ? "bg-yellow-100 text-yellow-800" : applicant.status === "approved" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"} px-2 py-1 rounded-full text-sm text-center capitalize`}>
+                                    <div className={`${applicant.status === "pending" ? "bg-yellow-100 text-yellow-800" : applicant.status === "approved" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"} px-2 py-1 rounded-full text-sm text-center capitalize w-24`}>
                                         {applicant.status}
+                                    </div>
+                                    <div className='text-sm mt-2'>
+                                        Applied: <span className='text-gray-400 italic'>{new Date(applicant.createdAt).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        })}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td className='space-y-1'>
+                                    <div className='text-sm flex items-center gap-2'>
+                                        <Mail size={20} /> {applicant?.email}
+                                    </div>
+                                    <div className='text-sm flex items-center gap-2'>
+                                        <Phone size={20} /> {applicant?.phone}
                                     </div>
                                 </td>
                                 <td className='px-6 py-4'>
                                     <div className='flex justify-end gap-4 cursor-pointer'>
-                                        <button
-                                            onClick={() => handleViewProfile(applicant)}
+                                        <a
+                                            download={applicant?.cv}
+                                            href={applicant?.cv}
+                                            target='_blank'
                                         >
-                                            <Eye size={20} />
-                                        </button>
-                                        <a href={`mailto:${applicant.email}`}>
-                                            <Mail size={20} />
+                                            <Download size={20} />
                                         </a>
                                         <button
                                             onClick={() => handleToggleFollow(applicant)}
                                         >
-                                            <Trash size={20} />
+                                            <MoreVerticalIcon size={20} />
                                         </button>
                                     </div>
                                 </td>

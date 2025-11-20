@@ -22,7 +22,7 @@ import Img from "./Image";
 import { FaArrowLeft } from "react-icons/fa";
 
 const Sidebar = ({ activeTab }) => {
-  const { backendUrl, setIsLoggedIn, setUserData, isSidebarOpen, setIsSidebarOpen } = useContext(AppContext);
+  const { backendUrl, setIsLoggedIn, setUserData, isSidebarOpen, setIsSidebarOpen, userData } = useContext(AppContext);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -38,19 +38,29 @@ const Sidebar = ({ activeTab }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMobileOpen]);
 
+  let navLinks;
   // Modern navigation structure with routes
-  const navLinks = [
-    { name: "Dashboard", key: "dashboard", icon: <LayoutDashboard size={20} />, path: "/dashboard" },
-    { name: "Jobs", key: "jobs", icon: <Briefcase size={20} />, path: "/dashboard/jobs" },
-    { name: "Applicants", key: "applicants", icon: <Users size={20} />, path: "/dashboard/applicants" },
-    { name: "Candidates", key: "candidates", icon: <UserCheck size={20} />, path: "/dashboard/candidates" },
-    { name: "Package", key: "package", icon: <Heart size={20} />, path: "/dashboard/package" },
-    { name: "Messages", key: "messages", icon: <MessageSquare size={20} />, path: "/dashboard/messages" },
-    { name: "Meetings", key: "meetings", icon: <Calendar size={20} />, path: "/dashboard/meetings" },
-    { name: "Company", key: "company", icon: <Building2 size={20} />, path: "/dashboard/company" },
-    { name: "Settings", key: "settings", icon: <Settings size={20} />, path: "/dashboard/settings" },
-    { name: "Logout", key: "logout", icon: <LogOut size={20} /> },
-  ];
+  if (userData.role === "recruiter") {
+    navLinks = [
+      { name: "Dashboard", key: "dashboard", icon: <LayoutDashboard size={20} />, path: "/dashboard" },
+      { name: "Jobs", key: "jobs", icon: <Briefcase size={20} />, path: "/dashboard/jobs" },
+      { name: "Applicants", key: "applicants", icon: <Users size={20} />, path: "/dashboard/applicants" },
+      { name: "Candidates", key: "candidates", icon: <UserCheck size={20} />, path: "/dashboard/candidates" },
+      { name: "Package", key: "package", icon: <Heart size={20} />, path: "/dashboard/package" },
+      { name: "Messages", key: "messages", icon: <MessageSquare size={20} />, path: "/dashboard/messages" },
+      { name: "Meetings", key: "meetings", icon: <Calendar size={20} />, path: "/dashboard/meetings" },
+      { name: "Company", key: "company", icon: <Building2 size={20} />, path: "/dashboard/company" },
+      { name: "Settings", key: "settings", icon: <Settings size={20} />, path: "/dashboard/settings" },
+      { name: "Logout", key: "logout", icon: <LogOut size={20} /> },
+    ];
+  } else {
+    navLinks = [
+      { name: "Dashboard", key: "dashboard", icon: <LayoutDashboard size={20} />, path: "/dashboard" },
+      { name: "Profile", key: "profile", icon: <LayoutDashboard size={20} />, path: "/dashboard/profile" },
+
+    ]
+  }
+
 
 
   const handleNavClick = (item) => {

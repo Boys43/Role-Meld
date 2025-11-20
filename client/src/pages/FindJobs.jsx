@@ -199,6 +199,8 @@ const FindJobs = () => {
     }
   }, [filteredJobs]);
 
+  console.log(selectedJob);
+
 
   // Loading
   if (loading) {
@@ -223,7 +225,7 @@ const FindJobs = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex w-full max-w-6xl mt-10 mx-auto flex-1 h-full">
+        <div className="flex w-full max-w-6xl my-10 mx-auto flex-1 h-full">
           {/* Sidebar Filters - 30% width */}
           <div ref={filterRef} className={`fixed transition-all bg-white  border-gray-200  h-screen overflow-y-auto top-0 left-0 z-9999 ${isFilterOpen ? 'w-[75%] lg:w-[25%] p-6 border-r' : 'w-0 py-6 px-0'}`}>
             <div className='space-y-6'>
@@ -268,7 +270,7 @@ const FindJobs = () => {
                     step="5000"
                     value={salaryRange[1]}
                     onChange={(e) => setSalaryRange([salaryRange[0], parseInt(e.target.value)])}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                   />
                   <div className='grid grid-cols-2 gap-2'>
                     <input
@@ -354,7 +356,6 @@ const FindJobs = () => {
 
               <hr className='border-gray-300' />
 
-
               <div className='space-y-3'>
                 <h4 className='text-md uppercase font-medium text-gray-400'>Special Filters</h4>
                 <div className='space-y-2'>
@@ -418,25 +419,15 @@ const FindJobs = () => {
                         e.stopPropagation()
                         setSelectedJob(job)
                       }} >
-                        <JobCard
-                          setLoginReminder={setLoginReminder}
-                          setToggleApplyJob={setToggleApplyJob}
-                          setapplJobId={setapplJobId}
-                          e={job}
-                        />
-                      </div>
-                      {/* Insert Featured Jobs after every 6 jobs */}
-                      {index === 5 && (
-                        <div className='col-span-full my-8'>
-                          <h3 className='text-xl font-semibold mb-4 flex items-center gap-3'>
-                            <MdFeaturedPlayList className='text-blue-600' />
-                            Sponsored Jobs
-                          </h3>
-                          <Suspense fallback={<div className="animate-pulse h-32 rounded-lg"></div>}>
-                            <FeaturedJobs />
-                          </Suspense>
+                        <div className={`${selectedJob?._id === job?._id ? "border-2" : job?.sponsored ? 'border-2 border-yellow-300' : ''} transition-all rounded-2xl border-[var(--primary-color)]`}>
+                          <JobCard
+                            setLoginReminder={setLoginReminder}
+                            setToggleApplyJob={setToggleApplyJob}
+                            setapplJobId={setapplJobId}
+                            e={job}
+                          />
                         </div>
-                      )}
+                      </div>
                     </div>
                   )) : (
                   <div className='col-span-full'>
@@ -473,7 +464,7 @@ const FindJobs = () => {
                         {selectedJob.companyProfile ? (
                           <Img
                             style="w-16 h-16 rounded-full object-cover border border-gray-100 flex-shrink-0"
-                            src={selectedJob.companyProfile}
+                            src={selectedJob.companyProfile || "/placeholder.png"}
                           />
                         ) : (
                           <div className="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center bg-gray-100 text-[var(--primary-color)] font-bold text-xl flex-shrink-0"
@@ -483,7 +474,7 @@ const FindJobs = () => {
                         )}
                       </div>
                       <div className='flex-1'>
-                        <h4 className='text-2xl text-gray-900 mb-1'>{selectedJob.title}</h4>
+                        <h4 className='text-2xl text-gray-900 mb-1 capitalize'>{selectedJob.title}</h4>
                         <div className='flex flex-wrap items-center gap-2 text-sm text-gray-600 mb-2'>
                           <span className='font-medium'>by <b>{selectedJob.company}</b></span>
                           {selectedJob.location && (

@@ -3,7 +3,7 @@ import { AppContext } from '../context/AppContext'
 import { useLocation, useNavigate } from 'react-router-dom';
 
 // Lucide React Icons for consistency (replacing mixed imports)
-import { Heart, Clock, MapPin } from 'lucide-react';
+import { Heart, Clock, MapPin, Crown } from 'lucide-react';
 import { FaPaperPlane } from 'react-icons/fa';
 import Img from './Image';
 import Currency from './CurrencyCovertor';
@@ -38,7 +38,6 @@ const JobCard = ({ e, className }) => {
     p-6 cursor-pointer border border-gray-200 bg-white rounded-2xl hover:shadow-lg shadow-black/5 
     transition-all duration-300 flex flex-col justify-between gap-4 
     min-w-full sm:min-w-[250px] md:min-w-[300px] 
-    ${e?.sponsored ? 'border-2 border-yellow-300' : ''}
   `}
             onClick={() => {
                 if (location.pathname !== '/find-jobs') navigate('/jobDetails/' + e._id)
@@ -77,22 +76,27 @@ const JobCard = ({ e, className }) => {
                         </div>
                     </div>
 
-                    {/* Save Button */}
-                    <button
-                        onClick={(event) => {
-                            event.stopPropagation()
-                            toggleSaveJob(e?._id)
-                        }}
-                        className={`p-2 rounded-full transition-all duration-200 flex-shrink-0
+                    <div className='flex items-center gap-2'>
+                        {/* Save Button */}
+                        {e?.sponsored && (
+                            <Crown className='text-yellow-500' />
+                        )}
+                        <button
+                            onClick={(event) => {
+                                event.stopPropagation()
+                                toggleSaveJob(e?._id)
+                            }}
+                            className={`p-2 rounded-full transition-all duration-200 flex-shrink-0
           ${isSaved
-                                ? 'bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90 shadow-md'
-                                : 'text-gray-600 hover:text-[var(--primary-color)] hover:bg-gray-200'
-                            }`}
-                        aria-label={isSaved ? 'Unsave job' : 'Save job'}
-                        disabled={!isLoggedIn}
-                    >
-                        {isSaved ? <Heart size={24} fill='white' /> : <Heart size={24} />}
-                    </button>
+                                    ? 'bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color)]/90 shadow-md'
+                                    : 'text-gray-600 hover:text-[var(--primary-color)] hover:bg-gray-200'
+                                }`}
+                            aria-label={isSaved ? 'Unsave job' : 'Save job'}
+                            disabled={!isLoggedIn}
+                        >
+                            {isSaved ? <Heart size={24} fill='white' /> : <Heart size={24} />}
+                        </button>
+                    </div>
                 </div>
 
                 {/* 2. Job Info */}
