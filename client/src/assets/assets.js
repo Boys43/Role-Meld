@@ -24,6 +24,7 @@ import Vector from './Vector.svg'
 import landing_bg from './landing-bg.svg'
 import girl from './girl.webp'
 import map from './map-bg.svg'
+import socialicons from './socialicons.png' 
 
 
 const assets = {
@@ -53,6 +54,7 @@ const assets = {
     landing_bg,
     girl,
     map,
+    socialicons,
 }
 
 export default assets;

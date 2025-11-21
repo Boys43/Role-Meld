@@ -465,7 +465,7 @@ const Navbar = ({ className }) => {
         Login
       </NavLink>
       <NavLink
-        to={"/register"}
+        to={"/employer-landing"}
         onClick={() => setIsMenuOpen(false)}
       >
         <button className="primary-btn">

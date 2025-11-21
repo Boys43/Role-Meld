@@ -19,17 +19,13 @@ const EmployerLanding = () => {
                         <div className='flex gap-3'>
                             <button className='primary-btn'>Become an employer</button>
                         </div>
-                        <div className='flex items-center gap-4 text-gray-400 text-sm'>
-                            <span>Google</span>
-                            <span>LinkedIn</span>
-                            <span>Dribbble</span>
-                            <span>Figma</span>
-                            <span>GitHub</span>
-                        </div>
                     </div>
                     <div className='col-span-2'>
                         <Img src={assets.employer_landing} />
                     </div>
+                </section>
+                <section className='w-300 lg:w-full flex justify-center items-center '>
+                    <Img src={assets.socialicons} style={"w-full h-full object-cover"} />
                 </section>
 
                 <section className=''>
