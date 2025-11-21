@@ -7,7 +7,7 @@ const Pricing = () => {
   return (
     <div>
         <Navbar />
-        <div className='py-20 flex flex-col items-center gap-2'>
+        <div className='py-20 text-center px-3 lg:p-0 flex flex-col items-center gap-2'>
             <h4 className='text-2xl font-semibold  text-black'>
                 Simple, transparent pricing
             </h4>

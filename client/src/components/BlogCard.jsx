@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import assets from '../assets/assets';
 import Img from '../components/Image';
 
-const BlogCard = ({ blog }) => {
+const BlogCard = ({ blog, layout = "vertical" }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -18,9 +18,9 @@ const BlogCard = ({ blog }) => {
     };
 
     return (
-        <div className="bg-white border border-gray-100 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer max-w-sm mx-auto">
+        <div className={`bg-white border border-gray-100 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer mx-auto ${layout === "horizontal" ? "flex" : ""}`}>
             {/* Image Section */}
-            <div className="relative group overflow-hidden w-full h-48">
+            <div className={`relative group w-full ${layout === "horizontal" ? "h-48" : "h-full"}`}>
                 <Img
                     loading='lazy'
                     src={
@@ -32,8 +32,7 @@ const BlogCard = ({ blog }) => {
                                     : blog.coverImage // fallback if it's a string URL
                             : assets.preview_image // default preview
                     }
-                    alt="Blog"
-                    style="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    style={`bg-blue-300 w-full object-cover transition-transform duration-300 group-hover:scale-105 ${layout === "horizontal" ? "h-100" : "h-48"}`}
                 />
             </div>
 

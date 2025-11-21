@@ -16,11 +16,15 @@ import CandidateProfile from "./pages/CandidateProfile";
 import NotFound404 from "./components/NotFound404";
 import NotFoundPage from "./pages/NotFoundPage";
 import EmployerLanding from "./pages/EmployerLanding";
+import Blogs from "./pages/Blogs";
+import ContactUs from "./pages/ContactUs";
+import FAQs from "./pages/FAQs";
 
 // Lazy-loaded components
 const Navbar = lazy(() => import("./components/Navbar"));
 const Footer = lazy(() => import("./components/Footer"));
 const ChatBotBubble = lazy(() => import("./components/ChatBotBubble"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 
 const Home = lazy(() => import("./pages/Home"));
 const Pricing = lazy(() => import("./pages/Pricing"));
@@ -201,10 +205,14 @@ const App = () => {
           <Route path="/test" element={<Test />} />
           <Route path="/followed-accounts" element={<FollowedAccounts />} />
           <Route path="/category-jobs" element={<CategoryJobs />} />
-          <Route path="/*" element={<NotFoundPage />} />
           <Route path="/blogdetails/:slug" element={<BlogsDetails />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/employer-landing" element={<EmployerLanding />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/faqs" element={<FAQs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
       <ChatBotBubble />

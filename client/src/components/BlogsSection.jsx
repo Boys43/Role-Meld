@@ -5,7 +5,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import NotFound404 from './NotFound404';
 
-const BlogsSection = ({ className, limit = 4 }) => {
+const BlogsSection = ({ className, limit = 4, layout = "vertical" }) => {
   const { backendUrl } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [blogs, setBlogs] = useState([])
@@ -36,25 +36,28 @@ const BlogsSection = ({ className, limit = 4 }) => {
 
   const staticBlogs = [
     {
+      id: 1,
       title: "The Best Practices for Software Development",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nibh et semper aliquet, nulla velit eleifend nibh, non luctus nulla risus sed felis.",
-      coverImage: `https://picsum.photos/200/300/?random`,
+      coverImage: `https://picsum.photos/512/512/?random=1`,
       createdAt: "2022-01-01",
       slug: "the-best-practices-for-software-development",
       category: "RECRUITMENT & HIRING"
     },
     {
+      id: 2,
       title: "Why Software Development is so Important",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nibh et semper aliquet, nulla velit eleifend nibh, non luctus nulla risus sed felis.",
-      coverImage: `https://picsum.photos/200/300/?random`,
+      coverImage: `https://picsum.photos/512/512/?random=2`,
       createdAt: "2022-01-15",
       slug: "why-software-development-is-so-important",
       category: " & HIRING"
     },
     {
+      id: 3,
       title: "The Future of Software Development",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nibh et semper aliquet, nulla velit eleifend nibh, non luctus nulla risus sed felis.",
-      coverImage: "https://picsum.photos/200/300/?random",
+      coverImage: "https://picsum.photos/512/512/?random=3",
       createdAt: "2022-02-01",
       slug: "the-future-of-software-development",
       category: "RECRUITMENT & HIRING"
@@ -67,7 +70,7 @@ const BlogsSection = ({ className, limit = 4 }) => {
         {staticBlogs.length > 0 ? staticBlogs?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // newest first
           .slice(0, limit)
           .map((blog, index) => (
-            <BlogCard key={index} blog={blog} />
+            <BlogCard layout={layout} key={index} blog={blog} />
           )) :
           <NotFound404 margin={"mt-10"} value={"No Recent Blogs"} />
         }

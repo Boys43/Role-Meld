@@ -79,11 +79,11 @@ const Footer = () => {
               </span>
               <h4 className="hidden md:block text-lg font-semibold mb-4">Company</h4>
               <ul className={`space-y-4 text-sm text-gray-500 transition-all duration-300 ease-in-out overflow-hidden ${openSections.company ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} md:max-h-none md:opacity-100 md:block`}>
-                <li><a href="#" className="hover:text-gray-800">About us</a></li>
-                <li><a href="#" className="hover:text-gray-800">Career</a></li>
-                <li><a href="#" className="hover:text-gray-800">Blogs</a></li>
-                <li><a href="#" className="hover:text-gray-800">FAQ's</a></li>
-                <li><a href="#" className="hover:text-gray-800">Contact</a></li>
+                <li><Link to={'/about-us'} className="hover:text-gray-800">About us</Link></li>
+                <li><Link to={'/career'} className="hover:text-gray-800">Career</Link></li>
+                <li><Link to={'/blogs'} className="hover:text-gray-800">Blogs</Link></li>
+                <li><Link to={'/faqs'} className="hover:text-gray-800">FAQ's</Link></li>
+                <li><Link to={'/contact'} className="hover:text-gray-800">Contact</Link></li>
               </ul>
             </div>
 
@@ -98,11 +98,11 @@ const Footer = () => {
               </span>
               <h4 className="hidden md:block text-lg font-semibold mb-4">Services</h4>
               <ul className={`space-y-4 text-sm text-gray-500 transition-all duration-300 ease-in-out overflow-hidden ${openSections.services ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} md:max-h-none md:opacity-100 md:block`}>
-                <li><a href="#" className="hover:text-gray-800">Jobs</a></li>
-                <li><a href="#" className="hover:text-gray-800">Companies</a></li>
-                <li><a href="#" className="hover:text-gray-800">Candidates</a></li>
+                <li><Link to={'/find-jobs'} className="hover:text-gray-800">Jobs</Link></li>
+                <li><Link to={'/companies'} className="hover:text-gray-800">Companies</Link></li>
+                <li><Link to={'/candidates'} className="hover:text-gray-800">Candidates</Link></li>
                 <li><Link to={'/pricing'} className="hover:text-gray-800">Pricing</Link></li>
-                <li><a href="#" className="hover:text-gray-800">Partner</a></li>
+                <li><Link to={'/partner'} className="hover:text-gray-800">Partner</Link></li>
               </ul>
             </div>
 
