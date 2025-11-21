@@ -1,7 +1,7 @@
 import { Facebook, Twitter, Linkedin, Instagram, Youtube, Monitor, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import FooterBottom from "./FooterBottom";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Footer = () => {
   const [openSections, setOpenSections] = useState({});
@@ -101,7 +101,7 @@ const Footer = () => {
                 <li><a href="#" className="hover:text-gray-800">Jobs</a></li>
                 <li><a href="#" className="hover:text-gray-800">Companies</a></li>
                 <li><a href="#" className="hover:text-gray-800">Candidates</a></li>
-                <li><a href="#" className="hover:text-gray-800">Pricing</a></li>
+                <li><Link to={'/pricing'} className="hover:text-gray-800">Pricing</Link></li>
                 <li><a href="#" className="hover:text-gray-800">Partner</a></li>
               </ul>
             </div>

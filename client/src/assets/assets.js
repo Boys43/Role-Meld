@@ -16,6 +16,15 @@ import post_job from './post_job.webp'
 import wave_2 from './wave_2.svg'
 import find_jobs_banner from './find_jobs_banner.png'
 import not_found_404 from './NotFoundPage.webp'
+import employer_landing from './employer-landing.webp'
+import landing_key1 from './landing-key1.svg'
+import landing_key2 from './landing-key2.svg'
+import landing_key3 from './landing-key3.svg'
+import Vector from './Vector.svg'
+import landing_bg from './landing-bg.svg'
+import girl from './girl.webp'
+import map from './map-bg.svg'
+
 
 const assets = {
     apple,
@@ -35,7 +44,15 @@ const assets = {
     post_job,
     wave_2,
     find_jobs_banner,
-    not_found_404
+    not_found_404,
+    employer_landing,
+    landing_key1,
+    landing_key2,
+    landing_key3,
+    Vector,
+    landing_bg,
+    girl,
+    map,
 }
 
 export default assets;

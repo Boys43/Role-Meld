@@ -477,43 +477,45 @@ const Navbar = ({ className }) => {
 
   // --- Main Render ---
   return (
-    <nav className={`px-4 max-w-7xl mx-auto w-full ${location.pathname.includes("dashboard") ? "bg-white border-b border-gray-300" : ""} py-5 relative z-999 ${className}`}>
-      <div className="flex items-center md:px-2 lg:px-4 justify-between">
-        {/* Left Section - Logo and Desktop Links */}
-        <div className="flex items-center gap-3">
-          <div className="md:hidden">
-            <button
-              onClick={toggleMobileMenu}
-              className="p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            >
-              {isMenuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
-            </button>
+    <div className="border-b border-gray-200">
+      <nav className={`px-4 max-w-7xl mx-auto w-full ${location.pathname.includes("dashboard") ? "bg-white border-b border-gray-300" : ""} py-5 relative z-999 ${className}`}>
+        <div className="flex items-center md:px-2 lg:px-4 justify-between">
+          {/* Left Section - Logo and Desktop Links */}
+          <div className="flex items-center gap-3">
+            <div className="md:hidden">
+              <button
+                onClick={toggleMobileMenu}
+                className="p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {isMenuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
+              </button>
+            </div>
+
+            <div className={`flex items-center gap-10`}>
+              <NavLink to={"/"}>
+                {/* The image styling should be outside the component if possible, or ensure it's responsive */}
+                <Img src="/logo.webp" style={`${location.pathname.includes("dashboard") ? "hidden" : ""} w-28 sm:w-32`} alt="Company Logo" />
+              </NavLink>
+              <DesktopNavLinks />
+            </div>
           </div>
 
-          <div className={`flex items-center gap-10`}>
-            <NavLink to={"/"}>
-              {/* The image styling should be outside the component if possible, or ensure it's responsive */}
-              <Img src="/logo.webp" style={`${location.pathname.includes("dashboard") ? "hidden" : ""} w-28 sm:w-32`} alt="Company Logo" />
-            </NavLink>
-            <DesktopNavLinks />
+          <div className="md:hidden items-center gap-4" onClick={() => setIsSearchOpen(true)}>
+            <FaSearch />
+          </div>
+
+          {/* Right Section - Auth/User Actions */}
+          <div className="hidden md:flex items-center gap-4">
+            {isLoggedIn ? <UserProfileDropdown /> : <AuthButtons />}
           </div>
         </div>
 
-        <div className="md:hidden items-center gap-4" onClick={() => setIsSearchOpen(true)}>
-          <FaSearch />
-        </div>
+        {/* Mobile Sidebar Content */}
+        <MobileSidebar />
 
-        {/* Right Section - Auth/User Actions */}
-        <div className="hidden md:flex items-center gap-4">
-          {isLoggedIn ? <UserProfileDropdown /> : <AuthButtons />}
-        </div>
-      </div>
-
-      {/* Mobile Sidebar Content */}
-      <MobileSidebar />
-
-    </nav>
+      </nav>
+    </div>
   );
 };
 

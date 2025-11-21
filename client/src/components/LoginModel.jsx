@@ -47,9 +47,9 @@ const LoginModel = ({ setStep }) => {
   }
 
   return (
-    <div className="flex w-full justify-center items-center bg-white">
+    <div className="flex w-full justify-center items-center">
       <div className="w-full px-8 md:px-32 lg:px-24">
-        <form onSubmit={login} className="bg-white rounded-md border border-gray-300 p-5 flex flex-col gap-3">
+        <form onSubmit={login} className="bg-white rounded-2xl border border-gray-300 p-10 flex flex-col gap-3">
           <h1 className="text-gray-800 font-bold text-2xl mb-1">Login</h1>
           <p className="text-sm font-normal text-gray-600 mb-6">Welcome back 👋</p>
 

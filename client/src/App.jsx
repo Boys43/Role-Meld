@@ -15,6 +15,7 @@ import AdminDashboardLayout from "./components/AdminDashboardLayout";
 import CandidateProfile from "./pages/CandidateProfile";
 import NotFound404 from "./components/NotFound404";
 import NotFoundPage from "./pages/NotFoundPage";
+import EmployerLanding from "./pages/EmployerLanding";
 
 // Lazy-loaded components
 const Navbar = lazy(() => import("./components/Navbar"));
@@ -22,6 +23,7 @@ const Footer = lazy(() => import("./components/Footer"));
 const ChatBotBubble = lazy(() => import("./components/ChatBotBubble"));
 
 const Home = lazy(() => import("./pages/Home"));
+const Pricing = lazy(() => import("./pages/Pricing"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const JobDetails = lazy(() => import("./pages/JobDetails"));
@@ -201,6 +203,8 @@ const App = () => {
           <Route path="/category-jobs" element={<CategoryJobs />} />
           <Route path="/*" element={<NotFoundPage />} />
           <Route path="/blogdetails/:slug" element={<BlogsDetails />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/employer-landing" element={<EmployerLanding />} />
         </Routes>
       </div>
       <ChatBotBubble />
