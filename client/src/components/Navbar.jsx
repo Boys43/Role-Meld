@@ -414,12 +414,14 @@ const Navbar = ({ className }) => {
               src={userData.profilePicture}
               style="w-full h-full object-cover"
             />
+
           ) : (
             <span className="text-lg font-semibold flex items-center justify-center h-full w-full">
               {userData?.name?.[0]?.toUpperCase() || "?"}
             </span>
           )}
         </button>
+
 
         {/* DROPDOWN */}
         <div
@@ -448,6 +450,15 @@ const Navbar = ({ className }) => {
           </ul>
         </div>
       </div>
+
+      <NavLink
+        to={"/dashboard/jobs"}
+        onClick={() => setIsMenuOpen(false)}
+      >
+        <button className="primary-btn">
+          Post a job
+        </button>
+      </NavLink>
 
 
       {/* Dropdown Menu */}
@@ -513,7 +524,6 @@ const Navbar = ({ className }) => {
 
         {/* Mobile Sidebar Content */}
         <MobileSidebar />
-
       </nav>
     </div>
   );

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { Suspense } from "react";
+import Loading from "../../components/Loading";
 
-const Company = () => {
+const CompanyProfileComponent = React.lazy(() => import("../../components/RecruiterProfile"));
+
+const CompanyProfile = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Company</h1>
-      <p>Company management coming soon...</p>
-    </div>
+    <Suspense fallback={<Loading />}>
+      <CompanyProfileComponent />
+    </Suspense>
   );
 };
 
-export default Company;
+export default CompanyProfile;

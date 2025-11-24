@@ -19,6 +19,9 @@ import EmployerLanding from "./pages/EmployerLanding";
 import Blogs from "./pages/Blogs";
 import ContactUs from "./pages/ContactUs";
 import FAQs from "./pages/FAQs";
+import ManageJobs from "./pages/dashboard/Jobs/Jobs";
+import PostJobPage from "./pages/dashboard/Jobs/PostJob";
+
 
 // Lazy-loaded components
 const Navbar = lazy(() => import("./components/Navbar"));
@@ -42,7 +45,6 @@ const CompaniesPage = lazy(() => import("./pages/Companies"));
 
 // Dashboard pages
 const DashboardHome = lazy(() => import("./pages/dashboard/DashboardHome"));
-const Jobs = lazy(() => import("./pages/dashboard/Jobs"));
 const Applicants = lazy(() => import("./pages/dashboard/Applicants"));
 const Candidates = lazy(() => import("./pages/dashboard/Candidates"));
 const Package = lazy(() => import("./pages/dashboard/Package"));
@@ -156,7 +158,8 @@ const App = () => {
             }
           >
             <Route index element={<DashboardHome />} />
-            <Route path="jobs" element={<Jobs />} />
+            <Route path="jobs" element={<ManageJobs />} />
+            <Route path="jobs/post" element={<PostJobPage />} />
             <Route path="applicants" element={<Applicants />} />
             <Route path="candidates" element={<Candidates />} />
             <Route path="package" element={<Package />} />

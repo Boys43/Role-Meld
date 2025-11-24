@@ -112,12 +112,6 @@ const JobDetails = () => {
                         <span>Jobs</span>
                         <span className='mx-2'>/</span>
                         <span className='text-gray-900 font-medium'>{jobData?.category}</span>
-                        {jobData?.subCategory && (
-                            <>
-                                <span className='mx-2'>/</span>
-                                <span className='text-gray-900 font-medium'>{jobData?.subCategory}</span>
-                            </>
-                        )}
                     </div>
                 </nav>
 
@@ -147,12 +141,6 @@ const JobDetails = () => {
                                             <h4 className='text-2xl text-gray-900 mb-1'>{jobData?.title}</h4>
                                             <div className='flex flex-wrap items-center gap-2 text-sm text-gray-600 mb-2'>
                                                 <span className='font-medium'>by <b>{jobData?.company}</b></span>
-                                                {jobData?.location && (
-                                                    <>
-                                                        <span>in</span>
-                                                        <span>{jobData?.location}</span>
-                                                    </>
-                                                )}
                                                 {jobData?.category && (
                                                     <>
                                                         <span>in</span>
@@ -261,9 +249,9 @@ const JobDetails = () => {
                                             <div className='text-sm font-semibold text-black'>Salary</div>
                                             <div className='text-sm text-gray-500'>
                                                 {jobData?.salaryType === "fixed" ? <span>
-                                                    <Currency amount={jobData?.fixedSalary} from={jobData?.jobsCurrency} />
+                                                    <Currency amount={jobData?.fixedSalary} from={jobData?.currency} />
                                                 </span> : <span>
-                                                    <Currency amount={jobData?.minSalary} from={jobData?.jobsCurrency} /> - <Currency amount={jobData?.maxSalary} from={jobData?.jobsCurrency} /></span>}
+                                                    <Currency amount={jobData?.minSalary} from={jobData?.currency} /> - <Currency amount={jobData?.maxSalary} from={jobData?.currency} /></span>}
                                             </div>
                                         </div>
                                     </div>

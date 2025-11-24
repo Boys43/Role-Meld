@@ -110,11 +110,11 @@ const JobCard = ({ e, className }) => {
                         </span>
                         <span className='w-max px-3 py-1 rounded-full bg-[var(--primary-color)]/10 text-[var(--primary-color)]'>
                             {e?.salaryType === 'fixed' ? (
-                                <Currency amount={e?.fixedSalary} from={e?.jobsCurrency} />
+                                <Currency amount={e?.fixedSalary} from={e?.currency} />
                             ) : (
                                 <>
-                                    <Currency amount={e?.minSalary} from={e?.jobsCurrency} /> -{' '}
-                                    <Currency amount={e?.maxSalary} from={e?.jobsCurrency} />
+                                    <Currency amount={e?.minSalary} from={e?.currency} /> -{' '}
+                                    <Currency amount={e?.maxSalary} from={e?.currency} />
                                 </>
                             )}
                         </span>

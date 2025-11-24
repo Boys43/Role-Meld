@@ -1,8 +1,6 @@
 import applicationModel from '../models/applicationModel.js';
 import jobsModel from '../models/jobsModel.js';
 import recruiterProfileModel from '../models/recruiterProfileModel.js';
-// import authModel from '../models/authModels.js';
-
 import userProfileModel from "../models/userProfileModel.js";
 
 export const addJob = async (req, res) => {
@@ -14,12 +12,14 @@ export const addJob = async (req, res) => {
     }
 
     try {
-        const userProfile = await recruiterProfileModel.findOne({authId: userId});
+        const userProfile = await recruiterProfileModel.findOne({ authId: userId });
         const job = new jobsModel({
             ...jobData,
             postedBy: userProfile._id,
             postedAt: new Date(),
-            applicationDeadline: new Date(Date.now() + jobData.applicationDeadline * 24 * 60 * 60 * 1000),
+            applicationDeadline: jobData.closingDays
+                ? new Date(Date.now() + jobData.closingDays * 24 * 60 * 60 * 1000)
+                : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         });
         await job.save();
 
@@ -48,7 +48,7 @@ export const addJob = async (req, res) => {
 };
 
 export const saveJob = async (req, res) => {
-    const { savedJobs } = req.body;            
+    const { savedJobs } = req.body;
     const userId = req.user._id
 
     try {
@@ -124,7 +124,7 @@ export const getSavedJobs = async (req, res) => {
     const userId = req.user._id
 
     try {
-        const user = await userProfileModel.findOne({authId: userId})
+        const user = await userProfileModel.findOne({ authId: userId })
         const savedJobs = await jobsModel.find({ _id: { $in: user.savedJobs }, isActive: true });
 
         if (!savedJobs) {

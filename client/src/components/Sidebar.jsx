@@ -43,7 +43,12 @@ const Sidebar = ({ activeTab }) => {
   if (userData.role === "recruiter") {
     navLinks = [
       { name: "Dashboard", key: "dashboard", icon: <LayoutDashboard size={20} />, path: "/dashboard" },
-      { name: "Jobs", key: "jobs", icon: <Briefcase size={20} />, path: "/dashboard/jobs" },
+      {
+        name: "Jobs", key: "jobs", icon: <Briefcase size={20} />, path: "/dashboard/jobs",
+        children: [
+          { name: "Post a Job", key: "post-job", icon: <Briefcase size={20} />, path: "/dashboard/jobs/post" },
+        ]
+      },
       { name: "Applicants", key: "applicants", icon: <Users size={20} />, path: "/dashboard/applicants" },
       { name: "Candidates", key: "candidates", icon: <UserCheck size={20} />, path: "/dashboard/candidates" },
       { name: "Package", key: "package", icon: <Heart size={20} />, path: "/dashboard/package" },
@@ -57,7 +62,6 @@ const Sidebar = ({ activeTab }) => {
     navLinks = [
       { name: "Dashboard", key: "dashboard", icon: <LayoutDashboard size={20} />, path: "/dashboard" },
       { name: "Profile", key: "profile", icon: <LayoutDashboard size={20} />, path: "/dashboard/profile" },
-
     ]
   }
 
@@ -136,28 +140,46 @@ const Sidebar = ({ activeTab }) => {
         </div>
 
         {/* Navigation Links */}
+        {/* Navigation Links */}
         <nav className={`${isSidebarOpen ? 'flex-1 px-2' : 'flex-1 px-7'} py-4`}>
           <ul className="space-y-1">
             {navLinks.map((item) => (
-              <li key={item.key}>
+              <li key={item.key} className="relative group">
                 <span
                   onClick={() => handleNavClick(item)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-3xl text-left transition-colors cursor-pointer ${activeTab === item.key
-                    ? 'bg-[var(--accent-color)] text-[var(--primary-color)]'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-3xl text-left transition-colors cursor-pointer 
+            ${activeTab === item.key
+                      ? 'bg-[var(--accent-color)] text-[var(--primary-color)]'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }`}
                 >
                   <span className="flex-shrink-0">
                     {item.icon}
                   </span>
-                  {!isSidebarOpen && (
-                    <span className="font-medium">{item.name}</span>
-                  )}
+                  {!isSidebarOpen && <span className="font-medium">{item.name}</span>}
                 </span>
+
+                {/* Render children as absolute dropdown */}
+                {item.children && item.children.length > 0 && (
+                  <ul className="absolute left-full top-0 mt-0 ml-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
+                    {item.children.map((child) => (
+                      <li key={child.key}>
+                        <span
+                          onClick={() => handleNavClick(child)}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-gray-600 hover:bg-gray-50 hover:text-gray-900`}
+                        >
+                          {child.icon}
+                          <span>{child.name}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
         </nav>
+
       </div>
     </>
   );

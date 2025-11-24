@@ -2,7 +2,7 @@ import cron from "node-cron";
 import recruiterProfileModel from "../models/recruiterProfileModel.js";
 
 export const startStatusCron = () => {
-  cron.schedule("*/1 * * * *", async () => {
+  cron.schedule("0 * * * *", async () => {
     try {
       await recruiterProfileModel.updateMany(
         { profileScore: 100, reviewStatus: "pending" },

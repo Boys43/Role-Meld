@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useContext } from 'react';
+import { memo, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -19,6 +19,7 @@ const RecruiterProfile = () => {
         tagline: userData?.tagline || "",
         company: userData?.company || "",
         website: userData?.website || "",
+        members: userData?.members || "",
         city: userData?.city || "",
         country: userData?.country || "",
         establishedDate: userData?.establishedDate || "",
@@ -299,15 +300,18 @@ const RecruiterProfile = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="font-medium text-gray-700">Members</label>
-                                <input
-                                    type="number"
-                                    name="members"
-                                    value={formData.members}
-                                    onChange={handleChange}
-                                    placeholder={userData?.members || "e.g., 10"}
-                                    className="w-full p-3 border-2 border-gray-300 focus:border-blue-500 focus:outline-none rounded-lg transition-colors"
-                                />
+                               <CustomSelect
+                                label="Members"
+                                name="members"
+                                value={formData.members || ""}
+                                onChange={handleChange}
+                                >
+                                    <option value="0-50">0-50</option>
+                                    <option value="11-50">11-50</option>
+                                    <option value="51-200">51-200</option>
+                                    <option value="201-500">201-500</option>
+                                    <option value="500+">500+</option>
+                               </CustomSelect>
                             </div>
 
                             <div className="space-y-2">
