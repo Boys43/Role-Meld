@@ -26,11 +26,19 @@ const AdminPackages = () => {
         price: "",
         currency: "USD",
         duration: "",
+        durationUnit: "month",
         jobPostings: "",
         featuredJobs: "0",
         candidateAccess: false,
+        candidatesFollow: "0",
+        inviteCandidates: false,
+        sendMessages: false,
+        printProfiles: false,
+        reviewComment: false,
+        viewCandidateInfo: false,
+        support: "Limited",
+        packageType: "Standard",
         features: "",
-        isActive: true,
         displayOrder: "0"
     });
 
@@ -91,11 +99,19 @@ const AdminPackages = () => {
             price: "",
             currency: "USD",
             duration: "",
+            durationUnit: "month",
             jobPostings: "",
             featuredJobs: "0",
             candidateAccess: false,
+            candidatesFollow: "0",
+            inviteCandidates: false,
+            sendMessages: false,
+            printProfiles: false,
+            reviewComment: false,
+            viewCandidateInfo: false,
+            support: "Limited",
+            packageType: "Standard",
             features: "",
-            isActive: true,
             displayOrder: "0"
         });
         setIsModalOpen(true);
@@ -109,11 +125,19 @@ const AdminPackages = () => {
             price: pkg.price.toString(),
             currency: pkg.currency,
             duration: pkg.duration.toString(),
+            durationUnit: pkg.durationUnit || "month",
             jobPostings: pkg.jobPostings.toString(),
             featuredJobs: pkg.featuredJobs.toString(),
             candidateAccess: pkg.candidateAccess,
+            candidatesFollow: (pkg.candidatesFollow || 0).toString(),
+            inviteCandidates: pkg.inviteCandidates || false,
+            sendMessages: pkg.sendMessages || false,
+            printProfiles: pkg.printProfiles || false,
+            reviewComment: pkg.reviewComment || false,
+            viewCandidateInfo: pkg.viewCandidateInfo || false,
+            support: pkg.support || "Limited",
+            packageType: pkg.packageType || "Standard",
             features: pkg.features.join("\n"),
-            isActive: pkg.isActive,
             displayOrder: pkg.displayOrder.toString()
         });
         setIsModalOpen(true);
@@ -125,14 +149,22 @@ const AdminPackages = () => {
 
         const payload = {
             name: formData.name,
-            price: parseFloat(formData.price),
+            price: formData.packageType === "Free" ? 0 : parseFloat(formData.price),
             currency: formData.currency,
             duration: parseInt(formData.duration),
+            durationUnit: formData.durationUnit,
             jobPostings: parseInt(formData.jobPostings),
             featuredJobs: parseInt(formData.featuredJobs),
             candidateAccess: formData.candidateAccess,
+            candidatesFollow: parseInt(formData.candidatesFollow),
+            inviteCandidates: formData.inviteCandidates,
+            sendMessages: formData.sendMessages,
+            printProfiles: formData.printProfiles,
+            reviewComment: formData.reviewComment,
+            viewCandidateInfo: formData.viewCandidateInfo,
+            support: formData.support,
+            packageType: formData.packageType,
             features: formData.features.split("\n").filter(f => f.trim()),
-            isActive: formData.isActive,
             displayOrder: parseInt(formData.displayOrder)
         };
 
@@ -372,8 +404,8 @@ const AdminPackages = () => {
                                                             key={i}
                                                             onClick={() => setCurrentPage(i)}
                                                             className={`px-3 cursor-pointer py-1 text-sm border rounded-md ${currentPage === i
-                                                                    ? "bg-[var(--primary-color)] text-white border-[var(--primary-color)]"
-                                                                    : "border-gray-300 hover:bg-gray-50"
+                                                                ? "bg-[var(--primary-color)] text-white border-[var(--primary-color)]"
+                                                                : "border-gray-300 hover:bg-gray-50"
                                                                 }`}
                                                         >
                                                             {i}
@@ -445,32 +477,40 @@ const AdminPackages = () => {
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Price <span className="text-red-500">*</span>
+                                        Price {formData.packageType !== "Free" && <span className="text-red-500">*</span>}
+                                        {formData.packageType === "Free" && <span className="text-xs text-gray-500 ml-2">(Auto-set to 0)</span>}
                                     </label>
                                     <input
                                         type="number"
-                                        value={formData.price}
+                                        value={formData.packageType === "Free" ? "0" : formData.price}
                                         onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                                         min="0"
                                         step="0.01"
-                                        required
+                                        disabled={formData.packageType === "Free"}
+                                        required={formData.packageType !== "Free"}
                                     />
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-                                    <input
-                                        type="text"
+                                    <select
                                         value={formData.currency}
                                         onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                    />
+                                    >
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="GBP">GBP (£)</option>
+                                        <option value="PKR">PKR (₨)</option>
+                                        <option value="INR">INR (₹)</option>
+                                        <option value="AED">AED (د.إ)</option>
+                                    </select>
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Duration (Days) <span className="text-red-500">*</span>
+                                        Duration <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="number"
@@ -480,6 +520,18 @@ const AdminPackages = () => {
                                         min="1"
                                         required
                                     />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Duration Unit</label>
+                                    <select
+                                        value={formData.durationUnit}
+                                        onChange={(e) => setFormData({ ...formData, durationUnit: e.target.value })}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    >
+                                        <option value="month">Per Month</option>
+                                        <option value="year">Per Year</option>
+                                    </select>
                                 </div>
 
                                 <div>
@@ -508,6 +560,18 @@ const AdminPackages = () => {
                                 </div>
 
                                 <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Can Follow Candidates</label>
+                                    <input
+                                        type="number"
+                                        value={formData.candidatesFollow}
+                                        onChange={(e) => setFormData({ ...formData, candidatesFollow: e.target.value })}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        min="0"
+                                        placeholder="Number of candidates"
+                                    />
+                                </div>
+
+                                <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
                                     <input
                                         type="number"
@@ -517,7 +581,36 @@ const AdminPackages = () => {
                                     />
                                 </div>
 
-                                <div className="flex items-center gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Support</label>
+                                    <select
+                                        value={formData.support}
+                                        onChange={(e) => setFormData({ ...formData, support: e.target.value })}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    >
+                                        <option value="Limited">Limited</option>
+                                        <option value="Full">Full</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Package Type</label>
+                                    <select
+                                        value={formData.packageType}
+                                        onChange={(e) => setFormData({ ...formData, packageType: e.target.value })}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    >
+                                        <option value="Free">Free</option>
+                                        <option value="Standard">Standard</option>
+                                        <option value="Premium">Premium</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Checkboxes Section */}
+                            <div className="border-t pt-4 mt-4">
+                                <h3 className="text-sm font-semibold text-gray-700 mb-3">Package Features</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <label className="flex items-center gap-2 cursor-pointer">
                                         <input
                                             type="checkbox"
@@ -525,24 +618,64 @@ const AdminPackages = () => {
                                             onChange={(e) => setFormData({ ...formData, candidateAccess: e.target.checked })}
                                             className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                         />
-                                        <span className="text-sm font-medium text-gray-700">Candidate Access</span>
+                                        <span className="text-sm font-medium text-gray-700">Candidate Database Access</span>
                                     </label>
 
                                     <label className="flex items-center gap-2 cursor-pointer">
                                         <input
                                             type="checkbox"
-                                            checked={formData.isActive}
-                                            onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                                            checked={formData.inviteCandidates}
+                                            onChange={(e) => setFormData({ ...formData, inviteCandidates: e.target.checked })}
                                             className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                         />
-                                        <span className="text-sm font-medium text-gray-700">Active</span>
+                                        <span className="text-sm font-medium text-gray-700">Invite Candidates</span>
+                                    </label>
+
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.sendMessages}
+                                            onChange={(e) => setFormData({ ...formData, sendMessages: e.target.checked })}
+                                            className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                                        />
+                                        <span className="text-sm font-medium text-gray-700">Send Messages</span>
+                                    </label>
+
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.printProfiles}
+                                            onChange={(e) => setFormData({ ...formData, printProfiles: e.target.checked })}
+                                            className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                                        />
+                                        <span className="text-sm font-medium text-gray-700">Print Candidate Profiles</span>
+                                    </label>
+
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.reviewComment}
+                                            onChange={(e) => setFormData({ ...formData, reviewComment: e.target.checked })}
+                                            className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                                        />
+                                        <span className="text-sm font-medium text-gray-700">Review and Comment</span>
+                                    </label>
+
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.viewCandidateInfo}
+                                            onChange={(e) => setFormData({ ...formData, viewCandidateInfo: e.target.checked })}
+                                            className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                                        />
+                                        <span className="text-sm font-medium text-gray-700">View Candidate Information</span>
                                     </label>
                                 </div>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Features (one per line)
+                                    Additional Features (one per line)
                                 </label>
                                 <textarea
                                     value={formData.features}

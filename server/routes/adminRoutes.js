@@ -185,28 +185,43 @@ adminRouter.get("/packages", async (req, res) => {
 
 // Create new package
 adminRouter.post("/packages", async (req, res) => {
-  const { name, price, currency, duration, jobPostings, featuredJobs, candidateAccess, features, isActive, displayOrder } = req.body;
+  const {
+    name, price, currency, duration, durationUnit, jobPostings, featuredJobs,
+    candidateAccess, candidatesFollow, inviteCandidates, sendMessages,
+    printProfiles, reviewComment, viewCandidateInfo, support, packageType,
+    features, displayOrder
+  } = req.body;
 
   try {
     // Validate required fields
-    if (name == null || price == null || duration == null || jobPostings == null) {
+    if (name == null || duration == null || jobPostings == null) {
       return res.status(400).json({
         success: false,
-        error: "Name, price, duration, and job postings are required"
+        error: "Name, duration, and job postings are required"
       });
     }
 
+    // Auto-set price to 0 for Free packages
+    const finalPrice = packageType === "Free" ? 0 : (price || 0);
 
     const newPackage = new Package({
       name: name.trim(),
-      price,
+      price: finalPrice,
       currency: currency || "USD",
       duration,
+      durationUnit: durationUnit || "month",
       jobPostings,
       featuredJobs: featuredJobs || 0,
       candidateAccess: candidateAccess || false,
+      candidatesFollow: candidatesFollow || 0,
+      inviteCandidates: inviteCandidates || false,
+      sendMessages: sendMessages || false,
+      printProfiles: printProfiles || false,
+      reviewComment: reviewComment || false,
+      viewCandidateInfo: viewCandidateInfo || false,
+      support: support || "Limited",
+      packageType: packageType || "Standard",
       features: features || [],
-      isActive: isActive !== undefined ? isActive : true,
       displayOrder: displayOrder || 0
     });
 
@@ -234,13 +249,23 @@ adminRouter.patch("/packages/:id", async (req, res) => {
   const updates = {};
 
   // Only include fields that are provided
-  const allowedUpdates = ['name', 'price', 'currency', 'duration', 'jobPostings', 'featuredJobs', 'candidateAccess', 'features', 'isActive', 'displayOrder'];
+  const allowedUpdates = [
+    'name', 'price', 'currency', 'duration', 'durationUnit', 'jobPostings', 'featuredJobs',
+    'candidateAccess', 'candidatesFollow', 'inviteCandidates', 'sendMessages',
+    'printProfiles', 'reviewComment', 'viewCandidateInfo', 'support', 'packageType',
+    'features', 'displayOrder'
+  ];
 
   allowedUpdates.forEach(field => {
     if (req.body[field] !== undefined) {
       updates[field] = req.body[field];
     }
   });
+
+  // Auto-set price to 0 if packageType is being changed to Free
+  if (updates.packageType === "Free") {
+    updates.price = 0;
+  }
 
   if (Object.keys(updates).length === 0) {
     return res.status(400).json({
