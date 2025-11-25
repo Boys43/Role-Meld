@@ -177,7 +177,7 @@ const Pricing = () => {
                                     </div>
 
                                     {isRecommended && (
-                                        <span className='absolute right-6 top-6 rounded-full bg-yellow-400/30 text-yellow-800 text-sm font-semibold px-3 py-1'>
+                                        <span className='absolute right-3 top-3 rounded-full bg-yellow-400/30 text-yellow-800 text-sm font-semibold px-3 py-1'>
                                             Recommended
                                         </span>
                                     )}
