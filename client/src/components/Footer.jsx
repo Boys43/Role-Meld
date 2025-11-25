@@ -15,7 +15,13 @@ const Footer = () => {
 
   const location = useLocation();
   return (
-    <footer className={`${location.pathname.includes('/dashboard') ? 'hidden' : 'block'} bg-white border-t border-gray-200 text-gray-700`}>
+    <footer className={`${(
+      location.pathname.includes('/dashboard') ||
+      location.pathname.includes('/admin') ||
+      location.pathname.includes('/login') ||
+      location.pathname.includes('/register')
+    ) ? 'hidden' : 'block'} bg-white border-t border-gray-200 text-gray-700`}>
+
       {/* Newsletter Pre-footer */}
       <div className="border border-gray-200 py-12">
         <div className="max-w-6xl px-5 mx-auto grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-6">
@@ -70,7 +76,7 @@ const Footer = () => {
 
             {/* Company */}
             <div>
-              <span 
+              <span
                 onClick={() => toggleSection('company')}
                 className="flex md:hidden items-center justify-between w-full text-lg font-semibold mb-4 text-left"
               >
@@ -89,7 +95,7 @@ const Footer = () => {
 
             {/* Services */}
             <div>
-              <span 
+              <span
                 onClick={() => toggleSection('services')}
                 className="flex md:hidden items-center justify-between w-full text-lg font-semibold mb-4 text-left"
               >
@@ -108,7 +114,7 @@ const Footer = () => {
 
             {/* Support */}
             <div>
-              <span 
+              <span
                 onClick={() => toggleSection('support')}
                 className="flex md:hidden items-center justify-between w-full text-lg font-semibold mb-4 text-left"
               >
@@ -127,7 +133,7 @@ const Footer = () => {
 
             {/* Connect */}
             <div>
-              <span 
+              <span
                 onClick={() => toggleSection('connect')}
                 className="flex md:hidden items-center justify-between w-full text-lg font-semibold mb-4 text-left"
               >

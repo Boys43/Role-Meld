@@ -13,7 +13,8 @@ import {
   LogOut,
   Menu,
   X,
-  Blocks
+  Blocks,
+  Package
 } from "lucide-react";
 import { MdAssistant, MdRequestPage } from "react-icons/md";
 import Img from "./Image";
@@ -47,6 +48,7 @@ const AdminSidebar = ({ activeTab }) => {
     { name: "Employee Requests", key: "employee-profile-requests", icon: <MdRequestPage size={20} />, path: "/admin/employee-profile-requests" },
     { name: "All Jobs", key: "jobs", icon: <Briefcase size={20} />, path: "/admin/jobs" },
     { name: "Category Manager", key: "category-manager", icon: <Briefcase size={20} />, path: "/admin/category-manager" },
+    { name: "Packages", key: "packages", icon: <Package size={20} />, path: "/admin/packages" },
     { name: "Add Assistant", key: "add-assistant", icon: <MdAssistant size={20} />, path: "/admin/add-assistant" },
     { name: "All Assistants", key: "all-assistant", icon: <MdAssistant size={20} />, path: "/admin/all-assistant" },
     { name: "Blog Management", key: "blog-management", icon: <Blocks size={20} />, path: "/admin/blog-management" },

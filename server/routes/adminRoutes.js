@@ -1,5 +1,6 @@
 import express from 'express'
 import Category from '../models/categoryModel.js';
+import Package from '../models/packageModel.js';
 
 const adminRouter = express.Router()
 
@@ -165,6 +166,165 @@ adminRouter.post("/categories/bulk-import", async (req, res) => {
       error: "Bulk import failed",
       details: err.message
     });
+  }
+});
+
+// ============================
+// Package Management Routes
+// ============================
+
+// Get all packages
+adminRouter.get("/packages", async (req, res) => {
+  try {
+    const packages = await Package.find().sort({ displayOrder: 1, createdAt: -1 });
+    res.json({ success: true, packages });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Create new package
+adminRouter.post("/packages", async (req, res) => {
+  const { name, price, currency, duration, jobPostings, featuredJobs, candidateAccess, features, isActive, displayOrder } = req.body;
+
+  try {
+    // Validate required fields
+    if (name == null || price == null || duration == null || jobPostings == null) {
+      return res.status(400).json({
+        success: false,
+        error: "Name, price, duration, and job postings are required"
+      });
+    }
+
+
+    const newPackage = new Package({
+      name: name.trim(),
+      price,
+      currency: currency || "USD",
+      duration,
+      jobPostings,
+      featuredJobs: featuredJobs || 0,
+      candidateAccess: candidateAccess || false,
+      features: features || [],
+      isActive: isActive !== undefined ? isActive : true,
+      displayOrder: displayOrder || 0
+    });
+
+    await newPackage.save();
+    res.status(201).json({
+      success: true,
+      message: "Package created successfully",
+      package: newPackage
+    });
+  } catch (err) {
+    if (err.code === 11000) {
+      res.status(400).json({
+        success: false,
+        error: "A package with this name already exists"
+      });
+    } else {
+      res.status(400).json({ success: false, error: err.message });
+    }
+  }
+});
+
+// Update package
+adminRouter.patch("/packages/:id", async (req, res) => {
+  const { id } = req.params;
+  const updates = {};
+
+  // Only include fields that are provided
+  const allowedUpdates = ['name', 'price', 'currency', 'duration', 'jobPostings', 'featuredJobs', 'candidateAccess', 'features', 'isActive', 'displayOrder'];
+
+  allowedUpdates.forEach(field => {
+    if (req.body[field] !== undefined) {
+      updates[field] = req.body[field];
+    }
+  });
+
+  if (Object.keys(updates).length === 0) {
+    return res.status(400).json({
+      success: false,
+      error: "No updates provided"
+    });
+  }
+
+  try {
+    const updatedPackage = await Package.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
+
+    if (!updatedPackage) {
+      return res.status(404).json({
+        success: false,
+        error: "Package not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Package updated successfully",
+      package: updatedPackage
+    });
+  } catch (err) {
+    if (err.code === 11000) {
+      res.status(400).json({
+        success: false,
+        error: "A package with this name already exists"
+      });
+    } else {
+      res.status(400).json({ success: false, error: err.message });
+    }
+  }
+});
+
+// Delete package
+adminRouter.delete("/packages/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const pkg = await Package.findById(id);
+
+    if (!pkg) {
+      return res.status(404).json({
+        success: false,
+        error: "Package not found"
+      });
+    }
+
+    await Package.findByIdAndDelete(id);
+
+    res.json({
+      success: true,
+      message: `Package "${pkg.name}" deleted successfully`
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// Toggle package active status
+adminRouter.patch("/packages/:id/toggle-status", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const pkg = await Package.findById(id);
+
+    if (!pkg) {
+      return res.status(404).json({
+        success: false,
+        error: "Package not found"
+      });
+    }
+
+    pkg.isActive = !pkg.isActive;
+    await pkg.save();
+
+    res.json({
+      success: true,
+      message: `Package ${pkg.isActive ? 'activated' : 'deactivated'} successfully`,
+      package: pkg
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
   }
 });
 

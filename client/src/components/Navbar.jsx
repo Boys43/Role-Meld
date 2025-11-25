@@ -32,9 +32,6 @@ const USER_NAV_LINKS = [
   { to: "/companies", icon: HelpCircle, label: "Companies" },
 ];
 
-
-
-
 const Navbar = ({ className }) => {
 
   const location = useLocation();
@@ -64,6 +61,10 @@ const Navbar = ({ className }) => {
     { name: "Settings", key: "settings", icon: <Settings size={20} />, path: "/dashboard/settings" },
     { name: "Logout", key: "logout", icon: <LogOut size={20} /> },
   ];
+
+  if (userData.isAdmin) {
+    navLinks.push({ name: "Admin", key: "admin", icon: <UserCircle size={20} />, path: "/admin" });
+  }
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);

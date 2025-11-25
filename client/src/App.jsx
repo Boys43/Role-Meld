@@ -65,6 +65,7 @@ const AdminAddAssistant = lazy(() => import("./pages/admin/AdminAddAssistant"));
 const AdminAllAssistants = lazy(() => import("./pages/admin/AdminAllAssistants"));
 const AdminBlogManagement = lazy(() => import("./pages/admin/AdminBlogManagement"));
 const AdminAddBlog = lazy(() => import("./pages/admin/AdminAddBlog"));
+const AdminPackages = lazy(() => import("./pages/admin/AdminPackages"));
 
 // 🔒 Admin-only route
 export const AdminRoute = ({ children }) => {
@@ -184,6 +185,7 @@ const App = () => {
             <Route path="employee-profile-requests" element={<AdminEmployeeProfileRequests />} />
             <Route path="jobs" element={<AdminJobs />} />
             <Route path="category-manager" element={<AdminCategoryManager />} />
+            <Route path="packages" element={<AdminPackages />} />
             <Route path="add-assistant" element={<AdminAddAssistant />} />
             <Route path="all-assistant" element={<AdminAllAssistants />} />
             <Route path="blog-management" element={<AdminBlogManagement />} />
