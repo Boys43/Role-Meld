@@ -1,5 +1,5 @@
 import express from 'express';
-import { addAssistant, banUser, changePassword, changeVisibility, checkAdmin, deleteAccount, deleteUser, employeeProfileRequests, getAssistants, getPendingProfileRequests, isAuthenticated, login, logout, register, unBanUser, updateRecruiterStatus, verifyEmail } from '../controllers/authController.js';
+import { addAssistant, banUser, changePassword, changeVisibility, checkAdmin, deleteAccount, deleteUser, employeeProfileRequests, getAssistants, getPendingProfileRequests, isAuthenticated, login, logout, register, resetPasswordWithOTP, sendPasswordResetOTP, unBanUser, updateRecruiterStatus, verifyEmail, verifyPasswordResetOTP } from '../controllers/authController.js';
 import userAuth from '../middlewares/userAuth.js';
 
 const authRouter = express.Router()
@@ -21,5 +21,8 @@ authRouter.get('/get-profile-request', getPendingProfileRequests);
 authRouter.post('/change-visibility', changeVisibility);
 authRouter.post('/add-assistant', userAuth, addAssistant);
 authRouter.get('/get-assistants', userAuth, getAssistants);
+authRouter.post('/send-password-reset-otp', sendPasswordResetOTP);
+authRouter.post('/verify-password-reset-otp', verifyPasswordResetOTP);
+authRouter.post('/reset-password-with-otp', resetPasswordWithOTP);
 
 export default authRouter;

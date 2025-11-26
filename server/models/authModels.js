@@ -10,6 +10,7 @@ const authSchema = new mongoose.Schema({
     isVerified: { type: Boolean, default: false },
     verificationOTP: { type: String, default: "" },
     passwordResetOTP: { type: String, default: "" },
+    passwordResetOTPExpiry: { type: Date, default: null },
 }, { timestamps: true });
 
 const authModel = mongoose.model("User", authSchema);

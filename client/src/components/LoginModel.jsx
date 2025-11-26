@@ -4,6 +4,7 @@ import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import ForgotPasswordModel from './ForgotPasswordModel'
 
 const LoginModel = ({ setStep }) => {
   const { backendUrl, setIsLoggedIn, getUserData } = useContext(AppContext)
@@ -11,6 +12,7 @@ const LoginModel = ({ setStep }) => {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loginLoading, setLoginLoading] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
   const navigate = useNavigate()
 
   axios.defaults.withCredentials = true
@@ -22,7 +24,7 @@ const LoginModel = ({ setStep }) => {
       const { data } = await axios.post(`${backendUrl}/api/auth/login`, { email, password }, { withCredentials: true })
 
       console.log('data', data);
-      
+
 
       if (data.success) {
         setIsLoggedIn(true)
@@ -46,6 +48,10 @@ const LoginModel = ({ setStep }) => {
     }
   }
 
+  if (showForgotPassword) {
+    return <ForgotPasswordModel onBackToLogin={() => setShowForgotPassword(false)} />
+  }
+
   return (
     <div className="flex w-full justify-center items-center">
       <div className="w-full px-8 md:px-32 lg:px-24">
@@ -61,7 +67,7 @@ const LoginModel = ({ setStep }) => {
               type="email"
               name="email"
               placeholder="Email Address"
-              className="pl-2 text-sm w-full outline-none border-none text-[var(--primary-color)]"
+              className="pl-2 py-1 text-sm w-full outline-none border-none text-[var(--primary-color)]"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -76,7 +82,7 @@ const LoginModel = ({ setStep }) => {
               type={showPassword ? 'text' : 'password'}
               name="password"
               placeholder="Password"
-              className="text-[var(--primary-color)] pl-2 text-sm pr-8 w-full outline-none border-none"
+              className="text-[var(--primary-color)] pl-2 py-1 text-sm pr-8 w-full outline-none border-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -100,12 +106,15 @@ const LoginModel = ({ setStep }) => {
 
           {/* Footer Links */}
           <div className="flex justify-between mt-4 text-sm">
-            <span className="ml-2 text-gray-600 hover:text-blue-500 cursor-pointer transition-all">
+            <span
+              onClick={() => setShowForgotPassword(true)}
+              className="text-gray-500 hover:text-[var(--primary-color)] cursor-pointer transition-colors font-medium"
+            >
               Forgot Password?
             </span>
             <Link
               to="/register"
-              className="ml-2 text-gray-600 hover:text-blue-500 cursor-pointer transition-all"
+              className="text-gray-500 hover:text-[var(--primary-color)] cursor-pointer transition-colors font-medium"
             >
               Don't have an account yet?
             </Link>

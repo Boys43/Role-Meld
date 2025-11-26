@@ -74,7 +74,7 @@ export const getJob = async (req, res) => {
     }
 
     try {
-        const job = await jobsModel.findById(id).populate('postedBy', 'name email contactNumber members website foundedAt city country industry authId');
+        const job = await jobsModel.findById(id).populate('postedBy', 'name email contactNumber members website foundedAt city country industry authId about');
 
         if (!job) {
             return res.json({ success: false, message: "Job Not Found, Expired" })

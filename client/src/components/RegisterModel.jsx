@@ -95,7 +95,7 @@ const RegisterModel = ({ setRegStep }) => {
                     <div className="flex items-center border-2 py-3 px-4 rounded-full focus-within:border-[var(--primary-color)] transition-colors">
                         <User size={20} className="text-gray-400" />
                         <input
-                            className="pl-3 w-full outline-none border-none text-sm"
+                            className="pl-2 py-1 text-sm w-full outline-none border-none text-[var(--primary-color)]"
                             type="text"
                             placeholder="Full Name"
                             value={name}
@@ -108,7 +108,7 @@ const RegisterModel = ({ setRegStep }) => {
                     <div className="flex items-center border-2 py-3 px-4 rounded-full focus-within:border-[var(--primary-color)] transition-colors">
                         <Mail size={20} className="text-gray-400" />
                         <input
-                            className="pl-3 w-full outline-none border-none text-sm"
+                            className="pl-2 py-1 text-sm w-full outline-none border-none text-[var(--primary-color)]"
                             type="email"
                             placeholder="Email Address"
                             value={email}
@@ -121,7 +121,7 @@ const RegisterModel = ({ setRegStep }) => {
                     <div className="flex items-center border-2 py-3 px-4 rounded-full focus-within:border-[var(--primary-color)] transition-colors">
                         <Lock size={20} className="text-gray-400" />
                         <input
-                            className="pl-3 w-full outline-none border-none text-sm"
+                            className="pl-2 py-1 text-sm w-full outline-none border-none text-[var(--primary-color)]"
                             type={showPassword ? "text" : "password"}
                             placeholder="Password"
                             value={password}
@@ -142,7 +142,7 @@ const RegisterModel = ({ setRegStep }) => {
                         <div className="flex items-center border-2 py-3 px-4 rounded-full focus-within:border-[var(--primary-color)] transition-colors">
                             <Lock size={20} className="text-gray-400" />
                             <input
-                                className="pl-3 w-full outline-none border-none text-sm"
+                                className="pl-2 py-1 text-sm w-full outline-none border-none text-[var(--primary-color)]"
                                 type={showConfirmPassword ? "text" : "password"}
                                 placeholder="Confirm Password"
                                 value={confirmPassword}
@@ -199,7 +199,7 @@ const RegisterModel = ({ setRegStep }) => {
                         type="submit"
                         // Disable button if loading, passwords don't match, or required fields are empty
                         disabled={loading || password.length === 0 || confirmPassword.length === 0 || !passwordsMatch}
-                        className="primary-btn"
+                        className="primary-btn mt-2"
                     >
                         {loading ? "Registering..." : "Register"}
                     </button>

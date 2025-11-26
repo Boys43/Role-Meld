@@ -50,9 +50,10 @@ const jobsSchema = new mongoose.Schema({
 
   // Application Settings
   applicationDeadline: { type: Date, required: true },
-  jobApplyType: { type: String, enum: ["External", "Email"], default: "Email" },
+  jobApplyType: { type: String, enum: ["External", "Email", "Internal", "Call"], default: "Email" },
   externalUrl: { type: String },
   userEmail: { type: String },
+  callNumber: { type: String },
 
   applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: "userProfile" }],
 

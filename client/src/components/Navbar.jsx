@@ -62,9 +62,10 @@ const Navbar = ({ className }) => {
     { name: "Logout", key: "logout", icon: <LogOut size={20} /> },
   ];
 
-  if (userData.isAdmin) {
+  if (userData && userData.isAdmin) {
     navLinks.push({ name: "Admin", key: "admin", icon: <UserCircle size={20} />, path: "/admin" });
   }
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);

@@ -387,19 +387,21 @@ const JobForm = ({ setActiveTab }) => {
                 <CustomSelect name="jobApplyType" value={jobData.jobApplyType} onChange={handleJobChange}>
                   <option value="Email">By Email</option>
                   <option value="External">External Link</option>
+                  <option value="Internal">Internal</option>
+                  <option value="Call">By Call</option>
                 </CustomSelect>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {jobData.jobApplyType === 'Email' ? 'Email Address' : 'External URL'}
+                  {jobData.jobApplyType === 'Email' ? 'Email Address' : jobData.jobApplyType === 'Call' ? 'Phone Number' : 'External URL'}
                 </label>
                 <input
-                  type={jobData.jobApplyType === 'Email' ? 'email' : 'url'}
-                  name={jobData.jobApplyType === 'Email' ? 'userEmail' : 'externalUrl'}
-                  value={jobData.jobApplyType === 'Email' ? jobData.userEmail : jobData.externalUrl}
+                  type={jobData.jobApplyType === 'Email' ? 'email' : jobData.jobApplyType === 'Call' ? 'tel' : 'url'}
+                  name={jobData.jobApplyType === 'Email' ? 'userEmail' : jobData.jobApplyType === 'Call' ? 'userPhone' : 'externalUrl'}
+                  value={jobData.jobApplyType === 'Email' ? jobData.userEmail : jobData.jobApplyType === 'Call' ? jobData.userPhone : jobData.externalUrl}
                   onChange={handleJobChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none"
-                  placeholder={jobData.jobApplyType === 'Email' ? 'Enter email address' : 'https://example.com/apply'}
+                  placeholder={jobData.jobApplyType === 'Email' ? 'Enter email address' : jobData.jobApplyType === 'Call' ? 'Enter phone number' : 'https://example.com/apply'}
                 />
               </div>
             </div>

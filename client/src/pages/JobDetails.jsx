@@ -5,7 +5,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 // React Icons
 import { IoHome, IoWarning } from "react-icons/io5";
 import { toast } from 'react-toastify';
-import { MdCancel } from "react-icons/md";
 import JobCard from '../components/JobCard';
 import Loading from '../components/Loading';
 import Img from '../components/Image';
@@ -21,6 +20,7 @@ import {
 } from "lucide-react";
 import Currency from '../components/CurrencyCovertor';
 import Navbar from '../components/Navbar';
+import LoginPortal from '../portals/LoginPortal';
 
 
 const JobDetails = () => {
@@ -29,7 +29,7 @@ const JobDetails = () => {
         window.scrollTo({ top: 0 });
     }, []);
 
-    const { backendUrl, userData } = useContext(AppContext);
+    const { backendUrl, userData, isLoggedIn } = useContext(AppContext);
     const [loginReminder, setLoginReminder] = useState(false)
     const [jobData, setJobData] = useState(null);
     const [loading, setLoading] = useState(false)
@@ -51,6 +51,7 @@ const JobDetails = () => {
             setLoading(false)
         }
     }
+    console.log(jobData)
 
     const [applyJobModel, setApplyJobModel] = useState(false);
     const applyJob = async () => {
@@ -93,7 +94,7 @@ const JobDetails = () => {
     }
 
     console.log(companyJobs)
-
+    console.log(isLoggedIn)
 
     return (
         <div className='bg-[#f9f9f9]'>
@@ -326,7 +327,13 @@ const JobDetails = () => {
 
                             <button
                                 disabled={userData?.appliedJobs?.includes(id)}
-                                onClick={() => setApplyJobModel(true)}
+                                onClick={() => {
+                                    if (!isLoggedIn) {
+                                        setLoginReminder(true);
+                                    } else {
+                                        setApplyJobModel(true);
+                                    }
+                                }}
                                 className={`primary-btn ${userData?.appliedJobs?.includes(id) && "bg-gray-400 cursor-not-allowed"}`}
                             >
                                 {userData?.appliedJobs?.includes(id) ? "Already Applied" : "Apply now"}
@@ -356,8 +363,6 @@ const JobDetails = () => {
                                     </div>
                                 )}
                         </div>
-
-
                     </div>
 
                     {/* Right Sidebar */}
@@ -375,7 +380,13 @@ const JobDetails = () => {
                                 </div>
                                 <button
                                     disabled={userData?.appliedJobs?.includes(id)}
-                                    onClick={() => setApplyJobModel(true)}
+                                    onClick={() => {
+                                        if (!isLoggedIn) {
+                                            setLoginReminder(true);
+                                        } else {
+                                            setApplyJobModel(true);
+                                        }
+                                    }}
                                     className={`primary-btn w-full ${userData?.appliedJobs?.includes(id) && "bg-gray-400 cursor-not-allowed"}`}
                                 >
                                     {userData?.appliedJobs?.includes(id) ? "Already Applied" : "Apply now"}
@@ -492,29 +503,7 @@ const JobDetails = () => {
                     </div>
                 </div>
 
-                {/* Similar Jobs Section */}
-                <div className='mt-12'>
-
-                </div>
-
-                {/* Login */}
-                <div className={`fixed top-0 backdrop-blur-sm left-0 w-full h-screen flex items-center justify-center ${loginReminder ? 'flex' : 'hidden'}`}>
-                    <div className='relative bg-white flex flex-col items-center gap-4 shadow-2xl rounded-lg p-8'>
-                        <span className='absolute top-4 right-4 cursor-pointer'>
-                            <MdCancel onClick={() => setLoginReminder(false)} />
-                        </span>
-                        <h3 className='font-bold'>
-                            Please Login First
-                        </h3>
-                        <button className='w-full' onClick={() => navigate('/login')}>
-                            Login
-                        </button>
-                        <p>
-                            You need to be <span className='font-semibold'>Login</span> to continue
-                        </p>
-                    </div>
-                </div>
-
+                <LoginPortal loginReminder={loginReminder} setLoginReminder={setLoginReminder} />
 
                 {/* Apply Job Modal */}
                 {applyJobModel && (

@@ -645,3 +645,147 @@ export const getAssistants = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 }
+export const sendPasswordResetOTP = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.json({ success: false, message: "Email is required" });
+    }
+
+    try {
+        const user = await authModel.findOne({ email });
+
+        if (!user) {
+            return res.json({ success: false, message: "No account found with this email address" });
+        }
+
+        // Generate 6-digit OTP
+        const passwordResetOTP = String(Math.floor(100000 + Math.random() * 900000));
+
+        // Set expiry to 60 minutes from now
+        const otpExpiry = new Date(Date.now() + 60 * 60 * 1000);
+
+        // Send OTP via email
+        const sendSmtpEmail = {
+            sender: { name: "Alfa Career", email: "movietrendmaker2244@gmail.com" },
+            to: [{ email }],
+            subject: "🔐 Password Reset Request",
+            htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+            <div style="background: linear-gradient(90deg, #0076b5, #00bfa6); padding: 20px; text-align: center; color: white;">
+              <h2 style="margin: 0;">Alfa Career</h2>
+            </div>
+            <div style="padding: 25px; color: #333; font-size: 16px; line-height: 1.6;">
+              <p>Hey <b>${user.name}</b>,</p>
+              <p>We received a request to reset your password. To proceed, please use the following OTP:</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <span style="display: inline-block; font-size: 28px; font-weight: bold; letter-spacing: 6px; background: #f3f9ff; padding: 15px 25px; border: 2px dashed #0076b5; border-radius: 8px; color: #0076b5;">
+                  ${passwordResetOTP}
+                </span>
+              </div>
+              <p>This OTP is valid for <b>60 minutes</b>. Please do not share it with anyone for security reasons.</p>
+              <p>If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+            </div>
+            <div style="background: #f9f9f9; padding: 15px; text-align: center; font-size: 13px; color: #777;">
+              <p>© ${new Date().getFullYear()} Alfa Career. All rights reserved.</p>
+            </div>
+          </div>
+        `,
+        };
+
+        await tranEmailApi.sendTransacEmail(sendSmtpEmail);
+
+        // Store OTP and expiry in database
+        user.passwordResetOTP = passwordResetOTP;
+        user.passwordResetOTPExpiry = otpExpiry;
+        await user.save();
+
+        return res.json({ success: true, message: "Password reset OTP has been sent to your email" });
+    } catch (error) {
+        console.error("Password reset OTP error:", error.response?.body || error.message);
+        return res.json({ success: false, message: "Failed to send OTP. Please try again." });
+    }
+};
+
+export const verifyPasswordResetOTP = async (req, res) => {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+        return res.json({ success: false, message: "Email and OTP are required" });
+    }
+
+    try {
+        const user = await authModel.findOne({ email });
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        if (!user.passwordResetOTP) {
+            return res.json({ success: false, message: "No OTP request found. Please request a new OTP." });
+        }
+
+        // Check if OTP has expired (60 minutes)
+        if (user.passwordResetOTPExpiry && new Date() > user.passwordResetOTPExpiry) {
+            user.passwordResetOTP = "";
+            user.passwordResetOTPExpiry = null;
+            await user.save();
+            return res.json({ success: false, message: "OTP has expired. Please request a new OTP." });
+        }
+
+        if (user.passwordResetOTP !== otp) {
+            return res.json({ success: false, message: "Invalid OTP. Please try again." });
+        }
+
+        return res.json({ success: true, message: "OTP verified successfully" });
+    } catch (error) {
+        console.error("OTP verification error:", error.message);
+        return res.json({ success: false, message: "Verification failed. Please try again." });
+    }
+};
+
+export const resetPasswordWithOTP = async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+        return res.json({ success: false, message: "Email, OTP, and new password are required" });
+    }
+
+    try {
+        const user = await authModel.findOne({ email });
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        if (!user.passwordResetOTP) {
+            return res.json({ success: false, message: "No OTP request found. Please request a new OTP." });
+        }
+
+        // Check if OTP has expired (60 minutes)
+        if (user.passwordResetOTPExpiry && new Date() > user.passwordResetOTPExpiry) {
+            user.passwordResetOTP = "";
+            user.passwordResetOTPExpiry = null;
+            await user.save();
+            return res.json({ success: false, message: "OTP has expired. Please request a new OTP." });
+        }
+
+        if (user.passwordResetOTP !== otp) {
+            return res.json({ success: false, message: "Invalid OTP. Please verify OTP first." });
+        }
+
+        // Hash new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update password and clear OTP fields
+        user.password = hashedPassword;
+        user.passwordResetOTP = "";
+        user.passwordResetOTPExpiry = null;
+        await user.save();
+
+        return res.json({ success: true, message: "Password reset successfully. You can now login with your new password." });
+    } catch (error) {
+        console.error("Password reset error:", error.message);
+        return res.json({ success: false, message: "Password reset failed. Please try again." });
+    }
+};
