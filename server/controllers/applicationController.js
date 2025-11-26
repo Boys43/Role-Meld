@@ -51,3 +51,19 @@ export const updateApplcationStatus = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server Error", error: error.message });
     }
 }
+
+// Get applications for recruiter
+export const getRecruiterApplications = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const applications = await applicationModel.find({ recruiter: userId })
+            .populate("job", "title company location jobType salary")
+            .populate("applicant", "name email phone resume profilePicture")
+            .sort({ createdAt: -1 });
+
+        return res.json({ success: true, applications });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    }
+}

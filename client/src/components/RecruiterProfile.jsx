@@ -10,6 +10,7 @@ import SearchSelect from './SelectSearch';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { MdWarning } from 'react-icons/md';
 import CustomSelect from './CustomSelect';
+import ImageCropPortal from '../portals/ImageCropPortal';
 
 const RecruiterProfile = () => {
     const { userData, backendUrl, setUserData } = useContext(AppContext);
@@ -33,6 +34,11 @@ const RecruiterProfile = () => {
 
     const [companyImages, setCompanyImages] = useState(userData?.companyImages || []);
     const [uploadingImages, setUploadingImages] = useState(false);
+
+    // Crop Portal State
+    const [cropPortalOpen, setCropPortalOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [pictureLoading, setPictureLoading] = useState(false);
 
 
     const handleChange = (e) => {
@@ -100,10 +106,44 @@ const RecruiterProfile = () => {
         }
     };
 
-    // Profile Picture
-    const changePicture = async (profilePicture) => {
+    // Handle profile picture selection
+    const handleProfilePictureSelect = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            toast.error('Please select a valid image file');
+            return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error('Image size should be less than 5MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSelectedImage(reader.result);
+            setCropPortalOpen(true);
+        };
+        reader.readAsDataURL(file);
+
+        // Reset file input
+        e.target.value = '';
+    };
+
+    // Handle crop complete
+    const handleCropComplete = async (croppedBlob) => {
+        await uploadProfilePicture(croppedBlob);
+    };
+
+    // Upload profile picture
+    const uploadProfilePicture = async (blob) => {
+        setPictureLoading(true);
         const formData = new FormData();
-        formData.append("profilePicture", profilePicture);
+        formData.append("profilePicture", blob, "profile.jpg");
 
         try {
             const { data } = await axios.post(
@@ -120,6 +160,8 @@ const RecruiterProfile = () => {
             }
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
+        } finally {
+            setPictureLoading(false);
         }
     };
 
@@ -129,7 +171,7 @@ const RecruiterProfile = () => {
 
         setUploadingImages(true);
         const formData = new FormData();
-        
+
         Array.from(files).forEach(file => {
             formData.append('companyImages', file);
         });
@@ -300,18 +342,18 @@ const RecruiterProfile = () => {
                             </div>
 
                             <div className="space-y-2">
-                               <CustomSelect
-                                label="Members"
-                                name="members"
-                                value={formData.members || ""}
-                                onChange={handleChange}
+                                <CustomSelect
+                                    label="Members"
+                                    name="members"
+                                    value={formData.members || ""}
+                                    onChange={handleChange}
                                 >
                                     <option value="0-50">0-50</option>
                                     <option value="11-50">11-50</option>
                                     <option value="51-200">51-200</option>
                                     <option value="201-500">201-500</option>
                                     <option value="500+">500+</option>
-                               </CustomSelect>
+                                </CustomSelect>
                             </div>
 
                             <div className="space-y-2">
@@ -510,7 +552,7 @@ const RecruiterProfile = () => {
                                     id="profilePicture"
                                     name="profilePicture"
                                     className="hidden"
-                                    onChange={(e) => changePicture(e.target.files[0])}
+                                    onChange={handleProfilePictureSelect}
                                 />
                                 <label
                                     htmlFor="profilePicture"
@@ -561,7 +603,19 @@ const RecruiterProfile = () => {
                     </div>
                 </div>
             </div>
-        </div >
+
+            {/* Image Crop Portal */}
+            <ImageCropPortal
+                isOpen={cropPortalOpen}
+                onClose={() => setCropPortalOpen(false)}
+                imageSrc={selectedImage}
+                cropShape="round"
+                aspect={1}
+                onCropComplete={handleCropComplete}
+                requireLandscape={false}
+                imageType="profile"
+            />
+        </div>
     )
 }
 

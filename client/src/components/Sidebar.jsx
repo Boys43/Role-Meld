@@ -16,7 +16,9 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  FileText,
+  User
 } from "lucide-react";
 import Img from "./Image";
 import { FaArrowLeft } from "react-icons/fa";
@@ -61,7 +63,11 @@ const Sidebar = ({ activeTab }) => {
   } else {
     navLinks = [
       { name: "Dashboard", key: "dashboard", icon: <LayoutDashboard size={20} />, path: "/dashboard" },
-      { name: "Profile", key: "profile", icon: <LayoutDashboard size={20} />, path: "/dashboard/profile" },
+      { name: "Profile", key: "profile", icon: <User size={20} />, path: "/dashboard/profile" },
+      { name: "My Resume", key: "resume", icon: <FileText size={20} />, path: "/dashboard/resume" },
+      { name: "Applied Jobs", key: "applied-jobs", icon: <Briefcase size={20} />, path: "/dashboard/applied-jobs" },
+      { name: "Saved Jobs", key: "saved-jobs", icon: <Heart size={20} />, path: "/dashboard/saved-jobs" },
+      { name: "Logout", key: "logout", icon: <LogOut size={20} /> },
     ]
   }
 

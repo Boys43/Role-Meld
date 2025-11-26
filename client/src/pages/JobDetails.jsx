@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import JobCard from '../components/JobCard';
 import Loading from '../components/Loading';
 import Img from '../components/Image';
-import { ExternalLink, Calendar, Star, DollarSignIcon, Mail, MapPin, X } from 'lucide-react';
+import { ExternalLink, Calendar, Star, DollarSignIcon, Mail, MapPin, X, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Pencil, User, Briefcase } from "lucide-react";
 import {
@@ -21,6 +21,8 @@ import {
 import Currency from '../components/CurrencyCovertor';
 import Navbar from '../components/Navbar';
 import LoginPortal from '../portals/LoginPortal';
+import ApplyJobPortal from '../portals/ApplyJobPortal';
+import { FaLevelUpAlt } from 'react-icons/fa';
 
 
 const JobDetails = () => {
@@ -54,19 +56,6 @@ const JobDetails = () => {
     console.log(jobData)
 
     const [applyJobModel, setApplyJobModel] = useState(false);
-    const applyJob = async () => {
-        try {
-            const { data } = await axios.post(backendUrl + '/api/user/applyjob', { jobId: id });
-
-            if (data.success) {
-                toast.success(data.message);
-                setApplyJobModel(false);
-                getJob();
-            }
-        } catch (error) {
-            toast.error(error.response.data.message);
-        }
-    }
 
     const [companyJobs, setCompanyJobs] = useState([])
     // Get More Related Jobs;
@@ -256,6 +245,28 @@ const JobDetails = () => {
                                             </div>
                                         </div>
                                     </div>
+                                    <div className='flex gap-3'>
+                                        <div className='w-10 h-10 bg-[var(--accent-color)] rounded-full flex items-center justify-center'>
+                                            <Users size={24} className='text-[var(--primary-color)]' />
+                                        </div>
+                                        <div className='flex flex-col gap-2'>
+                                            <div className='text-sm font-semibold text-black'>Quantity</div>
+                                            <div className='text-sm text-gray-500'>
+                                                {jobData?.quantity}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='flex gap-3'>
+                                        <div className='w-10 h-10 bg-[var(--accent-color)] rounded-full flex items-center justify-center'>
+                                            <FaLevelUpAlt size={24} className='text-[var(--primary-color)]' />
+                                        </div>
+                                        <div className='flex flex-col gap-2'>
+                                            <div className='text-sm font-semibold text-black'>Career Level</div>
+                                            <div className='text-sm text-gray-500'>
+                                                {jobData?.careerLevel} Level
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -265,39 +276,11 @@ const JobDetails = () => {
                             <div className='p-4 space-y-6'>
                                 <div>
                                     <h4 className='text-2xl font-medium text-gray-900 mb-4'>Description</h4>
-                                    <h4 className='text-lg font-medium text-gray-900 mb-2'>Overview</h4>
-                                    <p className='text-sm text-gray-700 leading-relaxed whitespace-pre-line'>{jobData?.description}</p>
+                                    <div dangerouslySetInnerHTML={{ __html: jobData?.description }} />
                                 </div>
-
-                                {Array.isArray(jobData?.responsibilities) && jobData?.responsibilities.length > 0 && (
-                                    <div>
-                                        <h3 className='text-lg font-medium text-gray-900 mb-2'>Requirements</h3>
-                                        <ul className='space-y-2 text-sm text-gray-700'>
-                                            {jobData?.responsibilities.map((item, idx) => (
-                                                <li key={idx} className='flex items-start gap-2'>
-                                                    <span className='mt-1 w-1.5 h-1.5 rounded-full bg-gray-400 flex-shrink-0' />
-                                                    <span>{item}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-
-                                {Array.isArray(jobData?.benefits) && jobData?.benefits.length > 0 && (
-                                    <div>
-                                        <h3 className='text-lg font-medium text-gray-900 mb-2'>Benefits</h3>
-                                        <ul className='space-y-2 text-sm text-gray-700'>
-                                            {jobData?.benefits.map((item, idx) => (
-                                                <li key={idx} className='flex items-start gap-2'>
-                                                    <span className='mt-1 w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0' />
-                                                    <span>{item}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
                             </div>
 
+                            <hr className='border-gray-300' />
                             {/* Skills */}
                             {Array.isArray(jobData?.skills) && jobData?.skills.length > 0 && (
                                 <div className='p-4'>
@@ -435,7 +418,11 @@ const JobDetails = () => {
 
                                             <div>
                                                 <div className='text-black'>Founded in</div>
-                                                <div className='font-medium text-sm mt-1 '>{jobData?.postedBy?.foundedAt || '2010'}</div>
+                                                <div className='font-medium text-sm mt-1 '>
+                                                    {jobData?.postedBy?.foundedDate
+                                                        ? (new Date(jobData.postedBy.foundedDate).getFullYear() || '2010')
+                                                        : '2010'}
+                                                </div>
                                             </div>
 
                                             <div>
@@ -505,135 +492,7 @@ const JobDetails = () => {
 
                 <LoginPortal loginReminder={loginReminder} setLoginReminder={setLoginReminder} />
 
-                {/* Apply Job Modal */}
-                {applyJobModel && (
-                    <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-                        {/* Header Section with Gradient */}
-
-                        {/* Content Section */}
-                        {/* Alfa Careers Profile Card */}
-                        <div className="group relative border-2 border-gray-200 rounded-2xl bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col justify-between">
-                            <X
-                                onClick={() => setApplyJobModel(false)}
-                                className="absolute top-7 right-6 cursor-pointer text-black hover:rotate-90 transition-all duration-300 z-20"
-                                size={24}
-                            />
-                            {/* Edit Button */}
-                            <span
-                                onClick={() => window.location.href = "/my-profile"}
-                                className="absolute top-5 right-15 bg-white hover:bg-blue-50 p-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/edit"
-                            >
-                                <Pencil size={16} className="text-blue-600 group-hover/edit:scale-110 transition-transform" />
-                            </span>
-
-                            {/* Header */}
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl shadow-md">
-                                    <User size={24} className="text-white" />
-                                </div>
-                                <div>
-                                    <h4 className="text-xl font-bold text-gray-800">
-                                        Alfa Careers Profile
-                                    </h4>
-                                    <span className="text-xs text-gray-500">Your professional profile</span>
-                                </div>
-                            </div>
-
-                            <div className="grid sm:grid-cols-2 gap-2 text-sm text-gray-700 mb-6">
-
-                                {/* Personal Info */}
-                                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 shadow-sm space-y-2">
-                                    <h4 className="text-blue-600 font-semibold mb-2 flex items-center gap-2">
-                                        <User size={16} /> Personal Info
-                                    </h4>
-
-                                    <div className="flex items-center gap-2">
-                                        <User size={14} className="text-blue-500" />
-                                        <span>{userData?.name || "—"}</span>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <Phone size={14} className="text-blue-500" />
-                                        <span>{userData?.phone || "—"}</span>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <LinkIcon size={14} className="text-blue-500" />
-                                        {userData?.portfolio ? (
-                                            <a
-                                                href={userData.portfolio}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-blue-600 underline truncate max-w-[180px]"
-                                            >
-                                                {userData.portfolio}
-                                            </a>
-                                        ) : (
-                                            <span>—</span>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Location Info */}
-                                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 shadow-sm space-y-2">
-                                    <h4 className="text-[var(--primary-color)] font-semibold mb-2 flex items-center gap-2">
-                                        <MapPin size={16} /> Location
-                                    </h4>
-
-                                    <div className="flex items-center gap-2">
-                                        <MapPin size={14} className="text-[var(--primary-color)]" />
-                                        <span>{userData?.address || "—"}</span>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <Globe size={14} className="text-[var(--primary-color)]" />
-                                        <span>{userData?.city || "—"}, {userData?.country || "—"}</span>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <FileBadge size={14} className="text-[var(--primary-color)]" />
-                                        <span>Postal: {userData?.postal || "—"}</span>
-                                    </div>
-                                </div>
-
-                                {/* Work & Skills */}
-                                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 shadow-sm sm:col-span-2 space-y-2">
-                                    <h4 className="text-purple-600 font-semibold mb-2 flex items-center gap-2">
-                                        <Briefcase size={16} /> Work & Skills
-                                    </h4>
-
-                                    <div className="flex items-center gap-2">
-                                        <Briefcase size={14} className="text-purple-500" />
-                                        <span>Experience: {userData?.experience || "—"}</span>
-                                    </div>
-
-                                    <div className="flex items-start gap-2">
-                                        <FileBadge size={14} className="text-purple-500 mt-[2px]" />
-                                        <span className="truncate">
-                                            {userData?.skills?.length ? userData.skills.join(", ") : "—"}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Apply Button */}
-                            <span
-                                onClick={applyJob}
-                                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold px-4 py-2 rounded-xl hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm"
-                            >
-                                <Briefcase size={18} />
-                                Apply
-                            </span>
-                            <div className="mt-3 text-center">
-                                <span className="text-xs text-black">
-                                    Your information is secure and will only be shared with the employer
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Footer Note */}
-                    </div>
-                )}
+                <ApplyJobPortal jobData={jobData} applyJobModel={applyJobModel} setApplyJobModel={setApplyJobModel} id={id} />
             </main>
         </div>
 

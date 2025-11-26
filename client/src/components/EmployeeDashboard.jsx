@@ -12,6 +12,7 @@ import { Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement } from 'chart.js/auto'
 import Img from './Image';
 import { Clipboard, ClipboardList, ClipboardPenLine, Loader, User } from 'lucide-react';
+import ImageCropPortal from '../portals/ImageCropPortal';
 ChartJS.register(LineElement, ArcElement, Legend, PointElement, CategoryScale, LinearScale, BarElement);
 
 const EmployeeDashboard = () => {
@@ -19,11 +20,115 @@ const EmployeeDashboard = () => {
 
   const navigate = useNavigate()
 
+  // Crop Portal State
+  const [cropPortalOpen, setCropPortalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [cropConfig, setCropConfig] = useState({
+    shape: 'rect',
+    aspect: 16 / 9,
+    imageType: 'banner'
+  });
+
   const [pictureLoading, setPictureLoading] = useState(false)
-  const changePicture = async (profilePicture) => {
-    setPictureLoading(true)
+
+  // Validate image orientation (for banner)
+  const validateImageOrientation = (file) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        img.src = e.target.result;
+        img.onload = () => {
+          if (img.width > img.height) {
+            resolve({ valid: true, src: e.target.result });
+          } else {
+            reject(new Error('Banner images must be landscape-oriented (width > height)'));
+          }
+        };
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle image selection for profile picture
+  const handleProfilePictureSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSelectedImage(reader.result);
+      setCropConfig({
+        shape: 'round',
+        aspect: 1,
+        imageType: 'profile'
+      });
+      setCropPortalOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle image selection for banner
+  const handleBannerSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    try {
+      const { valid, src } = await validateImageOrientation(file);
+      if (valid) {
+        setSelectedImage(src);
+        setCropConfig({
+          shape: 'rect',
+          aspect: 16 / 9,
+          imageType: 'banner'
+        });
+        setCropPortalOpen(true);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // Handle crop complete
+  const handleCropComplete = async (croppedBlob) => {
+    if (cropConfig.imageType === 'profile') {
+      await uploadProfilePicture(croppedBlob);
+    } else if (cropConfig.imageType === 'banner') {
+      await uploadBanner(croppedBlob);
+    }
+  };
+
+  // Upload profile picture
+  const uploadProfilePicture = async (blob) => {
+    setPictureLoading(true);
     const formData = new FormData();
-    formData.append("profilePicture", profilePicture);
+    formData.append("profilePicture", blob, "profile.jpg");
 
     try {
       const { data } = await axios.post(
@@ -45,15 +150,17 @@ const EmployeeDashboard = () => {
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
     } finally {
-      setPictureLoading(false)
+      setPictureLoading(false);
     }
   };
 
   const [bannerLoading, setBannerLoading] = useState(false)
-  const updateBanner = async (banner) => {
-    setBannerLoading(true)
+
+  // Upload banner
+  const uploadBanner = async (blob) => {
+    setBannerLoading(true);
     const formData = new FormData();
-    formData.append("banner", banner);
+    formData.append("banner", blob, "banner.jpg");
 
     try {
       const { data } = await axios.post(
@@ -75,7 +182,7 @@ const EmployeeDashboard = () => {
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
     } finally {
-      setBannerLoading(false)
+      setBannerLoading(false);
     }
   };
 
@@ -143,10 +250,7 @@ const EmployeeDashboard = () => {
             name="banner"
             className="hidden"
             accept="image/*"
-            onChange={(e) => {
-              e.preventDefault();
-              updateBanner(e.target.files[0]);
-            }}
+            onChange={handleBannerSelect}
           />
           <label
             htmlFor="banner"
@@ -184,10 +288,7 @@ const EmployeeDashboard = () => {
               name="profilePicture"
               className="hidden"
               accept="image/*"
-              onChange={(e) => {
-                e.preventDefault();
-                changePicture(e.target.files[0]);
-              }}
+              onChange={handleProfilePictureSelect}
             />
             <label
               htmlFor="profilePicture"
@@ -296,6 +397,18 @@ const EmployeeDashboard = () => {
           />
         </div>
       </section>
+
+      {/* Image Crop Portal */}
+      <ImageCropPortal
+        isOpen={cropPortalOpen}
+        onClose={() => setCropPortalOpen(false)}
+        imageSrc={selectedImage}
+        cropShape={cropConfig.shape}
+        aspect={cropConfig.aspect}
+        onCropComplete={handleCropComplete}
+        requireLandscape={cropConfig.imageType === 'banner'}
+        imageType={cropConfig.imageType}
+      />
     </div>
 
   )

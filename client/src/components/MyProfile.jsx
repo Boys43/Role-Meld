@@ -10,6 +10,7 @@ import LocationSelector from './LocationSelector';
 import { FaSearch, FaMoneyBillWave } from "react-icons/fa";
 import SearchSelect from './SelectSearch';
 import Img from './Image';
+import CustomSelect from './CustomSelect';
 
 
 const MyProfile = () => {

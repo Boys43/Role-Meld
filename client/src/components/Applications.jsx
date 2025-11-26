@@ -2,54 +2,67 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Download, Eye, Mail, MoreVerticalIcon, Phone, Search, Trash } from 'lucide-react'
 import CustomSelect from './CustomSelect';
 import Img from './Image';
+import axios from 'axios';
+import { AppContext } from '../context/AppContext';
+import { toast } from 'react-toastify';
 
-const applicants = () => {
-    const [applicants, setapplicants] = useState([])
+const Applications = () => {
+    const { backendUrl, userData } = useContext(AppContext);
+    const [applicants, setApplicants] = useState([])
     const [searchTerm, setSearchTerm] = useState("")
     const [cityFilter, setCityFilter] = useState("all")
     const [itemsPerPage, setItemsPerPage] = useState(10)
     const [currentPage, setCurrentPage] = useState(1)
+    const [loading, setLoading] = useState(true)
 
+    const fetchApplications = async () => {
+        try {
+            const { data } = await axios.get(`${backendUrl}/api/applications/recruiter-applications`);
+            if (data.success) {
+                setApplicants(data.applications);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchApplications();
+    }, []);
 
     useEffect(() => {
         setCurrentPage(1)
     }, [searchTerm, cityFilter, itemsPerPage])
 
     const availableCities = useMemo(() => (
-        Array.from(new Set(applicants.map(applicant => applicant.city))).filter(Boolean)
+        Array.from(new Set(applicants.map(app => app.job?.location).filter(Boolean)))
     ), [applicants])
 
-    const filteredapplicants = useMemo(() => {
-        return applicants.filter(applicant => {
-            const matchesSearch = applicant.name.toLowerCase().includes(searchTerm.toLowerCase())
-                || applicant.email.toLowerCase().includes(searchTerm.toLowerCase())
-            const matchesCity = cityFilter === 'all' || applicant.city === cityFilter
+    const filteredApplicants = useMemo(() => {
+        return applicants.filter(app => {
+            const matchesSearch = app.applicant?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+                || app.applicant?.email?.toLowerCase().includes(searchTerm.toLowerCase())
+                || app.job?.title?.toLowerCase().includes(searchTerm.toLowerCase())
+
+            const matchesCity = cityFilter === 'all' || app.job?.location === cityFilter
+
             return matchesSearch && matchesCity
         })
     }, [applicants, searchTerm, cityFilter])
 
-    const totalPages = Math.ceil(filteredapplicants.length / itemsPerPage) || 1
+    const totalPages = Math.ceil(filteredApplicants.length / itemsPerPage) || 1
     const startIndex = (currentPage - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
-    const paginatedapplicants = filteredapplicants.slice(startIndex, endIndex)
+    const paginatedApplicants = filteredApplicants.slice(startIndex, endIndex)
 
-    const sampleApplicants = [
-        { name: "applicant", status: "pending", createdAt: Date.now(), email: "nt50616840@gmail.com", phone: "1234567890", cv: "https://via.placeholder.com/150", id: 1 },
-        { name: "applicant", status: "approved", createdAt: Date.now(), email: "nt50616840@gmail.com", phone: "1234567890", cv: "https://via.placeholder.com/150", id: 2, profilePicture: 'https://picsum.photos/200/200' },
-        { name: "applicant", status: "rejected", createdAt: Date.now(), email: "nt50616840@gmail.com", phone: "1234567890", cv: "https://via.placeholder.com/150", id: 3, profilePicture: 'https://picsum.photos/200/200' },
-        { name: "applicant", status: "pending", createdAt: Date.now(), email: "nt50616840@gmail.com", phone: "1234567890", cv: "https://via.placeholder.com/150", id: 4, profilePicture: 'https://picsum.photos/200/200' },
-        { name: "applicant", status: "approved", createdAt: Date.now(), email: "nt50616840@gmail.com", phone: "1234567890", cv: "https://via.placeholder.com/150", id: 5, profilePicture: 'https://picsum.photos/200/200' },
-        { name: "applicant", status: "rejected", createdAt: Date.now(), email: "nt50616840@gmail.com", phone: "1234567890", cv: "https://via.placeholder.com/150", id: 6, profilePicture: 'https://picsum.photos/200/200' },
-        { name: "applicant", status: "pending", createdAt: Date.now(), email: "nt50616840@gmail.com", phone: "1234567890", cv: "https://via.placeholder.com/150", id: 7, profilePicture: 'https://picsum.photos/200/200' },
-        { name: "applicant", status: "approved", createdAt: Date.now(), email: "nt50616840@gmail.com", phone: "1234567890", cv: "https://via.placeholder.com/150", id: 8, profilePicture: 'https://picsum.photos/200/200' },
-        { name: "applicant", status: "rejected", createdAt: Date.now(), email: "nt50616840@gmail.com", phone: "1234567890", cv: "https://via.placeholder.com/150", id: 9, profilePicture: 'https://picsum.photos/200/200' },
-        { name: "applicant", status: "pending", createdAt: Date.now(), email: "nt50616840@gmail.com", phone: "1234567890", cv: "https://via.placeholder.com/150", id: 10, profilePicture: 'https://picsum.photos/200/200' },
-    ]
-
-    useEffect(() => {
-        setapplicants(sampleApplicants)
-    }, [])
-
+    const handleToggleFollow = (applicant) => {
+        // Implement follow functionality if needed
+        console.log("Toggle follow", applicant);
+    }
 
     return (
         <div className="bg-white rounded-xl w-full min-h-screen border border-gray-200 p-6 rouned-lg">
@@ -66,7 +79,7 @@ const applicants = () => {
                     <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
                         type="text"
-                        placeholder="Search applicants..."
+                        placeholder="Search by name, email or job title..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
@@ -77,7 +90,7 @@ const applicants = () => {
                         value={cityFilter}
                         onChange={(e) => setCityFilter(e.target.value)}
                     >
-                        <option value="all">All Cities</option>
+                        <option value="all">All Locations</option>
                         {availableCities.map(city => (
                             <option key={city} value={city}>{city}</option>
                         ))}
@@ -92,76 +105,89 @@ const applicants = () => {
                     <thead>
                         <tr className='text-black uppercase text-sm'>
                             <th className='px-6 py-6 text-left'>Name</th>
+                            <th className='px-6 py-6 text-left'>Job Applied</th>
                             <th className='px-6 py-6 text-left'>Status</th>
                             <th className='px-6 py-6 text-left'>Information</th>
-                            <th className='px-6 py-6 text-left'></th>
+                            <th className='px-6 py-6 text-left'>Resume</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {paginatedapplicants.length === 0 && (
+                        {loading ? (
                             <tr>
-                                <td colSpan={4} className='px-6 py-6 text-center text-gray-500'>
+                                <td colSpan={5} className='px-6 py-6 text-center text-gray-500'>
+                                    Loading applicants...
+                                </td>
+                            </tr>
+                        ) : paginatedApplicants.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} className='px-6 py-6 text-center text-gray-500'>
                                     No applicants found.
                                 </td>
                             </tr>
+                        ) : (
+                            paginatedApplicants.map(app => (
+                                <tr key={app._id} className='border-t border-gray-100 hover:bg-gray-50'>
+                                    <td className='px-6 py-4 flex items-center gap-4'>
+                                        <Img src={app.applicant?.profilePicture || '/placeholder.png'} style='w-12 h-12 rounded-full object-cover' />
+                                        <div>
+                                            <div className='font-semibold text-gray-800'>{app.applicant?.name}</div>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='font-medium text-gray-800'>{app.job?.title}</div>
+                                        <div className='text-sm text-gray-500'>{app.job?.location}</div>
+                                    </td>
+                                    <td>
+                                        <div className={`${app.status === "applied" ? "bg-blue-100 text-blue-800" : app.status === "shortlisted" ? "bg-yellow-100 text-yellow-800" : app.status === "hired" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"} px-2 py-1 rounded-full text-sm text-center capitalize w-24`}>
+                                            {app.status}
+                                        </div>
+                                        <div className='text-sm mt-2'>
+                                            Applied: <span className='text-gray-400 italic'>{new Date(app.createdAt).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric'
+                                            })}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='space-y-1'>
+                                        <div className='text-sm flex items-center gap-2'>
+                                            <Mail size={16} className="text-gray-400" /> {app.applicant?.email}
+                                        </div>
+                                        {app.applicant?.phone && (
+                                            <div className='text-sm flex items-center gap-2'>
+                                                <Phone size={16} className="text-gray-400" /> {app.applicant?.phone}
+                                            </div>
+                                        )}
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        {app.resume ? (
+                                            <a
+                                                href={app.resume}
+                                                target='_blank'
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+                                            >
+                                                <Download size={18} />
+                                                <span className="text-sm font-medium">Download</span>
+                                            </a>
+                                        ) : (
+                                            <span className="text-gray-400 text-sm">No Resume</span>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))
                         )}
-                        {paginatedapplicants.map(applicant => (
-                            <tr key={applicant.id} className='border-t border-gray-100 hover:bg-gray-50'>
-                                <td className='px-6 py-4 flex items-center gap-4'>
-                                    <Img src={'/placeholder.png'} style='w-12 h-12 rounded-full' />
-                                    <div>
-                                        <div className='font-semibold text-gray-800'>{applicant.name}</div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className={`${applicant.status === "pending" ? "bg-yellow-100 text-yellow-800" : applicant.status === "approved" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"} px-2 py-1 rounded-full text-sm text-center capitalize w-24`}>
-                                        {applicant.status}
-                                    </div>
-                                    <div className='text-sm mt-2'>
-                                        Applied: <span className='text-gray-400 italic'>{new Date(applicant.createdAt).toLocaleDateString('en-US', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric'
-                                        })}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td className='space-y-1'>
-                                    <div className='text-sm flex items-center gap-2'>
-                                        <Mail size={20} /> {applicant?.email}
-                                    </div>
-                                    <div className='text-sm flex items-center gap-2'>
-                                        <Phone size={20} /> {applicant?.phone}
-                                    </div>
-                                </td>
-                                <td className='px-6 py-4'>
-                                    <div className='flex justify-end gap-4 cursor-pointer'>
-                                        <a
-                                            download={applicant?.cv}
-                                            href={applicant?.cv}
-                                            target='_blank'
-                                        >
-                                            <Download size={20} />
-                                        </a>
-                                        <button
-                                            onClick={() => handleToggleFollow(applicant)}
-                                        >
-                                            <MoreVerticalIcon size={20} />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
                     </tbody>
                 </table>
             </div>
 
             {/* Pagination */}
-            {filteredapplicants.length > 0 && (
+            {filteredApplicants.length > 0 && (
                 <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6'>
                     <div className='flex items-center gap-4'>
                         <div className='text-sm text-gray-600'>
-                            Showing {filteredapplicants.length === 0 ? 0 : startIndex + 1} - {Math.min(endIndex, filteredapplicants.length)} of {filteredapplicants.length}
+                            Showing {filteredApplicants.length === 0 ? 0 : startIndex + 1} - {Math.min(endIndex, filteredApplicants.length)} of {filteredApplicants.length}
                         </div>
                         <div>
                             <CustomSelect
@@ -178,7 +204,7 @@ const applicants = () => {
                         <button
                             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                             disabled={currentPage === 1}
-                            className='px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50'
+                            className='px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 hover:bg-gray-50'
                         >
                             Previous
                         </button>
@@ -186,7 +212,7 @@ const applicants = () => {
                         <button
                             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                             disabled={currentPage === totalPages}
-                            className='px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50'
+                            className='px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 hover:bg-gray-50'
                         >
                             Next
                         </button>
@@ -197,4 +223,4 @@ const applicants = () => {
     )
 }
 
-export default applicants
+export default Applications

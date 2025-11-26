@@ -52,6 +52,10 @@ const Messages = lazy(() => import("./pages/dashboard/Messages"));
 const Meetings = lazy(() => import("./pages/dashboard/Meetings"));
 const Company = lazy(() => import("./pages/dashboard/Company"));
 const DashboardSettings = lazy(() => import("./pages/dashboard/DashboardSettings"));
+const MyProfile = lazy(() => import("./components/MyProfile"));
+const MyResume = lazy(() => import("./components/MyResume"));
+const AppliedJobs = lazy(() => import("./components/AppliedJobs"));
+const SavedJobs = lazy(() => import("./components/SavedJobs"));
 
 // Admin dashboard pages
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
@@ -168,6 +172,12 @@ const App = () => {
             <Route path="meetings" element={<Meetings />} />
             <Route path="company" element={<Company />} />
             <Route path="settings" element={<DashboardSettings />} />
+
+            {/* User Dashboard Routes */}
+            <Route path="profile" element={<MyProfile />} />
+            <Route path="resume" element={<MyResume />} />
+            <Route path="applied-jobs" element={<AppliedJobs />} />
+            <Route path="saved-jobs" element={<SavedJobs />} />
           </Route>
           <Route path="/jobdetails/:id" element={<JobDetails />} />
           <Route
