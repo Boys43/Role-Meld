@@ -45,7 +45,7 @@ const DashboardLayout = () => {
       <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${isMobile ? "ml-0" : isSidebarOpen ? "ml-8" : "ml-72"}`}>
         <Navbar className={isSidebarOpen && "ml-8"} />
         <main className="p-2 md:p-4 lg:p-6 flex-1">
-          <Outlet />
+          <Outlet />  
         </main>
         <FooterBottom />
       </div>

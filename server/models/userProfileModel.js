@@ -18,16 +18,76 @@ const userProfileSchema = new mongoose.Schema({
   appliedJobs: { type: Array, default: [] },
   followedAccounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecruiterProfile" }],
   skills: { type: Array, default: [] },
-  isBanned: {type: Boolean, default: false},
-  currency: {type: String, default: "USD"},
-  followers: [{ type: mongoose.Schema.Types.ObjectId}],
-  following: [{ type: mongoose.Schema.Types.ObjectId}],
+  isBanned: { type: Boolean, default: false },
+  currency: { type: String, default: "USD" },
+  followers: [{ type: mongoose.Schema.Types.ObjectId }],
+  following: [{ type: mongoose.Schema.Types.ObjectId }],
 
   // 🆕 Resume & extra fields
   resume: { type: String, default: "" },   // file URL (PDF/Doc)
   portfolio: { type: String, default: "" },
   github: { type: String, default: "" },
   gender: { type: String, enum: ["male", "female", "other"], default: "male" },
+
+  // 🆕 Expanded Profile Fields
+  coverImage: { type: String, default: "" },
+  currentPosition: { type: String, default: "" },
+  category: { type: String, default: "" },
+  description: { type: String, default: "" },
+  dob: { type: Date },
+  languages: { type: Array, default: [] },
+  qualification: { type: String, default: "" },
+  experienceYears: { type: String, default: "" },
+  offeredSalary: { type: Number, default: 0 },
+  salaryType: { type: String, default: "Monthly" },
+
+  // 🌐 Predefined Social Networks
+  linkedin: { type: String, default: "" },
+  twitter: { type: String, default: "" },
+  facebook: { type: String, default: "" },
+  instagram: { type: String, default: "" },
+  youtube: { type: String, default: "" },
+  tiktok: { type: String, default: "" },
+
+  // 🌐 Custom Social Networks
+  customSocialNetworks: [{
+    network: { type: String },
+    url: { type: String }
+  }],
+  videoUrl: { type: String, default: "" },
+
+  // 📚 Education
+  education: [{
+    title: { type: String },
+    level: { type: String },
+    from: { type: Date },
+    to: { type: Date }, // null if present
+    description: { type: String }
+  }],
+
+  // 💼 Experience
+  experience: [{
+    jobTitle: { type: String },
+    company: { type: String },
+    from: { type: Date },
+    to: { type: Date }, // null if present
+    description: { type: String }
+  }],
+
+  // 🚀 Projects
+  projects: [{
+    title: { type: String },
+    link: { type: String },
+    description: { type: String },
+    images: { type: Array, default: [] }
+  }],
+
+  // 🏆 Awards
+  awards: [{
+    title: { type: String },
+    date: { type: Date },
+    description: { type: String }
+  }],
 }, { timestamps: true });
 
 

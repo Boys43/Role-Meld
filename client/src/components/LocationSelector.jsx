@@ -76,8 +76,15 @@ const LocationSelector = ({
     }
   };
 
-  const filteredCountries = locationService.searchCountries(countryQuery).slice(0, 10);
-  const filteredCities = locationService.searchCities(cities, cityQuery).slice(0, 10);
+  const filteredCountries = countries.length > 0
+    ? locationService.searchCountries(countryQuery).slice(0, 10)
+    : [];
+  const filteredCities = cities.length > 0
+    ? locationService.searchCities(cities, cityQuery).slice(0, 10)
+    : [];
+
+  console.log(filteredCountries);
+  console.log(filteredCities);
 
   const handleCountrySelect = (country) => {
     onCountryChange(country.name);
@@ -130,13 +137,13 @@ const LocationSelector = ({
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
               {selectedCountry && (
-                <span
+                <button
                   onClick={clearCountry}
-                  className="text-gray-400 p-2 hover:text-gray-600 transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                   type="button"
                 >
                   <X className="w-4 h-4" />
-                </span>
+                </button>
               )}
               <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showCountryDropdown ? 'rotate-180' : ''}`} />
             </div>
@@ -195,13 +202,13 @@ const LocationSelector = ({
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
               {selectedCity && (
-                <spam
+                <button
                   onClick={clearCity}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                   type="button"
                 >
                   <X className="w-4 h-4" />
-                </spam>
+                </button>
               )}
               <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showCityDropdown ? 'rotate-180' : ''}`} />
             </div>

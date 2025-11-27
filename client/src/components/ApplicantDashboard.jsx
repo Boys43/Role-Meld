@@ -2,42 +2,66 @@ import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-// Cirsluar Profile score
+// Circular Profile score
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-import { FileText, Image, Briefcase, Phone, Globe, MapPin, CreditCard, Star, Pencil, Camera, X, Loader, Bell } from "lucide-react";
+import {
+  FileText, Image, Briefcase, Phone, Globe, MapPin, CreditCard, Star, Pencil,
+  Camera, X, Loader, Bell, User, Calendar, Award, BookOpen, Video, Link2,
+  Layers, ImageIcon
+} from "lucide-react";
 import Img from "./Image";
 import { Link } from "react-router-dom";
 
+// Enhanced recommendation system with tab navigation
 const getProfileRecommendations = (user) => {
   const recommendations = [];
 
-  if (!user.resume || user.resume.trim() === "") {
-    recommendations.push({
-      icon: <FileText className="w-5 h-5 text-red-500" />,
-      title: "Upload your resume",
-      description: "Showcase your work and education history to attract employee.",
-      color: "bg-red-50"
-    });
-  }
-
+  // BASIC INFO TAB
   if (!user.profilePicture || user.profilePicture.trim() === "") {
     recommendations.push({
-      icon: <Image className="w-5 h-5 text-orange-500" />,
+      icon: <Camera className="w-5 h-5 text-orange-500" />,
       title: "Add a profile picture",
-      description: "Profiles with pictures are more trusted and attractive.",
-      color: "bg-orange-50"
+      description: "Profiles with pictures are more trusted and get 40% more views.",
+      color: "bg-orange-50",
+      tab: "basic",
+      field: "profilePicture"
     });
   }
 
-  if (!user.headline || user.headline.trim() === "") {
+  if (!user.coverImage || user.coverImage.trim() === "") {
     recommendations.push({
-      icon: <Briefcase className="w-5 h-5 text-yellow-500" />,
-      title: "Add a headline",
-      description: "Summarize your professional identity in one line.",
-      color: "bg-yellow-50"
+      icon: <ImageIcon className="w-5 h-5 text-purple-500" />,
+      title: "Add a cover image",
+      description: "Make your profile stand out with a professional cover image.",
+      color: "bg-purple-50",
+      tab: "basic",
+      field: "coverImage"
+    });
+  }
+
+  if (!user.currentPosition || user.currentPosition.trim() === "") {
+    recommendations.push({
+      icon: <Briefcase className="w-5 h-5 text-blue-500" />,
+      title: "Add your current position",
+      description: "Let recruiters know your current role.",
+      color: "bg-blue-50",
+      tab: "basic",
+      field: "currentPosition"
+    });
+  }
+
+  if (!user.description || user.description.trim() === "") {
+    recommendations.push({
+      icon: <FileText className="w-5 h-5 text-indigo-500" />,
+      title: "Write about yourself",
+      description: "A compelling description increases profile engagement by 60%.",
+      color: "bg-indigo-50",
+      tab: "basic",
+      field: "description"
     });
   }
 
@@ -45,17 +69,32 @@ const getProfileRecommendations = (user) => {
     recommendations.push({
       icon: <Phone className="w-5 h-5 text-green-500" />,
       title: "Add your phone number",
-      description: "Makes it easier for employee to contact you.",
-      color: "bg-green-50"
+      description: "Makes it easier for recruiters to contact you directly.",
+      color: "bg-green-50",
+      tab: "basic",
+      field: "phone"
     });
   }
 
-  if (!user.portfolio || user.portfolio.trim() === "") {
+  if (!user.dob) {
     recommendations.push({
-      icon: <Star className="w-5 h-5 text-blue-500" />,
-      title: "Add your portfolio",
-      description: "Show your work and projects to stand out.",
-      color: "bg-blue-50"
+      icon: <Calendar className="w-5 h-5 text-pink-500" />,
+      title: "Add your date of birth",
+      description: "Complete your basic information.",
+      color: "bg-pink-50",
+      tab: "basic",
+      field: "dob"
+    });
+  }
+
+  if (!user.qualification || user.qualification.trim() === "") {
+    recommendations.push({
+      icon: <BookOpen className="w-5 h-5 text-cyan-500" />,
+      title: "Add your qualification",
+      description: "Specify your highest education level.",
+      color: "bg-cyan-50",
+      tab: "basic",
+      field: "qualification"
     });
   }
 
@@ -63,8 +102,10 @@ const getProfileRecommendations = (user) => {
     recommendations.push({
       icon: <MapPin className="w-5 h-5 text-purple-500" />,
       title: "Add your city",
-      description: "Helps Employees know your location.",
-      color: "bg-purple-50"
+      description: "Helps recruiters find local talent.",
+      color: "bg-purple-50",
+      tab: "basic",
+      field: "city"
     });
   }
 
@@ -72,8 +113,10 @@ const getProfileRecommendations = (user) => {
     recommendations.push({
       icon: <Globe className="w-5 h-5 text-teal-500" />,
       title: "Add your country",
-      description: "Completes your profile location details.",
-      color: "bg-teal-50"
+      description: "Complete your location details.",
+      color: "bg-teal-50",
+      tab: "basic",
+      field: "country"
     });
   }
 
@@ -81,8 +124,10 @@ const getProfileRecommendations = (user) => {
     recommendations.push({
       icon: <MapPin className="w-5 h-5 text-pink-500" />,
       title: "Add your address",
-      description: "Provides employee full context of your location.",
-      color: "bg-pink-50"
+      description: "Provides full context of your location.",
+      color: "bg-pink-50",
+      tab: "basic",
+      field: "address"
     });
   }
 
@@ -90,17 +135,139 @@ const getProfileRecommendations = (user) => {
     recommendations.push({
       icon: <CreditCard className="w-5 h-5 text-indigo-500" />,
       title: "Add your postal code",
-      description: "Completes your location details for precision.",
-      color: "bg-indigo-50"
+      description: "Complete your location details for precision.",
+      color: "bg-indigo-50",
+      tab: "basic",
+      field: "postal"
     });
   }
 
+  // PROFESSIONAL INFO
+  if (!user.headline || user.headline.trim() === "") {
+    recommendations.push({
+      icon: <Briefcase className="w-5 h-5 text-yellow-500" />,
+      title: "Add a professional headline",
+      description: "Summarize your professional identity in one line.",
+      color: "bg-yellow-50",
+      tab: "basic",
+      field: "headline"
+    });
+  }
+
+  if (!user.resume || user.resume.trim() === "") {
+    recommendations.push({
+      icon: <FileText className="w-5 h-5 text-red-500" />,
+      title: "Upload your resume",
+      description: "Profiles with resumes get 3x more interview calls.",
+      color: "bg-red-50",
+      tab: "basic",
+      field: "resume"
+    });
+  }
+
+  if (!user.portfolio || user.portfolio.trim() === "") {
+    recommendations.push({
+      icon: <Link2 className="w-5 h-5 text-blue-500" />,
+      title: "Add your portfolio",
+      description: "Showcase your work and projects to stand out.",
+      color: "bg-blue-50",
+      tab: "basic",
+      field: "portfolio"
+    });
+  }
+
+  if (!user.videoUrl || user.videoUrl.trim() === "") {
+    recommendations.push({
+      icon: <Video className="w-5 h-5 text-red-500" />,
+      title: "Add a video introduction",
+      description: "Video profiles get 5x more engagement.",
+      color: "bg-red-50",
+      tab: "basic",
+      field: "videoUrl"
+    });
+  }
+
+  // SKILLS TAB
   if (!user.skills || user.skills.length < 3) {
     recommendations.push({
       icon: <Star className="w-5 h-5 text-fuchsia-500" />,
       title: "Add at least 3 skills",
-      description: "Highlight your expertise and make your profile stand out.",
-      color: "bg-fuchsia-50"
+      description: "Highlight your expertise and make your profile searchable.",
+      color: "bg-fuchsia-50",
+      tab: "skills",
+      field: "skills"
+    });
+  }
+
+  // EDUCATION TAB
+  if (!user.education || user.education.length === 0) {
+    recommendations.push({
+      icon: <BookOpen className="w-5 h-5 text-blue-500" />,
+      title: "Add your education",
+      description: "Add at least one education entry to boost credibility.",
+      color: "bg-blue-50",
+      tab: "education",
+      field: "education"
+    });
+  }
+
+  // EXPERIENCE TAB
+  if (!user.experience || user.experience.length === 0) {
+    recommendations.push({
+      icon: <Briefcase className="w-5 h-5 text-green-500" />,
+      title: "Add work experience",
+      description: "Showcase your professional journey and achievements.",
+      color: "bg-green-50",
+      tab: "experience",
+      field: "experience"
+    });
+  }
+
+  // PROJECTS TAB
+  if (!user.projects || user.projects.length === 0) {
+    recommendations.push({
+      icon: <Layers className="w-5 h-5 text-purple-500" />,
+      title: "Add your projects",
+      description: "Demonstrate your practical skills with real projects.",
+      color: "bg-purple-50",
+      tab: "projects",
+      field: "projects"
+    });
+  }
+
+  // AWARDS TAB
+  if (!user.awards || user.awards.length === 0) {
+    recommendations.push({
+      icon: <Award className="w-5 h-5 text-yellow-500" />,
+      title: "Add your achievements",
+      description: "Highlight awards and recognitions you've received.",
+      color: "bg-yellow-50",
+      tab: "awards",
+      field: "awards"
+    });
+  }
+
+  // SOCIAL LINKS
+  let socialCount = 0;
+  if (user.linkedin && user.linkedin.trim() !== "") socialCount++;
+  if (user.twitter && user.twitter.trim() !== "") socialCount++;
+  if (user.facebook && user.facebook.trim() !== "") socialCount++;
+  if (user.instagram && user.instagram.trim() !== "") socialCount++;
+  if (user.youtube && user.youtube.trim() !== "") socialCount++;
+  if (user.tiktok && user.tiktok.trim() !== "") socialCount++;
+  if (user.github && user.github.trim() !== "") socialCount++;
+  if (user.customSocialNetworks && user.customSocialNetworks.length > 0) {
+    socialCount += user.customSocialNetworks.filter(s => s.url && s.url.trim() !== "").length;
+  }
+
+  if (socialCount < 2) {
+    recommendations.push({
+      icon: <Globe className="w-5 h-5 text-blue-500" />,
+      title: "Connect social profiles",
+      description: "Add at least 2 social network links to increase visibility.",
+      color: "bg-blue-50",
+      tab: "basic",
+      field: "linkedin"
     });
   }
 
@@ -109,6 +276,7 @@ const getProfileRecommendations = (user) => {
 
 const ApplicantDashboard = ({ setActiveTab }) => {
   const { userData, setUserData, backendUrl, profileScore } = useContext(AppContext);
+  const navigate = useNavigate();
   const [updatePopUpState, setUpdatePopUpState] = useState("hidden");
 
   // ---------- Picture Update ----------
@@ -193,6 +361,16 @@ const ApplicantDashboard = ({ setActiveTab }) => {
     }
   };
 
+  // ---------- Navigation Handler ----------
+  const handleNavigateToProfile = (tab, field) => {
+    navigate('/dashboard/profile', {
+      state: {
+        activeTab: tab,
+        focusField: field
+      }
+    });
+  };
+
   const recommendations = getProfileRecommendations(userData);
 
   const [notificationsLoading, setNotificationsLoading] = useState(false)
@@ -216,9 +394,6 @@ const ApplicantDashboard = ({ setActiveTab }) => {
     getNotifications();
   }, [])
 
-  console.log(notifications);
-
-
   return (
     <>
       <div className="p-5 w-full min-h-[calc(100vh-4.6rem)] overflow-y-auto">
@@ -229,7 +404,7 @@ const ApplicantDashboard = ({ setActiveTab }) => {
               {/* Circular Progress */}
               <CircularProgressbar
                 value={profileScore}
-                text={""} // hide default text
+                text={""}
                 styles={{
                   path: {
                     stroke:
@@ -243,7 +418,7 @@ const ApplicantDashboard = ({ setActiveTab }) => {
                     strokeLinecap: "round",
                     transition: "stroke-dashoffset 0.5s ease",
                   },
-                  trail: { stroke: "#f3f4f6" }, // lighter gray for trail
+                  trail: { stroke: "#f3f4f6" },
                 }}
               />
 
@@ -313,8 +488,8 @@ const ApplicantDashboard = ({ setActiveTab }) => {
                   </div>
                   <span
                     className={`text-xs font-semibold px-3 py-1 rounded-full mt-2 sm:mt-0 ${not.type === "Application"
-                        ? "bg-red-100 text-red-600"
-                        : "bg-blue-100 text-blue-600"
+                      ? "bg-red-100 text-red-600"
+                      : "bg-blue-100 text-blue-600"
                       }`}
                   >
                     {not.type}
@@ -324,7 +499,6 @@ const ApplicantDashboard = ({ setActiveTab }) => {
             )}
           </div>
         </div>
-
 
         {/* Profile Score */}
         <div className="p-4 mt-5 bg-white rounded-lg shadow-md border border-gray-300">
@@ -351,8 +525,8 @@ const ApplicantDashboard = ({ setActiveTab }) => {
                   🎉 Great! Your profile is fully optimized.
                 </div>
               ) : (
-                recommendations.map((rec, idx) => (
-                  <div key={idx} className={`flex justify-between items-center p-3 rounded-md ${rec.color} shadow-sm`}>
+                recommendations.slice(0, 10).map((rec, idx) => (
+                  <div key={idx} className={`flex justify-between items-center p-3 rounded-md ${rec.color} shadow-sm hover:shadow-md transition-shadow`}>
                     <div className="flex items-center gap-3">
                       <div className="mr-3">{rec.icon}</div>
                       <div>
@@ -360,9 +534,20 @@ const ApplicantDashboard = ({ setActiveTab }) => {
                         <div className="text-sm text-gray-600">{rec.description}</div>
                       </div>
                     </div>
-                    <div className="bg-white px-2 py-1 rounded-md shadow-sm"><Pencil onClick={() => setActiveTab('my-profile')} /></div>
+                    <button
+                      onClick={() => handleNavigateToProfile(rec.tab, rec.field)}
+                      className="bg-white px-3 py-2 rounded-md shadow-sm hover:shadow-md transition-all hover:bg-gray-50 flex items-center gap-2"
+                    >
+                      <Pencil size={16} />
+                      <span className="text-sm font-medium">Fix</span>
+                    </button>
                   </div>
                 ))
+              )}
+              {recommendations.length > 10 && (
+                <div className="text-center text-sm text-gray-500 mt-2">
+                  + {recommendations.length - 10} more recommendations
+                </div>
               )}
             </div>
           </div>

@@ -3,6 +3,8 @@ import userProfileModel from "../models/userProfileModel.js"
 import authModel from "../models/authModels.js";
 import jobsModel from "../models/jobsModel.js";
 import applicationModel from "../models/applicationModel.js";
+import fs from 'fs';
+import cloudinary from '../config/cloudinary.js';
 
 
 export const getAllUsers = async (req, res) => {
@@ -27,51 +29,178 @@ export const getAllRecruiters = async (req, res) => {
 function calculateProfileScore(user) {
     let score = 0;
 
-    // Resume uploaded (any one of work/edu/skills filled)
-    if (user.resume && user.resume.trim() !== "") {
-        score += 20;
+    // ========== BASIC INFO (30 points) ==========
+    // Name (required, 3 points)
+    if (user.name && user.name.trim() !== "") {
+        score += 3;
     }
 
-    // Profile picture
-    if (user.profilePicture && user.profilePicture.trim() !== "") {
-        score += 20;
-    }
-
-    // Headline
-    if (user.headline && user.headline.trim() !== "") {
-        score += 10;
-    }
-
+    // Phone (3 points)
     if (user.phone && user.phone.trim() !== "") {
-        score += 10;
+        score += 3;
     }
 
+    // Current Position (3 points)
+    if (user.currentPosition && user.currentPosition.trim() !== "") {
+        score += 3;
+    }
+
+    // Description (5 points)
+    if (user.description && user.description.trim() !== "") {
+        score += 5;
+    }
+
+    // Date of Birth (3 points)
+    if (user.dob) {
+        score += 3;
+    }
+
+    // Gender (2 points)
+    if (user.gender && user.gender.trim() !== "") {
+        score += 2;
+    }
+
+    // Category (3 points)
+    if (user.category && user.category.trim() !== "") {
+        score += 3;
+    }
+
+    // Languages (3 points if at least 1)
+    if (user.languages && user.languages.length > 0) {
+        score += 3;
+    }
+
+    // Currency (2 points)
+    if (user.currency && user.currency.trim() !== "") {
+        score += 2;
+    }
+
+    // Salary Type (3 points)
+    if (user.salaryType && user.salaryType.trim() !== "") {
+        score += 3;
+    }
+
+    // ========== PROFESSIONAL (25 points) ==========
+    // Headline (5 points)
+    if (user.headline && user.headline.trim() !== "") {
+        score += 5;
+    }
+
+    // Qualification (5 points)
+    if (user.qualification && user.qualification.trim() !== "") {
+        score += 5;
+    }
+
+    // Experience Years (5 points)
+    if (user.experienceYears && user.experienceYears.trim() !== "") {
+        score += 5;
+    }
+
+    // Skills (5 points if at least 3)
+    if (user.skills && user.skills.length >= 3) {
+        score += 5;
+    }
+
+    // Offered Salary (5 points if > 0)
+    if (user.offeredSalary && user.offeredSalary > 0) {
+        score += 5;
+    }
+
+    // ========== MEDIA (15 points) ==========
+    // Profile Picture (4 points)
+    if (user.profilePicture && user.profilePicture.trim() !== "") {
+        score += 4;
+    }
+
+    // Cover Image (3 points)
+    if (user.coverImage && user.coverImage.trim() !== "") {
+        score += 3;
+    }
+
+    // Resume (4 points)
+    if (user.resume && user.resume.trim() !== "") {
+        score += 4;
+    }
+
+    // Portfolio (2 points)
     if (user.portfolio && user.portfolio.trim() !== "") {
-        score += 10;
+        score += 2;
     }
 
-    if (user.city && user.city.trim() !== "") {
-        score += 5;
+    // Video URL (2 points)
+    if (user.videoUrl && user.videoUrl.trim() !== "") {
+        score += 2;
     }
 
-    if (user.country && user.country.trim() !== "") {
-        score += 5;
-    }
-
+    // ========== LOCATION (10 points) ==========
+    // Address (3 points)
     if (user.address && user.address.trim() !== "") {
-        score += 10;
+        score += 3;
     }
 
+    // City (3 points)
+    if (user.city && user.city.trim() !== "") {
+        score += 3;
+    }
+
+    // Country (3 points)
+    if (user.country && user.country.trim() !== "") {
+        score += 3;
+    }
+
+    // Postal Code (1 point)
     if (user.postal && user.postal.trim() !== "") {
+        score += 1;
+    }
+
+    // ========== EXPERIENCE & EDUCATION (10 points) ==========
+    // Education (5 points if at least 1 entry)
+    if (user.education && user.education.length > 0) {
         score += 5;
     }
 
-    if (user?.skills?.length >= 3) {
+    // Experience (5 points if at least 1 entry)
+    if (user.experience && user.experience.length > 0) {
         score += 5;
+    }
+
+    // ========== PROJECTS & AWARDS (5 points) ==========
+    // Projects (3 points if at least 1)
+    if (user.projects && user.projects.length > 0) {
+        score += 3;
+    }
+
+    // Awards (2 points if at least 1)
+    if (user.awards && user.awards.length > 0) {
+        score += 2;
+    }
+
+    // ========== SOCIAL LINKS (5 points) ==========
+    let socialCount = 0;
+
+    // Count predefined social links
+    if (user.linkedin && user.linkedin.trim() !== "") socialCount++;
+    if (user.twitter && user.twitter.trim() !== "") socialCount++;
+    if (user.facebook && user.facebook.trim() !== "") socialCount++;
+    if (user.instagram && user.instagram.trim() !== "") socialCount++;
+    if (user.youtube && user.youtube.trim() !== "") socialCount++;
+    if (user.tiktok && user.tiktok.trim() !== "") socialCount++;
+    if (user.github && user.github.trim() !== "") socialCount++;
+
+    // Count custom social networks
+    if (user.customSocialNetworks && user.customSocialNetworks.length > 0) {
+        socialCount += user.customSocialNetworks.filter(s => s.url && s.url.trim() !== "").length;
+    }
+
+    // Award points based on social link count (max 5 points)
+    if (socialCount >= 2) {
+        score += Math.min(socialCount, 5);
     }
 
     return Math.min(score, 100);
 }
+
+
 
 function calculateRecruiterProfileScore(user) {
     let score = 0;
@@ -279,25 +408,40 @@ export const updateBanner = async (req, res) => {
 
 export const updateResume = async (req, res) => {
     try {
-        const userId = req.user._id;
-
         if (!req.file) {
-            return res.json({ success: false, message: "No resume uploaded" });
+            return res.status(400).json({ success: false, message: "No file uploaded" });
         }
+        const userId = req.user._id;
+        const baseName = req.file.originalname.split(".")[0];
 
-        const updatedProfile = await userProfileModel.findOneAndUpdate(
-            { authId: userId },
-            { $set: { resume: req.file?.path } }, // only save filename or path
-            { new: true }
-        );
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "users",
+            resource_type: "raw",
+            public_id: `${baseName}_${Date.now()}`,
+            format: "pdf"
+        });
 
-        return res.json({
+        try { fs.unlinkSync(req.file.path); } catch (e) { }
+
+        const user = await userProfileModel.findOne({ authId: userId });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User Not Found!" });
+        }
+        user.resume = result.secure_url;
+        user.profileScore = calculateProfileScore(user);
+        await user.save();
+
+        res.json({
             success: true,
             message: "Resume uploaded successfully",
-            profile: updatedProfile,
+            profile: user,
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Server error", error: error.message });
+        if (req.file && req.file.path) {
+            try { fs.unlinkSync(req.file.path); } catch (e) { }
+        }
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 

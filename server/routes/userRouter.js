@@ -30,14 +30,32 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
     const isResume = file.fieldname === "resume";
+    const fileExt = file.originalname.split('.').pop().toLowerCase();
+    const baseName = file.originalname.split('.')[0];
+
+    // Add extension ONLY for PDF files
+    const finalPublicId = isResume
+      ? `${baseName}_${Date.now()}.pdf`
+      : `${baseName}_${Date.now()}`;
+
     return {
       folder: "users",
+      resource_type: isResume ? "raw" : "image",
+
+      // No format conversion for raw files
+      format: !isResume ? fileExt : "pdf",
+
+      public_id: finalPublicId,
+
+      // Only image transformations
       transformation: !isResume
         ? [{ width: 800, height: 600, crop: "limit" }]
         : undefined,
     };
   },
 });
+
+
 
 const upload = multer({
   storage,
@@ -51,10 +69,18 @@ userRouter.get("/data", userAuth, getUserData);
 userRouter.post("/updateprofile", userAuth, updateProfile);
 userRouter.get("/checkprofilescore", userAuth, checkProfileScore);
 
+// Separate upload for resume (using disk storage for manual upload)
+const storageResume = multer.diskStorage({});
+const uploadResume = multer({
+  storage: storageResume,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+
 // File uploads
-userRouter.post("/updateresume", userAuth, upload.single("resume"), updateResume);
+userRouter.post('/updateresume', userAuth, uploadResume.single('resume'), updateResume);
 userRouter.post("/updateprofilepicture", userAuth, upload.single("profilePicture"), updateProfilePicture);
 userRouter.post("/updatebanner", userAuth, upload.single("banner"), updateBanner);
+// userRouter.post("/updatecoverimage", userAuth, upload.single("coverImage"), updateCoverImage); // Temporarily disabled - function not implemented
 
 // Jobs
 userRouter.post("/savejob", userAuth, saveJob);
